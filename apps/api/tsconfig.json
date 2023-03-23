@@ -8,9 +8,9 @@
     "rootDir": "src",
     "target": "es6",
     "typeRoots": ["node_modules/@types", "src/types", "../../packages/common/types"],
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./*"]
     }
   },
   "include": ["src/**/*"],
