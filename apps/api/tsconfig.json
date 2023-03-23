@@ -7,11 +7,7 @@
     "outDir": "dist",
     "rootDir": "src",
     "target": "es6",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["lib/*"]
-    },
-    "typeRoots": ["node_modules/@types", "lib/types", "src/types", "../shared/types"]
+    "typeRoots": ["node_modules/@types", "src/types", "../../packages/types"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
