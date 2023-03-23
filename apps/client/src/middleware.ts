@@ -1,11 +1,14 @@
 import { NextMiddleware, NextResponse } from 'next/server';
-import { recycleToken } from '@/features/auth/api';
+import { ACCESS_TOKEN_EXPIRATION_IN_SECONDS, REFRESH_TOKEN_EXPIRATION_IN_SECONDS } from 'common/constants';
 
 const middleware: NextMiddleware = async function middleware(req) {
   try {
     // Check for the authorization token in the query params
-    const token = req.nextUrl.searchParams.get('token');
-    if (!token) return NextResponse.next();
+    const [accessToken, refreshToken] = [
+      req.nextUrl.searchParams.get('access_token'),
+      req.nextUrl.searchParams.get('refresh_token'),
+    ]
+    if (!accessToken) return NextResponse.next();
 
     // Set redirect
     const redirect = decodeURIComponent(req.nextUrl.searchParams.get('redirect') || '/d');
@@ -15,15 +18,17 @@ const middleware: NextMiddleware = async function middleware(req) {
     // Create the response object
     const res = NextResponse.redirect(url);
 
-    // Recycle the token
-    const { authorization } = await recycleToken(token);
-
     // Set the authorization token
-    if (authorization)
-      res.cookies.set('authorization', authorization, {
-        maxAge: 1000 * 60 * 60 * 24 * 7,
-        path: '/',
-      });
+    res.cookies.set('access_token', accessToken, {
+      maxAge: ACCESS_TOKEN_EXPIRATION_IN_SECONDS,
+      path: '/',
+      httpOnly: true,
+    });
+    res.cookies.set('refresh_token', refreshToken, {
+      maxAge: REFRESH_TOKEN_EXPIRATION_IN_SECONDS,
+      path: '/',
+      httpOnly: true,
+    });
 
     return res;
   } catch (err) {

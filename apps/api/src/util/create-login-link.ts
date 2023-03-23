@@ -12,5 +12,6 @@ export default function createLoginLink({ accessToken, refreshToken }: TokenIds,
   loginLink.searchParams.append('access_token', accessToken.id);
   loginLink.searchParams.append('refresh_token', refreshToken.id)
   loginLink.searchParams.append('redirect', encodeURIComponent(redirect));
+  
   return loginLink;
 }

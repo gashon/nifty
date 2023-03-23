@@ -1,3 +1,5 @@
+import { ACCESS_TOKEN_EXPIRATION_IN_SECONDS } from 'common/constants';
+
 import mongoose from '../../mongoose';
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
 import { IToken } from './types';
@@ -16,7 +18,7 @@ const tokenSchema = new mongoose.Schema<IToken>({
   },
   expires_at: {
     type: Date,
-    default: () => new Date(Date.now() + 1000 * 60 * 60 * 24 * 1), // 1 day
+    default: () => new Date(Date.now() + ACCESS_TOKEN_EXPIRATION_IN_SECONDS),
   },
 }, { timestamps: { updatedAt: "updated_at", createdAt: "created_at" } });
 

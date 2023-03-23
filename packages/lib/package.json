@@ -24,7 +24,8 @@
     "qs": "^6.11.0",
     "randomstring": "^1.2.3",
     "snowflake-sdk": "^1.6.18",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "common": "*"
   },
   "devDependencies": {
     "@types/flat": "^5.0.2",

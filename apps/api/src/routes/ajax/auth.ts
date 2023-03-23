@@ -16,12 +16,13 @@ router.post('/login/email', async (req, res, next) => {
     let user = await User.findOne({ email: req.body.email });
     if (!user) user = await User.create({ email: req.body.email });
 
-    const [accessToken, refreshToken] = await Promise.all([
+    const [accessToken, refreshToken, _] = await Promise.all([
       Token.create({ user: user.id, strategy: 'email' }),
       RefreshToken.create({
         user: user.id,
         created_by_ip: req.ip,
       }),
+      User.findByIdAndUpdate(user.id, { last_login: Date.now() }),
     ]);
 
     const loginLink = createLoginLink({ accessToken, refreshToken }, '/d');
@@ -62,12 +63,13 @@ router.get(
       const user = req.user as IUser;
       if (!user) return res.redirect(`${process.env.DASHBOARD_BASE_URL}/auth/login`);
 
-      const [accessToken, refreshToken] = await Promise.all([
+      const [accessToken, refreshToken, _] = await Promise.all([
         Token.create({ user: user.id, strategy: 'google' }),
         RefreshToken.create({
           user: user.id,
           created_by_ip: req.ip,
         }),
+        User.findByIdAndUpdate(user.id, { last_login: Date.now() }),
       ]);
 
       const loginLink = createLoginLink({ accessToken, refreshToken }, state.redirect?.toString() || '/d');
@@ -79,9 +81,9 @@ router.get(
   }
 );
 
-router.post('/recycle', async (req, res, next) => {
+router.post('/refresh', async (req, res, next) => {
   try {
-    const oldToken = await Token.findById(req.body.authorization);
+    const oldToken = await Token.findById(req.body.refresh_token);
     if (!oldToken) return res.sendStatus(status.UNAUTHORIZED);
 
     const newToken = await Token.create({

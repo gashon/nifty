@@ -1,3 +1,6 @@
+import { REFRESH_TOKEN_EXPIRATION_IN_SECONDS } from 'common/constants';
+
+
 import mongoose from '../../mongoose';
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
 import createAccessToken from './methods/create-access-token';
@@ -12,7 +15,7 @@ const refreshTokenSchema = new mongoose.Schema<IRefreshToken>({
   },
   expires_at: {
     type: Date,
-    default: () => new Date(Date.now() + 1000 * 60 * 60 * 24 * 14), // 14 days
+    default: () => new Date(Date.now() + REFRESH_TOKEN_EXPIRATION_IN_SECONDS), 
   },
   created_by_ip: {
     type: String,
