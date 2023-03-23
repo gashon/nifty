@@ -13,8 +13,10 @@ export const SidebarLink: FC<SidebarLinkProps> = ({ icon, label, href }) => {
       href={href}
       className="flex items-center gap-3 rounded-xl p-3 transition-colors hover:bg-zinc-100 hover:dark:bg-zinc-800/50"
     >
-      <span>{icon}</span>
-      <span>{label}</span>
+      <div>
+        <span>{icon}</span>
+        <span>{label}</span>
+      </div>
     </Link>
   );
 };

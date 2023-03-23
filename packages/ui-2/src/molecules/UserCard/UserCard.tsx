@@ -1,4 +1,3 @@
-import { signOut } from 'next-auth/react';
 import { FC } from 'react';
 import { FiChevronUp, FiLogOut, FiSettings, FiUser } from 'react-icons/fi';
 import { twMerge } from 'tailwind-merge';
@@ -8,9 +7,10 @@ import { DropdownMenu } from '../../atoms/DropdownMenu';
 type UserCardProps = {
   name?: string;
   avatar?: string;
+  signOut?: () => void;
 };
 
-export const UserCard: FC<UserCardProps> = ({ name, avatar }) => {
+export const UserCard: FC<UserCardProps> = ({ name, avatar, signOut }) => {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
   return (
     <DropdownMenu
@@ -24,7 +24,7 @@ export const UserCard: FC<UserCardProps> = ({ name, avatar }) => {
         },
         {
           label: 'Sign out',
-          onClick: () => signOut(),
+          onClick: () => signOut ? signOut() : console.log("signing out"),
           icon: <FiLogOut />,
         },
         {

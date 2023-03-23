@@ -42,19 +42,21 @@ export const NotebookItem: FC<NotebookItemProps> = ({
       href={href as string}
       className="flex items-center justify-between rounded-xl bg-zinc-100 transition-colors hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700/50"
     >
-      <span className="flex flex-1 items-center gap-3 truncate px-5 py-3">
-        <span className="text-sm lg:text-base">{icon}</span>
-        <span className="truncate text-sm text-zinc-700 dark:text-zinc-300 lg:text-base">
-          {title}
+      <div>
+        <span className="flex flex-1 items-center gap-3 truncate px-5 py-3">
+          <span className="text-sm lg:text-base">{icon}</span>
+          <span className="truncate text-sm text-zinc-700 dark:text-zinc-300 lg:text-base">
+            {title}
+          </span>
         </span>
-      </span>
-      <div className="flex items-center gap-3 pr-5">
-        <p className="text-xs text-zinc-500">{lastEdited}</p>
-        {label && (
-          <div className="flex items-center gap-3">
-            <ModuleTag name={label.name} color={label.color} />
-          </div>
-        )}
+        <div className="flex items-center gap-3 pr-5">
+          <p className="text-xs text-zinc-500">{lastEdited}</p>
+          {label && (
+            <div className="flex items-center gap-3">
+              <ModuleTag name={label.name} color={label.color} />
+            </div>
+          )}
+        </div>
       </div>
     </Link>
   );
