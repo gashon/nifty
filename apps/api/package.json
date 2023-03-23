@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "doppler run -- nodemon src/server.ts",
-    "start": "ts-node src/server.ts",
+    "start": "node -r esbuild-register src/server.ts",
     "lint": "tsc --noEmit && eslint . --fix --ext js,ts"
   },
   "dependencies": {
@@ -35,6 +35,8 @@
     "@types/multer": "^1.4.7",
     "@types/node": "^18.11.9",
     "@types/throng": "^5.0.4",
+    "esbuild": "^0.15.13",
+    "esbuild-register": "^3.3.3",
     "eslint": "8.22.0",
     "eslint-config": "*",
     "nodemon": "^2.0.20",

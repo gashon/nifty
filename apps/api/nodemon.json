@@ -1,5 +1,5 @@
 {
   "$schema": "https://json.schemastore.org/nodemon.json",
-  "exec": "ts-node",
+  "exec": "node -r esbuild-register",
   "watch": ["src/**/*.ts", "../../packages/lib/**/*"]
 }
