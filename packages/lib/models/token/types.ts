@@ -5,6 +5,7 @@ export type LoginStrategy = 'email' | 'google' | 'invite' | 'refresh';
 export interface IToken extends Resource {
   user: string;
   strategy: LoginStrategy;
+  expires_at?: Date;
   /** @ignore */
   getLoginLink: (redirect: string) => URL;
 }
