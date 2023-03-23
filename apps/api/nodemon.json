@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/nodemon.json",
+  "exec": "ts-node",
+  "watch": [
+    "lib/**/*.ts",
+    "src/**/*.ts",
+    "../../packages/shared/**/*",
+    "../../packages/commons/**/*"
+  ]
+}

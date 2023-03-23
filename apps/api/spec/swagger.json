@@ -1,0 +1,361 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"mongoose.Types.ObjectId": {
+				"type": "string"
+			},
+			"IDirectory": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"object": {
+						"type": "string"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"test": {
+						"type": "boolean"
+					},
+					"created_by": {
+						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
+					},
+					"name": {
+						"type": "string"
+					},
+					"parent": {
+						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
+					},
+					"collaborators": {
+						"items": {
+							"$ref": "#/components/schemas/mongoose.Types.ObjectId"
+						},
+						"type": "array"
+					},
+					"is_public": {
+						"type": "boolean"
+					},
+					"deleted_at": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id",
+					"object",
+					"created_at",
+					"updated_at",
+					"test",
+					"created_by",
+					"name",
+					"parent",
+					"collaborators",
+					"is_public",
+					"deleted_at"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Partial_Expand_Pick_IDirectory.created_by-or-name-or-parent-or-is_public-or-deleted_at___": {
+				"properties": {
+					"created_by": {
+						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
+					},
+					"name": {
+						"type": "string"
+					},
+					"parent": {
+						"$ref": "#/components/schemas/mongoose.Types.ObjectId"
+					},
+					"is_public": {
+						"type": "boolean"
+					},
+					"deleted_at": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"DirectoryCreateRequest": {
+				"$ref": "#/components/schemas/Partial_Expand_Pick_IDirectory.created_by-or-name-or-parent-or-is_public-or-deleted_at___"
+			},
+			"ListResponse_IDirectory_": {
+				"properties": {
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"has_more": {
+						"type": "boolean"
+					},
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/IDirectory"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"total",
+					"has_more",
+					"page",
+					"data"
+				],
+				"type": "object"
+			},
+			"DirectoryListResponse": {
+				"$ref": "#/components/schemas/ListResponse_IDirectory_"
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "api",
+		"version": "0.0.0",
+		"contact": {}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/directories": {
+			"post": {
+				"operationId": "directory_create",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IDirectory"
+								}
+							}
+						}
+					},
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IDirectory"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"tags": [
+					"Directory"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/DirectoryCreateRequest"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "directory_list",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DirectoryListResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					},
+					"401": {
+						"description": "Unauthorized"
+					}
+				},
+				"tags": [
+					"Directory"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/directories/{id}": {
+			"get": {
+				"operationId": "directory_retrieve",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IDirectory"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Not Found"
+					}
+				},
+				"tags": [
+					"Directory"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"patch": {
+				"operationId": "directory_update",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IDirectory"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Not Found"
+					}
+				},
+				"tags": [
+					"Directory"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/DirectoryCreateRequest"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "directory_delete",
+				"responses": {
+					"204": {
+						"description": "No content"
+					},
+					"400": {
+						"description": "Bad Request"
+					},
+					"401": {
+						"description": "Unauthorized"
+					},
+					"404": {
+						"description": "Not Found"
+					}
+				},
+				"tags": [
+					"Directory"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		}
+	},
+	"servers": [
+		{
+			"description": "develop",
+			"url": "http://localhost:7000/v1"
+		},
+		{
+			"description": "staging",
+			"url": "https://next-express-staging/v1"
+		},
+		{
+			"description": "production",
+			"url": "https://next-express-prod/v1"
+		}
+	]
+}

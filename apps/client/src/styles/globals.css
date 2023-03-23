@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        @apply scroll-smooth overflow-y-auto overscroll-none;
+    }
+
+    [contentEditable=true]:empty:before {
+        @apply content-[attr(placeholder)] text-gray-200 cursor-text;
+    }
+
+    strong {
+        @apply font-semibold;
+    }
+
+    *,
+    ::before,
+    ::after {
+        @apply border-gray-200;
+        @apply divide-gray-200;
+    }
+
+    .scrollbar-none::-webkit-scrollbar {
+        @apply hidden;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .scrollbar-none {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+    }
+
+    .react-loading-skeleton {
+        @apply bg-gray-200 !important;
+    }
+
+    [type='submit'] {
+        @apply font-normal;
+    }
+}

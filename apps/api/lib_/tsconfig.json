@@ -1,0 +1,12 @@
+{
+  "extends": "tsconfig/base.json",
+  "compilerOptions": {
+    "lib": ["ES2019", "DOM"],
+    "module": "CommonJS",
+    "outDir": "dist",
+    "rootDir": ".",
+    "typeRoots": ["node_modules/@types", "lib/types"]
+  },
+  "include": ["**/*", "../src/server"],
+  "exclude": ["node_modules"]
+}

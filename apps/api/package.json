@@ -1,0 +1,44 @@
+{
+  "name": "api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "doppler run -- nodemon src/server.ts",
+    "start": "ts-node src/server.ts",
+    "lint": "tsc --noEmit && eslint . --fix --ext js,ts"
+  },
+  "dependencies": {
+    "basic-auth": "^2.0.1",
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "csv-parser": "^3.0.0",
+    "debug": "~2.6.9",
+    "eslint-utils": "^3.0.0",
+    "express": "~4.16.1",
+    "helmet": "^6.0.0",
+    "http-errors": "~1.6.3",
+    "http-status": "^1.5.3",
+    "lib": "*",
+    "morgan": "~1.9.1",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.8.0",
+    "throng": "^5.0.0",
+    "ts-node": "^10.9.1",
+    "tsoa": "^5.1.1"
+  },
+  "devDependencies": {
+    "@types/basic-auth": "^1.1.3",
+    "@types/cookie-parser": "^1.4.3",
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.14",
+    "@types/morgan": "^1.9.3",
+    "@types/multer": "^1.4.7",
+    "@types/node": "^18.11.9",
+    "@types/throng": "^5.0.4",
+    "eslint": "8.22.0",
+    "eslint-config": "*",
+    "nodemon": "^2.0.20",
+    "tsconfig": "*",
+    "typescript": "^4.8.4"
+  }
+}

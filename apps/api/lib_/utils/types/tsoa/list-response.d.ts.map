@@ -1,0 +1,1 @@
+{"version":3,"file":"list-response.d.ts","sourceRoot":"","sources":["list-response.ts"],"names":[],"mappings":"AAAA,oBAAY,YAAY,CAAC,CAAC,IAAI;IAC5B,IAAI,EAAE,CAAC,EAAE,CAAC;IACV,IAAI,EAAE,MAAM,CAAC;IACb,QAAQ,EAAE,OAAO,CAAC;IAClB,KAAK,EAAE,MAAM,CAAC;CACf,CAAC"}

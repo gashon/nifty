@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+exports.__esModule = true;
+var cookie_parser_1 = __importDefault(require("cookie-parser"));
+var cors_1 = __importDefault(require("cors"));
+var express_1 = __importDefault(require("express"));
+var helmet_1 = __importDefault(require("helmet"));
+var ajax_1 = __importDefault(require("./ajax"));
+var v1_1 = __importDefault(require("./v1"));
+var router = express_1["default"].Router();
+router.use(express_1["default"].json({ limit: '50mb' }));
+router.use(express_1["default"].urlencoded({ extended: true, limit: '50mb' }));
+router.use((0, helmet_1["default"])());
+router.use((0, cors_1["default"])());
+router.use((0, cookie_parser_1["default"])());
+router.use('/v1', v1_1["default"]);
+router.use('/ajax', ajax_1["default"]);
+exports["default"] = router;
