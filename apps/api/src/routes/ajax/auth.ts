@@ -8,6 +8,7 @@ import User, { IUser } from 'lib/models/user';
 
 import passport from '@/lib/passport';
 import createLoginLink from '@/util/create-login-link'
+import auth from '@/middleware/auth';
 
 const router = express.Router();
 
@@ -79,7 +80,7 @@ router.get(
   }
 );
 
-router.get('/user', async (req, res, next) => {
+router.get('/user', auth(), async (req, res, next) => {
   try {
     const token = await Token.findById(req.cookies.access_token).populate('user');
     if (!token) return res.sendStatus(status.UNAUTHORIZED);

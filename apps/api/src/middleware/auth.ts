@@ -7,7 +7,7 @@ import { IUser } from 'lib/models/user';
 
 export default function auth() {
   const authHandler: RequestHandler = async (req, res, next) => {
-    if (req.cookies.access_token) {
+    if (req.cookies.access_token && req.cookies.refresh_token) {
       // Fetch relevant token
       const accessToken = await Token.findById(req.cookies.access_token).populate<{ user: IUser }>(
         'user'
@@ -36,16 +36,16 @@ export default function auth() {
 
       // Set locals
       res.locals.user = accessToken.user;
-
       next();
+    } else {
+      return res.status(status.UNAUTHORIZED).send({
+        error: {
+          message: 'Missing authorization token',
+          type: 'invalid_request_error',
+        },
+      });
     }
 
-    return res.status(status.UNAUTHORIZED).send({
-      error: {
-        message: 'Missing authorization token',
-        type: 'invalid_request_error',
-      },
-    });
   };
 
   return authHandler;
