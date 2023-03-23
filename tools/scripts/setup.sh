@@ -1,3 +1,3 @@
-cd ./packages/client && doppler setup --no-interactive
+cd ./apps/api && doppler setup --no-interactive
 cd ../../
-cd ./packages/api && doppler setup --no-interactive
+cd ./apps/client && doppler setup --no-interactive
