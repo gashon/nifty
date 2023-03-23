@@ -1,5 +1,6 @@
 import mongoose from '../../mongoose';
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
+import createAccessToken from './methods/create-access-token';
 import { IRefreshToken } from './types';
 
 const refreshTokenSchema = new mongoose.Schema<IRefreshToken>({
@@ -11,7 +12,7 @@ const refreshTokenSchema = new mongoose.Schema<IRefreshToken>({
   },
 }, { timestamps: { updatedAt: "updated_at", createdAt: "created_at" } });
 
-
+refreshTokenSchema.methods.createAccessToken = createAccessToken;
 refreshTokenSchema.plugin(mongooseObjectId('ref_tkn', 'token'));
 
 export * from './types';
