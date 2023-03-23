@@ -9,7 +9,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { ToastContainer } from 'react-toastify';
-import { Button, Spinner } from '@/components/elements';
+import { Button, Spinner } from 'ui/components/elements';
 import { AuthLoader } from '@/lib/auth';
 import { queryClient } from '@/lib/react-query';
 

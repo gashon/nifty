@@ -1,8 +1,8 @@
 import { Field, Form, Formik, FormikValues } from 'formik';
 import { useRouter } from 'next/router';
 import { useState, useCallback } from 'react';
-import { Button, Text } from '@/components/elements';
-import { InputField } from '@/components/form';
+import { Button, Text } from 'ui/components/elements';
+import { InputField } from 'ui/components/form';
 import { login } from '@/features/auth/api';
 
 enum SentStatus {

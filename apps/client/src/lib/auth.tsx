@@ -1,6 +1,6 @@
 import { configureAuth } from 'react-query-auth';
 import { axios } from './axios';
-import { Spinner } from '@/components/elements';
+import { Spinner } from 'ui/components/elements';
 // import {
 //   loginWithEmailAndPassword,
 //   getUser,

@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React from 'react';
-import { Button } from '@/components/elements';
+import { Button } from 'ui/components/elements';
 
 export default function GoogleLogin() {
   const router = useRouter();

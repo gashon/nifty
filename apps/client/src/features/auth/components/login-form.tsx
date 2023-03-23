@@ -2,8 +2,8 @@ import * as z from 'zod';
 import { useCallback, useState, FC } from 'react';
 import { useRouter } from 'next/router';
 
-import { Button } from '@/components/elements';
-import { InputField, Form } from '@/components/form';
+import { Button } from 'ui/components/elements';
+import { InputField, Form } from 'ui/components/form';
 import { login } from '@/features/auth/api';
 import { LoginFormData } from '@/features/auth/types';
 import GoogleLogin from './google-login';
