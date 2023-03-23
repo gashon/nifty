@@ -1,4 +1,6 @@
 import Axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
+import { toast, ToastOptions } from 'react-toastify';
+
 import { errorNotification } from "@/util/notification";
 import { API_URL } from '@/config';
 
@@ -11,26 +13,27 @@ axios.interceptors.response.use(
     return response.data;
   },
   error => {
-    // access token expired
-    // const originalRequest = error.config;
-    // if (error?.response?.status === 401 && !originalRequest._retry) {
-    //   originalRequest._retry = true;
-    //   const authCookie = document.cookie
-    //     .split('; ')
-    //     .find(row => row.startsWith('authorization='))
-    //     ?.split('=')[1];
-    //   return axios
-    //     .post('/ajax/auth/recycle', {
-    //       authorization: authCookie,
-    //     })
-    //     .catch(err => {
-    //       location.replace('/auth/login?redirect=' + encodeURIComponent(location.pathname + location.search));
-    //     });
-    // } else {
-    //   location.replace('/auth/login?redirect=' + encodeURIComponent(location.pathname + location.search));
-    // }
+    // token expired
+    if (error?.response?.status === 401) {
+      toast.dismiss();
+      // todo create a proper session expired page and redirect to it
+      toast.error('Your session has expired. Please login again.', {
+        position: toast.POSITION.BOTTOM_RIGHT,
+        autoClose: false,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      // wait for toast to be dismissed
+      setTimeout(() => {
+        location.replace('/auth/login?redirect=' + encodeURIComponent(location.pathname + location.search));
+      }, 3000);
+      return;
+    }
 
-    // todo display error notification
     const message = error.response?.data?.message || error.message;
     errorNotification(message)
 
