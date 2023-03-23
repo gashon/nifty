@@ -1,0 +1,42 @@
+{
+  "name": "lib",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "@fast-csv/format": "^4.3.5",
+    "@google-cloud/bigquery": "^6.1.0",
+    "@google-cloud/storage": "^6.9.0",
+    "@sendgrid/mail": "^7.7.0",
+    "dayjs": "^1.11.6",
+    "flat": "^5.0.2",
+    "handlebars": "^4.7.7",
+    "knex": "^2.3.0",
+    "lodash": "^4.17.21",
+    "md5": "^2.3.0",
+    "mongoose": "^6.3.8",
+    "mongoose-autopopulate": "^0.17.1",
+    "openai": "^3.1.0",
+    "passport": "^0.6.0",
+    "passport-google-oauth20": "^2.0.0",
+    "pg": "^8.8.0",
+    "pluralize": "^8.0.0",
+    "qs": "^6.11.0",
+    "randomstring": "^1.2.3",
+    "snowflake-sdk": "^1.6.18",
+    "yup": "^0.32.11"
+  },
+  "devDependencies": {
+    "@types/flat": "^5.0.2",
+    "@types/lodash": "^4.14.189",
+    "@types/md5": "^2.3.2",
+    "@types/passport": "^1.0.11",
+    "@types/passport-google-oauth20": "^2.0.11",
+    "@types/pluralize": "^0.0.29",
+    "@types/randomstring": "^1.1.8",
+    "@types/snowflake-sdk": "^1.6.12",
+    "eslint": "8.22.0",
+    "eslint-config": "*",
+    "tsconfig": "*"
+  }
+}
