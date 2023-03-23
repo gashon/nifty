@@ -20,12 +20,12 @@ const middleware: NextMiddleware = async function middleware(req) {
 
     // Set the authorization token
     res.cookies.set('access_token', accessToken, {
-      maxAge: ACCESS_TOKEN_EXPIRATION_IN_SECONDS,
+      maxAge: ACCESS_TOKEN_EXPIRATION_IN_SECONDS * 1000,
       path: '/',
       httpOnly: true,
     });
     res.cookies.set('refresh_token', refreshToken, {
-      maxAge: REFRESH_TOKEN_EXPIRATION_IN_SECONDS,
+      maxAge: REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000,
       path: '/',
       httpOnly: true,
     });

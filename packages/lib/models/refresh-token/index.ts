@@ -15,7 +15,7 @@ const refreshTokenSchema = new mongoose.Schema<IRefreshToken>({
   },
   expires_at: {
     type: Date,
-    default: () => new Date(Date.now() + REFRESH_TOKEN_EXPIRATION_IN_SECONDS), 
+    default: () => new Date(Date.now() + REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000), 
   },
   created_by_ip: {
     type: String,

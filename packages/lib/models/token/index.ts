@@ -18,7 +18,7 @@ const tokenSchema = new mongoose.Schema<IToken>({
   },
   expires_at: {
     type: Date,
-    default: () => new Date(Date.now() + ACCESS_TOKEN_EXPIRATION_IN_SECONDS),
+    default: () => new Date(Date.now() + ACCESS_TOKEN_EXPIRATION_IN_SECONDS * 1000),
   },
 }, { timestamps: { updatedAt: "updated_at", createdAt: "created_at" } });
 

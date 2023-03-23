@@ -81,32 +81,27 @@ router.get(
   }
 );
 
-router.post('/refresh', async (req, res, next) => {
+router.get('/user', async (req, res, next) => {
   try {
-    const oldToken = await Token.findById(req.body.refresh_token);
-    if (!oldToken) return res.sendStatus(status.UNAUTHORIZED);
+    const token = await Token.findById(req.cookies.access_token).populate('user');
 
-    const newToken = await Token.create({
-      user: oldToken.user,
-      strategy: oldToken.strategy,
-    });
+    if (!token) return res.sendStatus(status.UNAUTHORIZED);
 
-    await User.findByIdAndUpdate(oldToken.user, { last_login: Date.now() });
-    await oldToken.deleteOne();
-
-    res.send({ authorization: newToken.id });
+    res.send(token.user);
   } catch (err) {
     next(err);
   }
 });
 
-router.get('/user', async (req, res, next) => {
+router.get('/logout', async (req, res, next) => {
   try {
-    const token = await Token.findById(req.cookies.authorization).populate('user');
+    await Token.findByIdAndDelete(req.cookies.access_token);
+    await RefreshToken.findByIdAndDelete(req.cookies.refresh_token);
 
-    if (!token) return res.sendStatus(status.UNAUTHORIZED);
+    res.clearCookie('access_token');
+    res.clearCookie('refresh_token');
 
-    res.send(token.user);
+    res.sendStatus(200);
   } catch (err) {
     next(err);
   }
