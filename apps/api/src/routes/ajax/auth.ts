@@ -89,7 +89,6 @@ router.post('/recycle', async (req, res, next) => {
 
 router.get('/user', async (req, res, next) => {
   try {
-    console.log("GOT", req.cookies.authorization)
     const token = await Token.findById(req.cookies.authorization).populate('user');
 
     if (!token) return res.sendStatus(status.UNAUTHORIZED);
