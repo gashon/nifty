@@ -1,0 +1,27 @@
+{
+  "name": "note-hive",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "npm@9.2.0",
+  "repository": "https://github.com/gashon/note-hive",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config": "*",
+    "prettier": "^2.7.1",
+    "turbo": "latest"
+  },
+  "engines": {
+    "node": ">=16.15.0"
+  }
+}
