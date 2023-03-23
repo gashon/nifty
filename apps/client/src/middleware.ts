@@ -32,7 +32,6 @@ const middleware: NextMiddleware = async function middleware(req) {
 
     return res;
   } catch (err) {
-    console.error('err', err);
     return NextResponse.redirect(`${process.env.DASHBOARD_BASE_URL}/auth/login`);
   }
 };

@@ -22,7 +22,7 @@ export default function auth() {
         if (!refreshToken || refreshToken.expires_at < new Date()) {
           if (refreshToken) await refreshToken.deleteOne();
           await accessToken.deleteOne();
-          
+
           return res.sendStatus(status.UNAUTHORIZED);
         }
 
@@ -32,7 +32,6 @@ export default function auth() {
           path: '/',
           httpOnly: true,
         });
-
       }
 
       // Set locals
