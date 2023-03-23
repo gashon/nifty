@@ -8,7 +8,7 @@ const middleware: NextMiddleware = async function middleware(req) {
       req.nextUrl.searchParams.get('access_token'),
       req.nextUrl.searchParams.get('refresh_token'),
     ]
-    if (!accessToken) return NextResponse.next();
+    if (!refreshToken) return NextResponse.next();
 
     // Set redirect
     const redirect = decodeURIComponent(req.nextUrl.searchParams.get('redirect') || '/d');
@@ -19,16 +19,18 @@ const middleware: NextMiddleware = async function middleware(req) {
     const res = NextResponse.redirect(url);
 
     // Set the authorization token
-    res.cookies.set('access_token', accessToken, {
-      maxAge: ACCESS_TOKEN_EXPIRATION_IN_SECONDS * 1000,
-      path: '/',
-      httpOnly: true,
-    });
-    res.cookies.set('refresh_token', refreshToken, {
-      maxAge: REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000,
-      path: '/',
-      httpOnly: true,
-    });
+    if (accessToken)
+      res.cookies.set('access_token', accessToken, {
+        maxAge: ACCESS_TOKEN_EXPIRATION_IN_SECONDS * 1000,
+        path: '/',
+        httpOnly: true,
+      });
+    if (refreshToken)
+      res.cookies.set('refresh_token', refreshToken, {
+        maxAge: REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000,
+        path: '/',
+        httpOnly: true,
+      });
 
     return res;
   } catch (err) {

@@ -28,9 +28,9 @@ export default function DashboardLayout({ title, children }: DashboardLayoutProp
         dangerouslySetInnerHTML={{
           // todo handle offline mode here
           __html: `
-            if (!document.cookie || document.cookie.indexOf('authorization=') === -1) {
-              location.replace('/auth/login?redirect=' + encodeURIComponent(location.pathname + location.search));
-            }
+            // if (!document.cookie || document.cookie.indexOf('authorization=') === -1) {
+            //   location.replace('/auth/login?redirect=' + encodeURIComponent(location.pathname + location.search));
+            // }
          `,
         }}
       />

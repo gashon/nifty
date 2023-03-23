@@ -16,13 +16,12 @@ router.post('/login/email', async (req, res, next) => {
     let user = await User.findOne({ email: req.body.email });
     if (!user) user = await User.create({ email: req.body.email });
 
-    const [accessToken, refreshToken, _] = await Promise.all([
+    const [accessToken, refreshToken] = await Promise.all([
       Token.create({ user: user.id, strategy: 'email' }),
       RefreshToken.create({
         user: user.id,
         created_by_ip: req.ip,
-      }),
-      User.findByIdAndUpdate(user.id, { last_login: Date.now() }),
+      })
     ]);
 
     const loginLink = createLoginLink({ accessToken, refreshToken }, '/d');
@@ -63,13 +62,12 @@ router.get(
       const user = req.user as IUser;
       if (!user) return res.redirect(`${process.env.DASHBOARD_BASE_URL}/auth/login`);
 
-      const [accessToken, refreshToken, _] = await Promise.all([
+      const [accessToken, refreshToken] = await Promise.all([
         Token.create({ user: user.id, strategy: 'google' }),
         RefreshToken.create({
           user: user.id,
           created_by_ip: req.ip,
-        }),
-        User.findByIdAndUpdate(user.id, { last_login: Date.now() }),
+        })
       ]);
 
       const loginLink = createLoginLink({ accessToken, refreshToken }, state.redirect?.toString() || '/d');
@@ -84,7 +82,6 @@ router.get(
 router.get('/user', async (req, res, next) => {
   try {
     const token = await Token.findById(req.cookies.access_token).populate('user');
-
     if (!token) return res.sendStatus(status.UNAUTHORIZED);
 
     res.send(token.user);

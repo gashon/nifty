@@ -9,9 +9,9 @@ type TokenIds = {
 export default function createLoginLink({ accessToken, refreshToken }: TokenIds, redirect: string): URL {
   const loginLink = new URL(`${process.env.DASHBOARD_BASE_URL}/auth/login`);
 
-  loginLink.searchParams.append('access_token', accessToken.id);
-  loginLink.searchParams.append('refresh_token', refreshToken.id)
+  loginLink.searchParams.append('access_token', encodeURIComponent(accessToken.id));
+  loginLink.searchParams.append('refresh_token', encodeURIComponent(refreshToken.id))
   loginLink.searchParams.append('redirect', encodeURIComponent(redirect));
-  
+
   return loginLink;
 }
