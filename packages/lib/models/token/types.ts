@@ -1,7 +1,7 @@
 import mongoose from '../../mongoose';
 import Resource from '../../utils/types/resource';
 
-export type LoginStrategy = 'email' | 'google' | 'invite';
+export type LoginStrategy = 'email' | 'google' | 'invite' | 'refresh';
 export interface IToken extends Resource {
   user: string;
   strategy: LoginStrategy;
