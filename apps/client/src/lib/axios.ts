@@ -20,7 +20,7 @@ axios.interceptors.response.use(
       toast.error('Your session has expired. Please login again.', {
         position: toast.POSITION.BOTTOM_RIGHT,
         autoClose: false,
-        hideProgressBar: false,
+        hideProgressBar: true,
         closeOnClick: false,
         pauseOnHover: true,
         draggable: true,
