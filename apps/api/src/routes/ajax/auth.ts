@@ -1,9 +1,13 @@
 import express from 'express';
 import status from 'http-status';
+
 import Notification from 'lib/models/notification';
 import Token from 'lib/models/token';
+import RefreshToken from 'lib/models/refresh-token';
 import User, { IUser } from 'lib/models/user';
-import passport from '../../lib/passport';
+
+import passport from '@/lib/passport';
+import createLoginLink from '@/util/create-login-link'
 
 const router = express.Router();
 
@@ -12,9 +16,15 @@ router.post('/login/email', async (req, res, next) => {
     let user = await User.findOne({ email: req.body.email });
     if (!user) user = await User.create({ email: req.body.email });
 
-    const token = await Token.create({ user: user.id, strategy: 'email' });
+    const [accessToken, refreshToken] = await Promise.all([
+      Token.create({ user: user.id, strategy: 'email' }),
+      RefreshToken.create({
+        user: user.id,
+        created_by_ip: req.ip,
+      }),
+    ]);
 
-    const loginLink = token.getLoginLink(req.query.redirect?.toString() || '/d');
+    const loginLink = createLoginLink({ accessToken, refreshToken }, '/d');
     await Notification.create({
       type: 'login',
       emails: [req.body.email],
@@ -52,14 +62,15 @@ router.get(
       const user = req.user as IUser;
       if (!user) return res.redirect(`${process.env.DASHBOARD_BASE_URL}/auth/login`);
 
-      const token = await Token.create({ user: user.id, strategy: 'google' });
+      const [accessToken, refreshToken] = await Promise.all([
+        Token.create({ user: user.id, strategy: 'google' }),
+        RefreshToken.create({
+          user: user.id,
+          created_by_ip: req.ip,
+        }),
+      ]);
 
-      const loginLink = new URL(`${process.env.DASHBOARD_BASE_URL}/auth/login`);
-      loginLink.searchParams.append('token', token.id);
-      loginLink.searchParams.append(
-        'redirect',
-        encodeURIComponent(state.redirect?.toString() || '/query')
-      );
+      const loginLink = createLoginLink({ accessToken, refreshToken }, state.redirect?.toString() || '/d');
 
       res.redirect(loginLink.toString());
     } catch (err) {

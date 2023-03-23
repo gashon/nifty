@@ -6,8 +6,6 @@ export interface IToken extends Resource {
   user: string;
   strategy: LoginStrategy;
   expires_at?: Date;
-  /** @ignore */
-  getLoginLink: (redirect: string) => URL;
 }
 
 export type TokenDocument = mongoose.Document<string, object, IToken>;

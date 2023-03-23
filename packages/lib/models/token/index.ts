@@ -1,6 +1,5 @@
 import mongoose from '../../mongoose';
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
-import getLoginLink from './methods/get-login-link';
 import { IToken } from './types';
 
 const tokenSchema = new mongoose.Schema<IToken>({
@@ -20,8 +19,6 @@ const tokenSchema = new mongoose.Schema<IToken>({
     default: () => new Date(Date.now() + 1000 * 60 * 60 * 24 * 1), // 1 day
   },
 }, { timestamps: { updatedAt: "updated_at", createdAt: "created_at" } });
-
-tokenSchema.methods.getLoginLink = getLoginLink;
 
 tokenSchema.plugin(mongooseObjectId('tkn', 'token'));
 
