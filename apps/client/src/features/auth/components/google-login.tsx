@@ -1,6 +1,7 @@
-import { useRouter } from 'next/router';
 import React from 'react';
-import { Button } from 'ui/components/elements';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { Button } from 'ui/src/atoms/button';
 
 export default function GoogleLogin() {
   const router = useRouter();
@@ -8,14 +9,14 @@ export default function GoogleLogin() {
 
   return (
     <Button
-      as="a"
-      href={`/ajax/auth/login/google?${new URLSearchParams({
-        ...router.query,
-        redirect,
-      }).toString()}`}
-      size="xl"
-      className="w-full"
-      variant="light"
+      onClick={() => {
+        window.location.href = `/ajax/auth/login/google?${new URLSearchParams({
+          ...router.query,
+          redirect,
+        }).toString()}`;
+      }}
+      icon={<Image src="/Google__G__Logo.svg" alt="Google logo" width={20} height={20} />}
+      variant="white"
     >
       Continue with Google
     </Button>
