@@ -1,12 +1,13 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { DetailedHTMLProps, FC, InputHTMLAttributes } from 'react';
+import { UseFormRegisterReturn } from 'react-hook-form';
 
 type InputProps = Pick<
   DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
-  'type' | 'onChange' | 'value' | 'required' | 'defaultValue'
+  'type' | 'onChange' | 'value' | 'required' | 'defaultValue' | 'disabled'
 > & {
   label: string;
-};
+} & Partial<UseFormRegisterReturn>;
 
 // Based on https://play.tailwindcss.com/asmAkefxLr
 export const Input: FC<InputProps> = ({ label, ...rest }) => (
@@ -17,6 +18,7 @@ export const Input: FC<InputProps> = ({ label, ...rest }) => (
       type="text"
       className="peer w-full bg-transparent px-3 py-3 outline-none transition-colors"
       placeholder=" "
+      style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
     />
 
     <label
@@ -39,9 +41,7 @@ export const Input: FC<InputProps> = ({ label, ...rest }) => (
       className="pointer-events-none visible absolute inset-0 mt-[-9px] rounded border border-zinc-600 transition-colors group-focus-within:border-2
   group-focus-within:!border-primary-500 group-hover:border-zinc-700 peer-placeholder-shown:invisible"
     >
-      <legend className="invisible ml-2 max-w-full whitespace-nowrap px-1 text-sm">
-        {label}
-      </legend>
+      <legend className="invisible ml-2 max-w-full whitespace-nowrap px-1 text-sm">{label}</legend>
     </fieldset>
   </div>
 );

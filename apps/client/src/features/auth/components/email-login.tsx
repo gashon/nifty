@@ -6,7 +6,7 @@ import { FiArrowRight } from 'react-icons/fi';
 import { login } from '@/features/auth/api';
 import { LoginFormData } from '../types';
 
-import { Button } from '@ui/atoms';
+import { Button, Input } from '@ui/atoms';
 import { InputField, Form } from '@ui/form';
 
 const schema = z.object({
@@ -36,10 +36,14 @@ export const EmailLogin: FC = () => {
       {sentStatus === SentStatus.Sent && (
         <h1>We&apos;ve sent you a temporary login link. Please check your email to log in.</h1>
       )}
-      <Form<LoginFormData, typeof schema> schema={schema} onSubmit={onMagicLinkLogin}>
+      <Form<LoginFormData, typeof schema>
+        schema={schema}
+        onSubmit={onMagicLinkLogin}
+        className="w-full flex flex-col align-center justify-center"
+      >
         {({ formState, register }) => (
           <>
-            <div className="inline-flex text-left w-full">
+            <div className="inline-flex text-left w-full mt-5" style={{ marginBottom: -5 }}>
               <InputField
                 type="email"
                 label="Email Address"

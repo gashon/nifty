@@ -10,7 +10,9 @@ export default function Login() {
     <main className="flex min-h-screen items-center justify-center px-6 md:px-0">
       <div className="flex flex-col items-center">
         <Brand size={50} />
-        <h1 className="mt-3 text-center text-2xl font-extrabold md:text-3xl">Welcome to Noodle!</h1>
+        <h1 className="mt-3 text-center text-2xl font-extrabold md:text-3xl">
+          Welcome to HiveNote!
+        </h1>
         <p className="max-w-sm pt-2 text-center text-sm text-zinc-700 dark:text-zinc-300 md:text-base">
           Enter your email address or use one of the social media options to log back in or
           register!

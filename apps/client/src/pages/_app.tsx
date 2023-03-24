@@ -9,7 +9,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { ToastContainer } from 'react-toastify';
-import { Button, Spinner } from 'ui/components/elements';
+import { Button } from '@ui/atoms';
 import { AuthLoader } from '@/lib/auth';
 import { queryClient } from '@/lib/react-query';
 
@@ -30,7 +30,6 @@ const ErrorFallback = () => {
     >
       <h2 className="text-lg font-semibold">Ooops, something went wrong :( </h2>
       <Button
-        className="mt-4"
         onClick={() =>
           window.location.replace(
             '/auth/login?redirect=' + encodeURIComponent(location.pathname + location.search)

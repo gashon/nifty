@@ -1,22 +1,8 @@
 import { cva, VariantProps } from 'class-variance-authority';
-import {
-  ButtonHTMLAttributes,
-  DetailedHTMLProps,
-  FC,
-  PropsWithChildren,
-  ReactNode,
-} from 'react';
+import { ButtonHTMLAttributes, DetailedHTMLProps, FC, PropsWithChildren, ReactNode } from 'react';
 
 const styles = cva(
-  [
-    'flex',
-    'items-center',
-    'justify-center',
-    'gap-3',
-    'font-semibold',
-    'rounded',
-    'transition-colors',
-  ],
+  ['flex', 'items-center', 'justify-center', 'font-semibold', 'rounded', 'transition-colors'],
   {
     variants: {
       size: {
@@ -36,7 +22,7 @@ const styles = cva(
       },
     },
     defaultVariants: { size: 'md', variant: 'secondary', shape: 'rectangle' },
-  },
+  }
 );
 
 type ButtonProps = Pick<
