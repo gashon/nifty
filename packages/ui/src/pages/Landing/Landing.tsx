@@ -43,8 +43,8 @@ export const Landing: FC<LandingProps> = ({ onWaitListFormSubmit }) => {
             Rethinking student productivity.
           </h1>
           <p className="mx-auto max-w-2xl pt-3 text-sm text-zinc-600 dark:text-zinc-400 md:text-base">
-            Noodle is an open source student productivity tool, providing students with all the
-            tools they need to organise their life and study more efficiently.
+            Nifty is an open source student productivity tool, providing students with all the tools
+            they need to organise their life and study more efficiently.
           </p>
           <div className="mt-12 flex flex-col items-center">
             <form
@@ -79,7 +79,7 @@ export const Landing: FC<LandingProps> = ({ onWaitListFormSubmit }) => {
               image="/waitlist-illustration.svg"
               alt="waitlist illustration"
               title="You're on the waiting list!"
-              description="We will send you an email as soon as Noodle is ready.
+              description="We will send you an email as soon as Nifty is ready.
                           Thanks for your interest 🤟"
               open={isOpen}
               onClose={() => setIsOpen(false)}

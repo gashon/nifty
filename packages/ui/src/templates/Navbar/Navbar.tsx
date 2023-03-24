@@ -16,7 +16,7 @@ export const Navbar = () => {
       <Link href="/" className="flex items-center gap-3 font-extrabold">
         <div>
           <Brand size={35} />
-          <span>Noodle</span>
+          <span>Nifty</span>
         </div>
       </Link>
       <div className="flex items-center gap-6">

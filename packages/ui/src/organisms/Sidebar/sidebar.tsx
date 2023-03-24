@@ -26,7 +26,7 @@ export const Sidebar: FC<SidebarProps> = ({ user, links }) => {
           <Link href="/" className="flex items-center gap-3 px-0 font-extrabold lg:px-3">
             <div>
               <Brand size={36} />
-              <span>Noodle</span>
+              <span>Nifty</span>
             </div>
           </Link>
           <div className="flex items-center gap-3">

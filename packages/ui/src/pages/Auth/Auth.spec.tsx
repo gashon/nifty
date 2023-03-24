@@ -22,7 +22,7 @@ describe('Auth page', () => {
         onMagicLinkLogin={jest.fn()}
       />,
     );
-    expect(screen.getByText('Welcome to Noodle!')).toBeInTheDocument();
+    expect(screen.getByText('Welcome to Nifty!')).toBeInTheDocument();
   });
 
   it('should render email input', () => {

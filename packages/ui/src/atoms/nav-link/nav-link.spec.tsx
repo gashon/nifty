@@ -22,7 +22,7 @@ describe('NavLink atom', () => {
   });
 
   it('renders an external link', () => {
-    const href = 'https://github.com/ixahmedxi/noodle';
+    const href = 'https://github.com';
     render(
       <NavLink href={href} external>
         Github
