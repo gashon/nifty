@@ -54,7 +54,10 @@ const IconSwitcher = ({ theme }: { theme: ThemeType }) => {
 
 const Icon: FC<{ theme: ThemeType }> = ({ theme }) => {
   return (
-    <div className="w-10 h-full border border-black rounded-full">
+    <div
+      className="w-10 h-full border border-black rounded-full"
+      style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)' }}
+    >
       <IconSwitcher theme={theme} />
     </div>
   );
@@ -76,8 +79,9 @@ const ThemeSelection: FC = ({}) => {
 
   return (
     <Suspense fallback={<></>}>
-      <div className={`bg-primary text-primary z-20`}>
+      <div className={`bg-primary text-primary z-20 w-auto`}>
         <DropdownMenu
+          menuClassName="w-auto flex flex-col items-center justify-center"
           buttonAs="button"
           list={AVAILABLE_THEMES.map(t => ({
             icon: <Icon theme={t} />,
@@ -85,12 +89,7 @@ const ThemeSelection: FC = ({}) => {
             onClick: () => updateTheme(t),
           }))}
         >
-          <div
-            className="w-10 h-full border border-black rounded-full"
-            style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)' }}
-          >
-            {theme && <Icon theme={theme as ThemeType} />}
-          </div>
+          {theme && <Icon theme={theme as ThemeType} />}
         </DropdownMenu>
       </div>
     </Suspense>

@@ -39,6 +39,7 @@ type ListItem =
 
 type DropdownMenuProps = VariantProps<typeof menuContentStyles> & {
   buttonAs?: 'button' | 'div';
+  menuClassName?: string;
   list: ListItem[];
 };
 
@@ -47,11 +48,12 @@ export const DropdownMenu: FC<PropsWithChildren<DropdownMenuProps>> = ({
   list,
   pos,
   buttonAs,
+  menuClassName,
 }) => {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <Menu.Button as={buttonAs}>{children}</Menu.Button>
-      <Menu.Items as="ul" className={menuContentStyles({ pos })}>
+      <Menu.Items as="ul" className={`${menuContentStyles({ pos })} ${menuClassName}`}>
         {list.map(item => (
           <Menu.Item
             key={item.label}
