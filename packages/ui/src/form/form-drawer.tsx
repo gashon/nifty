@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { useDisclosure } from '@/hooks/use-disclosure';
+import { useDisclosure } from '../hooks/use-disclosure';
 
-import { Button } from '../elements/button';
-import { Drawer, DrawerProps } from '../elements/drawer';
+import { Button } from '../atoms/button';
+import { Drawer, DrawerProps } from '../atoms/drawer';
 
 type FormDrawerProps = {
   isDone: boolean;
@@ -40,7 +40,7 @@ export const FormDrawer = ({
         size={size}
         renderFooter={() => (
           <>
-            <Button variant="inverse" size="sm" onClick={close}>
+            <Button variant="secondary" onClick={close}>
               Cancel
             </Button>
             {submitButton}
