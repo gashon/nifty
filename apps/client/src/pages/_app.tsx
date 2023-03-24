@@ -4,13 +4,13 @@ import duration from 'dayjs/plugin/duration';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import type { AppProps } from 'next/app';
+import { ThemeProvider } from 'next-themes';
 import { ErrorBoundary } from 'react-error-boundary';
 import { HelmetProvider } from 'react-helmet-async';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { ToastContainer } from 'react-toastify';
 import { Button } from '@ui/atoms';
-import { AuthLoader } from '@/lib/auth';
 import { queryClient } from '@/lib/react-query';
 
 // Import styles
@@ -49,8 +49,10 @@ export default function App({ Component, pageProps }: AppProps) {
         <ToastContainer />
         <HelmetProvider>
           <QueryClientProvider client={queryClient}>
+            <ThemeProvider>
+              <Component {...pageProps} />
+            </ThemeProvider>
             {process.env.NODE_ENV !== 'test' && <ReactQueryDevtools />}
-            <Component {...pageProps} />
           </QueryClientProvider>
         </HelmetProvider>
       </ErrorBoundary>

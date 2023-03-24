@@ -32,7 +32,7 @@ export const Input: FC<InputProps> = ({ label, registration, ...rest }) => (
 
     <fieldset
       className="pointer-events-none invisible absolute inset-0 mt-[-9px] rounded border border-zinc-600 transition-colors group-focus-within:border-2
-  group-focus-within:!border-primary-500 group-hover:border-zinc-700 peer-placeholder-shown:visible"
+  group-focus-within:!border-primary-500 group-hover:border-zinc-700 peer-placeholder-shown:visible border-tertiary"
     >
       <legend className="invisible ml-2 max-w-[0.01px] whitespace-nowrap px-0 text-sm transition-all duration-300 group-focus-within:max-w-full group-focus-within:px-1">
         {label}
@@ -41,7 +41,7 @@ export const Input: FC<InputProps> = ({ label, registration, ...rest }) => (
 
     <fieldset
       className="pointer-events-none visible absolute inset-0 mt-[-9px] rounded border border-zinc-600 transition-colors group-focus-within:border-2
-  group-focus-within:!border-primary-500 group-hover:border-zinc-700 peer-placeholder-shown:invisible"
+  group-focus-within:!border-primary-500 group-hover:border-zinc-700 peer-placeholder-shown:invisible border-tertiary"
     >
       <legend className="invisible ml-2 max-w-full whitespace-nowrap px-1 text-sm">{label}</legend>
     </fieldset>
