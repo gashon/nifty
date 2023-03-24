@@ -1,6 +1,7 @@
 import * as z from 'zod';
 import Image from 'next/image';
 import { Dispatch, FC, SetStateAction, useState, useCallback } from 'react';
+import ThemeLayout from '@/layouts/theme';
 
 import { Modal } from '@ui/molecules/modal';
 import { Navbar } from '@ui/templates/Navbar';
@@ -64,35 +65,37 @@ const Landing: FC<LandingProps> = ({ onWaitListFormSubmit }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="min-h-screen overflow-hidden bg-[url('/bg.svg')] bg-cover bg-bottom bg-no-repeat">
-      <main className="container mx-auto px-6 py-8 md:px-0">
-        <Navbar />
-        <header className="pt-24 text-center">
-          <h1 className="text-2xl font-extrabold md:text-3xl lg:text-4xl xl:text-5xl">
-            Rethinking student productivity.
-          </h1>
-          <p className="mx-auto max-w-2xl pt-3 text-sm text-zinc-600 dark:text-zinc-400 md:text-base">
-            Nifty is an open source student productivity tool, providing students with all the tools
-            they need to organise their life and study more efficiently.
-          </p>
-          <div className="mt-12 flex flex-col items-center">
-            <EmailForm setIsOpen={setIsOpen} />
-            <Modal
-              image="/waitlist-illustration.svg"
-              alt="waitlist illustration"
-              title="You're on the waiting list!"
-              description="We will send you an email as soon as Nifty is ready.
+    <ThemeLayout>
+      <div className="min-h-screen overflow-hidden bg-[url('/bg.svg')] bg-cover bg-bottom bg-no-repeat bg-primary">
+        <main className="container mx-auto px-6 py-8 md:px-0">
+          <Navbar />
+          <header className="pt-24 text-center">
+            <h1 className="text-primary text-2xl font-extrabold md:text-3xl lg:text-4xl xl:text-5xl">
+              Rethinking student productivity.
+            </h1>
+            <p className="mx-auto max-w-2xl pt-3 text-sm text-tertiary md:text-base">
+              Nifty is an open source student productivity tool, providing students with all the
+              tools they need to organise their life and study more efficiently.
+            </p>
+            <div className="mt-12 flex flex-col items-center">
+              <EmailForm setIsOpen={setIsOpen} />
+              <Modal
+                image="/waitlist-illustration.svg"
+                alt="waitlist illustration"
+                title="You're on the waiting list!"
+                description="We will send you an email as soon as Nifty is ready.
                           Thanks for your interest 🤟"
-              open={isOpen}
-              onClose={() => setIsOpen(false)}
-            />
+                open={isOpen}
+                onClose={() => setIsOpen(false)}
+              />
+            </div>
+          </header>
+          <div className="mx-auto max-w-5xl pt-36 md:pt-64">
+            <Image src="/preview.png" alt="Preview" width={1920} height={1080} />
           </div>
-        </header>
-        <div className="mx-auto max-w-5xl pt-36 md:pt-64">
-          <Image src="/preview.png" alt="Preview" width={1920} height={1080} />
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </ThemeLayout>
   );
 };
 

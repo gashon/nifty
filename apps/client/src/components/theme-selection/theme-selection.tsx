@@ -79,7 +79,7 @@ const ThemeSelection: FC = ({}) => {
 
   return (
     <Suspense fallback={<></>}>
-      <div className={`bg-primary text-primary z-20 w-auto`}>
+      <div className={`bg-transparent text-primary z-20 w-auto`}>
         <DropdownMenu
           menuClassName="w-auto flex flex-col items-center justify-center"
           buttonAs="button"
