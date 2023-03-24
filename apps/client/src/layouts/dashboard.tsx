@@ -3,7 +3,7 @@ import Script from 'next/script';
 import { NextSeo } from 'next-seo';
 import React from 'react';
 import Redirect from '@/components/redirect';
-import Navbar from '@/components/navbar';
+import { Navbar } from '@/components/navbar';
 import useUser from '@/hooks/use-user';
 
 interface DashboardLayoutProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -34,11 +34,11 @@ export default function DashboardLayout({ title, children }: DashboardLayoutProp
          `,
         }}
       />
-      <NextSeo title={title} noindex />
-      <div className="relative flex-col h-screen">
+      <div className="container mx-auto px-6 py-8 md:px-0">
         <Navbar />
         <div className="flex flex-1 h-full pt-14">{children}</div>
       </div>
+      <NextSeo title={title} noindex />
     </>
   );
 }

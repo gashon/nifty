@@ -15,7 +15,7 @@ axios.interceptors.response.use(
   error => {
     // token expired
     if (error?.response?.status === 401) {
-      location.replace(`/internal-error?message=${encodeURIComponent(
+      location.replace(`/error/internal?message=${encodeURIComponent(
         'Your session has expired. Please login again.'
       )}&redirect=${encodeURIComponent(location.pathname + location.search)}`);
       return
