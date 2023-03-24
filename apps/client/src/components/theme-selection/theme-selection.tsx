@@ -1,7 +1,9 @@
-import { FC, useEffect, useCallback, memo } from 'react';
+import { FC, memo } from 'react';
 import { useTheme } from 'next-themes';
 
-const AVAILABLE_THEMES = ['dark', 'pink'] as const;
+import { DropdownMenu } from '@ui/atoms';
+
+const AVAILABLE_THEMES = ['dark', 'light', 'pink', 'blue'] as const;
 type ThemeType = (typeof AVAILABLE_THEMES)[number];
 
 const ThemeSelection: FC = ({}) => {
@@ -12,10 +14,17 @@ const ThemeSelection: FC = ({}) => {
   };
 
   return (
-    <div className={`bg-primary text-primary`}>
-      <h1 className="text-3xl font-bold">My App</h1>
-      <button onClick={() => updateTheme(theme === 'dark' ? 'pink' : 'dark')}>Switch theme</button>
-      <p className="mt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+    <div className={`bg-primary text-primary z-20`}>
+      <DropdownMenu
+        buttonAs="button"
+        list={AVAILABLE_THEMES.map(t => ({
+          icon: <h1>Icon</h1>,
+          label: t,
+          onClick: () => updateTheme(t),
+        }))}
+      >
+        Change Theme
+      </DropdownMenu>
     </div>
   );
 };
