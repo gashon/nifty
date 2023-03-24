@@ -1,29 +1,23 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useCallback, memo } from 'react';
 import { useTheme } from 'next-themes';
 
-const themes = ['dark', 'pink'];
+const AVAILABLE_THEMES = ['dark', 'pink'] as const;
+type ThemeType = (typeof AVAILABLE_THEMES)[number];
 
-export const ThemeSelection: FC = ({}) => {
+const ThemeSelection: FC = ({}) => {
   const { theme, setTheme } = useTheme();
 
-  useEffect(() => {
-    console.log('setting', theme);
-    // localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  useEffect(() => {
-    // Load the previously selected theme from localStorage
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      setTheme(savedTheme);
-    }
-  }, []);
+  const updateTheme = (t: ThemeType) => {
+    setTheme(t);
+  };
 
   return (
     <div className={`bg-primary text-primary`}>
       <h1 className="text-3xl font-bold">My App</h1>
-      <button onClick={() => setTheme(theme === 'dark' ? 'pink' : 'dark')}>Switch theme</button>
+      <button onClick={() => updateTheme(theme === 'dark' ? 'pink' : 'dark')}>Switch theme</button>
       <p className="mt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
     </div>
   );
 };
+
+export default memo(ThemeSelection);

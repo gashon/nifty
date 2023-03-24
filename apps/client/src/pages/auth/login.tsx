@@ -1,4 +1,4 @@
-import { ThemeSelection } from '@/components/theme-selection/theme-selection';
+import ThemeSelection from '@/components/theme-selection/theme-selection';
 import { EmailLogin, GoogleLogin, GithubLogin } from '@/features/auth/components';
 
 import { Brand } from '@ui/atoms';

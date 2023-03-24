@@ -1,7 +1,7 @@
 import Axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import { toast, ToastOptions } from 'react-toastify';
 
-import { errorNotification } from "@/util/notification";
+import { errorNotification } from "@/lib/notification";
 import { API_URL } from '@/config';
 
 export const axios = Axios.create({

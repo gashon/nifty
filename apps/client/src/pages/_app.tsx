@@ -12,6 +12,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { ToastContainer } from 'react-toastify';
 import { Button } from '@ui/atoms';
 import { queryClient } from '@/lib/react-query';
+import ThemeLoaderProvider from '@/providers/theme';
 
 // Import styles
 import '../styles/globals.css';
