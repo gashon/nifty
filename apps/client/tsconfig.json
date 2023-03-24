@@ -14,7 +14,7 @@
     "jsx": "preserve",
     "paths": {
       "@/*": ["src/*"],
-      "@ui/*": ["../../packages/ui/src/*"]
+      "@ui/*": ["../../packages/ui/src/*"] // todo fix package import
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js"],
