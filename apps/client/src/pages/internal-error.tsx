@@ -14,9 +14,9 @@ const InternalError: FC<InternalErrorProps> = () => {
 
   console.log(redirect);
   return (
-    <main className="flex h-screen flex-col items-center justify-center gap-6">
+    <main className="bg-primary flex h-screen flex-col items-center justify-center gap-6">
       <Image src="/auth-denied.svg" alt="Sad illustration" width={150 * 2} height={130.58 * 2} />
-      <h1 className="text-5xl font-extrabold">Something went wrong.</h1>
+      <h1 className="text-primary text-5xl font-extrabold">Something went wrong.</h1>
       <p className="flex items-center gap-3 text-red-500">
         <FiAlertTriangle /> {message}
       </p>
