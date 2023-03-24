@@ -7,10 +7,11 @@ type InputProps = Pick<
   'type' | 'onChange' | 'value' | 'required' | 'defaultValue' | 'disabled'
 > & {
   label: string;
+  registration?: Partial<UseFormRegisterReturn>;
 } & Partial<UseFormRegisterReturn>;
 
 // Based on https://play.tailwindcss.com/asmAkefxLr
-export const Input: FC<InputProps> = ({ label, ...rest }) => (
+export const Input: FC<InputProps> = ({ label, registration, ...rest }) => (
   <div className="group relative w-full">
     <input
       {...rest}
@@ -19,6 +20,7 @@ export const Input: FC<InputProps> = ({ label, ...rest }) => (
       className="peer w-full bg-transparent px-3 py-3 outline-none transition-colors"
       placeholder=" "
       style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
+      {...registration}
     />
 
     <label

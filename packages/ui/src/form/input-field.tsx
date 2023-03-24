@@ -15,7 +15,7 @@ export const InputField = (props: InputFieldProps) => {
   const { type = 'text', label, className, registration, error } = props;
   return (
     <FieldWrapper label={label} error={error}>
-      <Input label={label} type={type} {...registration}/>
+      <Input label={label} type={type} registration={registration}/>
     </FieldWrapper>
   );
 };
