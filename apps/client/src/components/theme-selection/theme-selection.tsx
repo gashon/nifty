@@ -9,16 +9,6 @@ type ThemeType = (typeof AVAILABLE_THEMES)[number];
 // https://www.blobmaker.app/
 const IconSwitcher = ({ theme }: { theme: ThemeType }) => {
   switch (theme) {
-    case 'dark':
-      return (
-        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-          <path
-            fill="#1C1C1C"
-            d="M35.7,-61.5C49,-54.1,64.6,-50.2,69.5,-40.5C74.4,-30.8,68.7,-15.4,66.6,-1.2C64.5,13,65.9,25.9,62.2,37.6C58.4,49.2,49.4,59.6,38.1,67.8C26.9,76,13.5,82.1,-0.6,83.2C-14.7,84.2,-29.4,80.2,-38.9,71.1C-48.5,61.9,-52.9,47.5,-58,34.8C-63,22.1,-68.6,11,-69.4,-0.4C-70.2,-11.9,-66.1,-23.9,-61.3,-37C-56.5,-50.1,-50.9,-64.3,-40.6,-73.5C-30.2,-82.7,-15.1,-86.9,-2,-83.5C11.2,-80.1,22.3,-69,35.7,-61.5Z"
-            transform="translate(100 100)"
-          />
-        </svg>
-      );
     case 'light':
       return (
         <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
@@ -49,7 +39,25 @@ const IconSwitcher = ({ theme }: { theme: ThemeType }) => {
           />
         </svg>
       );
+    default: // dark
+      return (
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <path
+            fill="#1C1C1C"
+            d="M35.7,-61.5C49,-54.1,64.6,-50.2,69.5,-40.5C74.4,-30.8,68.7,-15.4,66.6,-1.2C64.5,13,65.9,25.9,62.2,37.6C58.4,49.2,49.4,59.6,38.1,67.8C26.9,76,13.5,82.1,-0.6,83.2C-14.7,84.2,-29.4,80.2,-38.9,71.1C-48.5,61.9,-52.9,47.5,-58,34.8C-63,22.1,-68.6,11,-69.4,-0.4C-70.2,-11.9,-66.1,-23.9,-61.3,-37C-56.5,-50.1,-50.9,-64.3,-40.6,-73.5C-30.2,-82.7,-15.1,-86.9,-2,-83.5C11.2,-80.1,22.3,-69,35.7,-61.5Z"
+            transform="translate(100 100)"
+          />
+        </svg>
+      );
   }
+};
+
+const Icon: FC<{ theme: ThemeType }> = ({ theme }) => {
+  return (
+    <div className="w-10 h-full border border-black rounded-full">
+      <IconSwitcher theme={theme} />
+    </div>
+  );
 };
 
 const ThemeSelection: FC = ({}) => {
@@ -72,14 +80,7 @@ const ThemeSelection: FC = ({}) => {
         <DropdownMenu
           buttonAs="button"
           list={AVAILABLE_THEMES.map(t => ({
-            icon: (
-              <div
-                className="w-10 h-full border border-black rounded-full"
-                style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)' }}
-              >
-                <IconSwitcher theme={t} />
-              </div>
-            ),
+            icon: <Icon theme={t} />,
             label: t.charAt(0).toUpperCase() + t.slice(1),
             onClick: () => updateTheme(t),
           }))}
@@ -88,7 +89,7 @@ const ThemeSelection: FC = ({}) => {
             className="w-10 h-full border border-black rounded-full"
             style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)' }}
           >
-            {theme && <IconSwitcher theme={theme as ThemeType} />}
+            {theme && <Icon theme={theme as ThemeType} />}
           </div>
         </DropdownMenu>
       </div>
