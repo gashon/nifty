@@ -15,7 +15,11 @@ axios.interceptors.response.use(
   error => {
     // token expired
     if (error?.response?.status === 401) {
+      location.replace(`/internal-error?message=${encodeURIComponent(
+        'Your session has expired. Please login again.'
+      )}?redirect=${encodeURIComponent(location.pathname + location.search)}`);
       toast.dismiss();
+
       // todo create a proper session expired page and redirect to it
       toast.error('Your session has expired. Please login again.', {
         position: toast.POSITION.BOTTOM_RIGHT,
