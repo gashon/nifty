@@ -5,15 +5,15 @@ const path = require('path');
 module.exports = {
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
   /** Expose public folder to storybook as static */
-  staticDirs: ['../../../apps/client/public'],
+  staticDirs: [path.resolve(__dirname, '../../../apps/client/public')],
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
+    'storybook-dark-mode',
+    '@storybook/addon-a11y',
+    '@storybook/addon-interactions',
+    'storybook-addon-paddings',
     {
-      /**
-       * Fix Storybook issue with PostCSS@8
-       * @see https://github.com/storybookjs/storybook/issues/12668#issuecomment-773958085
-       */
       name: '@storybook/addon-postcss',
       options: {
         postcssLoaderOptions: {
@@ -21,11 +21,20 @@ module.exports = {
         },
       },
     },
+    // 'storybook-addon-next',
+    'storybook-addon-next-router',
+    {
+      name: 'storybook-addon-next',
+      id: 'storybook-addon-next',
+      options: {
+        nextConfigPath: path.resolve(__dirname, '../../../apps/client/next.config.js'),
+      },
+    },
   ],
   core: {
     builder: 'webpack5',
   },
-  webpackFinal: (config) => {
+  webpackFinal: config => {
     /**
      * Add support for alias-imports
      * @see https://github.com/storybookjs/storybook/issues/11989#issuecomment-715524391
@@ -39,10 +48,7 @@ module.exports = {
      * Fixes font import with /
      * @see https://github.com/storybookjs/storybook/issues/12844#issuecomment-867544160
      */
-    config.resolve.roots = [
-      path.resolve(__dirname, '../public'),
-      'node_modules',
-    ];
+    config.resolve.roots = [path.resolve(__dirname, '../public'), 'node_modules'];
 
     return config;
   },

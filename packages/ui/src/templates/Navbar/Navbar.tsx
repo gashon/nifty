@@ -14,8 +14,10 @@ export const Navbar = () => {
   return (
     <nav className="relative flex justify-between">
       <Link href="/" className="flex items-center gap-3 font-extrabold">
-        <Brand size={35} />
-        <span>Noodle</span>
+        <div>
+          <Brand size={35} />
+          <span>Noodle</span>
+        </div>
       </Link>
       <div className="flex items-center gap-6">
         <ul
@@ -29,12 +31,12 @@ export const Navbar = () => {
             <NavLink href="/">Home</NavLink>
           </li>
           <li>
-            <NavLink href="https://github.com/ixahmedxi/noodle/blob/main/CONTRIBUTING.md" external>
+            <NavLink href="https://github.com/gashon/note-hive" external>
               Contributing
             </NavLink>
           </li>
           <li>
-            <NavLink href="https://main--629b4efffe8fed004a2a7681.chromatic.com" external>
+            <NavLink href="https://github.com/gashon/note-hive" external>
               Design System
             </NavLink>
           </li>
@@ -42,17 +44,17 @@ export const Navbar = () => {
         <div className="hidden h-8 w-[1px] bg-zinc-200 dark:bg-zinc-700 md:inline-block" />
         <ul className="flex items-center gap-6">
           <li>
-            <NavLink href="https://github.com/ixahmedxi/noodle" external>
+            <NavLink href="https://github.com/gashon/note-hive" external>
               <FiGithub title="Github" size={22} />
             </NavLink>
           </li>
           <li>
-            <NavLink href="https://twitter.com/ixahmedxii" external>
+            <NavLink href="https://github.com/gashon/note-hive" external>
               <FiTwitter title="Twitter" size={22} />
             </NavLink>
           </li>
           <li>
-            <NavLink href="https://discord.gg/ZWmTMEwrYx" external>
+            <NavLink href="https://github.com/gashon/note-hive" external>
               <FaDiscord title="Discord" size={22} />
             </NavLink>
           </li>

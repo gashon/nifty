@@ -4,6 +4,8 @@ import { AxiosReponse } from 'axios';
 import { axios } from '@/lib/axios';
 import { IUser } from '@api/lib/models/user';
 
+import { LoginFormData } from '../types';
+
 export const getUser = async () => {
   return await axios.get('/api/ajax/auth/user');
 };
@@ -18,6 +20,6 @@ export const getUser = async () => {
 //   }).then(res => res.json());
 // }
 
-// export const login = (data: LoginData, params: ParsedUrlQuery) => {
-//   return axios.post('/ajax/auth/login/email', data, { params });
-// };
+export const login = (data: LoginFormData, params: ParsedUrlQuery) => {
+  return axios.post('/ajax/auth/login/email', data, { params });
+};

@@ -1,9 +1,17 @@
-import { Field, Form, Formik, FormikValues } from 'formik';
+import * as z from 'zod';
 import { useRouter } from 'next/router';
-import { useState, useCallback } from 'react';
-import { Button, Text } from 'ui/components/elements';
-import { InputField } from 'ui/components/form';
+import { useState, useCallback, FC } from 'react';
+import { FiArrowRight } from 'react-icons/fi';
+
 import { login } from '@/features/auth/api';
+import { LoginFormData } from '../types';
+
+import { Button } from '@ui/atoms';
+import { InputField, Form } from '@ui/form';
+
+const schema = z.object({
+  email: z.string().email(),
+});
 
 enum SentStatus {
   NotSent,
@@ -11,53 +19,49 @@ enum SentStatus {
   Error,
 }
 
-export default function EmailLogin() {
+export const EmailLogin: FC = () => {
   const router = useRouter();
   const [sentStatus, setSentStatus] = useState<SentStatus>(SentStatus.NotSent);
 
-  const handleSubmit = useCallback(
-    (values: FormikValues) => {
-      console.log('handleSubmit', values);
-      // login({ email }, router.query);
+  const onMagicLinkLogin = useCallback(
+    async (values: z.infer<typeof schema>) => {
+      await login({ email: values.email }, router.query);
       setSentStatus(SentStatus.Sent);
     },
-    [router.query]
+    [router.query, setSentStatus]
   );
-
-  if (sentStatus === SentStatus.Sent) {
-    return (
-      <Text as="div" align="center" color="gray">
-        We&apos;ve sent you a temporary login link. Please check your email to log in.
-      </Text>
-    );
-  }
 
   return (
-    <Formik initialValues={{ email: '' }} onSubmit={handleSubmit}>
-      {({ isSubmitting }) => (
-        <Form className="w-full max-w-xs mx-auto">
-          <div className="inline-flex text-left w-full">
-            <Field
-              as={InputField}
-              size="xl"
-              name="email"
-              placeholder="Email address"
-              autoFocus
-              type="email"
-              required
-            />
-          </div>
-          <Button
-            type="submit"
-            variant="primary"
-            size="xl"
-            className="w-full mt-5"
-            loading={isSubmitting}
-          >
-            Continue
-          </Button>
-        </Form>
+    <>
+      {sentStatus === SentStatus.Sent && (
+        <h1>We&apos;ve sent you a temporary login link. Please check your email to log in.</h1>
       )}
-    </Formik>
+      <Form<LoginFormData, typeof schema> schema={schema} onSubmit={onMagicLinkLogin}>
+        {({ formState, register }) => (
+          <>
+            <div className="inline-flex text-left w-full">
+              <InputField
+                type="email"
+                label="Email Address"
+                error={formState.errors['email']}
+                registration={register('email')}
+              />
+            </div>
+            <Button
+              type="submit"
+              variant="primary"
+              icon={
+                <FiArrowRight
+                  strokeWidth={3}
+                  // check if email is valid, disable otherwise
+                />
+              }
+            >
+              Continue
+            </Button>
+          </>
+        )}
+      </Form>
+    </>
   );
-}
+};

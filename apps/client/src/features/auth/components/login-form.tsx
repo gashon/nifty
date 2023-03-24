@@ -6,7 +6,7 @@ import { Button } from 'ui/components/elements';
 import { InputField, Form } from 'ui/components/form';
 import { login } from '@/features/auth/api';
 import { LoginFormData } from '@/features/auth/types';
-import GoogleLogin from './google-login';
+import { GoogleLogin } from './google-login';
 
 const schema = z.object({
   email: z.string().email(),

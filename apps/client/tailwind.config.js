@@ -3,6 +3,7 @@ const colors = require('tailwindcss/colors');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  presets: [require('../../tailwind.config')],
   content: ['./src/**/*.{ts,tsx}', '../../packages/ui/**/*.{ts,tsx}'],
   theme: {
     extend: {
@@ -11,5 +12,7 @@ module.exports = {
       },
     },
   },
-  plugins: [require('@tailwindcss/forms')],
+  plugins: [
+    require('@tailwindcss/forms'),
+  ],
 };

@@ -23,7 +23,7 @@ const styles = cva(
         ],
       },
     },
-  },
+  }
 );
 
 type NavLinkProps = {
@@ -34,6 +34,7 @@ type NavLinkProps = {
 
 export const NavLink: FC<NavLinkProps> = ({ href, children, external }) => {
   const router = useRouter();
+
   if (external) {
     return (
       <a
@@ -48,8 +49,8 @@ export const NavLink: FC<NavLinkProps> = ({ href, children, external }) => {
   }
 
   return (
-    <Link href={href} className={styles({ active: router.pathname === href })}>
-      {children}
+    <Link href={href}>
+      <div className={styles({ active: router && router.pathname === href })}>{children}</div>
     </Link>
   );
 };
