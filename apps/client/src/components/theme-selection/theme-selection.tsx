@@ -1,4 +1,4 @@
-import { FC, memo } from 'react';
+import { useState, useEffect, FC, memo, Suspense } from 'react';
 import { useTheme } from 'next-themes';
 
 import { DropdownMenu } from '@ui/atoms';
@@ -33,8 +33,8 @@ const IconSwitcher = ({ theme }: { theme: ThemeType }) => {
       return (
         <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
           <path
-            fill="#FF0066"
-            d="M33.8,-61.9C43.4,-53.1,50.5,-43.2,55.1,-32.7C59.6,-22.2,61.6,-11.1,65.3,2.1C69,15.3,74.4,30.7,70.9,43.1C67.5,55.5,55.2,65,42,70.9C28.7,76.7,14.3,78.9,1.9,75.6C-10.5,72.2,-20.9,63.3,-34.5,57.6C-48.1,51.9,-64.7,49.5,-73.9,40.4C-83.1,31.3,-84.8,15.7,-80.7,2.4C-76.5,-10.9,-66.4,-21.7,-57.6,-31.5C-48.9,-41.2,-41.3,-49.8,-31.9,-58.8C-22.5,-67.7,-11.3,-76.9,0.4,-77.6C12.1,-78.4,24.2,-70.7,33.8,-61.9Z"
+            fill="#EBAECF"
+            d="M40.9,-71.2C52.4,-64.3,60.5,-52,64.8,-39.2C69.1,-26.4,69.5,-13.2,71.5,1.2C73.5,15.5,77.1,31,71.4,41.3C65.7,51.6,50.6,56.7,37.2,64.1C23.8,71.5,11.9,81.4,-1.2,83.4C-14.2,85.4,-28.4,79.7,-37.9,69.9C-47.4,60.2,-52.2,46.5,-59.9,34.2C-67.5,21.9,-78.1,11,-80,-1.1C-81.9,-13.1,-75.1,-26.3,-68.3,-40.1C-61.4,-53.9,-54.6,-68.4,-43.3,-75.4C-31.9,-82.4,-15.9,-82,-0.6,-80.9C14.7,-79.9,29.5,-78.2,40.9,-71.2Z"
             transform="translate(100 100)"
           />
         </svg>
@@ -54,31 +54,45 @@ const IconSwitcher = ({ theme }: { theme: ThemeType }) => {
 
 const ThemeSelection: FC = ({}) => {
   const { theme, setTheme } = useTheme();
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Prevents SSR flash of unstyled content
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+  if (!isMounted) return null;
 
   const updateTheme = (t: ThemeType) => {
     setTheme(t);
   };
 
   return (
-    <div className={`bg-primary text-primary z-20`}>
-      <DropdownMenu
-        buttonAs="button"
-        list={AVAILABLE_THEMES.map(t => ({
-          icon: (
-            <div
-              className="w-10 h-full border border-black rounded-full"
-              style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)' }}
-            >
-              <IconSwitcher theme={t} />
-            </div>
-          ),
-          label: t.charAt(0).toUpperCase() + t.slice(1),
-          onClick: () => updateTheme(t),
-        }))}
-      >
-        Change Theme
-      </DropdownMenu>
-    </div>
+    <Suspense fallback={<></>}>
+      <div className={`bg-primary text-primary z-20`}>
+        <DropdownMenu
+          buttonAs="button"
+          list={AVAILABLE_THEMES.map(t => ({
+            icon: (
+              <div
+                className="w-10 h-full border border-black rounded-full"
+                style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)' }}
+              >
+                <IconSwitcher theme={t} />
+              </div>
+            ),
+            label: t.charAt(0).toUpperCase() + t.slice(1),
+            onClick: () => updateTheme(t),
+          }))}
+        >
+          <div
+            className="w-10 h-full border border-black rounded-full"
+            style={{ backgroundColor: 'rgba(255, 255, 255, 0.65)' }}
+          >
+            {theme && <IconSwitcher theme={theme as ThemeType} />}
+          </div>
+        </DropdownMenu>
+      </div>
+    </Suspense>
   );
 };
 

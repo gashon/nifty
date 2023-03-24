@@ -1,4 +1,5 @@
-import ThemeSelection from '@/components/theme-selection/theme-selection';
+import { lazy } from 'react';
+const ThemeSelection = lazy(() => import('@/components/theme-selection/theme-selection'));
 import { EmailLogin, GoogleLogin, GithubLogin } from '@/features/auth/components';
 
 import { Brand } from '@ui/atoms';
