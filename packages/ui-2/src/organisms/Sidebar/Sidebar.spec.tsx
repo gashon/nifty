@@ -1,7 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ComponentProps } from 'react';
-import { Sidebar } from './Sidebar';
+import { Sidebar } from './sidebar';
 
 const args: ComponentProps<typeof Sidebar> = {
   user: {

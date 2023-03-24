@@ -3,10 +3,10 @@ import { FC, useState } from 'react';
 import { FaGithub } from 'react-icons/fa';
 import { FiArrowRight } from 'react-icons/fi';
 import { z } from 'zod';
-import { Brand } from '../../atoms/Brand';
-import { Button } from '../../atoms/Button';
-import { Input } from '../../atoms/Input';
-import { Modal } from '../../molecules/Modal';
+import { Brand } from '../../atoms/brand';
+import { Button } from '../../atoms/button';
+import { Input } from '../../atoms/input';
+import { Modal } from '../../molecules/modal';
 
 type AuthProps = {
   onMagicLinkLogin: (email: string) => void;
@@ -15,12 +15,7 @@ type AuthProps = {
   error?: string;
 };
 
-export const Auth: FC<AuthProps> = ({
-  onGithubLogin,
-  onGoogleLogin,
-  onMagicLinkLogin,
-  error,
-}) => {
+export const Auth: FC<AuthProps> = ({ onGithubLogin, onGoogleLogin, onMagicLinkLogin, error }) => {
   const [isErrorModalOpen, setErrorModalOpen] = useState(!!error);
   const [email, setEmail] = useState('');
   const isEmail = z.string().email();
@@ -29,25 +24,19 @@ export const Auth: FC<AuthProps> = ({
     <main className="flex min-h-screen items-center justify-center px-6 md:px-0">
       <div className="flex flex-col items-center">
         <Brand size={50} />
-        <h1 className="mt-3 text-center text-2xl font-extrabold md:text-3xl">
-          Welcome to Noodle!
-        </h1>
+        <h1 className="mt-3 text-center text-2xl font-extrabold md:text-3xl">Welcome to Noodle!</h1>
         <p className="max-w-sm pt-2 text-center text-sm text-zinc-700 dark:text-zinc-300 md:text-base">
-          Enter your email address or use one of the social media options to log
-          back in or register!
+          Enter your email address or use one of the social media options to log back in or
+          register!
         </p>
         <form
-          onSubmit={(e) => {
+          onSubmit={e => {
             e.preventDefault();
             onMagicLinkLogin(email);
           }}
           className="mt-6 flex w-full flex-col items-stretch gap-3"
         >
-          <Input
-            type="email"
-            label="Email address"
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <Input type="email" label="Email address" onChange={e => setEmail(e.target.value)} />
           <Button
             type="submit"
             variant="primary"
@@ -68,14 +57,7 @@ export const Auth: FC<AuthProps> = ({
           </Button>
           <Button
             onClick={onGoogleLogin}
-            icon={
-              <Image
-                src="/Google__G__Logo.svg"
-                alt="Google logo"
-                width={20}
-                height={20}
-              />
-            }
+            icon={<Image src="/Google__G__Logo.svg" alt="Google logo" width={20} height={20} />}
             variant="white"
           >
             Continue with Google

@@ -1,7 +1,7 @@
 import { ComponentProps, FC } from 'react';
-import { Greeting } from '../../molecules/Greeting';
-import { ModuleCard } from '../../molecules/ModuleCard';
-import { NotebookItem } from '../../molecules/NotebookItem';
+import { Greeting } from '../../molecules/greeting';
+import { ModuleCard } from '../../molecules/module-card';
+import { NotebookItem } from '../../molecules/notebook-item';
 import { Dashboard } from '../../templates/Dashboard';
 
 type TodaysActivityProps = Omit<

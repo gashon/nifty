@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { Greeting } from './Greeting';
+import { Greeting } from './greeting';
 
 describe('Greeting molecules', () => {
   it('renders the greeting', () => {
@@ -8,7 +8,7 @@ describe('Greeting molecules', () => {
         isLoading={false}
         greeting="Good morning"
         quote="The best way to predict the future is to invent it."
-      />,
+      />
     );
 
     expect(screen.getByText('Good morning')).toBeInTheDocument();
@@ -20,11 +20,11 @@ describe('Greeting molecules', () => {
         isLoading={false}
         greeting="Good morning"
         quote="The best way to predict the future is to invent it."
-      />,
+      />
     );
 
     expect(
-      screen.getByText('The best way to predict the future is to invent it.'),
+      screen.getByText('The best way to predict the future is to invent it.')
     ).toBeInTheDocument();
   });
 
@@ -34,7 +34,7 @@ describe('Greeting molecules', () => {
         isLoading
         greeting="Good morning"
         quote="The best way to predict the future is to invent it."
-      />,
+      />
     );
 
     expect(screen.getByRole('status')).toBeInTheDocument();

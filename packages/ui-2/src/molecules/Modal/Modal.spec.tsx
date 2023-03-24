@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { Modal } from './Modal';
+import { Modal } from './modal';
 
 describe('Modal molecule', () => {
   beforeEach(() => {
@@ -14,25 +14,19 @@ describe('Modal molecule', () => {
   });
 
   it("doesn't render title when closed", () => {
-    render(
-      <Modal title="Title" description="Description" onClose={() => {}} />,
-    );
+    render(<Modal title="Title" description="Description" onClose={() => {}} />);
 
     expect(screen.queryByText('Title')).not.toBeInTheDocument();
   });
 
   it('renders the title when open', () => {
-    render(
-      <Modal title="Title" description="Description" open onClose={() => {}} />,
-    );
+    render(<Modal title="Title" description="Description" open onClose={() => {}} />);
 
     expect(screen.getByText('Title')).toBeInTheDocument();
   });
 
   it('renders the description when open', () => {
-    render(
-      <Modal title="Title" description="Description" open onClose={() => {}} />,
-    );
+    render(<Modal title="Title" description="Description" open onClose={() => {}} />);
 
     expect(screen.getByText('Description')).toBeInTheDocument();
   });
@@ -46,7 +40,7 @@ describe('Modal molecule', () => {
         alt="illustration"
         open
         onClose={() => {}}
-      />,
+      />
     );
 
     expect(screen.getByAltText('illustration')).toBeInTheDocument();

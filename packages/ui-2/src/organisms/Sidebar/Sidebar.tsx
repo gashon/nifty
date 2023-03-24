@@ -3,9 +3,9 @@ import { ComponentProps, FC, useState } from 'react';
 import AnimateHeight from 'react-animate-height';
 import { FiMenu, FiX } from 'react-icons/fi';
 import { useMediaQuery } from 'usehooks-ts';
-import { Brand } from '../../atoms/Brand';
-import { SidebarLink } from '../../molecules/SidebarLink';
-import { UserCard } from '../../molecules/UserCard';
+import { Brand } from '../../atoms/brand';
+import { SidebarLink } from '../../molecules/sidebar-link';
+import { UserCard } from '../../molecules/user-card';
 
 type SidebarProps = {
   user: ComponentProps<typeof UserCard>;

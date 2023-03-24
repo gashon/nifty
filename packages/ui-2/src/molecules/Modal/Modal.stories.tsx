@@ -1,6 +1,6 @@
 import { Meta, Story } from '@storybook/react';
 import { ComponentProps } from 'react';
-import { Modal } from './Modal';
+import { Modal } from './modal';
 
 const args: ComponentProps<typeof Modal> = {
   open: true,
@@ -19,7 +19,7 @@ const config: Meta<typeof args> = {
 
 export default config;
 
-const Template: Story<typeof args> = (props) => <Modal {...props} />;
+const Template: Story<typeof args> = props => <Modal {...props} />;
 
 export const Default = Template.bind({});
 

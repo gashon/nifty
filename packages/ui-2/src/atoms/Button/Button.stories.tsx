@@ -6,7 +6,7 @@ import {
   FiArrowRight,
   FiArrowUp,
 } from 'react-icons/fi';
-import { Button } from './Button';
+import { Button } from './button';
 
 const args: ComponentProps<typeof Button> = {
   type: 'button',

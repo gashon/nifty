@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Input } from './Input';
+import { Input } from './input';
 
 describe('Input atom', () => {
   it('should render value', () => {

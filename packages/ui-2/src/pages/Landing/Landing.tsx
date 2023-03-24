@@ -3,7 +3,7 @@ import { FC, FormEvent, useState } from 'react';
 import { FiAlertTriangle } from 'react-icons/fi';
 import { twMerge } from 'tailwind-merge';
 import { z } from 'zod';
-import { Modal } from '../../molecules/Modal';
+import { Modal } from '../../molecules/modal';
 import { Navbar } from '../../templates/Navbar';
 
 const isEmail = z.string().email();
@@ -43,15 +43,14 @@ export const Landing: FC<LandingProps> = ({ onWaitListFormSubmit }) => {
             Rethinking student productivity.
           </h1>
           <p className="mx-auto max-w-2xl pt-3 text-sm text-zinc-600 dark:text-zinc-400 md:text-base">
-            Noodle is an open source student productivity tool, providing
-            students with all the tools they need to organise their life and
-            study more efficiently.
+            Noodle is an open source student productivity tool, providing students with all the
+            tools they need to organise their life and study more efficiently.
           </p>
           <div className="mt-12 flex flex-col items-center">
             <form
               onSubmit={onSubmit}
               className={twMerge(
-                'flex min-w-full flex-col rounded-lg bg-zinc-200 shadow-md dark:bg-zinc-800 md:min-w-[50ch] md:flex-row md:rounded-full',
+                'flex min-w-full flex-col rounded-lg bg-zinc-200 shadow-md dark:bg-zinc-800 md:min-w-[50ch] md:flex-row md:rounded-full'
               )}
               noValidate
             >
@@ -60,7 +59,7 @@ export const Landing: FC<LandingProps> = ({ onWaitListFormSubmit }) => {
                 placeholder="Email address"
                 className="flex-1 rounded-lg bg-transparent py-3 pl-6 text-sm outline-none placeholder:text-zinc-500 md:rounded-l-full"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={e => setEmail(e.target.value)}
               />
               <button
                 type="submit"

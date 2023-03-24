@@ -1,6 +1,6 @@
 import { Meta, Story } from '@storybook/react';
 import { ComponentProps } from 'react';
-import { Greeting } from './Greeting';
+import { Greeting } from './greeting';
 
 const args: ComponentProps<typeof Greeting> = {
   isLoading: false,
@@ -17,7 +17,7 @@ const config: Meta<typeof args> = {
 
 export default config;
 
-const Template: Story<typeof args> = (props) => <Greeting {...props} />;
+const Template: Story<typeof args> = props => <Greeting {...props} />;
 
 export const Default = Template.bind({});
 Default.storyName = 'Greeting';

@@ -1,6 +1,6 @@
 import { Meta, Story } from '@storybook/react';
 import { ComponentProps } from 'react';
-import { Input } from './Input';
+import { Input } from './input';
 
 const args: ComponentProps<typeof Input> = {
   type: 'email',
@@ -15,7 +15,7 @@ const config: Meta<typeof args> = {
 
 export default config;
 
-const Template: Story<typeof args> = (props) => <Input {...props} />;
+const Template: Story<typeof args> = props => <Input {...props} />;
 
 export const Normal = Template.bind({});
 Normal.storyName = 'Input';

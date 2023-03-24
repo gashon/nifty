@@ -3,13 +3,13 @@ import { useState } from 'react';
 import { FaDiscord } from 'react-icons/fa';
 import { FiGithub, FiMenu, FiTwitter, FiX } from 'react-icons/fi';
 import { twMerge } from 'tailwind-merge';
-import { Brand } from '../../atoms/Brand';
-import { NavLink } from '../../atoms/NavLink';
+import { Brand } from '../../atoms/brand';
+import { NavLink } from '../../atoms/nav-link';
 
 export const Navbar = () => {
   const [navbarOpen, setNavbarOpen] = useState(false);
 
-  const toggleNavbarOpen = () => setNavbarOpen((prev) => !prev);
+  const toggleNavbarOpen = () => setNavbarOpen(prev => !prev);
 
   return (
     <nav className="relative flex justify-between">
@@ -22,26 +22,19 @@ export const Navbar = () => {
           data-testid="pages-links"
           className={twMerge(
             'hidden gap-6 md:flex',
-            navbarOpen &&
-              'absolute left-0 top-12 flex w-full flex-col bg-zinc-900 py-3',
+            navbarOpen && 'absolute left-0 top-12 flex w-full flex-col bg-zinc-900 py-3'
           )}
         >
           <li>
             <NavLink href="/">Home</NavLink>
           </li>
           <li>
-            <NavLink
-              href="https://github.com/ixahmedxi/noodle/blob/main/CONTRIBUTING.md"
-              external
-            >
+            <NavLink href="https://github.com/ixahmedxi/noodle/blob/main/CONTRIBUTING.md" external>
               Contributing
             </NavLink>
           </li>
           <li>
-            <NavLink
-              href="https://main--629b4efffe8fed004a2a7681.chromatic.com"
-              external
-            >
+            <NavLink href="https://main--629b4efffe8fed004a2a7681.chromatic.com" external>
               Design System
             </NavLink>
           </li>
@@ -64,11 +57,7 @@ export const Navbar = () => {
             </NavLink>
           </li>
           <li>
-            <button
-              type="button"
-              onClick={toggleNavbarOpen}
-              className="inline-block md:hidden"
-            >
+            <button type="button" onClick={toggleNavbarOpen} className="inline-block md:hidden">
               {navbarOpen ? (
                 <FiX title="close-menu" size={22} />
               ) : (

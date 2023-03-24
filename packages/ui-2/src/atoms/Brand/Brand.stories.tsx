@@ -1,6 +1,6 @@
 import { Meta, Story } from '@storybook/react';
 import { ComponentProps } from 'react';
-import { Brand } from './Brand';
+import { Brand } from './brand';
 
 const args: ComponentProps<typeof Brand> = {
   size: 30,
@@ -24,5 +24,5 @@ const config: Meta<typeof args> = {
 
 export default config;
 
-export const Normal: Story<typeof args> = (props) => <Brand {...props} />;
+export const Normal: Story<typeof args> = props => <Brand {...props} />;
 Normal.storyName = 'Brand';

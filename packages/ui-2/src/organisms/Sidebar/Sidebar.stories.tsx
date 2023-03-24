@@ -1,7 +1,7 @@
 import { Meta, Story } from '@storybook/react';
 import { ComponentProps } from 'react';
 import { FiActivity } from 'react-icons/fi';
-import { Sidebar } from './Sidebar';
+import { Sidebar } from './sidebar';
 
 const args: ComponentProps<typeof Sidebar> = {
   user: {
@@ -25,7 +25,7 @@ const config: Meta<typeof args> = {
 
 export default config;
 
-const Template: Story<typeof args> = (props) => <Sidebar {...props} />;
+const Template: Story<typeof args> = props => <Sidebar {...props} />;
 
 export const Default = Template.bind({});
 Default.storyName = 'Sidebar';

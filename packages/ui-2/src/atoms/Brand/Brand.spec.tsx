@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { Brand } from './Brand';
+import { Brand } from './brand';
 
 describe('Brand atom', () => {
   it('renders a brand icon', () => {
