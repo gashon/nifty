@@ -17,25 +17,8 @@ axios.interceptors.response.use(
     if (error?.response?.status === 401) {
       location.replace(`/internal-error?message=${encodeURIComponent(
         'Your session has expired. Please login again.'
-      )}?redirect=${encodeURIComponent(location.pathname + location.search)}`);
-      toast.dismiss();
-
-      // todo create a proper session expired page and redirect to it
-      toast.error('Your session has expired. Please login again.', {
-        position: toast.POSITION.BOTTOM_RIGHT,
-        autoClose: false,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-      // wait for toast to be dismissed
-      setTimeout(() => {
-        location.replace('/auth/login?redirect=' + encodeURIComponent(location.pathname + location.search));
-      }, 3000);
-      return;
+      )}&redirect=${encodeURIComponent(location.pathname + location.search)}`);
+      return
     }
 
     const message = error.response?.data?.message || error.message;
