@@ -1,6 +1,6 @@
 import { ComponentProps, FC, PropsWithChildren } from 'react';
 import { FiBook, FiCheck, FiGrid, FiHome } from 'react-icons/fi';
-import { Sidebar } from '../../organisms/Sidebar';
+import { Sidebar } from '../../organisms/sidebar';
 
 type DashboardProps = {
   userName?: ComponentProps<typeof Sidebar>['user']['name'];
