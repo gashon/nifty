@@ -17,7 +17,7 @@ export const Input: FC<InputProps> = ({ label, registration, ...rest }) => (
       {...rest}
       data-testid="input-atom"
       type="text"
-      className="peer w-full bg-transparent px-3 py-3 outline-none transition-colors"
+      className={'peer w-full bg-transparent px-3 py-3 outline-none transition-colors'}
       placeholder=" "
       style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
       {...registration}
