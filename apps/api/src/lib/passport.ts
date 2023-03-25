@@ -25,27 +25,27 @@ const googleStrategy = new GoogleStrategy(
   }
 );
 
-// const githubStrategy = new GitHubStrategy({
-//   clientID: process.env.GITHUB_CLIENT_ID!,
-//   clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-//   callbackURL: "${process.env.API_BASE_URL}/ajax/auth/login/github/callback"
-// },
-//   async (accessToken, refreshToken, profile, cb) => {
-//     const user: IUser = await User.findOneAndUpdate(
-//       { email: profile._json.email },
-//       {
-//         avatar: profile._json.picture,
-//         last_login: Date.now(),
-//         verified: true,
-//       },
-//       { upsert: true, new: true, setDefaultsOnInsert: true }
-//     );
+const githubStrategy = new GitHubStrategy({
+  clientID: process.env.GITHUB_CLIENT_ID!,
+  clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+  callbackURL: `${process.env.API_BASE_URL}/ajax/auth/login/github/callback`
+},
+  async (accessToken, refreshToken, profile, cb) => {
+    const user: IUser = await User.findOneAndUpdate(
+      { email: profile._json.email },
+      {
+        avatar: profile._json.avatar_url,
+        last_login: Date.now(),
+        verified: true,
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
 
-//     return cb(null, user);
-//   }
-// )
+    return cb(null, user);
+  }
+)
 
-// passport.use('github', githubStrategy)
+passport.use('github', githubStrategy)
 passport.use('google', googleStrategy);
 
 export default passport;
