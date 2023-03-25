@@ -3,6 +3,7 @@ import express from 'express';
 import mongoose from 'lib/mongoose';
 import morgan from 'morgan';
 import throng from 'throng';
+import earlyAccessGuard from './middleware/early-access-gaurd';
 import errorHandler from './middleware/error-handler';
 import indexRouter from './routes/index';
 
@@ -22,6 +23,8 @@ async function start() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
+
+  app.use(earlyAccessGuard);
 
   app.use('/', indexRouter);
   app.use(errorHandler);

@@ -25,8 +25,9 @@ export const EmailLogin: FC = () => {
 
   const onMagicLinkLogin = useCallback(
     async (values: z.infer<typeof schema>) => {
-      // await login({ email: values.email }, router.query);
-      setSentStatus(SentStatus.Sent);
+      const res = await login({ email: values.email }, router.query);
+      if (!res || res.status !== 200) setSentStatus(SentStatus.Error);
+      else setSentStatus(SentStatus.Sent);
     },
     [router.query, setSentStatus]
   );

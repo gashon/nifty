@@ -21,7 +21,8 @@ axios.interceptors.response.use(
       return
     }
 
-    const message = error.response?.data?.message || error.message;
+    const data = error?.response?.data;
+    const message = data?.message || data?.error?.message || error.message;
     errorNotification(message)
 
     return undefined

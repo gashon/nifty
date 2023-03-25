@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema<IUser>({
     default: null,
     get: (v?: Date) => v?.getTime() || null,
   },
-  admin: {
+  early_access: {
     type: Boolean,
     default: false,
   },
