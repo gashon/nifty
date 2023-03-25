@@ -25,7 +25,7 @@ export const EmailLogin: FC = () => {
 
   const onMagicLinkLogin = useCallback(
     async (values: z.infer<typeof schema>) => {
-      await login({ email: values.email }, router.query);
+      // await login({ email: values.email }, router.query);
       setSentStatus(SentStatus.Sent);
     },
     [router.query, setSentStatus]
@@ -55,16 +55,19 @@ export const EmailLogin: FC = () => {
                 label="Email Address"
                 error={formState.errors['email']}
                 registration={register('email')}
+                disabled={sentStatus === SentStatus.Sent}
               />
             </div>
-            <Button
-              type="submit"
-              variant="primary"
-              loading={true}
-              icon={<FiArrowRight strokeWidth={3} />}
-            >
-              Continue
-            </Button>
+            {sentStatus !== SentStatus.Sent && (
+              <Button
+                type="submit"
+                variant="primary"
+                loading={formState.isSubmitting}
+                icon={<FiArrowRight strokeWidth={3} />}
+              >
+                Continue
+              </Button>
+            )}
           </>
         )}
       </Form>
