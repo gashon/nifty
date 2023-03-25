@@ -8,11 +8,24 @@ import {
   DirectoryRepository,
   TYPES as DIRECTORY_TYPES,
 } from './domains/directory';
+import {
+  IUserController,
+  IUserService,
+  IUserRepository,
+  UserController,
+  UserService,
+  UserRepository,
+  TYPES as USER_TYPES,
+} from './domains/user';
 
 const container = new Container();
 
 container.bind<IDirectoryService>(DIRECTORY_TYPES.DirectoryService).to(DirectoryService);
 container.bind<IDirectoryRepository>(DIRECTORY_TYPES.DirectoryRepository).to(DirectoryRepository);
 container.bind<IDirectoryController>(DIRECTORY_TYPES.DirectoryController).to(DirectoryController);
+
+container.bind<IUserService>(USER_TYPES.UserService).to(UserService);
+container.bind<IUserRepository>(USER_TYPES.UserRepository).to(UserRepository);
+container.bind<IUserController>(USER_TYPES.UserController).to(UserController);
 
 export { container };

@@ -32,7 +32,7 @@ export class UserController implements IUserController {
 
   @httpPost("/subscribe")
   async subscribe(req: Request, res: Response): Promise<void> {
-    const user = await this._userService.findOrUpdate(req.body, {});
+    const user = await this._userService.findOrUpdate(req.body, { email: req.body.email });
 
     // todo add notification (create notification service + repo first)
     // await Notification.create({
