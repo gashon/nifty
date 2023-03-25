@@ -38,7 +38,7 @@ const EmailForm: FC<{ setIsOpen: Dispatch<SetStateAction<boolean>> }> = ({ setIs
             type="email"
             placeholder="Email Address"
             {...register('email')}
-            className="peer transition-colors flex-1 rounded-lg border-none bg-transparent py-3 pl-6 text-sm outline-none placeholder:text-zinc-500 md:rounded-l-full"
+            className="text-black peer transition-colors flex-1 rounded-lg border-none bg-transparent py-3 pl-6 text-sm outline-none placeholder:text-zinc-500 md:rounded-l-full"
           />
           <button
             type="submit"
