@@ -1,8 +1,8 @@
 import { RequestHandler, Request, Response, NextFunction } from "express";
 import status from "http-status";
-import Token from "lib/models/token";
-import RefreshToken from "lib/models/refresh-token";
-import { IUser } from "lib/models/user";
+import Token from "@nifty/server-lib/models/token";
+import RefreshToken from "@nifty/server-lib/models/refresh-token";
+import { IUser } from "@nifty/server-lib/models/user";
 
 const earlyAccessGuard: RequestHandler = async (req: Request,
   res: Response,

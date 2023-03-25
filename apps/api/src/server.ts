@@ -1,6 +1,6 @@
 import cookieParser from 'cookie-parser';
 import express from 'express';
-import mongoose from 'lib/mongoose';
+import mongoose from '@nifty/server-lib/mongoose';
 import morgan from 'morgan';
 import throng from 'throng';
 import earlyAccessGuard from './middleware/early-access-gaurd';

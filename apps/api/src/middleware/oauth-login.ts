@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { IUser } from 'lib/models/user';
-import Token from 'lib/models/token';
-import RefreshToken from 'lib/models/refresh-token';
+import { IUser } from '@nifty/server-lib/models/user';
+import Token from '@nifty/server-lib/models/token';
+import RefreshToken from '@nifty/server-lib/models/refresh-token';
 import createLoginLink from '@/util/create-login-link';
 
 export default function oauthLogin(strategy: string) {

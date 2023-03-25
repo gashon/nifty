@@ -10,10 +10,11 @@
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
+    "noFallthroughCasesInSwitch": true
   },
   "files": [],
   "include": [],
+  "exclude": ["**/.*"],
   "references": [
     {
       "path": "./tsconfig.lib.json"

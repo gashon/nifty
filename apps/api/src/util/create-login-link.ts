@@ -1,5 +1,5 @@
-import { IToken } from "lib/models/token";
-import { IRefreshToken } from "lib/models/refresh-token";
+import { IToken } from "@nifty/server-lib/models/token";
+import { IRefreshToken } from "@nifty/server-lib/models/refresh-token";
 
 type TokenIds = {
   accessToken: IToken;

@@ -1,9 +1,9 @@
 import basicAuth from 'basic-auth';
 import { RequestHandler } from 'express';
 import status from 'http-status';
-import Token from 'lib/models/token';
-import RefreshToken from 'lib/models/refresh-token';
-import { IUser } from 'lib/models/user';
+import Token from '@nifty/server-lib/models/token';
+import RefreshToken from '@nifty/server-lib/models/refresh-token';
+import { IUser } from '@nifty/server-lib/models/user';
 
 export default function auth() {
   const authHandler: RequestHandler = async (req, res, next) => {

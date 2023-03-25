@@ -2,8 +2,8 @@ import * as express from 'express';
 import * as status from 'http-status';
 import { Body, OperationId, Controller, Post, Response, Route, Tags, Inject } from 'tsoa';
 
-import Notification from 'lib/models/notification';
-import User, { UserCreateRequest } from 'lib/models/user';
+import Notification from '@nifty/server-lib/models/notification';
+import User, { UserCreateRequest } from '@nifty/server-lib/models/user';
 
 @Route('subscribe')
 @Tags('Subscribe')

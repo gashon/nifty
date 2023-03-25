@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import status from 'http-status';
-import mongoose from 'lib/mongoose';
+import mongoose from '@nifty/server-lib/mongoose';
 import omit from 'lodash/omit';
 
 type RestHandlers = {

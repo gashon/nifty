@@ -4,7 +4,7 @@ import Directory, {
   IDirectory,
   DirectoryCreateRequest,
   DirectoryListResponse,
-} from "lib/models/directory";
+} from "@nifty/server-lib/models/directory";
 import {
   Body,
   Controller,

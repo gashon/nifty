@@ -1,10 +1,10 @@
 import express from 'express';
 import status from 'http-status';
 
-import Notification from 'lib/models/notification';
-import Token from 'lib/models/token';
-import RefreshToken from 'lib/models/refresh-token';
-import User, { IUser } from 'lib/models/user';
+import Notification from '@nifty/server-lib/models/notification';
+import Token from '@nifty/server-lib/models/token';
+import RefreshToken from '@nifty/server-lib/models/refresh-token';
+import User, { IUser } from '@nifty/server-lib/models/user';
 
 import passport from '@/lib/passport';
 import createLoginLink from '@/util/create-login-link'

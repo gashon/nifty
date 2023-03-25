@@ -1,5 +1,5 @@
 import { ErrorRequestHandler } from 'express';
-import mongoose from 'lib/mongoose';
+import mongoose from '@nifty/server-lib/mongoose';
 
 const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, next) {
   if (err instanceof SyntaxError) {
