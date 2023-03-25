@@ -1,8 +1,9 @@
 import md5 from 'md5';
+import { Model } from 'mongoose';
 import mongoose from '../../mongoose';
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
 import generateToken from './methods/generate-token';
-import { IUser } from './types';
+import { IUser, UserDocument } from './types';
 
 const userSchema = new mongoose.Schema<IUser>({
   name: {
@@ -45,5 +46,5 @@ userSchema.plugin(mongooseObjectId('usr', 'user'));
 userSchema.index({ email: 1 }, { unique: true });
 
 export * from './types';
-export default mongoose.models.User ||
-  mongoose.model<IUser>('User', userSchema);
+export default mongoose.models.User as Model<UserDocument> ||
+  mongoose.model<UserDocument>('User', userSchema);

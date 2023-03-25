@@ -1,12 +1,18 @@
 import { inject, injectable } from 'inversify';
+import { Model } from 'mongoose';
+import User, { UserDocument } from "@nifty/server-lib/models/user";
+import { IBaseRepositoryFactory, IBaseRepository } from "../base/repository-factory";
 import { IUserService, IUserRepository, IUser } from './interfaces';
 import { SearchKey } from "./types"
 
 @injectable()
 export class UserService implements IUserService {
+  private _userRepository: IUserRepository;
   constructor(
-    @inject('UserRepository') private _userRepository: IUserRepository,
-  ) { }
+    @inject('RepositoryFactory') factory: IBaseRepositoryFactory,
+  ) {
+    this._userRepository = factory.create<UserDocument>(User);
+  }
 
   async getMe(accessToken: string): Promise<IUser | null> {
     // todo implement this (get token repository)
@@ -21,8 +27,9 @@ export class UserService implements IUserService {
     return this._userRepository.findById(id);
   }
 
-  async createUser(User: Partial<IUser>): Promise<IUser> {
-    return this._userRepository.create(User);
+  async createUser(User: Partial<IUser>): Promise<UserDocument> {
+    const user = await this._userRepository.create(User);
+    return user;
   }
 
   async findOrUpdate(key: SearchKey, data: Partial<IUser>): Promise<IUser | null> {

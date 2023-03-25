@@ -1,7 +1,6 @@
 import mongoose from '../../mongoose';
 import Resource from '../../utils/types/resource';
 import { IToken, LoginStrategy } from '../token';
-
 export interface IUser extends Resource {
   name: string;
   email: string;
