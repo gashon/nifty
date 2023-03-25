@@ -1,7 +1,7 @@
 module.exports = {
   reactStrictMode: true,
   experimental: {
-    transpilePackages: ['ui'],
+    transpilePackages: ['@nifty/tsconfig', '@nifty/server-lib', '@nifty/ui', '@nifty/common'],
   },
   typescript: {
     ignoreBuildErrors: true,
