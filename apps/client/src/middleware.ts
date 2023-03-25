@@ -1,5 +1,5 @@
 import { NextMiddleware, NextResponse } from 'next/server';
-import { ACCESS_TOKEN_EXPIRATION_IN_SECONDS, REFRESH_TOKEN_EXPIRATION_IN_SECONDS } from 'common/constants';
+import { ACCESS_TOKEN_EXPIRATION_IN_SECONDS, REFRESH_TOKEN_EXPIRATION_IN_SECONDS } from '@nifty/common/constants';
 
 const middleware: NextMiddleware = async function middleware(req) {
   try {

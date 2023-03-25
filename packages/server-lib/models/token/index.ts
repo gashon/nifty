@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN_EXPIRATION_IN_SECONDS } from 'common/constants';
+import { ACCESS_TOKEN_EXPIRATION_IN_SECONDS } from '@nifty/common/constants';
 
 import mongoose from '../../mongoose';
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';

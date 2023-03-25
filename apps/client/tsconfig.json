@@ -14,7 +14,8 @@
     "jsx": "preserve",
     "paths": {
       "@/*": ["src/*"],
-      "@nifty/ui/*": ["../../packages/ui/src/*"] // todo fix package import
+      "@nifty/ui/*": ["../../packages/ui/src/*"],
+      "@nifty/common/*": ["../../packages/common/src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js"],

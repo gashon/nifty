@@ -1,6 +1,8 @@
 {
   "extends": "@nifty/tsconfig/base.json",
   "compilerOptions": {
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
     "experimentalDecorators": true,
     "lib": ["ES2019"],
     "module": "CommonJS",
@@ -10,7 +12,8 @@
     "typeRoots": ["node_modules/@types", "src/types", "../../packages/common/types"],
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@nifty/server-lib/*": ["../../packages/server-lib/src/*"]
     }
   },
   "include": ["src/**/*"],

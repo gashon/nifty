@@ -5,8 +5,12 @@
     "module": "CommonJS",
     "outDir": "dist",
     "rootDir": ".",
-    "typeRoots": ["node_modules/@types", "lib/types"]
+    "typeRoots": ["node_modules/@types", "lib/types"],
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"],
+      "@nifty/common/*": ["../../common/src/*"]
+    }
   },
   "exclude": ["node_modules", "**/.*"]
-
 }
