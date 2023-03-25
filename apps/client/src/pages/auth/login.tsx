@@ -27,16 +27,6 @@ export default function Login() {
             <GithubLogin />
             <GoogleLogin />
           </div>
-          {/* {error === 'Not approved' && (
-          <Modal
-            title="Authentication denied"
-            description="You have not been approved for early access just yet, we will let you know when you can sign in 🙌"
-            image="/auth-denied.svg"
-            alt="sad illustration"
-            open={isErrorModalOpen}
-            onClose={() => setErrorModalOpen(false)}
-          />
-        )} */}
         </div>
       </main>
     </ThemeLayout>

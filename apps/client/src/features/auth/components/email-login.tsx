@@ -6,7 +6,7 @@ import { FiArrowRight } from 'react-icons/fi';
 import { login } from '@/features/auth/api';
 import { LoginFormData } from '../types';
 
-import { Button, Input } from '@ui/atoms';
+import { Button } from '@ui/atoms';
 import { InputField, Form } from '@ui/form';
 
 const schema = z.object({
@@ -33,16 +33,22 @@ export const EmailLogin: FC = () => {
 
   return (
     <>
-      {sentStatus === SentStatus.Sent && (
-        <h1>We&apos;ve sent you a temporary login link. Please check your email to log in.</h1>
-      )}
       <Form<LoginFormData, typeof schema>
         schema={schema}
         onSubmit={onMagicLinkLogin}
         className="w-full flex flex-col align-center justify-center"
       >
-        {({ formState, register }) => (
+        {({ formState, register, getValues }) => (
           <>
+            {sentStatus === SentStatus.Sent && (
+              <p className="mt-3">
+                We&apos;ve sent you a temporary login link. Please check your{' '}
+                <span className="underline">
+                  <a href={`mailto:${getValues().email}`}>email</a>
+                </span>{' '}
+                to log in.
+              </p>
+            )}
             <div className="inline-flex text-left w-full mt-5" style={{ marginBottom: -5 }}>
               <InputField
                 type="email"
@@ -54,12 +60,8 @@ export const EmailLogin: FC = () => {
             <Button
               type="submit"
               variant="primary"
-              icon={
-                <FiArrowRight
-                  strokeWidth={3}
-                  // check if email is valid, disable otherwise
-                />
-              }
+              loading={true}
+              icon={<FiArrowRight strokeWidth={3} />}
             >
               Continue
             </Button>
