@@ -16,6 +16,7 @@
     "debug": "~2.6.9",
     "eslint-utils": "^3.0.0",
     "express": "~4.16.1",
+    "express-fingerprint": "1.2.2",
     "helmet": "^6.0.0",
     "http-errors": "~1.6.3",
     "http-status": "^1.5.3",

@@ -3,6 +3,7 @@ import express from 'express';
 import mongoose from 'lib/mongoose';
 import morgan from 'morgan';
 import throng from 'throng';
+import fingerprint from 'lib/fingerprint';
 import errorHandler from './middleware/error-handler';
 import indexRouter from './routes/index';
 
@@ -18,10 +19,19 @@ async function start() {
   app.set('trust proxy', !dev);
   app.disable('x-powered-by');
 
+  app.use(fingerprint)
+
   app.use(morgan(dev ? 'dev' : 'combined'));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
+
+
+  // log fingerprint
+  app.use((req, res, next) => {
+    console.log("fingerprint", req.fingerprint.hash)
+    next()
+  })
 
   app.use('/', indexRouter);
   app.use(errorHandler);
