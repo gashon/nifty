@@ -1,6 +1,7 @@
 import { injectable } from 'inversify';
 import User from "@nifty/server-lib/models/user";
 import { IUserRepository, IUser } from './interfaces';
+import { SearchKey } from "./types"
 
 @injectable()
 export class UserRepository implements IUserRepository {
@@ -33,5 +34,15 @@ export class UserRepository implements IUserRepository {
       { new: true }
     ).exec();
     return deletedUser;
+  }
+
+  async findOrUpsert(key: SearchKey, data: Partial<IUser>): Promise<IUser | null> {
+    const user = await User.findOneAndUpdate({ ...key }, data, {
+      new: true,
+      upsert: true,
+      runValidators: true,
+    }).exec();
+
+    return user;
   }
 }

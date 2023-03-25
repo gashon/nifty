@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { IUserService, IUserRepository, IUser } from './interfaces';
+import { SearchKey } from "./types"
 
 @injectable()
 export class UserService implements IUserService {
@@ -22,5 +23,9 @@ export class UserService implements IUserService {
 
   async createUser(User: Partial<IUser>): Promise<IUser> {
     return this._userRepository.create(User);
+  }
+
+  async findOrUpdate(key: SearchKey, data: Partial<IUser>): Promise<IUser | null> {
+    return this._userRepository.findOrUpsert(key, data);
   }
 }

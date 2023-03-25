@@ -29,4 +29,18 @@ export class UserController implements IUserController {
     const user = await this._userService.createUser(req.body as UserCreateRequest);
     res.status(status.CREATED).json({ data: user });
   }
+
+  @httpPost("/subscribe")
+  async subscribe(req: Request, res: Response): Promise<void> {
+    const user = await this._userService.findOrUpdate(req.body, {});
+
+    // todo add notification (create notification service + repo first)
+    // await Notification.create({
+    //   type: 'subscribe',
+    //   emails: [user.email],
+    //   data: { user },
+    // });
+
+    res.status(status.CREATED).json({ data: user });
+  }
 }

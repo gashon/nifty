@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 import { IUser } from "@nifty/server-lib/models/user";
-
+import { SearchKey } from "./types"
 interface IUserController {
   getUser(req: Request, res: Response): Promise<void>;
   createUser(req: Request, res: Response): Promise<void>;
@@ -11,6 +11,7 @@ interface IUserService {
   getMe(accessToken: string): Promise<IUser | null>;
   getUserById(id: string): Promise<IUser | null>;
   createUser(data: Partial<IUser>): Promise<IUser>;
+  findOrUpdate(key: SearchKey, data: Partial<IUser>): Promise<IUser | null>;
 }
 
 interface IUserRepository {
@@ -19,6 +20,7 @@ interface IUserRepository {
   findByName(name: string): Promise<IUser[]>;
   updateById(id: string, data: Partial<IUser>): Promise<IUser | null>;
   deleteById(id: string): Promise<IUser | null>;
+  findOrUpsert(key: SearchKey, data: Partial<IUser>): Promise<IUser | null>;
 }
 
 export { IUser, IUserController, IUserService, IUserRepository };
