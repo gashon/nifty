@@ -2,21 +2,24 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import morgan from 'morgan';
 import throng from 'throng';
+import 'reflect-metadata';
+import { InversifyExpressServer } from 'inversify-express-utils';
 import mongoose from '@nifty/server-lib/mongoose';
 
 import earlyAccessGuard from './middleware/early-access-gaurd';
 import errorHandler from './middleware/error-handler';
 import indexRouter from './routes/index';
+import container from './inversify.config';
+
+// required for inversify-express-utils
+import "./domains/directory/controller";
 
 const port = parseInt(process.env.PORT!, 10) || 7000;
 const dev = process.env.NODE_ENV !== 'production';
 
-async function start() {
-  // Connect to MongoDB
-  await mongoose.connect(process.env.DATABASE_URL!);
+const server = new InversifyExpressServer(container);
 
-  const app = express();
-
+server.setConfig((app) => {
   app.set('trust proxy', !dev);
   app.disable('x-powered-by');
 
@@ -29,12 +32,16 @@ async function start() {
 
   app.use('/', indexRouter);
   app.use(errorHandler);
+});
 
-  app.listen(port, () => console.log('Listening on port', port));
+export async function start() {
+  // Connect to MongoDB
+  await mongoose.connect(process.env.DATABASE_URL!);
+
+  const serverInstance = server.build();
+  serverInstance.listen(port, () => console.log('Listening on port', port));
 }
 
-throng({
-  worker: start,
-  count: parseInt(process.env.WEB_CONCURRENCY!, 10) || 1,
-  lifetime: Infinity,
-});
+if (!module.parent) {
+  start();
+}

@@ -5,6 +5,8 @@
     "strict": false,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "outDir": "dist",
