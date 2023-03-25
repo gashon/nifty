@@ -16,9 +16,9 @@ type EmailFormData = { email: string };
 const EmailForm: FC<{ setIsOpen: Dispatch<SetStateAction<boolean>> }> = ({ setIsOpen }) => {
   const onSubmit = useCallback(
     async (values: z.infer<typeof schema>) => {
-      await fetch('/api/subscribe', {
+      await fetch('/api/v1/subscribe', {
         method: 'POST',
-        body: JSON.stringify(values),
+        body: JSON.stringify({ email: values.email }),
         headers: {
           'Content-Type': 'application/json',
         },

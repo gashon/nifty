@@ -12,4 +12,6 @@ export interface IUser extends Resource {
   generateToken: (strategy: LoginStrategy) => Promise<IToken>;
 }
 
+export type UserCreateRequest = Partial<Pick<IUser, 'email'>>;
+
 export type UserDocument = mongoose.Document<string, object, IUser>;

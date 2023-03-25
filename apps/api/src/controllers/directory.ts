@@ -24,7 +24,6 @@ import restHandlers from '../helpers/rest-handlers';
 
 const handlers = restHandlers<IDirectory>(Directory);
 
-
 @Route('directories')
 @Tags('Directory')
 class DirectoryController extends Controller {
