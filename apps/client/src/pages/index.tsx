@@ -3,9 +3,9 @@ import Image from 'next/image';
 import { Dispatch, FC, SetStateAction, useState, useCallback } from 'react';
 import ThemeLayout from '@/layouts/theme';
 
-import { Modal } from '@ui/molecules/modal';
-import { Navbar } from '@ui/templates/Navbar';
-import { Form, InputField } from '@ui/form';
+import { Modal } from '@nifty/ui/molecules/modal';
+import { Navbar } from '@nifty/ui/templates/Navbar';
+import { Form, InputField } from '@nifty/ui/form';
 
 const schema = z.object({
   email: z.string().email(),

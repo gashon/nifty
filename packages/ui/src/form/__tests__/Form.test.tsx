@@ -1,6 +1,6 @@
 import * as z from 'zod';
 
-import { Button } from 'ui/components/elements/button';
+import { Button } from '../../atoms/button';
 import { rtlRender, screen, waitFor, userEvent } from '@/test/test-utils';
 
 import { Form } from '../form';

@@ -10,7 +10,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { ToastContainer } from 'react-toastify';
-import { Button } from '@ui/atoms';
+import { Button } from '@nifty/ui/atoms';
 import { queryClient } from '@/lib/react-query';
 
 // Import styles

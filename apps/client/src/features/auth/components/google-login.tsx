@@ -1,7 +1,7 @@
 import { useCallback, FC } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { Button } from '@ui/atoms';
+import { Button } from '@nifty/ui/atoms';
 
 export const GoogleLogin: FC = () => {
   const router = useRouter();

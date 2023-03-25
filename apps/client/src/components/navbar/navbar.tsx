@@ -4,8 +4,8 @@ import { useState, FC } from 'react';
 import { FaDiscord } from 'react-icons/fa';
 import { FiGithub, FiMenu, FiTwitter, FiX } from 'react-icons/fi';
 import { twMerge } from 'tailwind-merge';
-import { Brand } from '@ui/atoms/brand';
-import { NavLink } from '@ui/atoms/nav-link';
+import { Brand } from '@nifty/ui/atoms/brand';
+import { NavLink } from '@nifty/ui/atoms/nav-link';
 
 export const Navbar: FC = () => {
   const router = useRouter();

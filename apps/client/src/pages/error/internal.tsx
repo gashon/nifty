@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { FC } from 'react';
 import { FiAlertTriangle } from 'react-icons/fi';
-import { Button } from '@ui/atoms';
+import { Button } from '@nifty/ui/atoms';
 
 type InternalErrorProps = {
   message: string;

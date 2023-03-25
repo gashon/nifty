@@ -6,8 +6,8 @@ import { FiArrowRight } from 'react-icons/fi';
 import { login } from '@/features/auth/api';
 import { LoginFormData } from '../types';
 
-import { Button } from '@ui/atoms';
-import { InputField, Form } from '@ui/form';
+import { Button } from '@nifty/ui/atoms';
+import { InputField, Form } from '@nifty/ui/form';
 
 const schema = z.object({
   email: z.string().email(),

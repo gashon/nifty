@@ -1,6 +1,7 @@
 {
-  "name": "ui",
+  "name": "@nifty/ui",
   "version": "0.0.1",
+  "private": true,
   "resolutions": {
     "webpack": "^5"
   },

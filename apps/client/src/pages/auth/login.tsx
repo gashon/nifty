@@ -2,7 +2,7 @@ import { lazy } from 'react';
 import { EmailLogin, GoogleLogin, GithubLogin } from '@/features/auth/components';
 import ThemeLayout from '@/layouts/theme';
 
-import { Brand } from '@ui/atoms';
+import { Brand } from '@nifty/ui/atoms';
 
 export default function Login() {
   return (

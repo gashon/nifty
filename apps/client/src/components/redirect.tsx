@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React from 'react';
-import { LinkProps } from 'ui/components/link';
+import { LinkProps } from '@nifty/ui/components/link';
 
 interface RedirectProps extends React.HTMLAttributes<HTMLDivElement> {
   to: LinkProps['href'];

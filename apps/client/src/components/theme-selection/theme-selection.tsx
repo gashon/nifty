@@ -1,7 +1,7 @@
 import { useState, useEffect, FC, memo, Suspense } from 'react';
 import { useTheme } from 'next-themes';
 
-import { DropdownMenu } from '@ui/atoms';
+import { DropdownMenu } from '@nifty/ui/atoms';
 
 const AVAILABLE_THEMES = ['dark', 'light', 'pink', 'teal'] as const;
 type ThemeType = (typeof AVAILABLE_THEMES)[number];

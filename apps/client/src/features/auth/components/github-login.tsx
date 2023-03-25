@@ -1,7 +1,7 @@
 import { useCallback, FC } from 'react';
 import { FaGithub } from 'react-icons/fa';
 
-import { Button } from '@ui/atoms';
+import { Button } from '@nifty/ui/atoms';
 
 export const GithubLogin: FC = () => {
   const onGithubLogin = useCallback(() => {
