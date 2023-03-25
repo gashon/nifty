@@ -14,7 +14,7 @@ const tokenSchema = new mongoose.Schema<IToken>({
   strategy: {
     type: String,
     default: 'email',
-    enum: ['google', 'email', 'invite', 'refresh'],
+    enum: ['google', 'email', 'invite', 'refresh', 'github'],
   },
   expires_at: {
     type: Date,
