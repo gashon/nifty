@@ -32,10 +32,9 @@ const githubStrategy = new GitHubStrategy({
   scope: ['user:email', 'read:user'],
 },
   async (accessToken, refreshToken, profile, cb) => {
-    console.log("GOT PROFILE", profile);
     const email = profile.emails?.find((e: any) => e.primary?.value) || profile.emails?.[0]?.value;
     if (!email) return cb(new Error('No email found'));
-    
+
     const user: IUser = await User.findOneAndUpdate(
       { email },
       {
