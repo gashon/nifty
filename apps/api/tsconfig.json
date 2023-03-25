@@ -1,5 +1,5 @@
 {
-  "extends": "tsconfig/base.json",
+  "extends": "@nifty/tsconfig/base.json",
   "compilerOptions": {
     "experimentalDecorators": true,
     "lib": ["ES2019"],

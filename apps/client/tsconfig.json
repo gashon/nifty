@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "tsconfig/nextjs.json",
+  "extends": "@nifty/tsconfig/nextjs.json",
   "compilerOptions": {
     "strict": false,
     "forceConsistentCasingInFileNames": true,
