@@ -24,7 +24,7 @@ async function start() {
   app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
 
-  // app.use(earlyAccessGuard);
+  app.use(earlyAccessGuard);
 
   app.use('/', indexRouter);
   app.use(errorHandler);
