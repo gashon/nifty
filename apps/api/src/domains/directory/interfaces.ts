@@ -11,12 +11,11 @@ interface IDirectoryService {
 }
 
 interface IDirectoryRepository {
+  create(data: Partial<IDirectory>): Promise<IDirectory>;
   findById(id: string): Promise<IDirectory | null>;
-  // find(query: any): Promise<IDirectory[]>;
-  // findOne(query: any): Promise<IDirectory>;
-  // create(data: any): Promise<IDirectory>;
-  // update(id: string, data: any): Promise<IDirectory>;
-  // delete(id: string): Promise<IDirectory>;
+  findByName(name: string): Promise<IDirectory[]>;
+  updateById(id: string, data: Partial<IDirectory>): Promise<IDirectory | null>;
+  deleteById(id: string): Promise<IDirectory | null>;
 }
 
 export { IDirectory, IDirectoryController, IDirectoryService, IDirectoryRepository };
