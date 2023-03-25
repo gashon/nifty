@@ -4,14 +4,14 @@ import { IDirectoryService, IDirectoryRepository, IDirectory } from './interface
 @injectable()
 export class DirectoryService implements IDirectoryService {
   constructor(
-    @inject('DirectoryRepository') private directoryRepository: IDirectoryRepository,
+    @inject('DirectoryRepository') private _directoryRepository: IDirectoryRepository,
   ) { }
 
   async getDirectoryById(id: string): Promise<IDirectory | null> {
-    return this.directoryRepository.findById(id);
+    return this._directoryRepository.findById(id);
   }
 
   async createDirectory(directory: Partial<IDirectory>): Promise<IDirectory> {
-    return this.directoryRepository.create(directory);
+    return this._directoryRepository.create(directory);
   }
 }
