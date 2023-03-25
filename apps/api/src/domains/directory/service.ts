@@ -7,7 +7,11 @@ export class DirectoryService implements IDirectoryService {
     @inject('DirectoryRepository') private directoryRepository: IDirectoryRepository,
   ) { }
 
-  async getUserById(id: string): Promise<IDirectory | null> {
+  async getDirectoryById(id: string): Promise<IDirectory | null> {
     return this.directoryRepository.findById(id);
+  }
+
+  async createDirectory(directory: Partial<IDirectory>): Promise<IDirectory> {
+    return this.directoryRepository.create(directory);
   }
 }

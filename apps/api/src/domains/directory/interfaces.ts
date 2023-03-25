@@ -3,11 +3,13 @@ import { Request, Response } from 'express';
 import { IDirectory } from "@nifty/server-lib/models/directory";
 
 interface IDirectoryController {
-  getUser(req: Request, res: Response): Promise<void>;
+  getDirectory(req: Request, res: Response): Promise<void>;
+  createDirectory(req: Request, res: Response): Promise<void>;
 }
 
 interface IDirectoryService {
-  getUserById(id: string): Promise<IDirectory | null>;
+  getDirectoryById(id: string): Promise<IDirectory | null>;
+  createDirectory(data: Partial<IDirectory>): Promise<IDirectory>;
 }
 
 interface IDirectoryRepository {

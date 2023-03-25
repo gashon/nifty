@@ -1,7 +1,6 @@
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import morgan from 'morgan';
-import throng from 'throng';
 import 'reflect-metadata';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import mongoose from '@nifty/server-lib/mongoose';
@@ -9,7 +8,7 @@ import mongoose from '@nifty/server-lib/mongoose';
 import earlyAccessGuard from './middleware/early-access-gaurd';
 import errorHandler from './middleware/error-handler';
 import indexRouter from './routes/index';
-import container from './inversify.config';
+import { container } from './inversify.config';
 
 // required for inversify-express-utils
 import "./domains/directory/controller";
@@ -28,9 +27,14 @@ server.setConfig((app) => {
   app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
 
-  app.use(earlyAccessGuard);
+  // app.use(earlyAccessGuard);
 
   app.use('/', indexRouter);
+  app.use(errorHandler);
+
+});
+
+server.setErrorConfig((app) => {
   app.use(errorHandler);
 });
 

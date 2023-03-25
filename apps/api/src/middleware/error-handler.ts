@@ -3,8 +3,6 @@ import mongoose from '@nifty/server-lib/mongoose';
 
 const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, next) {
   if (err instanceof SyntaxError) {
-    console.log(err);
-
     res.status(400).send({
       error: {
         message: 'Invalid request (check your POST parameters): unable to parse JSON request body',
