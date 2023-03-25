@@ -2,6 +2,7 @@ import * as z from 'zod';
 import Image from 'next/image';
 import { Dispatch, FC, SetStateAction, useState, useCallback } from 'react';
 import ThemeLayout from '@/layouts/theme';
+import { subscribeUser } from '@/features/user';
 
 import { Modal } from '@nifty/ui/molecules/modal';
 import { Navbar } from '@nifty/ui/templates/Navbar';
@@ -16,13 +17,8 @@ type EmailFormData = { email: string };
 const EmailForm: FC<{ setIsOpen: Dispatch<SetStateAction<boolean>> }> = ({ setIsOpen }) => {
   const onSubmit = useCallback(
     async (values: z.infer<typeof schema>) => {
-      await fetch('/api/v1/subscribe', {
-        method: 'POST',
-        body: JSON.stringify({ email: values.email }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      // optimistic
+      subscribeUser(values.email);
       setIsOpen(true);
     },
     [setIsOpen]
