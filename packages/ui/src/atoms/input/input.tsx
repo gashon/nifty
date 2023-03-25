@@ -8,6 +8,7 @@ type InputProps = Pick<
 > & {
   label: string;
   registration?: Partial<UseFormRegisterReturn>;
+  disabled?: boolean;
 } & Partial<UseFormRegisterReturn>;
 
 // Based on https://play.tailwindcss.com/asmAkefxLr

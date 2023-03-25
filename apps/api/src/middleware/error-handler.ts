@@ -49,7 +49,7 @@ const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, n
     res.status(500).send({
       error: {
         message:
-          'Something went wrong on our end. Please open a ticket at <next-express>', // TODO: Discord link
+          'Something went wrong on our end. Please open a ticket at <Nifty>', // TODO: Discord link
         type: 'api_error',
       },
     });

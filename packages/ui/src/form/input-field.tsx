@@ -9,13 +9,14 @@ type InputFieldProps = FieldWrapperPassThroughProps &
     type?: 'text' | 'email' | 'password';
     className?: string;
     registration: Partial<UseFormRegisterReturn>;
+    disabled?: boolean;
   };
 
 export const InputField = (props: InputFieldProps) => {
-  const { type = 'text', label, className, registration, error } = props;
+  const { type = 'text', label, registration, error, disabled } = props;
   return (
     <FieldWrapper label={label} error={error}>
-      <Input label={label} type={type} registration={registration}/>
+      <Input label={label} type={type} registration={registration} disabled={disabled} />
     </FieldWrapper>
   );
 };

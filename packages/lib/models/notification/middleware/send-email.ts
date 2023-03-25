@@ -20,7 +20,7 @@ export default async function send(this: INotification) {
     to: this.emails,
     from: {
       email: template.from,
-      name: 'Next-express',
+      name: 'Nifty',
     },
     replyTo: {
       email: 'gashon@ghussein.org', // TODO: Set up emails

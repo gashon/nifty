@@ -49,7 +49,7 @@ var errorHandler = function errorHandler(err, req, res, next) {
         console.log(err);
         res.status(500).send({
             error: {
-                message: 'Something went wrong on our end. Please open a ticket at <next-express>',
+                message: 'Something went wrong on our end. Please open a ticket at <Nifty>',
                 type: 'api_error'
             }
         });
