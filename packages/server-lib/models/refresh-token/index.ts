@@ -1,10 +1,10 @@
+import { Model } from 'mongoose';
 import { REFRESH_TOKEN_EXPIRATION_IN_SECONDS } from '@nifty/common/constants';
-
 
 import mongoose from '../../mongoose';
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
 import createAccessToken from './methods/create-access-token';
-import { IRefreshToken } from './types';
+import { IRefreshToken, RefreshTokenDocument } from './types';
 
 const refreshTokenSchema = new mongoose.Schema<IRefreshToken>({
   user: {
@@ -27,4 +27,4 @@ refreshTokenSchema.methods.createAccessToken = createAccessToken;
 refreshTokenSchema.plugin(mongooseObjectId('ref_tkn', 'token'));
 
 export * from './types';
-export default mongoose.models.RefreshToken || mongoose.model<IRefreshToken>('RefreshToken', refreshTokenSchema);
+export default mongoose.models.RefreshToken as Model<RefreshTokenDocument> || mongoose.model<RefreshTokenDocument>('RefreshToken', refreshTokenSchema);

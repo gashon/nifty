@@ -1,6 +1,8 @@
+import { Model } from "mongoose";
+
 import mongoose from "../../mongoose";
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
-import { IDirectory } from './types';
+import { IDirectory, DirectoryDocument } from './types';
 
 const directorySchema = new mongoose.Schema<IDirectory>({
   created_by: {
@@ -42,6 +44,6 @@ directorySchema.plugin(mongooseObjectId('dir', 'directory'));
 directorySchema.index({ created_by: 1, name: 1 }, { unique: true });
 
 export * from './types';
-export default mongoose.models.Directory ||
-  mongoose.model<IDirectory>('Directory', directorySchema);
+export default mongoose.models.Directory as Model<DirectoryDocument> ||
+  mongoose.model<DirectoryDocument>('Directory', directorySchema);
 

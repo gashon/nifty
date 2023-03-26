@@ -1,7 +1,9 @@
+import { Model } from 'mongoose';
+
 import mongoose from '../../mongoose';
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
 import sendEmail from './middleware/send-email';
-import { INotification } from './types';
+import { INotification, NotificationDocument } from './types';
 
 const notificationSchema = new mongoose.Schema<INotification>({
   user: {
@@ -41,5 +43,5 @@ notificationSchema.index({ type: 1, emails: 1 });
 notificationSchema.index({ 'data.invoice': 1 });
 
 export * from './types';
-export default mongoose.models.Notification ||
-  mongoose.model<INotification>('Notification', notificationSchema);
+export default mongoose.models.Notification as Model<NotificationDocument> ||
+  mongoose.model<NotificationDocument>('Notification', notificationSchema);

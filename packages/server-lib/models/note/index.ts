@@ -1,6 +1,8 @@
+import { Model } from "mongoose";
+
 import mongoose from "../../mongoose";
 import mongooseObjectId from "../../mongoose/plugins/mongoose-object-id";
-import { INote } from "./types";
+import { INote, NoteDocument } from "./types";
 
 const noteSchema = new mongoose.Schema<INote>({
   created_by: {
@@ -63,5 +65,5 @@ noteSchema.plugin(mongooseObjectId("note", "note"));
 noteSchema.index({ created_by: 1, title: 1 }, { unique: true });
 
 export * from "./types";
-export default mongoose.models.Note ||
-  mongoose.model<INote>("Note", noteSchema);
+export default mongoose.models.Note as Model<NoteDocument> ||
+  mongoose.model<NoteDocument>("Note", noteSchema);

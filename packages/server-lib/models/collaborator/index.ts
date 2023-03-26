@@ -1,6 +1,8 @@
+import { Model } from "mongoose";
+
 import mongoose from "../../mongoose";
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
-import { ICollaborator } from './types';
+import { ICollaborator, CollaboratorDocument } from './types';
 
 const collaboratorSchema = new mongoose.Schema<ICollaborator>({
   user: {
@@ -39,5 +41,5 @@ collaboratorSchema.plugin(mongooseObjectId('col', 'collaborator'));
 collaboratorSchema.index({ user: 1, note: 1 }, { unique: true });
 
 export * from './types';
-export default mongoose.models.Collaborator ||
-  mongoose.model<ICollaborator>('Collaborator', collaboratorSchema);
+export default mongoose.models.Collaborator as Model<CollaboratorDocument> ||
+  mongoose.model<CollaboratorDocument>('Collaborator', collaboratorSchema);

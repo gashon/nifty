@@ -5,7 +5,7 @@ import { injectable, interfaces } from 'inversify';
 import * as models from '@nifty/server-lib/models';
 
 export interface IBaseRepositoryFactory {
-  create<T extends Document>(Schema: Model<T>): IBaseRepository<T>;
+  get<T extends Document>(Schema: Model<T>): IBaseRepository<T>;
 }
 
 export interface IBaseRepository<T extends Document> extends Model<T> {
@@ -21,7 +21,7 @@ export const baseRepository = <T extends Document>(Schema: Model<T>): IBaseRepos
   const repo = Schema as IBaseRepository<T>;
 
   // additional custom methods can be added to each repository here!
-  
+
   repo.sum = async (field: keyof T, query?: FilterQuery<T>): Promise<number> => {
     const result = await repo.aggregate([{ $match: query || {} }, { $group: { _id: null, total: { $sum: `$${String(field)}` } } }]);
     return result.length > 0 ? result[0].total : 0;
@@ -52,7 +52,7 @@ export const baseRepository = <T extends Document>(Schema: Model<T>): IBaseRepos
 
 @injectable()
 export class BaseRepositoryFactory implements IBaseRepositoryFactory {
-  create<T extends Document>(Schema: Model<T>): IBaseRepository<T> {
+  get<T extends Document>(Schema: Model<T>): IBaseRepository<T> {
     return baseRepository<T>(Schema);
   }
 }

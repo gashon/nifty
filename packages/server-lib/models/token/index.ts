@@ -1,8 +1,9 @@
+import { Model } from 'mongoose';
 import { ACCESS_TOKEN_EXPIRATION_IN_SECONDS } from '@nifty/common/constants';
 
 import mongoose from '../../mongoose';
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
-import { IToken } from './types';
+import { IToken, TokenDocument } from './types';
 
 const tokenSchema = new mongoose.Schema<IToken>({
   user: {
@@ -25,4 +26,4 @@ const tokenSchema = new mongoose.Schema<IToken>({
 tokenSchema.plugin(mongooseObjectId('tkn', 'token'));
 
 export * from './types';
-export default mongoose.models.Token || mongoose.model<IToken>('Token', tokenSchema);
+export default mongoose.models.Token as Model<TokenDocument> || mongoose.model<TokenDocument>('Token', tokenSchema);

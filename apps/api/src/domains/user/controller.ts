@@ -32,7 +32,12 @@ export class UserController implements IUserController {
 
   @httpPost("/subscribe")
   async subscribe(req: Request, res: Response): Promise<void> {
-    const user = await this._userService.findOrUpdate(req.body, { email: req.body.email });
+    const [user, created] = await this._userService.findOrCreate(req.body, { email: req.body.email });
+
+    if (!created) {
+      res.status(status.CONFLICT).json({ message: 'User already exists' });
+      return;
+    }
 
     // todo add notification (create notification service + repo first)
     // await Notification.create({

@@ -1,5 +1,5 @@
 import { Container } from 'inversify';
-import { BaseRepositoryFactory, IBaseRepositoryFactory } from "./domains/base/repository-factory";
+import { BaseRepositoryFactory, IBaseRepositoryFactory } from "./lib/repository-base";
 import {
   IDirectoryController,
   IDirectoryService,
@@ -19,9 +19,8 @@ import {
 } from './domains/user';
 
 const container = new Container();
-const baseRepositoryFactory = new BaseRepositoryFactory();
 
-container.bind<IBaseRepositoryFactory>("RepositoryFactory").to(BaseRepositoryFactory);
+container.bind<IBaseRepositoryFactory>("RepositoryGetter").to(BaseRepositoryFactory);
 
 container.bind<IDirectoryService>(DIRECTORY_TYPES.DirectoryService).to(DirectoryService);
 container.bind<IDirectoryRepository>(DIRECTORY_TYPES.DirectoryRepository).to(DirectoryRepository);
