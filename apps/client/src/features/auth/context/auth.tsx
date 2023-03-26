@@ -61,10 +61,12 @@ export const AuthProvider = ({ children }) => {
 
     if (persistedUser) {
       setUser(persistedUser);
+      setIsOffline(true);
       return;
     }
 
     setError(new Error('User is not logged in'));
+    setUser(null);
   }, []);
 
   const onGithubLogin = useCallback(() => {
