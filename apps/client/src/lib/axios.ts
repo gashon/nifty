@@ -9,9 +9,9 @@ export const axios = Axios.create({
 });
 
 axios.interceptors.response.use(
-  response => {
-    return response.data;
-  },
+  response =>
+    response
+  ,
   error => {
     // token expired
     if (error?.response?.status === 401) {

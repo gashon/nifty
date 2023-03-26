@@ -27,14 +27,13 @@ router.post('/login/email', async (req, res, next) => {
     ]);
 
     const loginLink = createLoginLink({ accessToken, refreshToken }, '/d');
+    await Notification.create({
+      type: 'login',
+      emails: [req.body.email],
+      data: { login_link: loginLink.toString() },
+    });
 
-    // await Notification.create({
-    //   type: 'login',
-    //   emails: [req.body.email],
-    //   data: { login_link: loginLink.toString() },
-    // });
-
-    res.sendStatus(200);
+    res.sendStatus(status.OK);
   } catch (err) {
     next(err);
   }
