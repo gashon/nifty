@@ -1,8 +1,17 @@
 import { ErrorRequestHandler } from 'express';
 import mongoose from '@nifty/server-lib/mongoose';
+import { CustomException } from '../exceptions';
 
 const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, next) {
-  if (err instanceof SyntaxError) {
+  if (err instanceof CustomException) {
+    res.status(err.statusCode).send({
+      error: {
+        message: err.message,
+        status: err.statusCode,
+        type: 'invalid_request_error',
+      },
+    });
+  } else if (err instanceof SyntaxError) {
     res.status(400).send({
       error: {
         message: 'Invalid request (check your POST parameters): unable to parse JSON request body',

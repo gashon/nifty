@@ -3,6 +3,7 @@ import { controller, httpGet, httpPost } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { Request, Response } from 'express';
 import { UserCreateRequest } from '@nifty/server-lib/models/user';
+import { CustomException } from '@/exceptions';
 import { IUserService, IUserController } from './interfaces';
 import { TYPES } from "./types";
 
@@ -34,10 +35,9 @@ export class UserController implements IUserController {
   async subscribe(req: Request, res: Response): Promise<void> {
     const [user, created] = await this._userService.findOrCreate(req.body, { email: req.body.email });
 
-    if (!created) {
-      res.status(status.CONFLICT).json({ message: 'You are already on the waitlist!' });
-      return;
-    }
+    if (!created)
+      throw new CustomException('You are already on the waitlist!', status.CONFLICT);
+
 
     // todo add notification (create notification service + repo first)
     // await Notification.create({
