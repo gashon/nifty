@@ -49,7 +49,8 @@
 }
 
 [data-theme='pink'] {
-  --primary: #efd4e3;
+  /* --primary: #edbed8; */
+  --primary: #ed9cc9;
   --secondary: theme('colors.white');
   --tertiary: theme('colors.zinc.800');
 }

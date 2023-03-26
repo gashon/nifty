@@ -17,12 +17,11 @@ type EmailFormData = { email: string };
 const EmailForm: FC<{ setIsOpen: Dispatch<SetStateAction<boolean>> }> = ({ setIsOpen }) => {
   const onSubmit = useCallback(
     async (values: z.infer<typeof schema>) => {
-      const {
-        // @ts-ignore
-        response: { status },
-      } = await subscribeUser(values.email);
-      if (status !== 200) return;
-      
+      const res = await subscribeUser(values.email);
+      // @ts-ignore
+      const status = res.status || res?.response?.status;
+      if (status !== 201) return;
+
       setIsOpen(true);
     },
     [setIsOpen]

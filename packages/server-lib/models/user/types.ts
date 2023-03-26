@@ -6,7 +6,7 @@ export interface IUser extends Resource {
   email: string;
   avatar: string;
   last_login?: Date | number;
-  early_access?: boolean;
+  permissions?: string[];
   /** @ignore */
   generateToken: (strategy: LoginStrategy) => Promise<IToken>;
 }

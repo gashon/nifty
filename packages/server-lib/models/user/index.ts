@@ -4,6 +4,7 @@ import mongoose from '../../mongoose';
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
 import generateToken from './methods/generate-token';
 import { IUser, UserDocument } from './types';
+import { USER_PERMISSIONS } from '@nifty/common/constants';
 
 const userSchema = new mongoose.Schema<IUser>({
   name: {
@@ -34,9 +35,10 @@ const userSchema = new mongoose.Schema<IUser>({
     default: null,
     get: (v?: Date) => v?.getTime() || null,
   },
-  early_access: {
-    type: Boolean,
-    default: false,
+  permissions: {
+    type: [String],
+    default: [USER_PERMISSIONS.GENERAL],
+    enum: Object.values(USER_PERMISSIONS),
   },
 }, { timestamps: { updatedAt: "updated_at", createdAt: "created_at" } });
 
