@@ -23,7 +23,7 @@ export const AuthContext = createContext<AuthContextType>(undefined);
 
 export const AuthProvider = ({ children }) => {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isOffline, setIsOffline] = useState<boolean | undefined>(false);
   const [user, setUser] = useState<AuthUserDTO | undefined>(undefined);
   const [error, setError] = useState<Error | undefined>(undefined);
@@ -59,19 +59,19 @@ export const AuthProvider = ({ children }) => {
         .finally(() => {
           setIsLoading(false);
         });
-      console.log('DONE');
-
       return;
     }
 
     if (persistedUser) {
       setUser(persistedUser);
       setIsOffline(true);
+      setIsLoading(false);
       return;
     }
 
     setError(new Error('User is not logged in'));
     setUser(null);
+    setIsLoading(false);
   }, []);
 
   const onGithubLogin = useCallback(() => {

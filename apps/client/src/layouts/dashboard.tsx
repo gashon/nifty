@@ -7,9 +7,10 @@ export default function DashboardLayout({ children }) {
   const { user, isLoading, isOffline, error } = useAuth();
 
   if (isLoading) return <h1>Loading...</h1>;
-  if (!isOffline) {
+  if (isOffline) {
     // todo handle offline mode here
     // todo e.g. create provider with boolean value for offline mode
+    return <h1>You're in offline mode</h1>;
   }
 
   return (

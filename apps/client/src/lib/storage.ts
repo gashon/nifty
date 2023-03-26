@@ -5,12 +5,19 @@ const storage = {
     if (!this.isMounted()) throw new Error('Storage is not available');
 
     const item = localStorage.getItem(`${storagePrefix}_${key}`);
-    return item ? JSON.parse(item) : null;
+    const doc = item ? JSON.parse(item) : null;
+
+    if (doc && doc.expires_at && new Date(doc.expires_at) < new Date()) {
+      this.remove(key);
+      return null;
+    }
+
+    return doc ? doc.data : null;
   },
-  set<T>(key: string, value: T): void {
+  set<T>(key: string, value: T, expires_at?: Date): void {
     if (!this.isMounted()) throw new Error('Storage is not available');
 
-    localStorage.setItem(`${storagePrefix}_${key}`, JSON.stringify(value));
+    localStorage.setItem(`${storagePrefix}_${key}`, JSON.stringify({ data: value, expires_at }));
   },
   remove(key: string): void {
     if (!storage.isMounted()) throw new Error('Storage is not available');
@@ -33,7 +40,7 @@ const storage = {
     } catch (e) {
       return false;
     }
-  }
+  },
 };
 
 export default storage;
