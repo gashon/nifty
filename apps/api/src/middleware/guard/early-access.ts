@@ -15,8 +15,6 @@ const earlyAccessGuard: RequestHandler = async (req: Request,
   res: Response,
   next: NextFunction) => {
 
-  console.log(req.url, WHITE_LIST, req.url === WHITE_LIST[0])
-
   for (const path of WHITE_LIST) {
     if (req.url === path) {
       return next();
@@ -29,11 +27,9 @@ const earlyAccessGuard: RequestHandler = async (req: Request,
 
   // redirect to referrer if not early access
   if (!accessToken?.user?.permissions?.includes(USER_PERMISSIONS.EARLY_ACCESS)) {
-    {
-      if (req.url?.includes("ajax") && !req.url?.includes("email"))
-        return res.redirect(`/error/internal?${new URLSearchParams({ message: 'You do not have early access to this feature.', redirect: req.headers.referer! }).toString()}`);
-      return res.status(status.FORBIDDEN).json({ error: { message: 'You do not have early access to this feature.', type: 'invalid_request_error' } });
-    }
+    if (req.url?.includes("ajax") && !req.url?.includes("email"))
+      return res.status(status.UNAUTHORIZED).json({ error: { message: 'You do not have early access to this feature.', type: 'invalid_request_error' } });
+    return res.status(status.FORBIDDEN).json({ error: { message: 'You do not have early access to this feature.', type: 'invalid_request_error' } });
   }
 
   next();

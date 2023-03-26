@@ -1,5 +1,4 @@
 import { NextMiddleware, NextResponse } from 'next/server';
-import { ACCESS_TOKEN_EXPIRATION_IN_SECONDS, REFRESH_TOKEN_EXPIRATION_IN_SECONDS } from '@nifty/common/constants';
 
 const middleware: NextMiddleware = async function middleware(req) {
   try {
@@ -21,13 +20,13 @@ const middleware: NextMiddleware = async function middleware(req) {
     // Set the authorization token
     if (accessToken)
       res.cookies.set('access_token', accessToken, {
-        maxAge: ACCESS_TOKEN_EXPIRATION_IN_SECONDS * 1000,
+        maxAge: 60 * 60 * 24 * 365 * 10, // cookie expiration handled on login and UNAUTHORIZED
         path: '/',
         httpOnly: true,
       });
     if (refreshToken)
       res.cookies.set('refresh_token', refreshToken, {
-        maxAge: REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000,
+        maxAge: 60 * 60 * 24 * 365 * 10,
         path: '/',
         httpOnly: true,
       });

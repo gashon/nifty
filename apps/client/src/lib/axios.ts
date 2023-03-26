@@ -9,20 +9,22 @@ export const axios = Axios.create({
 });
 
 axios.interceptors.response.use(
-  response =>
-    response
+  response => {
+    console.log("HITTTTTING", response)
+    return response
+  }
   ,
   error => {
+    const data = error?.response?.data;
+    const message = data?.message || data?.error?.message || error.message;
+
     // token expired
     if (error?.response?.status === 401) {
       location.replace(`/error/internal?message=${encodeURIComponent(
-        'Your session has expired. Please login again.'
+        message || 'Your session has expired. Please login again.'
       )}&redirect=${encodeURIComponent(location.pathname + location.search)}`);
       return
     }
-
-    const data = error?.response?.data;
-    const message = data?.message || data?.error?.message || error.message;
 
     if (message) {
       const isError = error.response?.status >= 400;

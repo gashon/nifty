@@ -96,9 +96,15 @@ router.get('/user', auth(), async (req, res, next) => {
 
 router.get('/logout', async (req, res, next) => {
   try {
-    await Token.findByIdAndDelete(req.cookies.access_token);
-    await RefreshToken.findByIdAndDelete(req.cookies.refresh_token);
-
+    await Token.updateMany({
+      _id: {
+        $in: [
+          req.cookies.access_token,
+          req.cookies.refresh_token,
+        ]
+      }
+    }, { deleted_at: new Date() });
+    
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
 
