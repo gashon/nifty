@@ -15,7 +15,6 @@ axios.interceptors.response.use(
   }
   ,
   error => {
-    
     const data = error?.response?.data;
     const message = data?.message || data?.error?.message || error.message;
 
@@ -29,7 +28,7 @@ axios.interceptors.response.use(
 
     if (message) {
       const isError = error.response?.status >= 400;
-      if (isError) errorNotification(message)
+      if (isError) errorNotification(error.response?.status < 500 ? message : "We are experiencing an unexpected rise in traffic. Please try again later.")
       else successNotification(message)
     }
 
