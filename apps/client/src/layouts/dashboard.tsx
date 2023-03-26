@@ -9,7 +9,6 @@ export default function DashboardLayout({ children }) {
   if (!isOffline) {
     // todo handle offline mode here
     // todo e.g. create provider with boolean value for offline mode
-    return null;
   }
 
   return (

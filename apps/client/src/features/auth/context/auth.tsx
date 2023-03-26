@@ -54,11 +54,13 @@ export const AuthProvider = ({ children }) => {
             return;
           }
           setError(err);
-          setIsOffline(false)
+          setIsOffline(false);
         })
         .finally(() => {
           setIsLoading(false);
         });
+      console.log('DONE');
+
       return;
     }
 

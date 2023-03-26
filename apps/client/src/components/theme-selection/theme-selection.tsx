@@ -75,7 +75,6 @@ const ThemeSelection: FC = ({}) => {
   if (!isMounted) return null;
 
   const themeHasBeenSelected = storage.get('theme_selected');
-  console.log('GOT', themeHasBeenSelected);
 
   const updateTheme = (t: ThemeType) => {
     storage.set('theme_selected', true);
