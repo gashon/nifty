@@ -8,7 +8,7 @@ import mongoose from '@nifty/server-lib/mongoose';
 import earlyAccessGuard from './middleware/early-access-gaurd';
 import errorHandler from './middleware/error-handler';
 import indexRouter from './routes/index';
-import { container } from './inversify.config';
+import { container } from './config/inversify.config';
 
 // required for inversify-express-utils
 import "./domains/directory/controller";

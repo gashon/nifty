@@ -1,5 +1,5 @@
 import { Container } from 'inversify';
-import { BaseRepositoryFactory, IBaseRepositoryFactory } from "./lib/repository-base";
+import { BaseRepositoryFactory, IBaseRepositoryFactory } from "../lib/repository-base";
 import {
   IDirectoryController,
   IDirectoryService,
@@ -8,7 +8,7 @@ import {
   DirectoryService,
   DirectoryRepository,
   TYPES as DIRECTORY_TYPES,
-} from './domains/directory';
+} from '../domains/directory';
 import {
   IUserController,
   IUserService,
@@ -16,7 +16,7 @@ import {
   UserController,
   UserService,
   TYPES as USER_TYPES,
-} from './domains/user';
+} from '../domains/user';
 
 const container = new Container();
 
