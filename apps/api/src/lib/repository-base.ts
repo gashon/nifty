@@ -18,7 +18,7 @@ export interface IBaseRepository<T extends Document> extends Model<T> {
 export const baseRepository = <T extends Document>(Schema: Model<T>): IBaseRepository<T> => {
   const repo = Schema as IBaseRepository<T>;
 
-  // additional custom methods can be added to each repository here!
+  // additional custom methods can be added to each repository :)
 
   repo.sum = async (field: keyof T, query?: FilterQuery<T>): Promise<number> => {
     const result = await repo.aggregate([{ $match: query || {} }, { $group: { _id: null, total: { $sum: `$${String(field)}` } } }]);

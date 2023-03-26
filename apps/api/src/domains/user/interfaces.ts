@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { IUser, UserDocument } from "@nifty/server-lib/models/user";
-import { IBaseRepository } from '../../lib/repository-base';
 interface IUserController {
   getUser(req: Request, res: Response): Promise<void>;
   createUser(req: Request, res: Response): Promise<void>;
@@ -13,8 +12,4 @@ interface IUserService {
   findOrCreate(key: Partial<IUser>, data: Partial<IUser>): Promise<[UserDocument, boolean]>;
 }
 
-interface IUserRepository extends IBaseRepository<UserDocument> {
-  // add custom methods here :)
-}
-
-export { IUser, IUserController, IUserService, IUserRepository };
+export { IUser, IUserController, IUserService };

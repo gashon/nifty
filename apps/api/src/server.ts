@@ -10,9 +10,6 @@ import errorHandler from './middleware/error-handler';
 import indexRouter from './routes/index';
 import { container } from './config/inversify.config';
 
-// required for inversify-express-utils
-import "./domains/directory/controller";
-
 const port = parseInt(process.env.PORT!, 10) || 7000;
 const dev = process.env.NODE_ENV !== 'production';
 
