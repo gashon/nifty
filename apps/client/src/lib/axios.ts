@@ -1,7 +1,7 @@
 import Axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import { toast, ToastOptions } from 'react-toastify';
 
-import { errorNotification } from "@/lib/notification";
+import { errorNotification, successNotification } from "@/lib/notification";
 import { API_URL } from '@/config';
 
 export const axios = Axios.create({
@@ -23,7 +23,12 @@ axios.interceptors.response.use(
 
     const data = error?.response?.data;
     const message = data?.message || data?.error?.message || error.message;
-    errorNotification(message)
+
+    if (message) {
+      const isError = error.response?.status >= 400 && error.response?.status < 500;
+      if (isError) errorNotification(message)
+      else successNotification(message)
+    }
 
     return undefined
   }

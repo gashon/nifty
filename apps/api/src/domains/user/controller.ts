@@ -35,7 +35,7 @@ export class UserController implements IUserController {
     const [user, created] = await this._userService.findOrCreate(req.body, { email: req.body.email });
 
     if (!created) {
-      res.status(status.CONFLICT).json({ message: 'User already exists' });
+      res.status(status.CONFLICT).json({ message: 'You are already on the waitlist!' });
       return;
     }
 
