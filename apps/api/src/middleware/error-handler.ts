@@ -1,14 +1,18 @@
 import { ErrorRequestHandler } from 'express';
+import * as Sentry from "@sentry/node";
 import mongoose from '@nifty/server-lib/mongoose';
 import { CustomException } from '../exceptions';
 
 const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, next) {
+  //send error to sentry
+  res.sentry = Sentry.captureException(err);
   if (err instanceof CustomException) {
     res.status(err.statusCode).send({
       error: {
         message: err.message,
         status: err.statusCode,
         type: 'invalid_request_error',
+        sentry_id: res.sentry,
       },
     });
   } else if (err instanceof SyntaxError) {
@@ -28,6 +32,7 @@ const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, n
         param: path,
         message: `Error, expected \`${path}\` to be unique. Value: \`${value}\``,
         type: 'invalid_request_error',
+        sentry_id: res.sentry,
       },
     });
   } else if (err instanceof mongoose.Error.ValidationError) {
@@ -38,6 +43,7 @@ const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, n
         param: Object.keys(err.errors)[0],
         message: Object.values(err.errors)[0].message,
         type: 'invalid_request_error',
+        sentry_id: res.sentry,
       },
     });
   } else if (err instanceof mongoose.Error.CastError) {
@@ -48,6 +54,7 @@ const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, n
         param: err.path,
         message: err.message,
         type: 'invalid_request_error',
+        sentry_id: res.sentry,
       },
     });
   } else {
@@ -58,6 +65,7 @@ const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, n
         message:
           'Something went wrong on our end. Please open a ticket at <Nifty>', // TODO: Discord link
         type: 'api_error',
+        sentry_id: res.sentry,
       },
     });
   }

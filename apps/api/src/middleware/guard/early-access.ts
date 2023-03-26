@@ -1,5 +1,6 @@
 import { RequestHandler, Request, Response, NextFunction } from "express";
 import status from "http-status";
+import { CustomException } from "@/exceptions";
 import Token from "@nifty/server-lib/models/token";
 import RefreshToken from "@nifty/server-lib/models/refresh-token";
 import { IUser } from "@nifty/server-lib/models/user";

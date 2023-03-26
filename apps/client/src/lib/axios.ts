@@ -25,7 +25,7 @@ axios.interceptors.response.use(
     const message = data?.message || data?.error?.message || error.message;
 
     if (message) {
-      const isError = error.response?.status >= 400 && error.response?.status < 500;
+      const isError = error.response?.status >= 400;
       if (isError) errorNotification(message)
       else successNotification(message)
     }

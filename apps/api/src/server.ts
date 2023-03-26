@@ -4,7 +4,10 @@ import morgan from 'morgan';
 import 'reflect-metadata';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import rateLimit from 'express-rate-limit';
+import * as Sentry from "@sentry/node";
+import * as Tracing from "@sentry/tracing";
 import mongoose from '@nifty/server-lib/mongoose';
+
 
 import earlyAccessGuard from './middleware/guard/early-access';
 import errorHandler from './middleware/error-handler';
@@ -13,6 +16,13 @@ import { container } from './config/inversify.config';
 
 const port = parseInt(process.env.PORT!, 10) || 7000;
 const dev = process.env.NODE_ENV !== 'production';
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  debug: dev,
+  enabled: !dev,
+  tracesSampleRate: 0.5,
+});
 
 const server = new InversifyExpressServer(container);
 
@@ -31,11 +41,9 @@ server.setConfig((app) => {
     message: 'Too many requests from this IP, please try again after 15 minutes',
   }))
 
-  // app.use(earlyAccessGuard);
+  app.use(earlyAccessGuard);
 
   app.use('/', indexRouter);
-  app.use(errorHandler);
-
 });
 
 server.setErrorConfig((app) => {

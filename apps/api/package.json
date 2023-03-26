@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@nifty/server-lib": "*",
+    "@sentry/node": "7.45.0",
+    "@sentry/tracing": "7.45.0",
     "@types/passport-github2": "1.2.5",
     "basic-auth": "^2.0.1",
     "cookie-parser": "~1.4.4",
