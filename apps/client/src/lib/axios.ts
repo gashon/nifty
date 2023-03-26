@@ -30,6 +30,6 @@ axios.interceptors.response.use(
       else successNotification(message)
     }
 
-    return undefined
+    return error
   }
 );

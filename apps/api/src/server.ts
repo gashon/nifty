@@ -6,7 +6,7 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 import rateLimit from 'express-rate-limit';
 import mongoose from '@nifty/server-lib/mongoose';
 
-import earlyAccessGuard from './middleware/early-access-gaurd';
+import earlyAccessGuard from './middleware/gaurd/early-access';
 import errorHandler from './middleware/error-handler';
 import indexRouter from './routes/index';
 import { container } from './config/inversify.config';
