@@ -1,5 +1,5 @@
-import {useCallback, ReactNode} from 'react';
-import { useAuth } from './auth';
+import { useCallback, ReactNode } from 'react';
+import { useAuth } from '@/features/auth';
 
 export enum ROLES {
   ADMIN = 'ADMIN',
@@ -8,9 +8,7 @@ export enum ROLES {
 
 type RoleTypes = keyof typeof ROLES;
 
-export const POLICIES = {
-
-};
+export const POLICIES = {};
 
 export const useAuthorization = () => {
   const { user } = useAuth();

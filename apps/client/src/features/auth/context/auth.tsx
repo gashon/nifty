@@ -1,21 +1,9 @@
 import * as z from 'zod';
-import React, {
-  createContext,
-  useState,
-  useContext,
-  useCallback,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-} from 'react';
+import React, { createContext, useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { AxiosResponse } from 'axios';
 import storage from '@/lib/storage';
-import {
-  getUser,
-  emailLogin,
-  LoginFormSchema,
-  SentStatus as EmailLoginSentStatus,
-} from '@/features/auth';
+import { getUser, emailLogin, LoginFormSchema } from '@/features/auth';
 import { IUser } from '@nifty/server-lib/models/user';
 
 type AuthUserDTO = IUser | null;
@@ -27,10 +15,7 @@ type AuthContextType = {
   isOffline: boolean;
   onGithubLogin: () => void;
   onGoogleLogin: () => void;
-  onMagicLinkLogin: (
-    values: { email?: string },
-    setSentStatus: Dispatch<SetStateAction<EmailLoginSentStatus>>
-  ) => void;
+  onMagicLinkLogin: (values: z.infer<typeof LoginFormSchema>) => Promise<AxiosResponse<any, any>>;
   logout: () => void;
 };
 
@@ -95,13 +80,8 @@ export const AuthProvider = ({ children }) => {
   }, [router]);
 
   const onMagicLinkLogin = useCallback(
-    async (
-      values: z.infer<typeof LoginFormSchema>,
-      setSentStatus: Dispatch<SetStateAction<EmailLoginSentStatus>>
-    ) => {
-      const { status } = await emailLogin({ email: values.email }, router.query);
-      if (status !== 200) setSentStatus(EmailLoginSentStatus.Error);
-      else setSentStatus(EmailLoginSentStatus.Sent);
+    async (values: z.infer<typeof LoginFormSchema>) => {
+      return emailLogin({ email: values.email }, router.query);
     },
     [router.query]
   );

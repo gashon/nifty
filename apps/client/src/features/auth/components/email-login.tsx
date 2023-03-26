@@ -4,13 +4,10 @@ import { useState, useCallback, FC } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
 
 import { LoginFormData, LoginFormSchema } from '../types';
+import { useAuth } from '../hooks';
 
 import { Button } from '@nifty/ui/atoms';
 import { InputField, Form } from '@nifty/ui/form';
-
-const schema = z.object({
-  email: z.string().email(),
-});
 
 export enum SentStatus {
   NotSent,
@@ -20,11 +17,12 @@ export enum SentStatus {
 
 export const EmailLogin: FC = () => {
   const router = useRouter();
+  const { onMagicLinkLogin } = useAuth();
   const [sentStatus, setSentStatus] = useState<SentStatus>(SentStatus.NotSent);
 
-  const onMagicLinkLogin = useCallback(
-    async (values: z.infer<typeof schema>) => {
-      const { status } = await login({ email: values.email }, router.query);
+  const onEmailLogin = useCallback(
+    async (values: z.infer<typeof LoginFormSchema>) => {
+      const { status } = await onMagicLinkLogin(values);
       if (status !== 200) setSentStatus(SentStatus.Error);
       else setSentStatus(SentStatus.Sent);
     },
@@ -35,7 +33,7 @@ export const EmailLogin: FC = () => {
     <>
       <Form<LoginFormData, typeof LoginFormSchema>
         schema={LoginFormSchema}
-        onSubmit={onMagicLinkLogin}
+        onSubmit={onEmailLogin}
         className="w-full flex flex-col align-center justify-center"
       >
         {({ formState, register, getValues }) => (
