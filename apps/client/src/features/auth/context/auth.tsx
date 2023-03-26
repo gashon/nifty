@@ -24,7 +24,7 @@ export const AuthContext = createContext<AuthContextType>(undefined);
 export const AuthProvider = ({ children }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isOffline, setIsOffline] = useState<boolean>(false);
+  const [isOffline, setIsOffline] = useState<boolean | undefined>(false);
   const [user, setUser] = useState<AuthUserDTO | undefined>(undefined);
   const [error, setError] = useState<Error | undefined>(undefined);
 
@@ -34,6 +34,7 @@ export const AuthProvider = ({ children }) => {
     const persistedUser = storage.get<AuthUserDTO | undefined>('user');
 
     // check if user has access token
+    // * FIXME - clean this up and make it more readable
     if (document.cookie.includes('access_token')) {
       // fetch user data
       setIsLoading(true);
@@ -45,6 +46,7 @@ export const AuthProvider = ({ children }) => {
           }
           storage.set('user', data);
           setUser(data);
+          setIsOffline(false);
         })
         .catch(err => {
           if (err.message === 'Network Error' && persistedUser) {
@@ -52,6 +54,7 @@ export const AuthProvider = ({ children }) => {
             return;
           }
           setError(err);
+          setIsOffline(false)
         })
         .finally(() => {
           setIsLoading(false);

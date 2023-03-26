@@ -12,7 +12,6 @@ const InternalError: FC<InternalErrorProps> = () => {
   const router = useRouter();
   const { message, redirect } = router.query;
 
-  console.log(redirect);
   return (
     <main className="bg-primary flex h-screen flex-col items-center justify-center gap-6">
       <Image src="/auth-denied.svg" alt="Sad illustration" width={150 * 2} height={130.58 * 2} />
