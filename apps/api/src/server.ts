@@ -3,6 +3,7 @@ import express from 'express';
 import morgan from 'morgan';
 import 'reflect-metadata';
 import { InversifyExpressServer } from 'inversify-express-utils';
+import rateLimit from 'express-rate-limit';
 import mongoose from '@nifty/server-lib/mongoose';
 
 import earlyAccessGuard from './middleware/early-access-gaurd';
@@ -23,6 +24,12 @@ server.setConfig((app) => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
+
+  app.use(rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: 'Too many requests from this IP, please try again after 15 minutes',
+  }))
 
   // app.use(earlyAccessGuard);
 
