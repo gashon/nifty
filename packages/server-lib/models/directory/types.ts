@@ -9,7 +9,6 @@ export interface IDirectory extends Resource {
   parent: mongoose.Types.ObjectId;
   collaborators: mongoose.Types.ObjectId[];
   is_public: boolean;
-  deleted_at: number;
 }
 
 export type DirectoryDocument = mongoose.Document<string, object, IDirectory>;

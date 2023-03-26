@@ -21,6 +21,10 @@ const refreshTokenSchema = new mongoose.Schema<IRefreshToken>({
     type: String,
     required: true,
   },
+  deleted_at: {
+    type: Date,
+    default: null,
+  }
 }, { timestamps: { updatedAt: "updated_at", createdAt: "created_at" } });
 
 refreshTokenSchema.methods.createAccessToken = createAccessToken;

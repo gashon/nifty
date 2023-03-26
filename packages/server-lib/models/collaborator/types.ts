@@ -6,7 +6,6 @@ export interface ICollaborator extends Resource {
   directory: mongoose.Types.ObjectId;
   note: mongoose.Types.ObjectId;
   permissions: string[];
-  removed_at: number;
 }
 
 export type CollaboratorDocument = mongoose.Document<string, object, ICollaborator>;

@@ -13,7 +13,6 @@ export interface INote extends Resource {
   img_url: string;
   tags: string[];
   is_public: boolean;
-  deleted_at: number;
 }
 
 export type NoteDocument = mongoose.Document<string, object, INote>;

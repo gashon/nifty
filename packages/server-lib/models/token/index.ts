@@ -21,6 +21,10 @@ const tokenSchema = new mongoose.Schema<IToken>({
     type: Date,
     default: () => new Date(Date.now() + ACCESS_TOKEN_EXPIRATION_IN_SECONDS * 1000),
   },
+  deleted_at: {
+    type: Date,
+    default: null,
+  }
 }, { timestamps: { updatedAt: "updated_at", createdAt: "created_at" } });
 
 tokenSchema.plugin(mongooseObjectId('tkn', 'token'));

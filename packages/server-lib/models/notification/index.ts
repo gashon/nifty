@@ -32,6 +32,10 @@ const notificationSchema = new mongoose.Schema<INotification>({
     default: [],
     required: true,
   },
+  deleted_at: {
+    type: Date,
+    default: null,
+  }
 }, { timestamps: { updatedAt: "updated_at", createdAt: "created_at" } });
 
 notificationSchema.plugin(mongooseObjectId('ntf', 'notification'));

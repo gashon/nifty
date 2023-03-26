@@ -40,6 +40,10 @@ const userSchema = new mongoose.Schema<IUser>({
     default: [USER_PERMISSIONS.GENERAL],
     enum: Object.values(USER_PERMISSIONS),
   },
+  deleted_at: {
+    type: Date,
+    default: null,
+  }
 }, { timestamps: { updatedAt: "updated_at", createdAt: "created_at" } });
 
 userSchema.methods.generateToken = generateToken;

@@ -30,10 +30,10 @@ const collaboratorSchema = new mongoose.Schema<ICollaborator>({
     required: true,
     enum: ["read", "write", "delete"],
   },
-  removed_at: {
-    type: Number,
+  deleted_at: {
+    type: Date,
     default: null,
-  },
+  }
 }, { timestamps: { updatedAt: "updated_at", createdAt: "created_at" } });
 
 collaboratorSchema.plugin(mongooseObjectId('col', 'collaborator'));
