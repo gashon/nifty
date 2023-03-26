@@ -5,9 +5,7 @@ import 'reflect-metadata';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import rateLimit from 'express-rate-limit';
 import * as Sentry from "@sentry/node";
-import * as Tracing from "@sentry/tracing";
 import mongoose from '@nifty/server-lib/mongoose';
-
 
 import earlyAccessGuard from './middleware/guard/early-access';
 import errorHandler from './middleware/error-handler';

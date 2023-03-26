@@ -1,4 +1,4 @@
-export * from "./controller"
-export * from "./service"
+export * from "./user.controller"
+export * from "./user.service"
 export * from "./interfaces"
 export * from "./types"

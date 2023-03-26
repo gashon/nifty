@@ -59,7 +59,6 @@ const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, n
     });
   } else {
     console.log(err);
-
     res.status(500).send({
       error: {
         message:
