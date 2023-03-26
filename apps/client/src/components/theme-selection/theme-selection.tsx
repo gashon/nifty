@@ -1,5 +1,6 @@
 import { useState, useEffect, FC, memo, Suspense } from 'react';
 import { useTheme } from 'next-themes';
+import storage from '@/lib/storage';
 
 import { DropdownMenu } from '@nifty/ui/atoms';
 
@@ -73,7 +74,11 @@ const ThemeSelection: FC = ({}) => {
   }, []);
   if (!isMounted) return null;
 
+  const themeHasBeenSelected = storage.get('theme_selected');
+  console.log('GOT', themeHasBeenSelected);
+
   const updateTheme = (t: ThemeType) => {
+    storage.set('theme_selected', true);
     setTheme(t);
   };
 
@@ -83,6 +88,7 @@ const ThemeSelection: FC = ({}) => {
         <DropdownMenu
           menuClassName="w-auto flex flex-col items-center justify-center"
           buttonAs="button"
+          pos="top"
           list={AVAILABLE_THEMES.map(t => ({
             icon: <Icon theme={t} />,
             label: t.charAt(0).toUpperCase() + t.slice(1),
@@ -90,6 +96,7 @@ const ThemeSelection: FC = ({}) => {
           }))}
         >
           {theme && <Icon theme={theme as ThemeType} />}
+          {!themeHasBeenSelected && <p className="underline">Change Theme!</p>}
         </DropdownMenu>
       </div>
     </Suspense>
