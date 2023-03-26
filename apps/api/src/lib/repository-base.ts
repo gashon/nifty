@@ -2,8 +2,6 @@ import 'reflect-metadata';
 import { FilterQuery, Model, Document } from 'mongoose';
 import { injectable, interfaces } from 'inversify';
 
-import * as models from '@nifty/server-lib/models';
-
 export interface IBaseRepositoryFactory {
   get<T extends Document>(Schema: Model<T>): IBaseRepository<T>;
 }

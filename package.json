@@ -10,10 +10,13 @@
     "apps/*"
   ],
   "scripts": {
-    "build": "turbo run build",
-    "dev": "FORCE_COLOR=1 turbo run dev --parallel",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "apps:build": "turbo run build",
+    "apps:dev": "cross-env FORCE_COLOR=1 turbo run dev --parallel",
+    "apps:lint": "turbo run lint",
+    "apps:format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "dependencies": {
+    "cross-env": "7.0.3"
   },
   "devDependencies": {
     "eslint": "^7.32.0",
@@ -22,6 +25,8 @@
     "turbo": "latest"
   },
   "engines": {
-    "node": ">=16.15.0"
+    "node": ">=16.15.0",
+    "yarn": ">=1.22.0",
+    "npm": "please-use-yarn"
   }
 }
