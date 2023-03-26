@@ -5,6 +5,7 @@ import React from 'react';
 import Redirect from '@/components/redirect';
 import { Navbar } from '@/components/navbar';
 import useUser from '@/hooks/use-user';
+import { useAuth } from '@/features/auth';
 
 interface DashboardLayoutProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -12,10 +13,11 @@ interface DashboardLayoutProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default function DashboardLayout({ title, children }: DashboardLayoutProps) {
   const router = useRouter();
-  const { data, isLoading, error } = useUser();
+  const { user, isLoading, error } = useAuth();
+  console.log('GOT USER', user);
 
   if (isLoading) return <h1>Loading...</h1>;
-  if (!data) {
+  if (!user) {
     // todo handle offline mode here
     // todo e.g. create provider with boolean value for offline mode
     return null;

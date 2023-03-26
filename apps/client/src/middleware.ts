@@ -22,7 +22,7 @@ const middleware: NextMiddleware = async function middleware(req) {
       res.cookies.set('access_token', accessToken, {
         maxAge: 60 * 60 * 24 * 365 * 10, // cookie expiration handled on login and UNAUTHORIZED
         path: '/',
-        httpOnly: true,
+        httpOnly: false, // used by the client to check if the user is logged in
       });
     if (refreshToken)
       res.cookies.set('refresh_token', refreshToken, {

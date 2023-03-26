@@ -10,7 +10,6 @@ export const axios = Axios.create({
 
 axios.interceptors.response.use(
   response => {
-    console.log("HITTTTTING", response)
     return response
   }
   ,

@@ -3,8 +3,7 @@ import { useRouter } from 'next/router';
 import { useState, useCallback, FC } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
 
-import { login } from '@/features/auth/api';
-import { LoginFormData } from '../types';
+import { LoginFormData, LoginFormSchema } from '../types';
 
 import { Button } from '@nifty/ui/atoms';
 import { InputField, Form } from '@nifty/ui/form';
@@ -13,7 +12,7 @@ const schema = z.object({
   email: z.string().email(),
 });
 
-enum SentStatus {
+export enum SentStatus {
   NotSent,
   Sent,
   Error,
@@ -34,8 +33,8 @@ export const EmailLogin: FC = () => {
 
   return (
     <>
-      <Form<LoginFormData, typeof schema>
-        schema={schema}
+      <Form<LoginFormData, typeof LoginFormSchema>
+        schema={LoginFormSchema}
         onSubmit={onMagicLinkLogin}
         className="w-full flex flex-col align-center justify-center"
       >

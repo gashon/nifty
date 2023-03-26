@@ -10,6 +10,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { ToastContainer } from 'react-toastify';
+import { AuthProvider } from '@/features/auth';
 import { Button } from '@nifty/ui/atoms';
 import { queryClient } from '@/lib/react-query';
 
@@ -46,11 +47,13 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <ErrorBoundary FallbackComponent={ErrorFallback}>
-        <ToastContainer />
         <HelmetProvider>
           <QueryClientProvider client={queryClient}>
             <ThemeProvider>
-              <Component {...pageProps} />
+              <AuthProvider>
+                <ToastContainer />
+                <Component {...pageProps} />
+              </AuthProvider>
             </ThemeProvider>
             {process.env.NODE_ENV !== 'test' && <ReactQueryDevtools />}
           </QueryClientProvider>

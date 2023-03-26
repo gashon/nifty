@@ -17,7 +17,8 @@
     "paths": {
       "@/*": ["src/*"],
       "@nifty/ui/*": ["../../packages/ui/src/*"],
-      "@nifty/common/*": ["../../packages/common/src/*"]
+      "@nifty/common/*": ["../../packages/common/src/*"],
+      "@nifty/server-lib/*": ["../../packages/server-lib/src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js"],

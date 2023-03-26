@@ -11,6 +11,6 @@ export const getUser = async () => {
   return await axios.get('/api/ajax/auth/user');
 };
 
-export const login = async (payload: LoginFormData, params: ParsedUrlQuery, enabled?: boolean) => {
+export const emailLogin = async (payload: LoginFormData, params: ParsedUrlQuery, enabled?: boolean) => {
   return axios.post('/ajax/auth/login/email', payload, { params });
 };
