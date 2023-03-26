@@ -15,16 +15,18 @@ type checkAccessArgs =
 
 export const POLICIES = {
   'theme:mutate': {
-    allowedPermissions: [USER_PERMISSIONS.BETA_TESTER],
+    allowedPermissions: [USER_PERMISSIONS.GENERAL],
   },
 };
 
 export const useAuthorization = () => {
   const { user } = useAuth();
 
-  if (user === null) {
-    throw Error('User does not exist!');
-  }
+  if (user === null)
+    return {
+      checkAccess: (_: checkAccessArgs) => false,
+      permissions: [],
+    };
 
   const checkAccess = useCallback(
     ({ allowedRoles, allowedPermissions }: checkAccessArgs) => {
@@ -52,16 +54,22 @@ export const useAuthorization = () => {
 type AuthorizationProps = {
   forbiddenFallback?: ReactNode;
   children: ReactNode;
-} & checkAccessArgs;
+} & (
+  | (checkAccessArgs & { checkPolicy?: never })
+  | { checkPolicy: keyof typeof POLICIES; allowedRoles?: never; allowedPermissions?: never }
+);
 
 export const Authorization = ({
   allowedRoles,
   allowedPermissions,
+  checkPolicy,
   forbiddenFallback = null,
   children,
 }: AuthorizationProps) => {
   const { checkAccess } = useAuthorization();
 
-  const canAccess = checkAccess({ allowedRoles, allowedPermissions });
+  const policy = POLICIES[checkPolicy] || {};
+  const canAccess = checkAccess({ allowedRoles, allowedPermissions, ...policy });
+
   return <>{canAccess ? children : forbiddenFallback}</>;
 };

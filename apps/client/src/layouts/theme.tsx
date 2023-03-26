@@ -10,9 +10,7 @@ type ThemeLayoutProps = {
 const ThemeLayout: FC<ThemeLayoutProps> = ({ children }) => {
   return (
     <div className="relative">
-      <Authorization
-        allowedPermissions={[USER_PERMISSIONS.GENERAL as keyof typeof USER_PERMISSIONS]}
-      >
+      <Authorization checkPolicy="theme:mutate">
         <div className="fixed bottom-5 left-5">
           <ThemeSelection />
         </div>
