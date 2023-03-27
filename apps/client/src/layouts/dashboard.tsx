@@ -5,7 +5,7 @@ const Sidebar = lazy(() => import('@/components/sidebar'));
 import { useAuth } from '@/features/auth';
 
 type DashboardLayoutProps = {
-  children: ReactElement[];
+  children: ReactElement | ReactElement[];
 };
 
 const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
