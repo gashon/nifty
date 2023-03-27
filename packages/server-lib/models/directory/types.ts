@@ -4,10 +4,10 @@ import { Expand } from '../../utils/types/tsoa/expand';
 import { ListResponse } from '../../utils/types/tsoa/list-response';
 
 export interface IDirectory extends Resource {
-  created_by: mongoose.Types.ObjectId;
+  created_by: string;
   name: string;
-  parent: mongoose.Types.ObjectId;
-  collaborators: mongoose.Types.ObjectId[];
+  parent: string;
+  collaborators: string[];
   is_public: boolean;
 }
 

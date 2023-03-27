@@ -1,21 +1,27 @@
 import * as z from 'zod';
-import { useRouter } from 'next/router';
-import { useState, useCallback, FC } from 'react';
+import { useCallback, FC } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
+import { FieldError } from 'react-hook-form';
 
-import { DirectoryCreateRequest } from '@nifty/api';
+import { DirectoryCreateRequest } from '@nifty/server-lib/models/directory';
+import { createModule } from '@/features/module';
+
 import { Button } from '@nifty/ui/atoms';
 import { InputField, Form } from '@nifty/ui/form';
-import { FieldError } from 'react-hook-form';
 
 const schema = z.object({
   name: z.string().min(1).max(50),
   is_public: z.boolean(),
 });
 
+//z.infer<typeof DirectoryCreateRequest>
 export const ModuleCreationForm: FC<{}> = ({}) => {
-  const onSubmit = useCallback(async (values: z.infer<typeof DirectoryCreateRequest>) => {
-    // const { status } = await createModule(values);
+  const onSubmit = useCallback(async (values: DirectoryCreateRequest) => {
+    const payload = { ...values, parent: undefined };
+    const response = await createModule(payload);
+
+    const module = response.data;
+    if (module) window.location.replace(`/modules/${module.id}`);
   }, []);
 
   return (

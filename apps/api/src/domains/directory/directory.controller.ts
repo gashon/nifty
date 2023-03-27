@@ -8,6 +8,7 @@ import { IDirectoryService, IDirectoryController } from './interfaces';
 import { TYPES } from "./types";
 import { TYPES as COLLABORATOR_TYPES } from "../collaborator/types";
 import { ICollaboratorService } from '../collaborator';
+import auth from '@/middleware/auth';
 
 @controller('/v1/directories')
 export class DirectoryController implements IDirectoryController {
@@ -22,7 +23,7 @@ export class DirectoryController implements IDirectoryController {
     res.status(status.OK).json({ data: directory });
   }
 
-  @httpPost("/")
+  @httpPost("/", auth())
   async createDirectory(req: Request, res: Response): Promise<void> {
     const createdBy = res.locals.user._id;
 

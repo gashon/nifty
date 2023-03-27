@@ -6,7 +6,7 @@ import { IDirectory, DirectoryDocument } from './types';
 
 const directorySchema = new mongoose.Schema<IDirectory>({
   created_by: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: "User",
     required: true,
     immutable: true,
@@ -17,13 +17,13 @@ const directorySchema = new mongoose.Schema<IDirectory>({
     default: "Directory Name",
   },
   parent: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: "Directory",
     required: false,
     immutable: false,
   },
   collaborators: {
-    type: [mongoose.Schema.Types.ObjectId],
+    type: [String],
     default: [],
     immutable: false,
     required: true,

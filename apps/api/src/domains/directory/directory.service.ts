@@ -1,5 +1,4 @@
 import { inject, injectable } from 'inversify';
-import { Model } from 'mongoose';
 import Directory, { DirectoryDocument } from "@nifty/server-lib/models/directory";
 import { IBaseRepositoryFactory, IBaseRepository } from "../../lib/repository-base";
 import { IDirectoryService, IDirectory } from './interfaces';
@@ -32,7 +31,7 @@ export class DirectoryService implements IDirectoryService {
       created_by: createdBy,
       parent: null,
     }
-    const directory = await this.directoryModel.create(Directory);
+    const directory = await this.directoryModel.create(doc);
     return directory;
   }
 
