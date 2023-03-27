@@ -3,7 +3,7 @@ import { IoMdCreate } from 'react-icons/io';
 
 import ModuleCard from '@nifty/ui/molecules/module-card';
 
-export const ModulesList: FC<{}> = ({}) => {
+export const ModuleList: FC<{}> = ({}) => {
   // todo fetch data
   const isLoading = false;
   const data = [
@@ -89,4 +89,4 @@ export const ModulesList: FC<{}> = ({}) => {
   );
 };
 
-export default ModulesList;
+export default ModuleList;

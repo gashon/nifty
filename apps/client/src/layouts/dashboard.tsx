@@ -15,7 +15,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
         links={[
           {
             label: 'Home',
-            href: '/',
+            href: '/dashboard',
             icon: <FiHome />,
           },
           {

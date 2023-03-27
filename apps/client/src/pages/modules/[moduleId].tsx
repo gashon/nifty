@@ -5,15 +5,15 @@ import { lazy } from 'react';
 import ThemeLayout from '@/layouts/theme';
 import DashboardLayout from '@/layouts/dashboard';
 import { AuthProtection, useAuth } from '@/features/auth';
-import { ModulesList } from '@/features/module';
+import { NotebookList } from '@/features/module';
 
 import { LoadingPage } from '@nifty/ui/pages/loading';
 
 export default function Module() {
   const router = useRouter();
-  const { user, isOffline, isLoading } = useAuth();
+  const { isOffline } = useAuth();
 
-  const { id } = router.query;
+  const { moduleId } = router.query;
 
   if (isOffline) {
     // todo handle offline mode here
@@ -29,7 +29,7 @@ export default function Module() {
           <DashboardLayout>
             <main className="flex flex-col order-1 pt-9">
               <h3 className="pb-6 text-3xl text-primary dark:text-zinc-400 ">Notebook Name</h3>
-              <ModulesList />
+              <NotebookList moduleId={moduleId as string} />
             </main>
           </DashboardLayout>
         </ThemeLayout>
