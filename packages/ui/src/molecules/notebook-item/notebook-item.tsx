@@ -32,7 +32,7 @@ export const NotebookItem: FC<NotebookItemProps> = ({
     return (
       <div
         role="status"
-        className="h-11 w-full animate-pulse rounded-xl bg-zinc-100 dark:bg-zinc-800 lg:h-12"
+        className="h-11 w-full animate-pulse rounded-xl bg-accent dark:bg-zinc-800 lg:h-12"
       />
     );
   }
@@ -40,11 +40,11 @@ export const NotebookItem: FC<NotebookItemProps> = ({
   return (
     <a
       href={href as string}
-      className="flex items-center justify-between rounded-xl bg-zinc-100 transition-colors hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700/50"
+      className="flex items-center justify-between rounded-xl bg-accent transition-colors hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700/50"
     >
       <span className="flex flex-1 items-center gap-3 truncate px-5 py-3">
         <span className="text-sm lg:text-base">{icon}</span>
-        <span className="truncate text-sm text-zinc-700 dark:text-zinc-300 lg:text-base">
+        <span className="truncate text-sm text-primary dark:text-zinc-300 lg:text-base">
           {title}
         </span>
       </span>
