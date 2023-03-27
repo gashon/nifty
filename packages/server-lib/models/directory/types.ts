@@ -10,10 +10,11 @@ export interface IDirectory extends Resource {
   collaborators: string[];
   is_public: boolean;
   alias?: string;
+  credits?: number;
 }
 
 export type DirectoryDocument = mongoose.Document<string, object, IDirectory>;
 
-export type DirectoryCreateRequest = Partial<Expand<Pick<IDirectory, 'alias' | 'name' | 'is_public' | 'parent'>>>
+export type DirectoryCreateRequest = Partial<Expand<Pick<IDirectory, 'credits' | 'alias' | 'name' | 'is_public' | 'parent'>>>
 
 export type DirectoryListResponse = ListResponse<IDirectory>

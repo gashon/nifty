@@ -20,6 +20,9 @@ const directorySchema = new mongoose.Schema<IDirectory>({
     type: String,
     trim: true,
   },
+  credits: {
+    type: Number,
+  },
   parent: {
     type: String,
     ref: "Directory",

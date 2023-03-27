@@ -10,6 +10,7 @@ import { createModule } from '@/features/module';
 const schema = z.object({
   name: z.string().min(1).max(50),
   alias: z.string().min(1).max(50).optional(),
+  credits: z.number().min(0).max(100).optional(),
   is_public: z.boolean(),
 });
 
@@ -45,6 +46,14 @@ export const ModuleCreationForm: FC<{}> = ({}) => {
               label="Alias (optional): e.g. CS 101"
               error={formState.errors['alias'] as FieldError}
               registration={register('alias')}
+            />
+          </div>
+          <div className="inline-flex text-left w-full mt-5" style={{ marginBottom: -5 }}>
+            <InputField
+              type="text"
+              label="Number of Credits (optional)"
+              error={formState.errors['credits'] as FieldError}
+              registration={register('credits')}
             />
           </div>
           <div
