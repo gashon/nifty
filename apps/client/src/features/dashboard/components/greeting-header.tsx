@@ -5,8 +5,7 @@ export type GreetingHeaderProps = Omit<ComponentProps<typeof Greeting>, 'isLoadi
 
 export const GreetingHeader: FC<GreetingHeaderProps> = ({ greeting, quote }) => {
   // todo fetch daily quote
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
+  const isLoading = false;
   return <Greeting isLoading={isLoading} greeting={greeting} quote={quote} />;
 };
 

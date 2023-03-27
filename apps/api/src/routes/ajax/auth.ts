@@ -26,7 +26,7 @@ router.post('/login/email', async (req, res, next) => {
       })
     ]);
 
-    const loginLink = createLoginLink({ accessToken, refreshToken }, '/d');
+    const loginLink = createLoginLink({ accessToken, refreshToken }, '/dashboard');
     await Notification.create({
       type: 'login',
       emails: [req.body.email],

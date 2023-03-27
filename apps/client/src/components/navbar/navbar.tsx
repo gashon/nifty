@@ -16,7 +16,7 @@ export const Navbar: FC = () => {
   return (
     <nav className="relative flex justify-between">
       <Link
-        href={!router.pathname.includes('/d') ? '/' : '/d'}
+        href={!router.pathname.includes('/dashboard') ? '/' : '/dashboard'}
         className="flex items-center gap-3 font-extrabold"
       >
         <div>

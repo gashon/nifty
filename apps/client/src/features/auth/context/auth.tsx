@@ -3,7 +3,7 @@ import React, { createContext, useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { AxiosResponse } from 'axios';
 import storage from '@/lib/storage';
-import { getUser, emailLogin, LoginFormSchema } from '@/features/auth';
+import { getUser, emailLogin, LoginFormSchema, signOut } from '@/features/auth';
 import { IUser } from '@nifty/server-lib/models/user';
 
 type AuthUserDTO = IUser | null;
@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const onGoogleLogin = useCallback(() => {
-    const redirect = (router.query.redirect as string) || '/d';
+    const redirect = (router.query.redirect as string) || '/dashboard';
     window.location.href = `/ajax/auth/login/google?${new URLSearchParams({
       ...router.query,
       redirect,
@@ -86,10 +86,11 @@ export const AuthProvider = ({ children }) => {
     [router.query]
   );
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
     // always remove user from local before destroying cookie (otherwise we mis-detect offlineMode)
     storage.remove('user');
-    window.location.href = '/ajax/auth/logout';
+    await signOut();
+    window.location.href = '/auth';
   }, []);
 
   const value = {

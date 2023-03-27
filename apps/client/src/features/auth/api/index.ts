@@ -14,3 +14,7 @@ export const getUser = async () => {
 export const emailLogin = async (payload: LoginFormData, params: ParsedUrlQuery, enabled?: boolean) => {
   return axios.post('/ajax/auth/login/email', payload, { params });
 };
+
+export const signOut = async () => {
+  return axios.get('/ajax/auth/logout');
+}

@@ -10,7 +10,7 @@ const middleware: NextMiddleware = async function middleware(req) {
     if (!refreshToken) return NextResponse.next();
 
     // Set redirect
-    const redirect = decodeURIComponent(req.nextUrl.searchParams.get('redirect') || '/d');
+    const redirect = decodeURIComponent(req.nextUrl.searchParams.get('redirect') || '/dashboard');
     // Construct the URL
     const url = new URL(`${process.env.DASHBOARD_BASE_URL}${redirect}`);
 

@@ -12,7 +12,7 @@ type SidebarProps = {
 };
 
 export const Sidebar: FC<SidebarProps> = ({ links }) => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const isDesktop = useMediaQuery('(min-width: 1024px)');
@@ -53,7 +53,7 @@ export const Sidebar: FC<SidebarProps> = ({ links }) => {
           </ul>
         </AnimateHeight>
       </div>
-      {isDesktop && <UserCard {...user} />}
+      {isDesktop && <UserCard signOut={logout} {...user} />}
     </nav>
   );
 };

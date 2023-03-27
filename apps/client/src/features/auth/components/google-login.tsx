@@ -5,7 +5,7 @@ import { Button } from '@nifty/ui/atoms';
 
 export const GoogleLogin: FC = () => {
   const router = useRouter();
-  const redirect = (router.query.redirect as string) || '/d';
+  const redirect = (router.query.redirect as string) || '/dashboard';
 
   const onGoogleLogin = useCallback(() => {
     window.location.href = `/ajax/auth/login/google?${new URLSearchParams({

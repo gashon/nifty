@@ -19,7 +19,7 @@ export default function oauthLogin(strategy: string) {
         })
       ]);
 
-      const loginLink = createLoginLink({ accessToken, refreshToken }, state.redirect?.toString() || '/d');
+      const loginLink = createLoginLink({ accessToken, refreshToken }, state.redirect?.toString() || '/dashboard');
 
       res.redirect(loginLink.toString());
     } catch (err) {
