@@ -2,7 +2,7 @@ import express from 'express';
 import status from 'http-status';
 import ApiKey from '@/../../../packages/server-lib/models/api-key';
 import pick from 'lodash/pick';
-import auth from '../../middleware/auth';
+import auth from '../../middlewares/auth';
 
 const router = express.Router();
 

@@ -3,7 +3,7 @@ import { controller, httpGet, httpPost } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { Request, Response } from 'express';
 
-import auth from '@/middleware/auth';
+import auth from '@/middlewares/auth';
 import { CustomException } from '@/exceptions';
 import { DirectoryCreateRequest } from '@nifty/server-lib/models/directory';
 import {

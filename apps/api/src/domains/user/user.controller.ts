@@ -4,6 +4,7 @@ import { inject } from 'inversify';
 import { Request, Response } from 'express';
 import { UserCreateRequest } from '@nifty/server-lib/models/user';
 import { CustomException } from '@/exceptions';
+import auth from '@/middlewares/auth';
 
 import { IUserService, IUserController } from '@/domains';
 import { USER_TYPES } from "@/domains/user/types";
@@ -12,10 +13,10 @@ export class UserController implements IUserController {
   constructor(@inject(USER_TYPES.SERVICE) private userService: IUserService) {
   }
 
-  @httpGet('/me')
-  async getMe(req: Request, res: Response): Promise<void> {
-    const accessToken = req.headers.access_token as string;
-    const user = await this.userService.getMe(accessToken);
+  @httpGet('/me', auth())
+  async getMe(_: Request, res: Response): Promise<void> {
+    const user = res.locals.user;
+
     res.status(status.OK).json({ data: user });
   }
 

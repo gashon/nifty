@@ -8,8 +8,8 @@ import User, { IUser } from '@nifty/server-lib/models/user';
 
 import passport from '@/lib/passport';
 import createLoginLink from '@/util/create-login-link'
-import auth from '@/middleware/auth';
-import oauthLogin from '@/middleware/oauth-login';
+import auth from '@/middlewares/auth';
+import oauthLogin from '@/middlewares/oauth-login';
 
 const router = express.Router();
 
@@ -104,7 +104,7 @@ router.get('/logout', async (req, res, next) => {
         ]
       }
     }, { deleted_at: new Date() });
-    
+
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
 

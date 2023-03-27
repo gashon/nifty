@@ -7,8 +7,8 @@ import rateLimit from 'express-rate-limit';
 import * as Sentry from "@sentry/node";
 import mongoose from '@nifty/server-lib/mongoose';
 
-import earlyAccessGuard from './middleware/guard/early-access';
-import errorHandler from './middleware/error-handler';
+import earlyAccessGuard from './middlewares/guards/early-access';
+import errorHandler from './middlewares/error-handler';
 import indexRouter from './routes/index';
 import { container } from './config/inversify.config';
 
