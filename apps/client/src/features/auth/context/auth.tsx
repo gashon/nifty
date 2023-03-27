@@ -44,7 +44,6 @@ export const AuthProvider = ({ children }) => {
             setError(new Error('Failed to fetch user data'));
             return;
           }
-          console.log('SETTING');
           storage.set<IUser>('user', data);
           setUser(data);
           setIsOffline(false);
@@ -95,6 +94,7 @@ export const AuthProvider = ({ children }) => {
   );
 
   const logout = useCallback(() => {
+    // always remove user from local before destroying cookie (otherwise we mis-detect offlineMode)
     storage.remove('user');
     window.location.href = '/ajax/auth/logout';
   }, []);
