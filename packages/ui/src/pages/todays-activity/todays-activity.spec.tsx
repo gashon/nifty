@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { ComponentProps } from 'react';
-import { TodaysActivity } from './TodaysActivity';
+import { TodaysActivity } from './todays-activity';
 
 const args: ComponentProps<typeof TodaysActivity> = {
   userName: 'Ahmed Elsakaan',
@@ -54,16 +54,12 @@ describe("Today's Activity page", () => {
 
   it('renders the greeting', () => {
     render(<TodaysActivity {...args} />);
-    expect(
-      screen.getByText(args.greetingProps.greeting as string),
-    ).toBeInTheDocument();
+    expect(screen.getByText(args.greetingProps.greeting as string)).toBeInTheDocument();
   });
 
   it('renders the quote', () => {
     render(<TodaysActivity {...args} />);
-    expect(
-      screen.getByText(args.greetingProps.quote as string),
-    ).toBeInTheDocument();
+    expect(screen.getByText(args.greetingProps.quote as string)).toBeInTheDocument();
   });
 
   it('renders the recent modules', () => {
@@ -86,7 +82,7 @@ describe("Today's Activity page", () => {
           ...args.recentModules,
           isLoading: true,
         }}
-      />,
+      />
     );
     expect(screen.getAllByRole('status')).toHaveLength(5);
   });
@@ -99,7 +95,7 @@ describe("Today's Activity page", () => {
           ...args.recentNotebooks,
           isLoading: true,
         }}
-      />,
+      />
     );
     expect(screen.getAllByRole('status')).toHaveLength(5);
   });

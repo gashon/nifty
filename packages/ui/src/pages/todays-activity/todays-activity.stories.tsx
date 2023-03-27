@@ -1,6 +1,6 @@
 import { Meta, Story } from '@storybook/react';
 import { ComponentProps } from 'react';
-import { TodaysActivity } from './TodaysActivity';
+import { TodaysActivity } from './todays-activity';
 
 const args: ComponentProps<typeof TodaysActivity> = {
   userAvatar: 'https://avatars.githubusercontent.com/u/20271968?v=4',
@@ -121,7 +121,7 @@ const config: Meta<typeof args> = {
 
 export default config;
 
-const Template: Story<ComponentProps<typeof TodaysActivity>> = (props) => (
+const Template: Story<ComponentProps<typeof TodaysActivity>> = props => (
   <TodaysActivity {...props} />
 );
 
