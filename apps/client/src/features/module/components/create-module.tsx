@@ -6,14 +6,14 @@ import ModuleCard from '@nifty/ui/molecules/module-card';
 import { ParentModal } from '@nifty/ui/molecules';
 
 export const CreateModule: FC<{}> = ({}) => {
-  const [open, setOpen] = useState<boolean>(true);
+  const [open, setOpen] = useState<boolean>(false);
 
   return (
     <>
       <ModuleCard
         icon={<AiOutlinePlus size={55} />}
         variant={'button'}
-        onClick={() => console.log('Create')}
+        onClick={() => setOpen(true)}
       />
       <ParentModal open={open} title={'Create a module'} onClose={() => setOpen(false)}>
         <ModuleCreationForm />
