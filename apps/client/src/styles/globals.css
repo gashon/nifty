@@ -7,21 +7,20 @@
 }
 
 :root {
-  --bg-primary: var(--primary, theme('colors.white'));
-  --bg-secondary: var(--secondary, theme('colors.zinc.100'));
-  --bg-tertiary: var(--tertiary, theme('colors.zinc.200'));
+  --bg-primary: var(--bg-primary-, var(--primary, theme('colors.white')));
+  --bg-secondary: var(--bg-secondary-, var(--secondary, theme('colors.zinc.100')));
+  --bg-tertiary: var(--bg-tertiary-, var(--tertiary, theme('colors.zinc.200')));
+  --bg-accent: var(--bg-accent-, var(--accent, theme('colors.zinc.300')));
 
-  --text-primary: var(--secondary, theme('colors.zinc.900'));
-  --text-secondary: var(--primary, theme('colors.zinc.700'));
-  --text-tertiary: var(--tertiary, theme('colors.zinc.500'));
+  --text-primary: var(--text-primary-, var(--primary, theme('colors.zinc.900')));
+  --text-secondary: var(--text-secondary-, var(--secondary, theme('colors.zinc.700')));
+  --text-tertiary: var(--text-tertiary-, var(--tertiary, theme('colors.zinc.500')));
+  --text-accent: var(--text-accent-, var(--accent, theme('colors.zinc.400')));
 
-  --border-primary: var(--primary, theme('colors.zinc.100'));
-  --border-secondary: var(--secondary, theme('colors.zinc.50'));
-  --border-tertiary: var(--tertiary, theme('colors.zinc.200'));
-
-  --primary-dark: theme('colors.gray.900');
-  --primary-medium: theme('colors.gray.700');
-  --primary-light: theme('colors.gray.500');
+  --border-primary: var(--border-primary-, var(--primary, theme('colors.zinc.100')));
+  --border-secondary: var(--border-secondary-, var(--secondary, theme('colors.zinc.50')));
+  --border-tertiary: var(--border-tertiary-, var(--tertiary, theme('colors.zinc.200')));
+  --border-accent: var(--border-accent-, var(--accent, theme('colors.zinc.300')));
 }
 
 @tailwind base;
@@ -36,23 +35,35 @@
   --bg-primary: rgba(19, 19, 19, 1);
   --bg-secondary: theme('colors.white');
   --bg-tertiary: theme('colors.gray.800');
+  --bg-accent: rgba(100, 100, 100, 0.15);
+  --border-accent: rgba(100, 100, 100, 0.45);
 
   --text-primary: theme('colors.white');
   --text-secondary: theme('colors.zinc.700');
   --text-tertiary: rgba(255, 255, 255, 0.65);
 }
 
+[data-theme='light'] {
+  --bg-accent: rgba(100, 100, 100, 0.15);
+  --border-accent: rgba(100, 100, 100, 0.25);
+}
+
 [data-theme='teal'] {
-  --primary: #2dd4bf;
-  --secondary: theme('colors.white');
-  --tertiary: theme('colors.zinc.800');
+  --bg-primary-: rgba(19, 19, 19, 1);
+  --text-primary-: theme('colors.white');
+  --primary: theme('colors.white');
+  --secondary: #2dd4bf;
+  --tertiary: #ed9cc9theme('colors.zinc.800');
+  --accent: #2dd4be61;
 }
 
 [data-theme='pink'] {
   /* --primary: #edbed8; */
-  --primary: #ed9cc9;
-  --secondary: theme('colors.white');
-  --tertiary: theme('colors.zinc.800');
+  --text-primary-: #191919;
+  --primary: theme('colors.white');
+  --secondary: #ff008c;
+  --tertiary: #ed9cc9theme('colors.zinc.800');
+  --bg-accent-: #ff008c33;
 }
 
 @keyframes spin {

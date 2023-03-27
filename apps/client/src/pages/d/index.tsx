@@ -24,8 +24,52 @@ export default function Dashboard() {
           <TodaysActivity
             userName={user?.email}
             userAvatar={user?.avatar}
-            greetingProps={{ isLoading }}
-            recentModules={{ isLoading }}
+            greetingProps={{ isLoading, greeting: 'Hello Gashon', quote: "You're doing great!" }}
+            recentModules={{
+              isLoading,
+              data: [
+                {
+                  href: '/modules/1',
+                  icon: '🧠',
+                  name: 'Algorithms and Complexity',
+                  code: 'CS2860',
+                  color: 'red',
+                  credits: 15,
+                },
+                {
+                  href: '/modules/2',
+                  icon: '📽',
+                  name: 'IT Project Management',
+                  code: 'CS3003',
+                  color: 'green',
+                  credits: 15,
+                },
+                {
+                  href: '/modules/3',
+                  icon: '💅',
+                  name: 'User centered design',
+                  code: 'PC3001',
+                  color: 'indigo',
+                  credits: 15,
+                },
+                {
+                  href: '/modules/4',
+                  icon: '📌',
+                  name: 'Final Year Project',
+                  code: 'CS3810',
+                  color: 'amber',
+                  credits: 15,
+                },
+                {
+                  href: '/modules/5',
+                  icon: '🔐',
+                  name: 'Malicious Software',
+                  code: 'IY3840',
+                  color: 'blue',
+                  credits: 15,
+                },
+              ],
+            }}
             recentNotebooks={{ isLoading }}
           />
         </ThemeLayout>

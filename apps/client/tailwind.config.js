@@ -9,18 +9,21 @@ const textColor = {
   primary: generateColorClass('text-primary'),
   secondary: generateColorClass('text-secondary'),
   tertiary: generateColorClass('text-tertiary'),
+  accent: generateColorClass('text-accent'),
 };
 
 const backgroundColor = {
   primary: generateColorClass('bg-primary'),
   secondary: generateColorClass('bg-secondary'),
   tertiary: generateColorClass('bg-tertiary'),
+  accent: generateColorClass('bg-accent'),
 };
 
 const borderColor = {
   primary: generateColorClass('border-primary'),
   secondary: generateColorClass('border-secondary'),
   tertiary: generateColorClass('border-tertiary'),
+  accent: generateColorClass('border-accent'),
 };
 
 /** @type {import('tailwindcss').Config} */

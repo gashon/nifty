@@ -1,7 +1,8 @@
 import { ComponentProps, FC } from 'react';
-import { Greeting } from '../../molecules/greeting';
-import { ModuleCard } from '../../molecules/module-card';
-import { NotebookItem } from '../../molecules/notebook-item';
+import { IoMdCreate } from 'react-icons/io';
+import Greeting from '../../molecules/greeting';
+import ModuleCard from '../../molecules/module-card';
+import NotebookItem from '../../molecules/notebook-item';
 import { Dashboard } from '../../templates/Dashboard';
 
 type TodaysActivityProps = Omit<ComponentProps<typeof Dashboard>, 'children'> & {
@@ -23,13 +24,14 @@ export const TodaysActivity: FC<TodaysActivityProps> = ({
   recentModules,
   recentNotebooks,
 }) => {
+  const noModules = !recentModules.isLoading && (recentModules.data || []).length === 0;
   return (
     <Dashboard userName={userName} userAvatar={userAvatar}>
       <Greeting {...greetingProps} />
       <div className="flex flex-col">
         <section className="order-2 pt-9 lg:order-1">
-          <h3 className="pb-3 text-xs text-zinc-600 dark:text-zinc-400 lg:text-base">
-            Recent modules
+          <h3 className="text-primary pb-3 text-xs dark:text-zinc-400 lg:text-base">
+            {noModules ? 'Modules' : 'Recent modules'}
           </h3>
           {recentModules.isLoading && (
             <div className="grid grid-cols-[repeat(auto-fill,_minmax(288px,_1fr))] gap-6">
@@ -38,6 +40,21 @@ export const TodaysActivity: FC<TodaysActivityProps> = ({
               <ModuleCard variant="loading" />
               <ModuleCard variant="loading" />
               <ModuleCard variant="loading" />
+            </div>
+          )}
+          {noModules && (
+            <div className="grid grid-cols-2 gap-6">
+              <div className="flex flex-col items-center justify-center h-[288px]">
+                <p className="text-sm text-zinc-600 dark:text-zinc-400 lg:text-base">
+                  <ModuleCard
+                    href={'/d'}
+                    icon={<IoMdCreate />}
+                    color={'white'}
+                    name={'Create your first module'}
+                    code={"It's easy!"}
+                  />
+                </p>
+              </div>
             </div>
           )}
           {!recentModules.isLoading && recentModules.data && (

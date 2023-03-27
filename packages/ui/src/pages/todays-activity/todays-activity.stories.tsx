@@ -3,8 +3,8 @@ import { ComponentProps } from 'react';
 import { TodaysActivity } from './todays-activity';
 
 const args: ComponentProps<typeof TodaysActivity> = {
-  userAvatar: 'https://avatars.githubusercontent.com/u/20271968?v=4',
-  userName: 'Ahmed Elsakaan',
+  userAvatar: 'https://avatars.githubusercontent.com/u/87954127?v=4',
+  userName: 'Gashon Hussein',
   greetingProps: {
     isLoading: false,
     greeting: 'Good morning, John Doe!',

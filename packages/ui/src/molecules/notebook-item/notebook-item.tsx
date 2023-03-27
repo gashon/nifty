@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ComponentProps, FC } from 'react';
+import { ComponentProps, FC, memo } from 'react';
 import { ModuleTag } from '../../atoms/module-tag';
 
 type NotebookItemProps =
@@ -59,3 +59,5 @@ export const NotebookItem: FC<NotebookItemProps> = ({
     </a>
   );
 };
+
+export default memo(NotebookItem);

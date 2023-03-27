@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, memo } from 'react';
 
 type GreetingProps = {
   greeting?: string;
@@ -21,8 +21,8 @@ export const Greeting: FC<GreetingProps> = ({ greeting, quote, isLoading }) => {
   if (greeting && quote) {
     return (
       <div>
-        <h1 className="pb-1 text-2xl font-semibold lg:text-3xl">{greeting}</h1>
-        <h3 className="max-w-[70ch] text-sm text-zinc-700 dark:text-zinc-400 lg:text-base">
+        <h1 className="text-primary pb-1 text-2xl font-semibold lg:text-3xl">{greeting}</h1>
+        <h3 className="text-primary max-w-[70ch] text-sm dark:text-zinc-400 lg:text-base">
           {quote}
         </h3>
       </div>
@@ -31,3 +31,5 @@ export const Greeting: FC<GreetingProps> = ({ greeting, quote, isLoading }) => {
 
   return null;
 };
+
+export default memo(Greeting);

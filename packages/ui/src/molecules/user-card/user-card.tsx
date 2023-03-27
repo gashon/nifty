@@ -24,7 +24,7 @@ export const UserCard: FC<UserCardProps> = ({ name, avatar, signOut }) => {
         },
         {
           label: 'Sign out',
-          onClick: () => signOut ? signOut() : console.log("signing out"),
+          onClick: () => (signOut ? signOut() : console.log('signing out')),
           icon: <FiLogOut />,
         },
         {
@@ -38,7 +38,7 @@ export const UserCard: FC<UserCardProps> = ({ name, avatar, signOut }) => {
         type="button"
         className={twMerge(
           'flex w-auto items-center justify-center gap-3 p-3 transition-colors focus-within:outline-none focus-visible:border-none lg:w-full lg:justify-start',
-          name && 'lg:justify-center',
+          name && 'lg:justify-center'
         )}
       >
         <div className="flex items-center gap-3 text-left">
@@ -49,7 +49,7 @@ export const UserCard: FC<UserCardProps> = ({ name, avatar, signOut }) => {
           />
           {name && (
             <div className="hidden lg:block">
-              <p className="text-sm font-semibold">{name}</p>
+              <p className="text-sm font-semibold text-primary">{name}</p>
             </div>
           )}
         </div>
