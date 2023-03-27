@@ -2,11 +2,11 @@ import { inject, injectable } from 'inversify';
 import { Model } from 'mongoose';
 import User, { UserDocument } from "@nifty/server-lib/models/user";
 import { IBaseRepositoryFactory, IBaseRepository } from "../../lib/repository-base";
-import { IUserService, IUserRepository, IUser } from './interfaces';
+import { IUserService, IUser } from './interfaces';
 
 @injectable()
 export class UserService implements IUserService {
-  private userModel: IUserRepository;
+  private userModel: IBaseRepository<UserDocument>;
   constructor(
     @inject('RepositoryGetter') repo: IBaseRepositoryFactory,
   ) {
@@ -22,7 +22,7 @@ export class UserService implements IUserService {
     return null;
   }
 
-  async getUserById(id: string): Promise<UserDocument | null> {
+  async findUserById(id: string): Promise<UserDocument | null> {
     return this.userModel.findById(id);
   }
 

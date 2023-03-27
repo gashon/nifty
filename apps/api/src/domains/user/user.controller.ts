@@ -21,7 +21,7 @@ export class UserController implements IUserController {
 
   @httpGet('/:id')
   async getUser(req: Request, res: Response): Promise<void> {
-    const user = await this._userService.getUserById(req.params.id);
+    const user = await this._userService.findUserById(req.params.id);
     res.status(status.OK).json({ data: user });
   }
 
