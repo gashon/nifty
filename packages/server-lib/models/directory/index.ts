@@ -41,7 +41,7 @@ const directorySchema = new mongoose.Schema<IDirectory>({
 
 directorySchema.plugin(mongooseObjectId('dir', 'directory'));
 
-directorySchema.index({ created_by: 1, name: 1 }, { unique: true });
+directorySchema.index({ name: 1, created_by: 1 }, {});
 
 export * from './types';
 export default mongoose.models.Directory as Model<DirectoryDocument> ||

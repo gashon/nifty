@@ -3,6 +3,7 @@ import { axios } from '@/lib/axios';
 import { DirectoryCreateRequest, IDirectory } from '@nifty/server-lib/models/directory';
 
 
-export const createModule = async (payload: DirectoryCreateRequest): Promise<AxiosResponse<IDirectory>> => {
-  return axios.post<IDirectory>('/api/v1/directories', payload);
+type DirectoryCreateResponse = { data: IDirectory };
+export const createModule = async (payload: DirectoryCreateRequest): Promise<AxiosResponse<DirectoryCreateResponse>> => {
+  return axios.post<DirectoryCreateResponse>('/api/v1/directories', payload);
 }

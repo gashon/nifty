@@ -26,7 +26,6 @@ export class DirectoryController implements IDirectoryController {
   @httpPost("/", auth())
   async createDirectory(req: Request, res: Response): Promise<void> {
     const createdBy = res.locals.user._id;
-
     // validate parent
     const parent = await this._directoryService.findDirectoryById(req.body.parent);
     if (parent && parent._id) {

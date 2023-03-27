@@ -20,8 +20,8 @@ export const ModuleCreationForm: FC<{}> = ({}) => {
     const payload = { ...values, parent: undefined };
     const response = await createModule(payload);
 
-    const module = response.data;
-    if (module) window.location.replace(`/modules/${module.id}`);
+    const { data: directory } = response.data;
+    if (directory) window.location.replace(`/modules/${directory.id}`);
   }, []);
 
   return (
