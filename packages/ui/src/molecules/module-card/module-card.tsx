@@ -13,6 +13,19 @@ type ModuleCardProps =
       tasks?: number;
       progress?: number;
       credits?: number;
+      onClick?: never;
+    }
+  | {
+      variant: 'button';
+      onClick?: () => void;
+      icon: ReactNode;
+      name?: string;
+      color?: never;
+      code?: never;
+      href?: never;
+      tasks?: never;
+      progress?: never;
+      credits?: never;
     }
   | {
       variant: 'loading';
@@ -24,6 +37,7 @@ type ModuleCardProps =
       tasks?: undefined;
       progress?: undefined;
       credits?: undefined;
+      onClick?: never;
     };
 
 export const ModuleCard: FC<ModuleCardProps> = ({
@@ -36,6 +50,7 @@ export const ModuleCard: FC<ModuleCardProps> = ({
   progress,
   color,
   credits,
+  onClick,
 }) => {
   if (variant === 'loading') {
     return (
@@ -43,6 +58,18 @@ export const ModuleCard: FC<ModuleCardProps> = ({
         role="status"
         className="h-[168px] min-w-[300px] animate-pulse rounded-2xl bg-zinc-100 dark:bg-zinc-800"
       />
+    );
+  }
+
+  if (variant === 'button') {
+    return (
+      <button
+        onClick={onClick}
+        className="flex justify-center items-center text-primary bg-accent block rounded-2xl p-6 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 hover:dark:bg-zinc-700/50"
+      >
+        <span className="text-base lg:text-lg">{icon}</span>
+        <h3 className="pt-2 text-base lg:text-lg">{name}</h3>
+      </button>
     );
   }
 

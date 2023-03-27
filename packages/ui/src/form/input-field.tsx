@@ -6,7 +6,7 @@ import { Input } from '../atoms';
 
 type InputFieldProps = FieldWrapperPassThroughProps &
   Required<Pick<FieldWrapperPassThroughProps, 'label'>> & {
-    type?: 'text' | 'email' | 'password';
+    type?: 'text' | 'email' | 'password' | 'checkbox';
     className?: string;
     registration: Partial<UseFormRegisterReturn>;
     disabled?: boolean;

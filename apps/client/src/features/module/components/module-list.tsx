@@ -1,7 +1,8 @@
 import { FC } from 'react';
-import { IoMdCreate } from 'react-icons/io';
+import { AiOutlinePlus } from 'react-icons/ai';
 
 import ModuleCard from '@nifty/ui/molecules/module-card';
+import { CreateModule } from '@/features/module/components/create-module';
 
 export const ModuleList: FC<{}> = ({}) => {
   // todo fetch data
@@ -48,7 +49,6 @@ export const ModuleList: FC<{}> = ({}) => {
       credits: 15,
     },
   ];
-  const noModules = !isLoading && (data || []).length === 0;
 
   return (
     <>
@@ -61,23 +61,10 @@ export const ModuleList: FC<{}> = ({}) => {
           <ModuleCard variant="loading" />
         </div>
       )}
-      {noModules && (
-        <div className="grid grid-cols-2 gap-6">
-          <div className="flex flex-col items-center justify-center h-[288px]">
-            <p className="text-sm text-zinc-600 dark:text-zinc-400 lg:text-base">
-              <ModuleCard
-                href={'/d'}
-                icon={<IoMdCreate />}
-                color={'white'}
-                name={'Create your first module'}
-                code={"It's easy!"}
-              />
-            </p>
-          </div>
-        </div>
-      )}
+
       {!isLoading && data && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <CreateModule />
           {data.map(module => (
             <div key={module.name}>
               <ModuleCard {...module} />
