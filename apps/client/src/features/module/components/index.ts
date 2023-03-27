@@ -1,4 +1,4 @@
 export * from "./notebook-list"
 export * from "./module-list"
-export * from "./create-module"
+export * from "./module-creation"
 export * from "./module-form"

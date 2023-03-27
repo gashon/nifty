@@ -5,7 +5,7 @@ import { ModuleCreationForm } from '@/features/module';
 import ModuleCard from '@nifty/ui/molecules/module-card';
 import { ParentModal } from '@nifty/ui/molecules';
 
-export const CreateModule: FC<{}> = ({}) => {
+export const ModuleCreationButton: FC<{}> = ({}) => {
   const [open, setOpen] = useState<boolean>(false);
 
   return (
@@ -22,4 +22,4 @@ export const CreateModule: FC<{}> = ({}) => {
   );
 };
 
-export default CreateModule;
+export default ModuleCreationButton;

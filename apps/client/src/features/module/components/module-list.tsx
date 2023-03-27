@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { AiOutlinePlus } from 'react-icons/ai';
 
 import ModuleCard from '@nifty/ui/molecules/module-card';
-import { CreateModule } from '@/features/module/components/create-module';
+import { ModuleCreationButton } from '@/features/module/components/module-creation';
 
 export const ModuleList: FC<{}> = ({}) => {
   // todo fetch data
@@ -64,7 +64,7 @@ export const ModuleList: FC<{}> = ({}) => {
 
       {!isLoading && data && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <CreateModule />
+          <ModuleCreationButton />
           {data.map(module => (
             <div key={module.name}>
               <ModuleCard {...module} />
