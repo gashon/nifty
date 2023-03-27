@@ -44,7 +44,8 @@ export const AuthProvider = ({ children }) => {
             setError(new Error('Failed to fetch user data'));
             return;
           }
-          storage.set('user', data);
+          console.log('SETTING');
+          storage.set<IUser>('user', data);
           setUser(data);
           setIsOffline(false);
         })

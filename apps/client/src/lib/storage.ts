@@ -59,7 +59,9 @@ const storage: Storage = {
     const item = localStorage.getItem(`${storagePrefix}_${key}`);
     const doc: StorageDocument<any> = item ? JSON.parse(item) : null;
 
-    delete doc.data;
+    if (doc)
+      delete doc.data;
+
     return doc
   },
   isMounted(): boolean {
