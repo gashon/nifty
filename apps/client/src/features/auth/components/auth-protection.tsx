@@ -6,11 +6,11 @@ export const AuthProtection = ({ children, LoadingComponent }) => {
 
   useEffect(() => {
     if (user === null) {
-      // window.location.replace(
-      //   `/error/external?message=${encodeURIComponent(
-      //     'You are not logged in!'
-      //   )}&redirect=${encodeURIComponent(location.pathname + location.search)}`
-      // );
+      window.location.replace(
+        `/error/external?message=${encodeURIComponent(
+          'You are not logged in!'
+        )}&redirect=${encodeURIComponent(location.pathname + location.search)}`
+      );
     }
   }, [user, isLoading]);
 
