@@ -4,12 +4,12 @@ import { inject } from 'inversify';
 import { Request, Response } from 'express';
 import { UserCreateRequest } from '@nifty/server-lib/models/user';
 import { CustomException } from '@/exceptions';
-import { IUserService, IUserController } from './interfaces';
-import { TYPES } from "./types";
 
+import { IUserService, IUserController } from '@/domains';
+import { USER_TYPES } from "@/domains/user/types";
 @controller('/v1/users')
 export class UserController implements IUserController {
-  constructor(@inject(TYPES.UserService) private userService: IUserService) {
+  constructor(@inject(USER_TYPES.SERVICE) private userService: IUserService) {
   }
 
   @httpGet('/me')

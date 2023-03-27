@@ -1,7 +1,4 @@
-const TYPES = {
-  CollaboratorService: "CollaboratorService",
-  CollaboratorRepository: "CollaboratorRepository",
-  CollaboratorController: "CollaboratorController"
+export enum COLLABORATOR_TYPES {
+  SERVICE = "CollaboratorService",
+  CONTROLLER = "CollaboratorRepository",
 };
-
-export { TYPES };

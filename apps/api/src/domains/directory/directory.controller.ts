@@ -2,19 +2,24 @@ import status from 'http-status';
 import { controller, httpGet, httpPost } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { Request, Response } from 'express';
-import { DirectoryCreateRequest } from '@nifty/server-lib/models/directory';
-import { CustomException } from '@/exceptions';
-import { IDirectoryService, IDirectoryController } from './interfaces';
-import { TYPES } from "./types";
-import { TYPES as COLLABORATOR_TYPES } from "../collaborator/types";
-import { ICollaboratorService } from '../collaborator';
-import auth from '@/middleware/auth';
 
+import auth from '@/middleware/auth';
+import { CustomException } from '@/exceptions';
+import { DirectoryCreateRequest } from '@nifty/server-lib/models/directory';
+import {
+  IDirectoryService,
+  IDirectoryController,
+} from "@/domains/directory"
+import {
+  ICollaboratorService,
+} from "@/domains/collaborator"
+import { DIRECTORY_TYPES } from '@/domains/directory/types';
+import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
 @controller('/v1/directories')
 export class DirectoryController implements IDirectoryController {
   constructor(
-    @inject(TYPES.DirectoryService) private directoryService: IDirectoryService,
-    @inject(COLLABORATOR_TYPES.CollaboratorService) private collaboratorService: ICollaboratorService) {
+    @inject(DIRECTORY_TYPES.SERVICE) private directoryService: IDirectoryService,
+    @inject(COLLABORATOR_TYPES.SERVICE) private collaboratorService: ICollaboratorService) {
   }
 
   @httpGet('/:id')

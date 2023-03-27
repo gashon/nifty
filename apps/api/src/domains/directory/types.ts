@@ -1,7 +1,4 @@
-const TYPES = {
-  DirectoryService: "DirectoryService",
-  DirectoryRepository: "DirectoryRepository",
-  DirectoryController: "DirectoryController"
+export enum DIRECTORY_TYPES {
+  SERVICE = "DirectoryService",
+  CONTROLLER = "DirectoryController"
 };
-
-export { TYPES };
