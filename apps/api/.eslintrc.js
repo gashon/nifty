@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  extends: ['next-express'],
+  extends: ['custom'],
   parserOptions: {
     project: './tsconfig.json',
     tsconfigRootDir: __dirname,

@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  extends: ['query'],
+  extends: ['custom'],
   rules: {
     'no-console': 'off',
     'func-names': 'off',

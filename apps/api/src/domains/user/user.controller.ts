@@ -16,7 +16,6 @@ export class UserController implements IUserController {
   @httpGet('/me', auth())
   async getMe(_: Request, res: Response): Promise<void> {
     const user = res.locals.user;
-
     res.status(status.OK).json({ data: user });
   }
 
