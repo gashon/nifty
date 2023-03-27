@@ -2,7 +2,6 @@ import { lazy, FC, ReactElement, PropsWithChildren } from 'react';
 import { FiBook, FiCheck, FiGrid, FiHome } from 'react-icons/fi';
 // import { Sidebar } from '@/features/dashboard/components';
 const Sidebar = lazy(() => import('@/components/sidebar'));
-import { useAuth } from '@/features/auth';
 
 type DashboardLayoutProps = {
   children: ReactElement | ReactElement[];

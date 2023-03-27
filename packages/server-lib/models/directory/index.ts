@@ -14,7 +14,11 @@ const directorySchema = new mongoose.Schema<IDirectory>({
   name: {
     type: String,
     trim: true,
-    default: "Directory Name",
+    default: "New Directory",
+  },
+  alias: {
+    type: String,
+    trim: true,
   },
   parent: {
     type: String,

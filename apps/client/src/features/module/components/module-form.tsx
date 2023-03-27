@@ -1,16 +1,15 @@
-import * as z from 'zod';
-import { useCallback, FC } from 'react';
-import { FiArrowRight } from 'react-icons/fi';
-import { FieldError } from 'react-hook-form';
-
 import { DirectoryCreateRequest } from '@nifty/server-lib/models/directory';
-import { createModule } from '@/features/module';
-
 import { Button } from '@nifty/ui/atoms';
 import { InputField, Form } from '@nifty/ui/form';
+import { useCallback, FC } from 'react';
+import { FieldError } from 'react-hook-form';
+import { FiArrowRight } from 'react-icons/fi';
+import * as z from 'zod';
+import { createModule } from '@/features/module';
 
 const schema = z.object({
   name: z.string().min(1).max(50),
+  alias: z.string().min(1).max(50).optional(),
   is_public: z.boolean(),
 });
 
@@ -35,9 +34,17 @@ export const ModuleCreationForm: FC<{}> = ({}) => {
           <div className="inline-flex text-left w-full mt-5" style={{ marginBottom: -5 }}>
             <InputField
               type="text"
-              label="Name"
+              label="Class Name"
               error={formState.errors['name'] as FieldError}
               registration={register('name')}
+            />
+          </div>
+          <div className="inline-flex text-left w-full mt-5" style={{ marginBottom: -5 }}>
+            <InputField
+              type="text"
+              label="Alias (optional): e.g. CS 101"
+              error={formState.errors['alias'] as FieldError}
+              registration={register('alias')}
             />
           </div>
           <div
