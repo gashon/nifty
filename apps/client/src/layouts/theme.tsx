@@ -1,6 +1,6 @@
 import { lazy, FC, ReactNode } from 'react';
 import { Authorization } from '@/lib/authorization';
-import { USER_PERMISSIONS } from '@nifty/common/constants';
+
 const ThemeSelection = lazy(() => import('@/components/theme-selection/theme-selection'));
 
 type ThemeLayoutProps = {

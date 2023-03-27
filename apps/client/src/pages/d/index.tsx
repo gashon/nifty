@@ -1,11 +1,16 @@
 import { NextSeo } from 'next-seo';
+import { lazy } from 'react';
 
 import { AuthProtection, useAuth } from '@/features/auth';
+import { GreetingHeader } from '@/features/dashboard/components';
+
 import ThemeLayout from '@/layouts/theme';
 import DashboardLayout from '@/layouts/dashboard';
 
 import { LoadingPage } from '@nifty/ui/pages/loading';
-import { TodaysActivity } from '@nifty/ui/pages/todays-activity';
+
+const RecentModules = lazy(() => import('@/features/dashboard/components/recent-modules'));
+const RecentNotebooks = lazy(() => import('@/features/dashboard/components/recent-notebooks'));
 
 export default function Dashboard() {
   const { user, isOffline, isLoading } = useAuth();
@@ -21,111 +26,23 @@ export default function Dashboard() {
       <NextSeo title={'Dashboard'} noindex />
       <AuthProtection loadingComponent={<LoadingPage />}>
         <ThemeLayout>
-          <TodaysActivity
-            userName={user?.email}
-            userAvatar={user?.avatar}
-            greetingProps={{ isLoading, greeting: 'Hello Gashon', quote: "You're doing great!" }}
-            recentModules={{
-              isLoading,
-              data: [
-                {
-                  href: '/modules/1',
-                  icon: '🧠',
-                  name: 'Algorithms and Complexity',
-                  code: 'CS2860',
-                  color: 'red',
-                  credits: 15,
-                },
-                {
-                  href: '/modules/2',
-                  icon: '📽',
-                  name: 'IT Project Management',
-                  code: 'CS3003',
-                  color: 'green',
-                  credits: 15,
-                },
-                {
-                  href: '/modules/3',
-                  icon: '💅',
-                  name: 'User centered design',
-                  code: 'PC3001',
-                  color: 'indigo',
-                  credits: 15,
-                },
-                {
-                  href: '/modules/4',
-                  icon: '📌',
-                  name: 'Final Year Project',
-                  code: 'CS3810',
-                  color: 'amber',
-                  credits: 15,
-                },
-                {
-                  href: '/modules/5',
-                  icon: '🔐',
-                  name: 'Malicious Software',
-                  code: 'IY3840',
-                  color: 'blue',
-                  credits: 15,
-                },
-              ],
-            }}
-            recentNotebooks={{
-              isLoading,
-              data: [
-                {
-                  icon: '📚',
-                  title: 'Introduction to Computer Algorithms',
-                  lastEdited: '2 hours ago',
-                  href: '/notebooks/1',
-                  label: {
-                    name: 'Algorithms and Complexity',
-                    color: 'red',
-                  },
-                },
-                {
-                  icon: '✨',
-                  title: 'Week 1 - Introduction to IT Project Management',
-                  lastEdited: '6 hours ago',
-                  href: '/notebooks/2',
-                  label: {
-                    name: 'IT Project Management',
-                    color: 'green',
-                  },
-                },
-                {
-                  icon: '👩‍🎨',
-                  title: 'Introduction to User centered design',
-                  lastEdited: '8 hours ago',
-                  href: '/notebooks/3',
-                  label: {
-                    name: 'User centered design',
-                    color: 'indigo',
-                  },
-                },
-                {
-                  icon: '📌',
-                  title: 'Final Project Plan',
-                  lastEdited: '14 hours ago',
-                  href: '/notebooks/4',
-                  label: {
-                    name: 'Final Year Project',
-                    color: 'amber',
-                  },
-                },
-                {
-                  icon: '🔐',
-                  title: 'Encryption and Decryption',
-                  lastEdited: '23 hours ago',
-                  href: '/notebooks/5',
-                  label: {
-                    name: 'Malicious Software',
-                    color: 'blue',
-                  },
-                },
-              ],
-            }}
-          />
+          <DashboardLayout>
+            <GreetingHeader greeting={`Hello ${user?.email}`} quote="You're doing great" />
+            <div className="flex flex-col">
+              <section className="order-2 pt-9 lg:order-1">
+                <h3 className="text-primary pb-3 text-xs dark:text-zinc-400 lg:text-base">
+                  Modules
+                </h3>
+                <RecentModules />
+              </section>
+              <section className="order-1 pt-9">
+                <h3 className="pb-3 text-xs text-zinc-600 dark:text-zinc-400 lg:text-base">
+                  Recently edited notebooks
+                </h3>
+                <RecentNotebooks />
+              </section>
+            </div>
+          </DashboardLayout>
         </ThemeLayout>
       </AuthProtection>
     </>

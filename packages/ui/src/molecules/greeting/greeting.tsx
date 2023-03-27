@@ -1,6 +1,6 @@
 import { FC, memo } from 'react';
 
-type GreetingProps = {
+export type GreetingProps = {
   greeting?: string;
   quote?: string;
   isLoading: boolean;

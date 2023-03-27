@@ -1,4 +1,4 @@
-import Greeting from './greeting';
+import Greeting, { GreetingProps } from './greeting';
 export default Greeting;
 
-export { Greeting } from './greeting';
+export { Greeting, GreetingProps } from './greeting';

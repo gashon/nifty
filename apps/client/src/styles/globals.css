@@ -31,6 +31,17 @@
   @apply text-white;
 }
 
+[data-theme='brown'] {
+  @apply text-white;
+  /* --primary: #edbed8; */
+  --text-primary-: #ffffffbc;
+  --primary: rgba(73, 53, 40, 1);
+  --secondary: ##6e3e00;
+  --tertiary: #ed9cc9;
+  --bg-accent-: rgba(170, 138, 111, 1);
+  --border-accent: rgba(100, 100, 100, 0.19);
+}
+
 [data-theme='dark'] {
   --bg-primary: rgba(19, 19, 19, 1);
   --bg-secondary: theme('colors.white');

@@ -1,18 +1,18 @@
-import Link from 'next/link';
-import { ComponentProps, FC, useState, memo } from 'react';
-import AnimateHeight from 'react-animate-height';
-import { FiMenu, FiX } from 'react-icons/fi';
+import { FC, ComponentProps, useState } from 'react';
 import { useMediaQuery } from 'usehooks-ts';
-import { Brand } from '../../atoms/brand';
-import { SidebarLink } from '../../molecules/sidebar-link';
-import { UserCard } from '../../molecules/user-card';
+import { FiMenu, FiX } from 'react-icons/fi';
+import AnimateHeight from 'react-animate-height';
+
+import { useAuth } from '@/features/auth';
+import { Brand } from '@nifty/ui/atoms';
+import { SidebarLink, UserCard } from '@nifty/ui/molecules';
 
 type SidebarProps = {
-  user: ComponentProps<typeof UserCard>;
   links: ComponentProps<typeof SidebarLink>[];
 };
 
-export const Sidebar: FC<SidebarProps> = ({ user, links }) => {
+export const Sidebar: FC<SidebarProps> = ({ links }) => {
+  const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const isDesktop = useMediaQuery('(min-width: 1024px)');
@@ -58,4 +58,4 @@ export const Sidebar: FC<SidebarProps> = ({ user, links }) => {
   );
 };
 
-export default memo(Sidebar);
+export default Sidebar;

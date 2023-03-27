@@ -4,12 +4,22 @@ import storage from '@/lib/storage';
 
 import { DropdownMenu } from '@nifty/ui/atoms';
 
-const AVAILABLE_THEMES = ['dark', 'light', 'pink', 'teal'] as const;
+const AVAILABLE_THEMES = ['dark', 'light', 'pink', 'teal', 'brown'] as const;
 type ThemeType = (typeof AVAILABLE_THEMES)[number];
 
 // https://www.blobmaker.app/
 const IconSwitcher = ({ theme }: { theme: ThemeType }) => {
   switch (theme) {
+    case 'brown':
+      return (
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <path
+            fill="#6E3E00"
+            d="M41.6,-55.1C57.2,-46,75.2,-38.1,78.8,-25.9C82.5,-13.6,71.6,3.1,65.4,20.9C59.1,38.8,57.5,57.8,47.4,67.7C37.2,77.6,18.6,78.4,-0.3,78.8C-19.3,79.3,-38.5,79.4,-47.7,69.2C-56.8,58.9,-55.8,38.4,-61.5,20.2C-67.2,1.9,-79.6,-14,-79.8,-29.9C-80.1,-45.9,-68.4,-61.9,-53.1,-71.1C-37.7,-80.3,-18.9,-82.6,-2.9,-78.6C13,-74.6,26.1,-64.2,41.6,-55.1Z"
+            transform="translate(100 100)"
+          />
+        </svg>
+      );
     case 'light':
       return (
         <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
