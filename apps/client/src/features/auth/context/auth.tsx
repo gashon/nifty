@@ -23,7 +23,6 @@ export const AuthContext = createContext<AuthContextType>(undefined);
 
 export const AuthProvider = ({ children }) => {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isOffline, setIsOffline] = useState<boolean | undefined>(false);
   const [user, setUser] = useState<AuthUserDTO | undefined>(undefined);
   const [error, setError] = useState<Error | undefined>(undefined);
@@ -37,7 +36,6 @@ export const AuthProvider = ({ children }) => {
     // * FIXME - clean this up and make it more readable
     if (document.cookie.includes('access_token')) {
       // fetch user data
-      setIsLoading(true);
       getUser()
         .then(({ data, status }) => {
           if (status !== 200) {
@@ -55,9 +53,6 @@ export const AuthProvider = ({ children }) => {
           }
           setError(err);
           setIsOffline(false);
-        })
-        .finally(() => {
-          setIsLoading(false);
         });
       return;
     }
@@ -65,13 +60,11 @@ export const AuthProvider = ({ children }) => {
     if (persistedUser) {
       setUser(persistedUser);
       setIsOffline(true);
-      setIsLoading(false);
       return;
     }
 
     setError(new Error('User is not logged in'));
     setUser(null);
-    setIsLoading(false);
   }, []);
 
   const onGithubLogin = useCallback(() => {
@@ -103,7 +96,7 @@ export const AuthProvider = ({ children }) => {
     user,
     error,
     isOffline,
-    isLoading,
+    isLoading: user === undefined,
     onMagicLinkLogin,
     onGithubLogin,
     onGoogleLogin,

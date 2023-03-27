@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useAuth } from '@/features/auth';
 
-export const AuthProtection = ({ children }) => {
-  const { user } = useAuth();
+export const AuthProtection = ({ children, LoadingComponent }) => {
+  const { user, isLoading } = useAuth();
 
   useEffect(() => {
     if (user === null) {
@@ -12,7 +12,9 @@ export const AuthProtection = ({ children }) => {
         )}&redirect=${encodeURIComponent(location.pathname + location.search)}`
       );
     }
-  }, [user]);
+  }, [user, isLoading]);
+
+  if (isLoading || user === null) return LoadingComponent;
 
   return <>{children}</>;
 };
