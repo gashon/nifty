@@ -1,7 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, FC, ReactElement } from 'react';
 import { useAuth } from '@/features/auth';
 
-export const AuthProtection = ({ children, LoadingComponent }) => {
+type AuthProtectionProps = {
+  children: ReactElement;
+  loadingComponent: ReactElement;
+};
+
+export const AuthProtection: FC<AuthProtectionProps> = ({ children, loadingComponent }) => {
   const { user, isLoading } = useAuth();
 
   useEffect(() => {
@@ -14,7 +19,7 @@ export const AuthProtection = ({ children, LoadingComponent }) => {
     }
   }, [user, isLoading]);
 
-  if (isLoading || user === null) return LoadingComponent;
+  if (isLoading || user === null) return loadingComponent;
 
   return <>{children}</>;
 };

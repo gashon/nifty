@@ -9,7 +9,7 @@ export default function Dashboard() {
   return (
     <>
       <NextSeo title={'Dashboard'} noindex />
-      <AuthProtection LoadingComponent={<LoadingPage />}>
+      <AuthProtection loadingComponent={<LoadingPage />}>
         <DashboardLayout>
           <h1>content</h1>
         </DashboardLayout>
