@@ -13,13 +13,13 @@ import auth from '@/middleware/auth';
 @controller('/v1/directories')
 export class DirectoryController implements IDirectoryController {
   constructor(
-    @inject(TYPES.DirectoryService) private _directoryService: IDirectoryService,
-    @inject(COLLABORATOR_TYPES.CollaboratorService) private _collaboratorService: ICollaboratorService) {
+    @inject(TYPES.DirectoryService) private directoryService: IDirectoryService,
+    @inject(COLLABORATOR_TYPES.CollaboratorService) private collaboratorService: ICollaboratorService) {
   }
 
   @httpGet('/:id')
   async getDirectory(req: Request, res: Response): Promise<void> {
-    const directory = await this._directoryService.findDirectoryById(req.params.id);
+    const directory = await this.directoryService.findDirectoryById(req.params.id);
     res.status(status.OK).json({ data: directory });
   }
 
@@ -27,14 +27,14 @@ export class DirectoryController implements IDirectoryController {
   async createDirectory(req: Request, res: Response): Promise<void> {
     const createdBy = res.locals.user._id;
     // validate parent
-    const parent = await this._directoryService.findDirectoryById(req.body.parent);
+    const parent = await this.directoryService.findDirectoryById(req.body.parent);
     if (parent && parent._id) {
-      const collaborator = await this._collaboratorService.findCollaboratorByDirectoryIdAndUserId(parent._id, createdBy);
+      const collaborator = await this.collaboratorService.findCollaboratorByDirectoryIdAndUserId(parent._id, createdBy);
       if (!collaborator)
         throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
     }
 
-    const directory = await this._directoryService.createDirectory(createdBy, req.body as DirectoryCreateRequest);
+    const directory = await this.directoryService.createDirectory(createdBy, req.body as DirectoryCreateRequest);
     res.status(status.CREATED).json({ data: directory });
   }
 

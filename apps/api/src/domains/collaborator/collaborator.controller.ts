@@ -8,7 +8,7 @@ import { TYPES } from "./types";
 
 @controller('/v1/collaborators')
 export class CollaboratorController implements ICollaboratorController {
-  constructor(@inject(TYPES.CollaboratorService) private _collaboratorService: ICollaboratorService) {
+  constructor(@inject(TYPES.CollaboratorService) private collaboratorService: ICollaboratorService) {
   }
 
 
