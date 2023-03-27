@@ -13,12 +13,10 @@ export const Navbar = () => {
 
   return (
     <nav className="relative flex justify-between">
-      <Link href="/" className="flex items-center gap-3 font-extrabold">
-        <div>
-          <Brand size={35} />
-          <span>Nifty</span>
-        </div>
-      </Link>
+      <a href="/" className="flex items-center gap-3 font-extrabold">
+        <Brand size={35} />
+        <span>Nifty</span>
+      </a>
       <div className="flex items-center gap-6">
         <ul
           data-testid="pages-links"

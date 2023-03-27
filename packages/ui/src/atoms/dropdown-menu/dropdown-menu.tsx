@@ -61,12 +61,10 @@ export const DropdownMenu: FC<PropsWithChildren<DropdownMenuProps>> = ({
             className="rounded-xl transition-colors hover:bg-zinc-300 ui-active:bg-zinc-300 dark:hover:bg-zinc-700/50 dark:ui-active:bg-zinc-700/50"
           >
             {item.href ? (
-              <Link href={item.href} className="flex h-9 items-center gap-3 px-3 text-sm">
-                <div>
-                  <span>{item.icon}</span>
-                  <span>{item.label}</span>
-                </div>
-              </Link>
+              <a href={item.href} className="flex h-9 items-center gap-3 px-3 text-sm">
+                <span>{item.icon}</span>
+                <span>{item.label}</span>
+              </a>
             ) : (
               <button
                 type="button"

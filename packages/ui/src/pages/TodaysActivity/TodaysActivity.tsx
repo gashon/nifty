@@ -4,10 +4,7 @@ import { ModuleCard } from '../../molecules/module-card';
 import { NotebookItem } from '../../molecules/notebook-item';
 import { Dashboard } from '../../templates/Dashboard';
 
-type TodaysActivityProps = Omit<
-  ComponentProps<typeof Dashboard>,
-  'children'
-> & {
+type TodaysActivityProps = Omit<ComponentProps<typeof Dashboard>, 'children'> & {
   greetingProps: ComponentProps<typeof Greeting>;
   recentModules: {
     data?: ComponentProps<typeof ModuleCard>[];
@@ -44,8 +41,8 @@ export const TodaysActivity: FC<TodaysActivityProps> = ({
             </div>
           )}
           {!recentModules.isLoading && recentModules.data && (
-            <div className="grid grid-cols-[repeat(auto-fill,_minmax(288px,_1fr))] gap-6">
-              {recentModules.data.map((module) => (
+            <div className="grid grid-cols-2 gap-6">
+              {recentModules.data.map(module => (
                 <div key={module.name}>
                   <ModuleCard {...module} />
                 </div>
@@ -69,7 +66,7 @@ export const TodaysActivity: FC<TodaysActivityProps> = ({
             )}
             {!recentNotebooks.isLoading &&
               recentNotebooks.data &&
-              recentNotebooks.data.map((notebook) => (
+              recentNotebooks.data.map(notebook => (
                 <NotebookItem key={notebook.href} {...notebook} />
               ))}
           </div>
