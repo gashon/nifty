@@ -1,10 +1,10 @@
 import * as z from 'zod';
-import { FC, useCallback, useContext } from 'react';
+import { FC, useCallback } from 'react';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { FiArrowRight } from 'react-icons/fi';
 import { FieldError } from 'react-hook-form';
 
-import { useCreateModule, ModuleListContext } from '@/features/module';
+import { useCreateModule } from '@/features/module';
 
 import ModuleCard from '@nifty/ui/molecules/module-card';
 import { Button } from '@nifty/ui/atoms';
@@ -20,7 +20,6 @@ const schema = z.object({
 
 export const ModuleCreationButton: FC = () => {
   const createModuleMutation = useCreateModule();
-  const { setDirectories } = useContext(ModuleListContext);
 
   const onSubmit = useCallback(
     async (values: DirectoryCreateRequest) => {
@@ -28,9 +27,10 @@ export const ModuleCreationButton: FC = () => {
       const response = await createModuleMutation.mutateAsync(payload);
 
       const { data: directory } = response.data;
-      setDirectories((directories: any) => [directory, ...directories]);
+      // refetch directories (react-query will handle caching)
+      
     },
-    [createModuleMutation, setDirectories]
+    [createModuleMutation]
   );
 
   return (

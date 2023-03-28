@@ -52,15 +52,12 @@ export const ModuleList: FC = () => {
   // todo implement frontend pagination
   const { data, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } =
     useInfiniteDirectories({ limit: 100 });
-
   console.log('GOT', data);
-  const [directories, setDirectories] = useState<any | IDirectory[] | undefined>(MOCK);
-
   // todo fetch data
   const isLoading = false;
 
   return (
-    <ModuleListContext.Provider value={{ directories, setDirectories }}>
+    <>
       {isLoading && (
         <div className="grid grid-cols-[repeat(auto-fill,_minmax(288px,_1fr))] gap-6">
           <ModuleCard variant="loading" />
@@ -75,7 +72,7 @@ export const ModuleList: FC = () => {
         <>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <ModuleCreationButton />
-            {data.pages.map(({ data: { data } }: any) =>
+            {data.pages.map(({ data }: any) =>
               data.map(module => (
                 <div key={module.name}>
                   <ModuleCard {...module} href={`/modules/${module.id}`} />
@@ -85,7 +82,7 @@ export const ModuleList: FC = () => {
           </div>
         </>
       )}
-    </ModuleListContext.Provider>
+    </>
   );
 };
 
