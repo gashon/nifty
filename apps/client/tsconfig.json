@@ -10,7 +10,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "outDir": "dist",
-    "rootDir": ".",
+    "rootDir": "../../",
     "typeRoots": ["node_modules/@types", "../../packages/shared/types"],
     "baseUrl": ".",
     "jsx": "preserve",
@@ -18,7 +18,8 @@
       "@/*": ["src/*"],
       "@nifty/ui/*": ["../../packages/ui/src/*"],
       "@nifty/common/*": ["../../packages/common/src/*"],
-      "@nifty/server-lib/*": ["../../packages/server-lib/src/*"]
+      "@nifty/server-lib/*": ["../../packages/server-lib/src/*"],
+      "@nifty/api/*": ["../api/src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js"],

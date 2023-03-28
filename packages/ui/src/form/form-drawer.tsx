@@ -12,6 +12,7 @@ type FormDrawerProps = {
   title: string;
   children: React.ReactNode;
   size?: DrawerProps['size'];
+  renderFooter?: boolean;
 };
 
 export const FormDrawer = ({
@@ -21,6 +22,7 @@ export const FormDrawer = ({
   triggerButton,
   submitButton,
   size = 'md',
+  renderFooter,
 }: FormDrawerProps) => {
   const { close, open, isOpen } = useDisclosure();
 
@@ -40,10 +42,14 @@ export const FormDrawer = ({
         size={size}
         renderFooter={() => (
           <>
-            <Button variant="secondary" onClick={close}>
-              Cancel
-            </Button>
-            {submitButton}
+            {renderFooter && (
+              <>
+                <Button variant="secondary" onClick={close}>
+                  Cancel
+                </Button>
+                {submitButton}
+              </>
+            )}
           </>
         )}
       >

@@ -1,11 +1,10 @@
 import { DirectoryCreateRequest } from '@nifty/server-lib/models/directory';
 import { Button } from '@nifty/ui/atoms';
 import { InputField, Form } from '@nifty/ui/form';
-import { useCallback, FC } from 'react';
+import { FC } from 'react';
 import { FieldError } from 'react-hook-form';
 import { FiArrowRight } from 'react-icons/fi';
 import * as z from 'zod';
-import { createModule } from '@/features/module';
 
 const schema = z.object({
   name: z.string().min(1).max(50),
@@ -15,15 +14,7 @@ const schema = z.object({
 });
 
 //z.infer<typeof DirectoryCreateRequest>
-export const ModuleCreationForm: FC<{}> = ({}) => {
-  const onSubmit = useCallback(async (values: DirectoryCreateRequest) => {
-    const payload = { ...values, parent: undefined };
-    const response = await createModule(payload);
-
-    const { data: directory } = response.data;
-    if (directory) window.location.replace(`/modules/${directory.id}`);
-  }, []);
-
+export const ModuleCreationForm: FC<{ onSubmit: any }> = ({ onSubmit }) => {
   return (
     <Form<DirectoryCreateRequest, typeof schema>
       schema={schema}

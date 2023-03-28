@@ -13,7 +13,7 @@ import {
 import {
   ICollaboratorService,
 } from "@/domains/collaborator"
-import { DIRECTORY_TYPES } from '@/domains/directory/types';
+import { DIRECTORY_TYPES, DirectoryCreateResponse } from '@/domains/directory/types';
 import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
 @controller('/v1/directories')
 export class DirectoryController implements IDirectoryController {
@@ -29,7 +29,7 @@ export class DirectoryController implements IDirectoryController {
   }
 
   @httpPost("/", auth())
-  async createDirectory(req: Request, res: Response): Promise<void> {
+  async createDirectory(req: Request, res: Response): Promise<Response<DirectoryCreateResponse>> {
     const createdBy = res.locals.user._id;
     // validate parent
     const parent = await this.directoryService.findDirectoryById(req.body.parent);
@@ -40,7 +40,7 @@ export class DirectoryController implements IDirectoryController {
     }
 
     const directory = await this.directoryService.createDirectory(createdBy, req.body as DirectoryCreateRequest);
-    res.status(status.CREATED).json({ data: directory });
+    return res.status(status.CREATED).json({ data: directory });
   }
 
 }
