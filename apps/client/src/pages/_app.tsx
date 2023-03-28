@@ -65,7 +65,7 @@ export default function App({ Component, pageProps }: AppProps) {
                 <Component {...pageProps} />
               </AuthProvider>
             </ThemeProvider>
-            {process.env.NODE_ENV !== 'test' && <ReactQueryDevtools />}
+            {process.env.NODE_ENV !== 'test' && <ReactQueryDevtools position={'bottom-right'} />}
           </QueryClientProvider>
         </HelmetProvider>
       </ErrorBoundary>

@@ -1,8 +1,6 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 
-import { ModuleListContext, ModuleCreationButton, useInfiniteDirectories } from '@/features/module';
-
-import { IDirectory } from '@nifty/server-lib/models/directory';
+import { ModuleCreationButton, useInfiniteDirectories } from '@/features/module';
 import ModuleCard from '@nifty/ui/molecules/module-card';
 
 export const ModuleList: FC = () => {
@@ -10,7 +8,7 @@ export const ModuleList: FC = () => {
   const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, isFetched } =
     useInfiniteDirectories({ limit: 100 });
 
-    return (
+  return (
     <div className="grid grid-cols-[repeat(auto-fill,_minmax(488px,_1fr))] gap-6">
       {isFetching &&
         !isFetched &&

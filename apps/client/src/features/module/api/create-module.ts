@@ -25,21 +25,21 @@ export const useCreateModule = ({ config }: UseCreateModuleOptions = {}) => {
 
       const previousModules: InfiniteQueryData = queryClient.getQueryData('directories');
 
-      // queryClient.setQueryData(['directories'], () => (
-      //   {
-      //     ...previousModules,
-      //     pages: [
-      //       {
-      //         ...previousModules.pages[0],
-      //         data: [
-      //           newDirectory,
-      //           ...previousModules.pages[0].data,
-      //         ],
-      //       },
-      //       ...previousModules.pages.slice(1),
-      //     ],
-      //   }
-      // ));
+      queryClient.setQueryData(['directories'], () => (
+        {
+          ...previousModules,
+          pages: [
+            {
+              ...previousModules.pages[0],
+              data: [
+                newDirectory,
+                ...previousModules.pages[0].data,
+              ],
+            },
+            ...previousModules.pages.slice(1),
+          ],
+        }
+      ));
       return { previousModules };
     },
     onError: (_, __, context: any) => {
