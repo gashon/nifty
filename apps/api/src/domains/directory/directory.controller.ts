@@ -36,7 +36,7 @@ export class DirectoryController implements IDirectoryController {
 
     //@ts-ignore
     const collaboratorIds = collaborators.data.map(c => c.id);
-    const directories = await this.directoryService.findDirectoriesByCollaboratorIds(collaboratorIds);
+    const directories = await this.directoryService.findDirectoriesByCollaboratorIds(collaboratorIds)
 
     res.status(status.OK).json({ data: directories });
   }

@@ -26,7 +26,7 @@ export class DirectoryService implements IDirectoryService {
       collaborators: {
         $in: ids
       }
-    });
+    }).sort({ created_at: -1 });
   }
 
   async paginateDirectories(condition: FilterQuery<DirectoryDocument>, query: PaginationParams): Promise<Partial<DirectoryListResponse>> {
