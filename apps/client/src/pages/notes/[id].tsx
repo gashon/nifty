@@ -5,10 +5,8 @@ import { useState, useEffect } from 'react';
 
 import ThemeLayout from '@/layouts/theme';
 import { AuthProtection, useAuth } from '@/features/auth';
-// import { DocumentEditor } from '@/features/note/';
-const DocumentEditor = dynamic(() => import('@/features/note/components/editor'), { ssr: false });
-
 import { LoadingPage } from '@nifty/ui/pages/loading';
+const DocumentEditor = dynamic(() => import('@/features/note/components/editor'), { ssr: false });
 
 export default function Document() {
   const router = useRouter();
@@ -37,7 +35,7 @@ export default function Document() {
             <h3 className="pb-6 text-3xl text-primary dark:text-zinc-400 ">Editor</h3>
             conte
             <div className="h-screen">
-              <DocumentEditor />
+              <DocumentEditor documentId={documentId as string} />
             </div>
             done
           </main>

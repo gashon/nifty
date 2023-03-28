@@ -1,41 +1,45 @@
-import React, { useState } from 'react';
-import { render } from 'react-dom';
+import { useState, useEffect, FC } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
-export function DocumentEditor() {
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{ size: [] }],
-      [{ font: [] }],
-      [{ align: ['right', 'center', 'justify'] }],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['link', 'image'],
-      [{ color: ['red', '#785412'] }],
-      [{ background: ['red', '#785412'] }],
-    ],
-  };
+const modules = {
+  toolbar: [
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [{ size: [] }],
+    [{ font: [] }],
+    [{ align: ['right', 'center', 'justify'] }],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    ['link', 'image'],
+    [{ color: ['red', '#785412'] }],
+    [{ background: ['red', '#785412'] }],
+  ],
+};
 
-  const formats = [
-    'header',
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'blockquote',
-    'list',
-    'bullet',
-    'link',
-    'color',
-    'image',
-    'background',
-    'align',
-    'size',
-    'font',
-  ];
+const formats = [
+  'header',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'blockquote',
+  'list',
+  'bullet',
+  'link',
+  'color',
+  'image',
+  'background',
+  'align',
+  'size',
+  'font',
+];
 
+type DocumentEditorProps = {
+  documentId: string;
+};
+
+// todo, consider using the class component (well supported)
+export const DocumentEditor: FC<DocumentEditorProps> = ({ documentId }) => {
   const [code, setCode] = useState('hellllo');
   const handleProcedureContentChange = (content, delta, source, editor) => {
     setCode(content);
@@ -46,9 +50,12 @@ export function DocumentEditor() {
     //this.quill.setSelection(cursorPosition + 1);
   };
 
+  useEffect(() => {
+    console.log('useEffect', code);
+  }, [code]);
+
   return (
     <>
-      {console.log(code)}
       <ReactQuill
         theme="snow"
         modules={modules}
@@ -58,6 +65,6 @@ export function DocumentEditor() {
       />
     </>
   );
-}
+};
 
 export default DocumentEditor;
