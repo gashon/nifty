@@ -52,8 +52,6 @@ export const ModuleList: FC = () => {
   const { data, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } =
     useInfiniteDirectories({ limit: 5, sort: 'name' });
 
-  console.log('GOTTTT', data);
-
   const [directories, setDirectories] = useState<any | IDirectory[] | undefined>(MOCK);
 
   // todo fetch data

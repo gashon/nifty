@@ -18,7 +18,10 @@ export class DirectoryService implements IDirectoryService {
   }
 
   async paginateDirectories(query: PaginationParams): Promise<Partial<DirectoryListResponse>> {
-    return this.directoryModel.paginate(query);
+    return this.directoryModel.paginate({
+      parent: null,
+      ...query
+    });
   }
 
   async createDirectory(createdBy: string, data: Partial<IDirectory>): Promise<DirectoryDocument> {
