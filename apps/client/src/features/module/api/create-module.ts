@@ -1,6 +1,6 @@
 import { DirectoryListResponse, DirectoryCreateRequest } from '@nifty/server-lib/models/directory';
 import { AxiosResponse } from 'axios';
-import { UseInfiniteQueryResult, useMutation } from 'react-query';
+import { useMutation } from 'react-query';
 import { axios } from '@/lib/axios';
 import { MutationConfig, queryClient } from '@/lib/react-query';
 import { DirectoryCreateResponse } from "@nifty/api/domains/directory/types"
@@ -25,21 +25,21 @@ export const useCreateModule = ({ config }: UseCreateModuleOptions = {}) => {
 
       const previousModules: InfiniteQueryData = queryClient.getQueryData('directories');
 
-      queryClient.setQueryData('directories', () => (
-        {
-          ...previousModules,
-          pages: [
-            {
-              ...previousModules.pages[0],
-              data: [
-                newDirectory,
-                ...previousModules.pages[0].data,
-              ],
-            },
-            ...previousModules.pages.slice(1),
-          ],
-        }
-      ));
+      // queryClient.setQueryData(['directories'], () => (
+      //   {
+      //     ...previousModules,
+      //     pages: [
+      //       {
+      //         ...previousModules.pages[0],
+      //         data: [
+      //           newDirectory,
+      //           ...previousModules.pages[0].data,
+      //         ],
+      //       },
+      //       ...previousModules.pages.slice(1),
+      //     ],
+      //   }
+      // ));
       return { previousModules };
     },
     onError: (_, __, context: any) => {

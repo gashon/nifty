@@ -24,11 +24,7 @@ export const ModuleCreationButton: FC = () => {
   const onSubmit = useCallback(
     async (values: DirectoryCreateRequest) => {
       const payload = { ...values, parent: undefined };
-      const response = await createModuleMutation.mutateAsync(payload);
-
-      const { data: directory } = response.data;
-      // refetch directories (react-query will handle caching)
-      
+      await createModuleMutation.mutateAsync(payload);
     },
     [createModuleMutation]
   );

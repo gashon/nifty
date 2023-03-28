@@ -35,7 +35,7 @@ server.setConfig((app) => {
 
   app.use(rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
+    max: dev ? Number.MAX_SAFE_INTEGER : 250, // limit each IP to x requests per windowMs
     message: 'Too many requests from this IP, please try again after 15 minutes',
   }))
 
