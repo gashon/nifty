@@ -1,5 +1,8 @@
 import { inject, injectable } from 'inversify';
+import { FilterQuery } from 'mongoose';
+
 import Directory, { DirectoryDocument, DirectoryListResponse } from "@nifty/server-lib/models/directory";
+
 import { IBaseRepositoryFactory, IBaseRepository } from "../../lib/repository-base";
 import { IDirectoryService, IDirectory } from './interfaces';
 import { PaginationParams } from '@/types';
@@ -7,6 +10,7 @@ import { PaginationParams } from '@/types';
 @injectable()
 export class DirectoryService implements IDirectoryService {
   private directoryModel: IBaseRepository<DirectoryDocument>;
+
   constructor(
     @inject('RepositoryGetter') repo: IBaseRepositoryFactory,
   ) {
@@ -17,18 +21,26 @@ export class DirectoryService implements IDirectoryService {
     return this.directoryModel.findById(id);
   }
 
-  async paginateDirectories(query: PaginationParams): Promise<Partial<DirectoryListResponse>> {
+  async findDirectoriesByCollaboratorIds(ids: string[]): Promise<DirectoryDocument[]> {
+    return this.directoryModel.find({
+      collaborators: {
+        $in: ids
+      }
+    });
+  }
+
+  async paginateDirectories(condition: FilterQuery<DirectoryDocument>, query: PaginationParams): Promise<Partial<DirectoryListResponse>> {
     return this.directoryModel.paginate({
-      parent: null,
+      ...condition,
       ...query
     });
   }
 
   async createDirectory(createdBy: string, data: Partial<IDirectory>): Promise<DirectoryDocument> {
     const doc = {
-      ...data,
       created_by: createdBy,
       parent: null,
+      ...data,
     }
     const directory = await this.directoryModel.create(doc);
     return directory;
@@ -40,4 +52,5 @@ export class DirectoryService implements IDirectoryService {
 
     return [await this.directoryModel.create(data), true];
   }
+
 }

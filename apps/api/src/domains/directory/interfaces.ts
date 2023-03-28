@@ -1,4 +1,6 @@
 import { Request, Response } from 'express';
+import { FilterQuery } from 'mongoose';
+
 import { IDirectory, DirectoryDocument, DirectoryListResponse } from "@nifty/server-lib/models/directory";
 import { DirectoryCreateResponse } from "@/domains/directory/types";
 import { PaginationParams } from "@/types";
@@ -11,7 +13,8 @@ interface IDirectoryController {
 interface IDirectoryService {
   findDirectoryById(id: string): Promise<DirectoryDocument | null>;
   createDirectory(createdBy: string, data: Partial<IDirectory>): Promise<DirectoryDocument>;
-  paginateDirectories(query: PaginationParams): Promise<Partial<DirectoryListResponse>>;
+  paginateDirectories(condition: FilterQuery<DirectoryDocument>, query: PaginationParams): Promise<Partial<DirectoryListResponse>>;
+  findDirectoriesByCollaboratorIds(ids: string[]): Promise<DirectoryDocument[]>;
 }
 
 export { IDirectory, IDirectoryController, IDirectoryService }; 

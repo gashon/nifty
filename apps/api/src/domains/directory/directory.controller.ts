@@ -29,10 +29,16 @@ export class DirectoryController implements IDirectoryController {
     res.status(status.OK).json({ data: directory });
   }
 
-  @httpGet('/')
+  @httpGet('/', auth())
   async getDirectories(req: Request, res: Response): Promise<void> {
-    const data = await this.directoryService.paginateDirectories(req.query as PaginationParams);
-    res.status(status.OK).json(data);
+    const userId = res.locals.user._id;
+    const collaborators = await this.collaboratorService.paginateCollaborators({ user: userId }, req.query as PaginationParams);
+
+    //@ts-ignore
+    const collaboratorIds = collaborators.data.map(c => c.id);
+    const directories = await this.directoryService.findDirectoriesByCollaboratorIds(collaboratorIds);
+
+    res.status(status.OK).json({ data: directories });
   }
 
   @httpPost("/", auth())
@@ -46,7 +52,13 @@ export class DirectoryController implements IDirectoryController {
         throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
     }
 
-    const directory = await this.directoryService.createDirectory(createdBy, req.body as DirectoryCreateRequest);
+    const rootCollaborator = await this.collaboratorService.createCollaborator(createdBy, { created_by: createdBy, user: createdBy });
+    const doc = {
+      ...(req.body satisfies DirectoryCreateRequest),
+      collaborators: [rootCollaborator.id],
+    };
+    const directory = await this.directoryService.createDirectory(createdBy, doc);
+
     return res.status(status.CREATED).json({ data: directory });
   }
 

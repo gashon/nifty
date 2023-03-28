@@ -4,12 +4,12 @@ import { Expand } from '../../utils/types/tsoa/expand';
 import { ListResponse } from '../../utils/types/tsoa/list-response';
 
 export interface INote extends Resource {
-  created_by: mongoose.Types.ObjectId;
+  created_by: string;
   title: string;
   content: string;
   description: string;
-  directory: mongoose.Types.ObjectId;
-  collaborators: mongoose.Types.ObjectId[];
+  directory: string;
+  collaborators: string[];
   img_url: string;
   tags: string[];
   is_public: boolean;
@@ -17,6 +17,6 @@ export interface INote extends Resource {
 
 export type NoteDocument = mongoose.Document<string, object, INote>;
 
-export type NoteCreateRequest = Partial<Expand<Pick<INote, 'created_by' | 'title' | 'content' | 'description' | 'directory' | 'collaborators' | 'img_url' | 'tags' | 'is_public' | 'deleted_at'>>>
+export type NoteCreateRequest = Partial<Expand<Pick<INote, | 'title' | 'content' | 'description' | 'directory' | 'collaborators' | 'img_url' | 'tags' | 'is_public' | 'deleted_at'>>>
 
-export type NoteListResponse = ListResponse<INote>
+export type NoteListResponse = ListResponse<NoteDocument>

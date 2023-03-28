@@ -5,22 +5,16 @@ import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
 import { ICollaborator, CollaboratorDocument } from './types';
 
 const collaboratorSchema = new mongoose.Schema<ICollaborator>({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
+  created_by: {
+    type: String,
     ref: "User",
     required: true,
     immutable: true,
   },
-  directory: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Directory",
-    required: false,
-    immutable: true,
-  },
-  note: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Note",
-    required: false,
+  user: {
+    type: String,
+    ref: "User",
+    required: true,
     immutable: true,
   },
   permissions: {
@@ -38,7 +32,7 @@ const collaboratorSchema = new mongoose.Schema<ICollaborator>({
 
 collaboratorSchema.plugin(mongooseObjectId('col', 'collaborator'));
 
-collaboratorSchema.index({ user: 1, note: 1 }, { unique: true });
+collaboratorSchema.index({ user: 1 }, {});
 
 export * from './types';
 export default mongoose.models.Collaborator as Model<CollaboratorDocument> ||
