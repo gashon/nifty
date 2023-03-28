@@ -12,12 +12,12 @@ export default function mongoosePaginate(schema: mongoose.Schema) {
   schema.statics.paginate = function paginate(query = {}, options) {
     options = {
       projection: {},
-      sort: { created: -1 },
+      sort: { created_at: -1 },
       select: '',
       ...options,
     };
 
-    if (query.lmit) options.limit = query.limit;
+    if (query.limit) options.limit = query.limit;
     if (query.page) options.page = query.page;
     if (query.sort) options.sort = query.sort;
     if (query.expand) options.expand = query.expand.map((i: string) => parseJSON(i));

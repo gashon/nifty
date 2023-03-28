@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 
-import { ModuleListContext, ModuleCreationButton } from '@/features/module';
+import { ModuleListContext, ModuleCreationButton, useInfiniteDirectories } from '@/features/module';
 
 import { IDirectory } from '@nifty/server-lib/models/directory';
 import ModuleCard from '@nifty/ui/molecules/module-card';
@@ -48,9 +48,14 @@ const MOCK = [
   },
 ];
 
-export const ModuleList: FC<{}> = ({}) => {
+export const ModuleList: FC = () => {
+  const { data, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } =
+    useInfiniteDirectories({ limit: 5, sort: 'name' });
+
+  console.log('GOTTTT', data);
+
   const [directories, setDirectories] = useState<any | IDirectory[] | undefined>(MOCK);
-  
+
   // todo fetch data
   const isLoading = false;
 

@@ -17,4 +17,4 @@ export type DirectoryDocument = mongoose.Document<string, object, IDirectory>;
 
 export type DirectoryCreateRequest = Partial<Expand<Pick<IDirectory, 'credits' | 'alias' | 'name' | 'is_public' | 'parent'>>>
 
-export type DirectoryListResponse = ListResponse<IDirectory>
+export type DirectoryListResponse = ListResponse<DirectoryDocument>

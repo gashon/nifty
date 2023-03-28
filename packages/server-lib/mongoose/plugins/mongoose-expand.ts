@@ -3,6 +3,8 @@ import qs from 'qs';
 
 mongoose.set('strictPopulate', false);
 
+// this plugin allows you to expand nested fields in mongoose queries
+// example: GET /api/directory?expand=parent
 export default function mongooseExpand(schema: mongoose.Schema) {
   function populate(
     this: mongoose.Query<mongoose.Document, mongoose.Document>

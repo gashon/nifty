@@ -6,6 +6,7 @@ import { Request, Response } from 'express';
 import auth from '@/middlewares/auth';
 import { CustomException } from '@/exceptions';
 import { DirectoryCreateRequest } from '@nifty/server-lib/models/directory';
+import { PaginationParams } from '@/types';
 import {
   IDirectoryService,
   IDirectoryController,
@@ -25,6 +26,12 @@ export class DirectoryController implements IDirectoryController {
   @httpGet('/:id')
   async getDirectory(req: Request, res: Response): Promise<void> {
     const directory = await this.directoryService.findDirectoryById(req.params.id);
+    res.status(status.OK).json({ data: directory });
+  }
+
+  @httpGet('/')
+  async getDirectories(req: Request, res: Response): Promise<void> {
+    const directory = await this.directoryService.paginateDirectories(req.query as PaginationParams);
     res.status(status.OK).json({ data: directory });
   }
 

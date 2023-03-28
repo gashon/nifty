@@ -1,7 +1,8 @@
 import { inject, injectable } from 'inversify';
-import Directory, { DirectoryDocument } from "@nifty/server-lib/models/directory";
+import Directory, { DirectoryDocument, DirectoryListResponse } from "@nifty/server-lib/models/directory";
 import { IBaseRepositoryFactory, IBaseRepository } from "../../lib/repository-base";
 import { IDirectoryService, IDirectory } from './interfaces';
+import { PaginationParams } from '@/types';
 
 @injectable()
 export class DirectoryService implements IDirectoryService {
@@ -12,17 +13,12 @@ export class DirectoryService implements IDirectoryService {
     this.directoryModel = repo.get<DirectoryDocument>(Directory);
   }
 
-  async getMe(accessToken: string): Promise<DirectoryDocument | null> {
-    // todo implement this (get token repository)
-    // const token = await Token.findById(req.cookies.access_token).populate('directory');
-    // if (!token) return res.sendStatus(status.UNAUTHORIZED);
-
-    // res.send(token.directory);
-    return null;
-  }
-
   async findDirectoryById(id: string): Promise<DirectoryDocument | null> {
     return this.directoryModel.findById(id);
+  }
+
+  async paginateDirectories(query: PaginationParams): Promise<Partial<DirectoryListResponse>> {
+    return this.directoryModel.paginate(query);
   }
 
   async createDirectory(createdBy: string, data: Partial<IDirectory>): Promise<DirectoryDocument> {
