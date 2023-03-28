@@ -1,10 +1,9 @@
 export enum SOCKET_EVENT {
-  EDITOR_CONNECT = 'editor:connect',
-  EDITOR_DISCONNECT = 'editor:disconnect',
   EDITOR_JOIN = 'editor:join',
+  EDITOR_DISCONNECT = 'editor:disconnect',
   EDITOR_LEAVE = 'editor:leave',
+  EDITOR_IDLE = 'editor:idle',
   DOCUMENT_UPDATE = 'document:update',
   DOCUMENT_GET = 'document:get',
   DOCUMENT_SAVE = 'document:save',
-  EDITOR_ERROR = 'error',
 }

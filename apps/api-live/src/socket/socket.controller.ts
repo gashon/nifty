@@ -1,5 +1,5 @@
 import WebSocket, { WebSocketServer as Server, ServerOptions } from "ws";
-import { SocketService } from "./socket.service";
+import { SocketService } from "@/socket/socket.service";
 import { SOCKET_EVENT } from "@/types";
 
 export class WebSocketServer extends Server {
@@ -10,6 +10,7 @@ export class WebSocketServer extends Server {
     this.socketService = new SocketService();
   }
 
+  // todo broadcast user information from all users on join
   async handleConnection(documentId: string, socket: WebSocket) {
     await this.socketService.addEditorToDocument(documentId, socket);
 
@@ -26,12 +27,24 @@ export class WebSocketServer extends Server {
           this.handleDocumentUpdate(documentId, socket, data);
           break;
         case SOCKET_EVENT.EDITOR_LEAVE:
+          this.handleEditorLeave(documentId, socket);
+          break;
+        case SOCKET_EVENT.EDITOR_IDLE:
+          this.handleEditorIdle(documentId);
           break;
         default:
           console.log("NOT IMPLEMENTD")
       }
 
     });
+
+    socket.on("close", () => {
+      this.handleEditorLeave(documentId, socket);
+    });
+
+    socket.on("error", () => {
+      this.handleEditorDisconnect(documentId, socket);
+    })
   }
 
   async handleDocumentUpdate(documentId: string, socket: WebSocket, data: any) {
@@ -40,7 +53,6 @@ export class WebSocketServer extends Server {
     const { content } = data;
     await this.socketService.setContent(documentId, content, socket);
 
-    // broadcast the update to all connected users
     const updateMessage = { type: SOCKET_EVENT.DOCUMENT_UPDATE, content };
     this.socketService.broadcast(documentId, updateMessage);
   }
@@ -61,15 +73,17 @@ export class WebSocketServer extends Server {
     this.socketService.broadcast(documentId, disconnectMessage);
   }
 
+  async handleEditorIdle(documentId: string) {
+    const idleMessage = { type: SOCKET_EVENT.EDITOR_IDLE, documentId };
+    this.socketService.broadcast(documentId, idleMessage);
+  }
+
   async syncToDatabase(documentId: string) {
     // todo - consider using a queue to handle this
     // todo - consider remove the need for an editor to be passed in
-    const content = await this.socketService.getContent(documentId);
-
     // todo - save to database
 
-    // broadcast the update to all connected users
-    const updateMessage = { type: SOCKET_EVENT.DOCUMENT_SAVE, content };
+    const updateMessage = { type: SOCKET_EVENT.DOCUMENT_SAVE };
     this.socketService.broadcast(documentId, updateMessage);
   }
 
