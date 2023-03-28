@@ -34,7 +34,7 @@ export const ModuleCreationButton: FC = () => {
       <FormDrawer
         isDone={createModuleMutation.isSuccess}
         title={'Create a module'}
-        triggerButton={<ModuleCard icon={<AiOutlinePlus size={55} />} variant={'button'} />}
+        triggerButton={<Button> Create Module</Button>}
         submitButton={
           <Button
             type="submit"

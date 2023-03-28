@@ -61,7 +61,7 @@ const MOCK = [
 ];
 
 export const NotebookList: FC<NotebookListProps> = ({ moduleId }) => {
-  const { data, isFetching, isFetched } = useInfiniteNotes({ directoryId: moduleId, limit: 1000 });
+  const { data, isFetched } = useInfiniteNotes({ directoryId: moduleId, limit: 1000 });
 
   return (
     <>
@@ -80,7 +80,7 @@ export const NotebookList: FC<NotebookListProps> = ({ moduleId }) => {
             {data.pages.map(({ data }: any) =>
               data.map(note => (
                 <div key={note.id}>
-                  <NotebookItem href={`/document/${note.id}`} {...note} />
+                  <NotebookItem href={`/notes/${note.id}`} {...note} />
                 </div>
               ))
             )}

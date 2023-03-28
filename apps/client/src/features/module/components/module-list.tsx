@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { ModuleCreationButton, useInfiniteDirectories } from '@/features/module';
+import { useInfiniteDirectories } from '@/features/module';
 import ModuleCard from '@nifty/ui/molecules/module-card';
 
 export const ModuleList: FC = () => {
@@ -16,7 +16,6 @@ export const ModuleList: FC = () => {
 
       {isFetched && (
         <>
-          <ModuleCreationButton />
           {data.pages.map(({ data }: any) =>
             data.map(module => (
               <div key={module.id}>

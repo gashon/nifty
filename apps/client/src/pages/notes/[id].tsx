@@ -26,12 +26,9 @@ export default function Module() {
       <NextSeo title={'Module'} noindex />
       <AuthProtection loadingComponent={<LoadingPage />}>
         <ThemeLayout>
-          <DashboardLayout>
-            <main className="flex flex-col order-1 pt-9">
-              <h3 className="pb-6 text-3xl text-primary dark:text-zinc-400 ">Notebook Name</h3>
-              <NotebookList moduleId={documentId as string} />
-            </main>
-          </DashboardLayout>
+          <main className="flex flex-col order-1 pt-9">
+            <h3 className="pb-6 text-3xl text-primary dark:text-zinc-400 ">Editor</h3>
+          </main>
         </ThemeLayout>
       </AuthProtection>
     </>

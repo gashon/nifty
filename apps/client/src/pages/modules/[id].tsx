@@ -14,7 +14,7 @@ export default function Module() {
   const router = useRouter();
   const { isOffline } = useAuth();
 
-  const { moduleId, name: moduleName } = router.query;
+  const { id, name: moduleName } = router.query;
 
   if (isOffline) {
     // todo handle offline mode here
@@ -34,9 +34,9 @@ export default function Module() {
               </h3>
               <div className="flex gap-3 flex-col">
                 <div>
-                  <NoteCreationButton moduleId={moduleId}/>
+                  <NoteCreationButton moduleId={id as string} />
                 </div>
-                <NotebookList moduleId={moduleId as string} />
+                <NotebookList moduleId={id as string} />
               </div>
             </main>
           </DashboardLayout>

@@ -5,7 +5,7 @@ import { lazy } from 'react';
 import ThemeLayout from '@/layouts/theme';
 import DashboardLayout from '@/layouts/dashboard';
 import { AuthProtection, useAuth } from '@/features/auth';
-import { ModuleList } from '@/features/module';
+import { ModuleList, ModuleCreationButton } from '@/features/module';
 
 import { LoadingPage } from '@nifty/ui/pages/loading';
 
@@ -29,7 +29,12 @@ export default function Module() {
           <DashboardLayout>
             <main className="flex flex-col order-1 pt-9">
               <h3 className="pb-6 text-3xl text-primary dark:text-zinc-400 ">Notebook Name</h3>
-              <ModuleList />
+              <div className="flex flex-col">
+                <div className="mb-3">
+                  <ModuleCreationButton />
+                </div>
+                <ModuleList />
+              </div>
             </main>
           </DashboardLayout>
         </ThemeLayout>

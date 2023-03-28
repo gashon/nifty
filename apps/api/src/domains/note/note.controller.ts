@@ -67,13 +67,13 @@ export class NoteController implements INoteController {
     const collaborator = await this.collaboratorService.findCollaboratorByDirectoryIdAndUserId(directory.id, createdBy);
     if (!collaborator)
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
-    
-    const note = await this.noteService.createNote(createdBy, req.body satisfies NoteCreateRequest);
+
+    const note = await this.noteService.createNote(createdBy, req.body as NoteCreateRequest);
 
     // add the note to the directory
     directory.set({ notes: [...directory.notes, note.id] });
     await directory.save();
-    
+
     return res.status(status.CREATED).json({ data: note });
   }
 

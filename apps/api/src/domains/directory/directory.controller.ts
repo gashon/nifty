@@ -54,7 +54,7 @@ export class DirectoryController implements IDirectoryController {
 
     const rootCollaborator = await this.collaboratorService.createCollaborator(createdBy, { created_by: createdBy, user: createdBy });
     const doc = {
-      ...(req.body satisfies DirectoryCreateRequest),
+      ...(req.body as DirectoryCreateRequest),
       collaborators: [rootCollaborator.id],
     };
     const directory = await this.directoryService.createDirectory(createdBy, doc);
