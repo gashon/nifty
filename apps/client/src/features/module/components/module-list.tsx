@@ -49,9 +49,11 @@ const MOCK = [
 ];
 
 export const ModuleList: FC = () => {
+  // todo implement frontend pagination
   const { data, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } =
-    useInfiniteDirectories({ limit: 5, sort: 'name' });
+    useInfiniteDirectories({ limit: 100 });
 
+  console.log('GOT', data);
   const [directories, setDirectories] = useState<any | IDirectory[] | undefined>(MOCK);
 
   // todo fetch data
@@ -69,15 +71,19 @@ export const ModuleList: FC = () => {
         </div>
       )}
 
-      {!isLoading && directories && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <ModuleCreationButton />
-          {directories.map(module => (
-            <div key={module.name}>
-              <ModuleCard {...module} />
-            </div>
-          ))}
-        </div>
+      {!isFetching && (
+        <>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <ModuleCreationButton />
+            {data.pages.map(({ data: { data } }: any) =>
+              data.map(module => (
+                <div key={module.name}>
+                  <ModuleCard {...module} href={`/modules/${module.id}`} />
+                </div>
+              ))
+            )}
+          </div>
+        </>
       )}
     </ModuleListContext.Provider>
   );

@@ -9,7 +9,7 @@ type ModuleCardProps =
       icon: ReactNode;
       color: string;
       name: string;
-      code: string;
+      alias: string;
       tasks?: number;
       progress?: number;
       credits?: number;
@@ -21,7 +21,7 @@ type ModuleCardProps =
       icon: ReactNode;
       name?: string;
       color?: never;
-      code?: never;
+      alias?: never;
       href?: never;
       tasks?: never;
       progress?: never;
@@ -33,7 +33,7 @@ type ModuleCardProps =
       icon?: undefined;
       color?: undefined;
       name?: undefined;
-      code?: undefined;
+      alias?: undefined;
       tasks?: undefined;
       progress?: undefined;
       credits?: undefined;
@@ -45,7 +45,7 @@ export const ModuleCard: FC<ModuleCardProps> = ({
   href,
   icon,
   name,
-  code,
+  alias,
   tasks,
   progress,
   color,
@@ -80,7 +80,7 @@ export const ModuleCard: FC<ModuleCardProps> = ({
     >
       <span className="text-base lg:text-lg">{icon}</span>
       <h3 className="pt-2 text-base lg:text-lg">{name}</h3>
-      <p className="pt-1 text-sm opacity-75 dark:text-zinc-400">{code}</p>
+      <p className="pt-1 text-sm opacity-75 dark:text-zinc-400">{alias}</p>
       {credits && <p className="pt-1 pb-3 text-xs opacity-50">{credits} Credits</p>}
       <div>
         {progress && tasks && (

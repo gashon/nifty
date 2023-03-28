@@ -31,8 +31,8 @@ export class DirectoryController implements IDirectoryController {
 
   @httpGet('/')
   async getDirectories(req: Request, res: Response): Promise<void> {
-    const directory = await this.directoryService.paginateDirectories(req.query as PaginationParams);
-    res.status(status.OK).json({ data: directory });
+    const data = await this.directoryService.paginateDirectories(req.query as PaginationParams);
+    res.status(status.OK).json(data);
   }
 
   @httpPost("/", auth())
