@@ -14,13 +14,16 @@ import {
 import {
   ICollaboratorService,
 } from "@/domains/collaborator"
+import { IDirectoryService } from '../directory';
 import { NOTE_TYPES, NoteCreateResponse } from '@/domains/note/types';
 import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
+import { DIRECTORY_TYPES } from '@/domains/directory/types';
 
-@controller('/v1/directories')
+@controller('/v1/notes')
 export class NoteController implements INoteController {
   constructor(
     @inject(NOTE_TYPES.SERVICE) private noteService: INoteService,
+    @inject(DIRECTORY_TYPES.SERVICE) private directoryService: IDirectoryService,
     @inject(COLLABORATOR_TYPES.SERVICE) private collaboratorService: ICollaboratorService) {
   }
 
@@ -32,28 +35,45 @@ export class NoteController implements INoteController {
 
   @httpGet('/', auth())
   async getNotes(req: Request, res: Response): Promise<void> {
-    const directoryId = req.query.directoryId as string;
-    const data = await this.noteService.paginateNotes({ directory: directoryId }, req.query as PaginationParams);
-    res.status(status.OK).json(data);
+    const userId = res.locals.user._id;
+    const directoryId = req.query.directory_id as string;
+
+    // validate directory exists
+    const directory = await this.directoryService.findDirectoryById(directoryId);
+    if (!directory)
+      throw new CustomException('Directory not found', status.NOT_FOUND);
+
+    // validate user has access to directory
+    const collaborator = await this.collaboratorService.findCollaboratorByDirectoryIdAndUserId(directory.id, userId);
+    if (!collaborator)
+      throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
+
+    const noteIds = directory.notes;
+    const data = await this.noteService.findNotesByIds(noteIds);
+    res.status(status.OK).json({ data });
   }
 
   @httpPost("/", auth())
   async createNote(req: Request, res: Response): Promise<Response<NoteCreateResponse>> {
     const createdBy = res.locals.user._id;
+    const directoryId = req.body.directory_id;
 
-    // const doc = { ...(req.body satisfies NoteCreateRequest), created_by: createdBy }
+    // validate directory exists
+    const directory = await this.directoryService.findDirectoryById(directoryId);
+    if (!directory)
+      throw new CustomException('Directory not found', status.NOT_FOUND);
 
-
-    // 
-    // validate parent
-    // const parent = await this.noteService.findNoteById(req.body.parent);
-    // if (parent && parent._id) {
-    //   const collaborator = await this.collaboratorService.findCollaboratorByDirectoryIdAndUserId(parent._id, createdBy);
-    //   if (!collaborator)
-    //     throw new CustomException('You do not have access to this note', status.FORBIDDEN);
-    // }
-
+    // validate user has access to directory
+    const collaborator = await this.collaboratorService.findCollaboratorByDirectoryIdAndUserId(directory.id, createdBy);
+    if (!collaborator)
+      throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
+    
     const note = await this.noteService.createNote(createdBy, req.body satisfies NoteCreateRequest);
+
+    // add the note to the directory
+    directory.set({ notes: [...directory.notes, note.id] });
+    await directory.save();
+    
     return res.status(status.CREATED).json({ data: note });
   }
 

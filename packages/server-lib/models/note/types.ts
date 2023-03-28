@@ -8,15 +8,14 @@ export interface INote extends Resource {
   title: string;
   content: string;
   description: string;
-  directory: string;
   collaborators: string[];
   img_url: string;
   tags: string[];
   is_public: boolean;
 }
 
-export type NoteDocument = mongoose.Document<string, object, INote>;
+export type NoteDocument = mongoose.Document<string, object, INote> & INote;
 
-export type NoteCreateRequest = Partial<Expand<Pick<INote, | 'title' | 'content' | 'description' | 'directory' | 'collaborators' | 'img_url' | 'tags' | 'is_public' | 'deleted_at'>>>
+export type NoteCreateRequest = Partial<Expand<Pick<INote, 'title' | 'description' | 'is_public' >>>
 
 export type NoteListResponse = ListResponse<NoteDocument>

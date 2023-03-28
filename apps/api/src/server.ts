@@ -10,7 +10,7 @@ import mongoose from '@nifty/server-lib/mongoose';
 import earlyAccessGuard from './middlewares/guards/early-access';
 import errorHandler from './middlewares/error-handler';
 import indexRouter from './routes/index';
-import { container } from './config/inversify.config';
+import { container } from './domains/inversify.config';
 
 const port = parseInt(process.env.PORT!, 10) || 7000;
 const dev = process.env.NODE_ENV !== 'production';

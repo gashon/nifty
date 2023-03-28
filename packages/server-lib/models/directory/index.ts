@@ -11,6 +11,13 @@ const directorySchema = new mongoose.Schema<IDirectory>({
     required: true,
     immutable: true,
   },
+  notes: {
+    type: [String],
+    default: [],
+    immutable: false,
+    required: true,
+    ref: "Note",
+  },
   name: {
     type: String,
     trim: true,

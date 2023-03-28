@@ -20,7 +20,7 @@ export const ModuleList: FC = () => {
           {data.pages.map(({ data }: any) =>
             data.map(module => (
               <div key={module.id}>
-                <ModuleCard {...module} href={`/modules/${module.id}`} />
+                <ModuleCard {...module} href={`/modules/${module.id}?name=${module.name}`} />
               </div>
             ))
           )}

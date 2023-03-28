@@ -19,6 +19,14 @@ export class NoteService implements INoteService {
     return this.noteModel.findById(id);
   }
 
+  findNotesByIds(ids: string[]): Promise<NoteDocument[]> {
+    return this.noteModel.find({
+      _id: {
+        $in: ids
+      }
+    }).sort({ created_at: -1 })
+  }
+
   async paginateNotes(condition: FilterQuery<NoteDocument>, query: PaginationParams): Promise<Partial<NoteListResponse>> {
     return this.noteModel.paginate({
       ...condition,

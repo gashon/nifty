@@ -11,7 +11,7 @@ export const createModule = (data: DirectoryCreateRequest): Promise<AxiosRespons
 
 type UseCreateModuleOptions = {
   config?: MutationConfig<typeof createModule>;
-};
+}
 
 type InfiniteQueryData = {
   pages: DirectoryListResponse[];

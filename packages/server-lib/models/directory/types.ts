@@ -5,6 +5,7 @@ import { ListResponse } from '../../utils/types/tsoa/list-response';
 
 export interface IDirectory extends Resource {
   created_by: string;
+  notes: string[];
   name: string;
   parent: string;
   collaborators: string[];
@@ -13,7 +14,7 @@ export interface IDirectory extends Resource {
   credits?: number;
 }
 
-export type DirectoryDocument = mongoose.Document<string, object, IDirectory>;
+export type DirectoryDocument = mongoose.Document<string, object, IDirectory> & IDirectory;
 
 export type DirectoryCreateRequest = Partial<Expand<Pick<IDirectory, 'credits' | 'alias' | 'name' | 'is_public' | 'parent'>>>
 

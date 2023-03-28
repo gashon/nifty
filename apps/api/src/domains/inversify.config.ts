@@ -21,6 +21,13 @@ import {
   CollaboratorService,
   COLLABORATOR_TYPES,
 } from '@/domains/collaborator';
+import {
+  INoteController,
+  INoteService,
+  NoteController,
+  NoteService,
+  NOTE_TYPES,
+} from '@/domains/note';
 
 const container = new Container();
 
@@ -34,5 +41,8 @@ container.bind<IDirectoryController>(DIRECTORY_TYPES.CONTROLLER).to(DirectoryCon
 
 container.bind<ICollaboratorService>(COLLABORATOR_TYPES.SERVICE).to(CollaboratorService);
 container.bind<ICollaboratorController>(COLLABORATOR_TYPES.CONTROLLER).to(CollaboratorController);
+
+container.bind<INoteService>(NOTE_TYPES.SERVICE).to(NoteService);
+container.bind<INoteController>(NOTE_TYPES.CONTROLLER).to(NoteController);
 
 export { container };

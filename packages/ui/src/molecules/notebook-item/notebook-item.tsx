@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ComponentProps, FC, memo } from 'react';
+import { ComponentProps, FC, memo, ReactElement } from 'react';
 import { ModuleTag } from '../../atoms/module-tag';
 
 type NotebookItemProps =
@@ -10,6 +10,7 @@ type NotebookItemProps =
       lastEdited?: undefined;
       label?: undefined;
       href?: undefined;
+      onClick?: never;
     }
   | {
       variant?: 'default';
@@ -18,6 +19,16 @@ type NotebookItemProps =
       lastEdited: string;
       label: ComponentProps<typeof ModuleTag>;
       href: string;
+      onClick?: never;
+    }
+  | {
+      variant: 'button';
+      onClick?: () => void;
+      icon: ReactElement;
+      label?: string;
+      title?: never;
+      lastEdited?: never;
+      href?: never;
     };
 
 export const NotebookItem: FC<NotebookItemProps> = ({
@@ -27,6 +38,7 @@ export const NotebookItem: FC<NotebookItemProps> = ({
   lastEdited,
   label,
   href,
+  onClick,
 }) => {
   if (variant === 'loading') {
     return (
@@ -34,6 +46,18 @@ export const NotebookItem: FC<NotebookItemProps> = ({
         role="status"
         className="h-11 w-full animate-pulse rounded-xl bg-accent dark:bg-zinc-800 lg:h-12"
       />
+    );
+  }
+
+  if (variant === 'button') {
+    return (
+      <button
+        onClick={onClick}
+        className="flex justify-center items-center h-11 w-full rounded-xl bg-accent dark:bg-zinc-800 lg:h-12"
+      >
+        <span className="text-base lg:text-lg">{icon}</span>
+        <h3 className="pt-2 text-base lg:text-lg">{label}</h3>
+      </button>
     );
   }
 

@@ -34,13 +34,6 @@ const noteSchema = new mongoose.Schema<INote>({
     required: true,
     ref: "Collaborator",
   },
-  directory: {
-    type: String,
-    trim: true,
-    ref: "Directory",
-    required: false,
-    immutable: false,
-  },
   img_url: {
     type: String,
     trim: true,
