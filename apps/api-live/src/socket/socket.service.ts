@@ -9,10 +9,17 @@ export class SocketService {
     this.socketRepository = new SocketRepository(redisClient);
   }
 
-  async broadcast(documentId: string, message: object) {
+  // call with a socket to broadcast to all other sockets
+  async broadcast(documentId: string, message: object): Promise<void>;
+  async broadcast(documentId: string, message: object, socket: WebSocket): Promise<void>;
+  async broadcast(documentId: string, message: object, socket?: WebSocket) {
     const payload = JSON.stringify(message);
-    const editors = await this.socketRepository.getEditors(documentId);
-    editors.forEach((editor) => editor.send(payload));
+    const editors = await this.socketRepository.getEditorSockets(documentId);
+    editors.forEach((editor) => {
+      if (editor !== socket) {
+        editor.send(payload);
+      }
+    });
   }
 
   async addEditorToDocument(documentId: string, editor: WebSocket) {

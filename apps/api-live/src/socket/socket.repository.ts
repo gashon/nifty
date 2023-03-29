@@ -1,12 +1,11 @@
 import { WebSocket } from "ws";
-import { promisify } from "util"
+import { v4 as uuidv4 } from "uuid";
 import { RedisClientType } from "@/lib/redis";
 import { Document, Store } from "@/types/document";
 
-type RedisCallback<T> = (err: Error | null, reply: T) => void;
-
 export class SocketRepository {
   private redis: RedisClientType;
+  private socketMap: Map<string, WebSocket> = new Map();
 
   constructor(redisClient: RedisClientType) {
     this.redis = redisClient;
@@ -14,20 +13,37 @@ export class SocketRepository {
 
   async getEditors(documentId: string) {
     const editors = await this._redisGet(`document:${documentId}:editors`);
-    return editors ? JSON.parse(editors) as WebSocket[] : [] as WebSocket[];
+    return editors ? JSON.parse(editors) as string[] : [] as string[];
+  }
+
+  async getEditorSockets(documentId: string): Promise<WebSocket[]> {
+    const editors = await this.getEditors(documentId);
+    return editors.map((editorId) => this.socketMap.get(editorId)!).filter((socket) => socket);
   }
 
   async addEditor(documentId: string, editor: WebSocket) {
-    const editors = await this.getEditors(documentId);
-    if (!editors.includes(editor)) {
-      await this.redis.set(`document:${documentId}:editors`, JSON.stringify([...editors, editor]));
+    const editorId = uuidv4();
+    this.socketMap.set(editorId, editor);
+
+    const editorIds = await this.getEditors(documentId);
+    if (!editorIds.includes(editorId)) {
+      await this.redis.set(`document:${documentId}:editors`, JSON.stringify([...editorIds, editorId]));
     }
   }
 
   async removeEditor(documentId: string, editor: WebSocket) {
-    const editors = await this.getEditors(documentId);
-    const newEditors = editors.filter((e) => e !== editor);
+    const editorIds = await this.getEditors(documentId);
+    const editorId = this.getEditorIdBySocket(editor)
+
+    if (!editorId) throw new Error("Editor not found");
+
+    this.socketMap.delete(editorId);
+    const newEditors = editorIds.filter((e) => e !== editorId);
     await this.redis.set(`document:${documentId}:editors`, JSON.stringify(newEditors));
+  }
+
+  getEditorIdBySocket(editor: WebSocket) {
+    return [...this.socketMap.entries()].find((entry) => entry[1] === editor)?.[0];
   }
 
   async getContent(documentId: string) {
@@ -41,7 +57,8 @@ export class SocketRepository {
 
   async socketIsEditor(documentId: string, editor: WebSocket) {
     const editors = await this.getEditors(documentId);
-    return editors.includes(editor);
+    const editorId = this.getEditorIdBySocket(editor);
+    return editors.includes(editorId!);
   }
 
   _redisGet(key: string) {

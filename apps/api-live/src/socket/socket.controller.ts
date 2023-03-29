@@ -25,16 +25,13 @@ export class WebSocketServer extends Server {
 
   // todo broadcast user information from all users on join
   async handleConnection(documentId: string, socket: WebSocket) {
-    console.log("HITTING")
     await this.socketService.addEditorToDocument(documentId, socket);
 
     // broadcast the join to all connected users
     const joinMessage = { type: SOCKET_EVENT.EDITOR_JOIN, documentId };
-    console.log("JOIN", joinMessage, documentId)
-    this.socketService.broadcast(documentId, joinMessage);
+    this.socketService.broadcast(documentId, joinMessage, socket);
 
     socket.on("message", (message) => {
-      console.log("GOT MESSAGE")
       const data = this.socketService.parse(message);
       if (!data) return;
 
@@ -99,7 +96,7 @@ export class WebSocketServer extends Server {
     // todo - consider remove the need for an editor to be passed in
     // todo - save to database
 
-    const updateMessage = { type: SOCKET_EVENT.DOCUMENT_SAVE };
+    const updateMessage = { type: SOCKET_EVENT.DOCUMENT_SAVE, documentId };
     this.socketService.broadcast(documentId, updateMessage);
   }
 
