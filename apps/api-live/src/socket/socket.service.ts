@@ -1,6 +1,8 @@
 import WebSocket, { RawData, OPEN } from "ws";
-import { SocketRepository } from "./socket.repository";
 import { RedisClientType } from "@/lib/redis";
+import { SocketRepository } from "./socket.repository";
+import { NoteDocument } from "@nifty/server-lib/models/note";
+
 
 export class SocketService {
   private socketRepository: SocketRepository;
@@ -16,11 +18,14 @@ export class SocketService {
     const payload = JSON.stringify(message);
     const editors = await this.socketRepository.getEditorSockets(documentId);
     editors.forEach((editor) => {
-      console.log("BEING sent", payload)
       if (editor !== socket && editor.readyState === OPEN) {
         editor.send(payload);
       }
     });
+  }
+
+  async getEditors(documentId: string): Promise<string[]> {
+    return this.socketRepository.getEditors(documentId);
   }
 
   async addEditorToDocument(documentId: string, editor: WebSocket) {
@@ -40,6 +45,16 @@ export class SocketService {
   async getContent(documentId: string, editor?: WebSocket): Promise<string> {
     if (editor && !this.socketRepository.socketIsEditor(documentId, editor)) throw new Error("You are not an editor of this document");
     return this.socketRepository.getContent(documentId);
+  }
+
+  // pass editor to require permissions
+  async saveContentToDisk(documentId: string): Promise<[NoteDocument, boolean]>;
+  async saveContentToDisk(documentId: string, editor: WebSocket): Promise<[NoteDocument, boolean]>;
+  async saveContentToDisk(documentId: string, editor?: WebSocket) {
+    if (editor && !this.socketRepository.socketIsEditor(documentId, editor)) throw new Error("You are not an editor of this document");
+
+    const memoryContent = await this.socketRepository.getContent(documentId);
+    return this.socketRepository.updateMongoDocument(documentId, memoryContent);
   }
 
   parse(message: RawData): Record<string, unknown> | null {

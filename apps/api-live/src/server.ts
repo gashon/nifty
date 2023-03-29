@@ -10,8 +10,8 @@ import { WebSocketServer } from '@/socket';
 const port = 8080;
 const dev = process.env.NODE_ENV !== 'production';
 
+mongoose.connect(process.env.DATABASE_URL!);
 const app = express();
-// mongoose.connect(process.env.DATABASE_URL!);
 
 app.set('trust proxy', !dev);
 app.disable('x-powered-by');

@@ -3,6 +3,8 @@ import { SocketService } from "@/socket/socket.service";
 import { SOCKET_EVENT } from "@/types";
 import { RedisClientType } from "@/lib/redis";
 
+const AUTO_SAVE_INTERVAL = 5000; // 5 seconds
+
 type SocketMessage = {
   type: SOCKET_EVENT;
   senderId: string;
@@ -22,10 +24,12 @@ function isSocketMessage(obj: any): obj is SocketMessage {
 
 export class WebSocketServer extends Server {
   private socketService: SocketService;
+  private autoSaveClocks: Record<string, NodeJS.Timeout> = {};
 
   constructor(redisClient: RedisClientType, options: ServerOptions) {
     super(options);
     this.socketService = new SocketService(redisClient);
+    this.autoSaveClocks = {};
 
     this.on("connection", async (socket, request) => {
 
@@ -50,9 +54,20 @@ export class WebSocketServer extends Server {
     const joinMessage = { type: SOCKET_EVENT.EDITOR_JOIN, documentId };
     this.socketService.broadcast(documentId, joinMessage, socket);
 
+    // start autosave clock if not already started
+    if (!this.autoSaveClocks[documentId]) {
+      this.autoSaveClocks[documentId] = setInterval(async () => {
+        await this.syncToDatabase(documentId);
+      }, AUTO_SAVE_INTERVAL);
+    }
+
+    // send the current content to the new user
+    const content = await this.socketService.getContent(documentId);
+    const contentMessage = { type: SOCKET_EVENT.DOCUMENT_LOAD, documentId, content };
+    socket.send(JSON.stringify(contentMessage));
+
     socket.on("message", (message: WebSocket.RawData, _isBinary: boolean) => {
       const data = this.socketService.parse(message);
-      console.log("BEING sent", data)
       if (!data) {
         socket.send(JSON.stringify({ type: SOCKET_EVENT.ERROR, message: "Invalid message format" }));
         return;
@@ -90,7 +105,6 @@ export class WebSocketServer extends Server {
     await this.socketService.setContent(documentId, content, socket);
 
     const updateMessage = { type: SOCKET_EVENT.DOCUMENT_UPDATE, content };
-    console.log("broadcasting", updateMessage)
     this.socketService.broadcast(documentId, updateMessage, socket);
   }
 
@@ -102,6 +116,13 @@ export class WebSocketServer extends Server {
 
     const leaveMessage = { type: SOCKET_EVENT.EDITOR_LEAVE, documentId };
     this.socketService.broadcast(documentId, leaveMessage);
+
+    // stop autosave clock if no editors left
+    const editors = await this.socketService.getEditors(documentId);
+    if (editors.length === 0) {
+      clearInterval(this.autoSaveClocks[documentId]);
+      delete this.autoSaveClocks[documentId];
+    }
   }
 
   async handleEditorDisconnect(documentId: string, socket: WebSocket) {
@@ -112,6 +133,13 @@ export class WebSocketServer extends Server {
 
     const disconnectMessage = { type: SOCKET_EVENT.EDITOR_DISCONNECT, documentId };
     this.socketService.broadcast(documentId, disconnectMessage);
+
+    // stop autosave clock if no editors left
+    const editors = await this.socketService.getEditors(documentId);
+    if (editors.length === 0) {
+      clearInterval(this.autoSaveClocks[documentId]);
+      delete this.autoSaveClocks[documentId];
+    }
   }
 
   async handleEditorIdle(documentId: string) {
@@ -120,12 +148,12 @@ export class WebSocketServer extends Server {
   }
 
   async syncToDatabase(documentId: string) {
-    // todo - consider using a queue to handle this
-    // todo - consider remove the need for an editor to be passed in
-    // todo - save to database
+    const [_, updated] = await this.socketService.saveContentToDisk(documentId);
 
-    const updateMessage = { type: SOCKET_EVENT.DOCUMENT_SAVE, documentId };
-    this.socketService.broadcast(documentId, updateMessage);
+    if (updated) {
+      const updateMessage = { type: SOCKET_EVENT.DOCUMENT_SAVE, documentId };
+      this.socketService.broadcast(documentId, updateMessage);
+    }
   }
 
 

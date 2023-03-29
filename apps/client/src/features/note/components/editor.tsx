@@ -1,6 +1,7 @@
 import { useState, useEffect, FC } from 'react';
 import dynamic from 'next/dynamic';
 import { useNoteSocket } from '@/features/socket/hooks/use-note-socket';
+import { SOCKET_EVENT } from '@nifty/api-live/types';
 import 'react-quill/dist/quill.snow.css';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
@@ -43,13 +44,19 @@ type DocumentEditorProps = {
 
 // todo, consider using the class component (well supported)
 export const DocumentEditor: FC<DocumentEditorProps> = ({ documentId }) => {
-  const [code, setCode] = useState({ source: 'local', content: '' });
+  const [code, setCode] = useState<{ source: string; content: string; isLoading?: boolean }>({
+    source: 'local',
+    content: '',
+    isLoading: true,
+  });
+  const [autoSaved, setAutoSaved] = useState(false);
   const handleProcedureContentChange = (content, delta, source, editor) => {
     if (content === code.content) {
       return;
     }
 
-    setCode({ content, source: 'local' });
+    setAutoSaved(false);
+    setCode({ ...code, content, source: 'local' });
     //let has_attribues = delta.ops[1].attributes || "";
     //console.log(has_attribues);
     //const cursorPosition = e.quill.getSelection().index;
@@ -63,12 +70,6 @@ export const DocumentEditor: FC<DocumentEditorProps> = ({ documentId }) => {
 
     socket.onopen = () => {
       console.log('Connected to WebSocket server');
-      const message = {
-        type: 'document:update',
-        content: 'this is a test',
-        documentId: documentId,
-      };
-      socket.send(JSON.stringify(message));
     };
 
     socket.onerror = error => {
@@ -77,8 +78,13 @@ export const DocumentEditor: FC<DocumentEditorProps> = ({ documentId }) => {
 
     socket.onmessage = event => {
       const data = JSON.parse(event.data);
-      if (data.type === 'document:update') {
-        setCode({ content: data.content, source: 'remote' });
+      console.log('GOT', data);
+      if (data.type === SOCKET_EVENT.DOCUMENT_UPDATE) {
+        setCode({ ...code, content: data.content, source: 'remote', isLoading: false });
+      } else if (data.type === SOCKET_EVENT.DOCUMENT_SAVE) {
+        setAutoSaved(true);
+      } else if (data.type === SOCKET_EVENT.DOCUMENT_LOAD) {
+        setCode({ ...code, content: data.content, source: 'remote', isLoading: false });
       }
     };
 
@@ -104,13 +110,16 @@ export const DocumentEditor: FC<DocumentEditorProps> = ({ documentId }) => {
 
   return (
     <>
-      <ReactQuill
-        theme="snow"
-        modules={modules}
-        formats={formats}
-        value={code.content}
-        onChange={handleProcedureContentChange}
-      />
+      {autoSaved && <div>Saved</div>}
+      {!code.isLoading && (
+        <ReactQuill
+          theme="snow"
+          modules={modules}
+          formats={formats}
+          value={code.content}
+          onChange={handleProcedureContentChange}
+        />
+      )}
     </>
   );
 };

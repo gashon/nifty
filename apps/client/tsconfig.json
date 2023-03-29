@@ -19,7 +19,8 @@
       "@nifty/ui/*": ["../../packages/ui/src/*"],
       "@nifty/common/*": ["../../packages/common/src/*"],
       "@nifty/server-lib/*": ["../../packages/server-lib/src/*"],
-      "@nifty/api/*": ["../api/src/*"]
+      "@nifty/api/*": ["../api/src/*"],
+      "@nifty/api-live/*": ["../api-live/src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js"],

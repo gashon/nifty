@@ -1,14 +1,18 @@
 import { WebSocket } from "ws";
 import { v4 as uuidv4 } from "uuid";
+import { Model } from "mongoose"
 import { RedisClientType } from "@/lib/redis";
 import { Document, Store } from "@/types/document";
+import Note, { NoteDocument } from "@nifty/server-lib/models/note";
 
 export class SocketRepository {
   private redis: RedisClientType;
   private socketMap: Map<string, WebSocket> = new Map();
+  private noteModel: Model<NoteDocument>;
 
   constructor(redisClient: RedisClientType) {
     this.redis = redisClient;
+    this.noteModel = Note;
   }
 
   async getEditors(documentId: string) {
@@ -48,6 +52,11 @@ export class SocketRepository {
 
   async getContent(documentId: string) {
     const content = await this._redisGet(`document:${documentId}:content`);
+    if (!content) {
+      const note = await this.noteModel.findById(documentId);
+      if (!note) throw new Error("Document not found");
+      return note.content;
+    }
     return content ? content : "";
   }
 
@@ -59,6 +68,19 @@ export class SocketRepository {
     const editors = await this.getEditors(documentId);
     const editorId = this.getEditorIdBySocket(editor);
     return editors.includes(editorId!);
+  }
+
+  async updateMongoDocument(documentId: string, content: string) {
+    const note = await this.noteModel.findById(documentId);
+    if (!note) throw new Error("Document not found");
+
+    const isUpdated = content !== note.content
+    if (isUpdated) {
+      note.content = content;
+      await note.save();
+    }
+
+    return [note, isUpdated]
   }
 
   _redisGet(key: string) {
