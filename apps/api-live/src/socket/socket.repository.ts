@@ -55,6 +55,8 @@ export class SocketRepository {
     if (!content) {
       const note = await this.noteModel.findById(documentId);
       if (!note) throw new Error("Document not found");
+
+      this.redis.set(`document:${documentId}:content`, note.content);
       return note.content;
     }
     return content ? content : "";
