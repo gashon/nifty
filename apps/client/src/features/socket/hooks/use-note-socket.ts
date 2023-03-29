@@ -10,6 +10,11 @@ export const useNoteSocket = (noteId: string) => {
 
     const s = new WebSocket(`ws://localhost:8080/${noteId}`);
 
+    //attempt to reconnect on error
+    s.addEventListener('error', () => {
+      s.close();
+    });
+
     setSocket(s);
     return () => {
       s.close();

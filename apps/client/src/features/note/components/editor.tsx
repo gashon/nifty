@@ -51,6 +51,8 @@ export const DocumentEditor: FC<DocumentEditorProps> = ({ documentId }) => {
   });
   const [autoSaved, setAutoSaved] = useState(false);
   const handleProcedureContentChange = (content, delta, source, editor) => {
+    console.log('cursor locations', editor.getSelection());
+
     if (content === code.content) {
       return;
     }
@@ -70,10 +72,6 @@ export const DocumentEditor: FC<DocumentEditorProps> = ({ documentId }) => {
 
     socket.onopen = () => {
       console.log('Connected to WebSocket server');
-    };
-
-    socket.onerror = error => {
-      console.log('WebSocket error: ', error);
     };
 
     socket.onmessage = event => {
