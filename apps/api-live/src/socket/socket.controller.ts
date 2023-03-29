@@ -71,16 +71,20 @@ export class WebSocketServer extends Server {
   }
 
   async handleEditorLeave(documentId: string, socket: WebSocket) {
-    await this.syncToDatabase(documentId);
-    await this.socketService.removeEditorFromDocument(documentId, socket);
+    await Promise.all([
+      this.syncToDatabase(documentId),
+      this.socketService.removeEditorFromDocument(documentId, socket),
+    ])
 
     const leaveMessage = { type: SOCKET_EVENT.EDITOR_LEAVE, documentId };
     this.socketService.broadcast(documentId, leaveMessage);
   }
 
   async handleEditorDisconnect(documentId: string, socket: WebSocket) {
-    await this.syncToDatabase(documentId);
-    await this.socketService.removeEditorFromDocument(documentId, socket);
+    await Promise.all([
+      this.syncToDatabase(documentId),
+      this.socketService.removeEditorFromDocument(documentId, socket),
+    ])
 
     const disconnectMessage = { type: SOCKET_EVENT.EDITOR_DISCONNECT, documentId };
     this.socketService.broadcast(documentId, disconnectMessage);
