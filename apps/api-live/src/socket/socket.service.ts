@@ -1,4 +1,4 @@
-import WebSocket, { Data } from "ws";
+import WebSocket, { RawData, OPEN } from "ws";
 import { SocketRepository } from "./socket.repository";
 import { RedisClientType } from "@/lib/redis";
 
@@ -16,7 +16,7 @@ export class SocketService {
     const payload = JSON.stringify(message);
     const editors = await this.socketRepository.getEditorSockets(documentId);
     editors.forEach((editor) => {
-      if (editor !== socket) {
+      if (editor !== socket && editor.readyState === OPEN) {
         editor.send(payload);
       }
     });
@@ -41,7 +41,7 @@ export class SocketService {
     return this.socketRepository.getContent(documentId);
   }
 
-  parse(message: Data) {
+  parse(message: RawData): Record<string, unknown> | null {
     try {
       const data =
         message instanceof ArrayBuffer
@@ -49,7 +49,9 @@ export class SocketService {
           : message instanceof Buffer
             ? message.toString()
             : message;
-      return JSON.parse(data as string);
+
+      console.log(typeof data, "GOT", data)
+      return JSON.parse(data as string)
     } catch (error) {
       return null;
     }

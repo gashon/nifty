@@ -30,5 +30,5 @@ const server = http.createServer(app);
 new WebSocketServer(redis, { server });
 
 server.listen(port, () => {
-  console.log(`port listening on ${port}`);
+  console.log(`Websockets listening on ${port}`);
 });

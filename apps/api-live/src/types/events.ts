@@ -6,4 +6,5 @@ export enum SOCKET_EVENT {
   DOCUMENT_UPDATE = 'document:update',
   DOCUMENT_GET = 'document:get',
   DOCUMENT_SAVE = 'document:save',
+  ERROR = 'error'
 }

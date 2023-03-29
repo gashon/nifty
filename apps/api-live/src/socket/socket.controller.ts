@@ -3,6 +3,23 @@ import { SocketService } from "@/socket/socket.service";
 import { SOCKET_EVENT } from "@/types";
 import { RedisClientType } from "@/lib/redis";
 
+type SocketMessage = {
+  type: SOCKET_EVENT;
+  senderId: string;
+  data: any; // todo create different types for different events
+}
+
+function isSocketMessage(obj: any): obj is SocketMessage {
+  return (
+    typeof obj === "object" &&
+    "type" in obj &&
+    "senderId" in obj &&
+    "data" in obj &&
+    Object.values(SOCKET_EVENT).includes(obj.type) &&
+    typeof obj.senderId === "string"
+  );
+}
+
 export class WebSocketServer extends Server {
   private socketService: SocketService;
 
@@ -31,10 +48,13 @@ export class WebSocketServer extends Server {
     const joinMessage = { type: SOCKET_EVENT.EDITOR_JOIN, documentId };
     this.socketService.broadcast(documentId, joinMessage, socket);
 
-    socket.on("message", (message) => {
+    socket.on("message", (message: WebSocket.RawData, _isBinary: boolean) => {
       const data = this.socketService.parse(message);
-      if (!data) return;
-
+      if (!data) {
+        socket.send(JSON.stringify({ type: SOCKET_EVENT.ERROR, message: "Invalid message format" }));
+        return;
+      }
+      
       switch (data.type) {
         case SOCKET_EVENT.DOCUMENT_UPDATE:
           this.handleDocumentUpdate(documentId, socket, data);
@@ -46,7 +66,7 @@ export class WebSocketServer extends Server {
           this.handleEditorIdle(documentId);
           break;
         default:
-          console.log("NOT IMPLEMENTD")
+          socket.send(JSON.stringify({ type: SOCKET_EVENT.ERROR, message: "Invalid message type" }));
       }
 
     });
