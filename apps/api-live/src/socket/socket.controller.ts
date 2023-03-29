@@ -9,17 +9,32 @@ export class WebSocketServer extends Server {
   constructor(redisClient: RedisClientType, options: ServerOptions) {
     super(options);
     this.socketService = new SocketService(redisClient);
+
+    this.on("connection", async (socket, request) => {
+
+      const documentId = request.url?.split("/").pop();
+      if (!documentId) return;
+
+      this.handleConnection(documentId, socket);
+    });
+
+    this.on("error", (error) => {
+      console.log("ERROR", error);
+    });
   }
 
   // todo broadcast user information from all users on join
   async handleConnection(documentId: string, socket: WebSocket) {
+    console.log("HITTING")
     await this.socketService.addEditorToDocument(documentId, socket);
 
     // broadcast the join to all connected users
     const joinMessage = { type: SOCKET_EVENT.EDITOR_JOIN, documentId };
+    console.log("JOIN", joinMessage, documentId)
     this.socketService.broadcast(documentId, joinMessage);
 
     socket.on("message", (message) => {
+      console.log("GOT MESSAGE")
       const data = this.socketService.parse(message);
       if (!data) return;
 

@@ -1,3 +1,3 @@
 setup:
-  project: example-api-live
+  project: example-api
   config: dev

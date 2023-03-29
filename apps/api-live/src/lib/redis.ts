@@ -4,7 +4,7 @@ export type RedisClientType = RedisType<RedisModules, RedisFunctions, RedisScrip
 
 export function initRedisClient(): RedisClientType {
   const client = createClient({
-    url: 'redis://127.0.0.1:6379',
+    url: process.env.REDIS_HOST || 'redis://127.0.0.1:6379',
   });
 
   (async () => {
