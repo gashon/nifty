@@ -32,9 +32,8 @@ export class WebSocketServer extends Server {
       const documentId = request.url?.split("/").pop();
       if (!documentId) return;
 
-      console.log("GOT", request.url)
+      console.log("Connection to", documentId)
 
-      
       this.handleConnection(documentId, socket);
     });
 
@@ -53,10 +52,12 @@ export class WebSocketServer extends Server {
 
     socket.on("message", (message: WebSocket.RawData, _isBinary: boolean) => {
       const data = this.socketService.parse(message);
+      console.log("BEING sent", data)
       if (!data) {
         socket.send(JSON.stringify({ type: SOCKET_EVENT.ERROR, message: "Invalid message format" }));
         return;
       }
+
 
       switch (data.type) {
         case SOCKET_EVENT.DOCUMENT_UPDATE:
@@ -90,7 +91,8 @@ export class WebSocketServer extends Server {
     await this.socketService.setContent(documentId, content, socket);
 
     const updateMessage = { type: SOCKET_EVENT.DOCUMENT_UPDATE, content };
-    this.socketService.broadcast(documentId, updateMessage);
+    console.log("broadcasting", updateMessage)
+    this.socketService.broadcast(documentId, updateMessage, socket);
   }
 
   async handleEditorLeave(documentId: string, socket: WebSocket) {

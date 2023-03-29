@@ -16,6 +16,7 @@ export class SocketService {
     const payload = JSON.stringify(message);
     const editors = await this.socketRepository.getEditorSockets(documentId);
     editors.forEach((editor) => {
+      console.log("BEING sent", payload)
       if (editor !== socket && editor.readyState === OPEN) {
         editor.send(payload);
       }

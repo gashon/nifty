@@ -68,6 +68,10 @@ export const DocumentEditor: FC<DocumentEditorProps> = ({ documentId }) => {
     };
 
     socket.onmessage = event => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'document:update') {
+        setCode(data.content);
+      }
       console.log('Got msg:', JSON.parse(event.data));
     };
 
@@ -78,6 +82,16 @@ export const DocumentEditor: FC<DocumentEditorProps> = ({ documentId }) => {
 
   useEffect(() => {
     console.log('useEffect', code);
+    if (!socket || socket.readyState !== socket.OPEN) return;
+
+    console.log('GOT', socket.readyState === socket.OPEN);
+    socket.send(
+      JSON.stringify({
+        type: 'document:update',
+        content: code,
+        documentId: documentId,
+      })
+    );
   }, [code]);
 
   return (
