@@ -32,8 +32,8 @@ export class SocketService {
     return this.socketRepository.addEditor(documentId, editor);
   }
 
-  async removeEditorFromDocument(documentId: string, editor: WebSocket) {
-    return this.socketRepository.removeEditor(documentId, editor);
+  async disconnectEditor(documentId: string, editor: WebSocket) {
+    return this.socketRepository.disconnectEditor(documentId, editor);
   }
 
   async setContent(documentId: string, content: string, editor: WebSocket) {
@@ -45,6 +45,10 @@ export class SocketService {
   async getContent(documentId: string, editor?: WebSocket): Promise<string> {
     if (editor && !this.socketRepository.socketIsEditor(documentId, editor)) throw new Error("You are not an editor of this document");
     return this.socketRepository.getContent(documentId);
+  }
+
+  async removeDocumentFromMemory(documentId: string){
+    return this.socketRepository.removeDocumentFromMemory(documentId);
   }
 
   // pass editor to require permissions

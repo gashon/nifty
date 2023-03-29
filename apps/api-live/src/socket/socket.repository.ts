@@ -35,7 +35,7 @@ export class SocketRepository {
     }
   }
 
-  async removeEditor(documentId: string, editor: WebSocket) {
+  async disconnectEditor(documentId: string, editor: WebSocket) {
     const editorIds = await this.getEditors(documentId);
     const editorId = this.getEditorIdBySocket(editor)
 
@@ -62,6 +62,13 @@ export class SocketRepository {
 
   async setContent(documentId: string, content: string, editor: WebSocket) {
     await this.redis.set(`document:${documentId}:content`, content);
+  }
+
+  async removeDocumentFromMemory(documentId: string) {
+    await Promise.all([
+      this.redis.del(`document:${documentId}:content`),
+      this.redis.del(`document:${documentId}:editors`),
+    ])
   }
 
   async socketIsEditor(documentId: string, editor: WebSocket) {

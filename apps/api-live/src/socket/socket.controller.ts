@@ -32,12 +32,10 @@ export class WebSocketServer extends Server {
     this.autoSaveClocks = {};
 
     this.on("connection", async (socket, request) => {
-
       const documentId = request.url?.split("/").pop();
       if (!documentId) return;
 
       console.log("Connection to", documentId)
-
       this.handleConnection(documentId, socket);
     });
 
@@ -94,13 +92,11 @@ export class WebSocketServer extends Server {
     });
 
     socket.on("error", () => {
-      this.handleEditorDisconnect(documentId, socket);
+      this.handleEditorLeave(documentId, socket);
     })
   }
 
   async handleDocumentUpdate(documentId: string, socket: WebSocket, data: any) {
-    // todo - validate data
-    // todo - count updates and save to database every 10 updates
     const { content } = data;
     await this.socketService.setContent(documentId, content, socket);
 
@@ -111,7 +107,7 @@ export class WebSocketServer extends Server {
   async handleEditorLeave(documentId: string, socket: WebSocket) {
     await Promise.all([
       this.syncToDatabase(documentId),
-      this.socketService.removeEditorFromDocument(documentId, socket),
+      this.socketService.disconnectEditor(documentId, socket),
     ])
 
     const leaveMessage = { type: SOCKET_EVENT.EDITOR_LEAVE, documentId };
@@ -122,23 +118,8 @@ export class WebSocketServer extends Server {
     if (editors.length === 0) {
       clearInterval(this.autoSaveClocks[documentId]);
       delete this.autoSaveClocks[documentId];
-    }
-  }
 
-  async handleEditorDisconnect(documentId: string, socket: WebSocket) {
-    await Promise.all([
-      this.syncToDatabase(documentId),
-      this.socketService.removeEditorFromDocument(documentId, socket),
-    ])
-
-    const disconnectMessage = { type: SOCKET_EVENT.EDITOR_DISCONNECT, documentId };
-    this.socketService.broadcast(documentId, disconnectMessage);
-
-    // stop autosave clock if no editors left
-    const editors = await this.socketService.getEditors(documentId);
-    if (editors.length === 0) {
-      clearInterval(this.autoSaveClocks[documentId]);
-      delete this.autoSaveClocks[documentId];
+      await this.socketService.removeDocumentFromMemory(documentId);
     }
   }
 
