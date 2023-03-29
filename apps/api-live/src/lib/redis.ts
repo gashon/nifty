@@ -1,10 +1,32 @@
-import redis, { RedisClientOptions } from 'redis'
-import { promisify } from "util"
+import { RedisClientType as RedisType, createClient, RedisModules, RedisFunctions, RedisScripts } from 'redis'
 
-const redisClient = redis.createClient({
-  url: process.env.REDIS_HOST || null,
-  port: process.env.REDIS_PORT || 6379
-} as RedisClientOptions);
+export type RedisClientType = RedisType<RedisModules, RedisFunctions, RedisScripts>
 
-const redisGet = promisify(redisClient.get).bind(redisClient);
-export { redisClient, redisGet };
+export function initRedisClient(): RedisClientType {
+  const client = createClient({
+    url: 'redis://127.0.0.1:6379',
+  });
+
+  (async () => {
+    // Connect to redis server
+    await client.connect();
+  })();
+
+  client.on('error', (err) => {
+    console.log('Redis error: ', err);
+  });
+
+  client.on('end', () => {
+    console.log('Redis client connection closed');
+  });
+
+  client.on('connect', () => {
+    console.log('Redis client connected');
+  });
+
+  client.on('ready', () => {
+    console.log('Redis client ready');
+  });
+
+  return client
+}

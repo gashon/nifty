@@ -1,13 +1,15 @@
 import { WebSocket } from "ws";
-import { redisClient, redisGet } from "@/lib/redis";
+import { promisify } from "util"
+import { RedisClientType } from "@/lib/redis";
 import { Document, Store } from "@/types/document";
 
-export class SocketRepository {
-  private redis: typeof redisClient;
 
-  constructor() {
+export class SocketRepository {
+  private redis: RedisClientType;
+
+  constructor(redisClient: RedisClientType) {
     this.redis = redisClient;
-    this.redis.get = redisGet;
+    this.redis.get = promisify(redisClient.get).bind(redisClient);;
   }
 
   async getEditors(documentId: string) {

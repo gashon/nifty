@@ -1,13 +1,14 @@
 import WebSocket, { WebSocketServer as Server, ServerOptions } from "ws";
 import { SocketService } from "@/socket/socket.service";
 import { SOCKET_EVENT } from "@/types";
+import { RedisClientType } from "@/lib/redis";
 
 export class WebSocketServer extends Server {
   private socketService: SocketService;
 
-  constructor(options: ServerOptions) {
+  constructor(redisClient: RedisClientType, options: ServerOptions) {
     super(options);
-    this.socketService = new SocketService();
+    this.socketService = new SocketService(redisClient);
   }
 
   // todo broadcast user information from all users on join

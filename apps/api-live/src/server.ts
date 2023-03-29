@@ -1,9 +1,11 @@
 import express from 'express';
 import http from 'http';
-import WebSocket from 'ws';
 import rateLimit from 'express-rate-limit';
 import morgan from 'morgan';
 import mongoose from '@nifty/server-lib/mongoose';
+
+import { initRedisClient } from '@/lib/redis';
+import { WebSocketServer } from '@/socket';
 
 const port = parseInt(process.env.PORT!, 10) || 8080;
 const dev = process.env.NODE_ENV !== 'production';
@@ -22,7 +24,11 @@ app.use(rateLimit({
   message: 'Too many requests from this IP, please try again after 15 minutes',
 }))
 
+const redis = initRedisClient();
+
 const server = http.createServer(app);
+new WebSocketServer(redis, { server });
+
 server.listen(port, () => {
   console.log(`port listening on ${port}`);
 });

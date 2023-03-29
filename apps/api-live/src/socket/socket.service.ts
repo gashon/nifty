@@ -1,11 +1,12 @@
 import WebSocket, { Data } from "ws";
 import { SocketRepository } from "./socket.repository";
+import { RedisClientType } from "@/lib/redis";
 
 export class SocketService {
   private socketRepository: SocketRepository;
 
-  constructor() {
-    this.socketRepository = new SocketRepository();
+  constructor(redisClient: RedisClientType) {
+    this.socketRepository = new SocketRepository(redisClient);
   }
 
   async broadcast(documentId: string, message: object) {
