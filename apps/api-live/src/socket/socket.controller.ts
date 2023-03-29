@@ -58,7 +58,6 @@ export class WebSocketServer extends Server {
         return;
       }
 
-
       switch (data.type) {
         case SOCKET_EVENT.DOCUMENT_UPDATE:
           this.handleDocumentUpdate(documentId, socket, data);

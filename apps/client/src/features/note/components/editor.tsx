@@ -43,9 +43,13 @@ type DocumentEditorProps = {
 
 // todo, consider using the class component (well supported)
 export const DocumentEditor: FC<DocumentEditorProps> = ({ documentId }) => {
-  const [code, setCode] = useState('hellllo');
+  const [code, setCode] = useState({ source: 'local', content: '' });
   const handleProcedureContentChange = (content, delta, source, editor) => {
-    setCode(content);
+    if (content === code.content) {
+      return;
+    }
+
+    setCode({ content, source: 'local' });
     //let has_attribues = delta.ops[1].attributes || "";
     //console.log(has_attribues);
     //const cursorPosition = e.quill.getSelection().index;
@@ -67,12 +71,15 @@ export const DocumentEditor: FC<DocumentEditorProps> = ({ documentId }) => {
       socket.send(JSON.stringify(message));
     };
 
+    socket.onerror = error => {
+      console.log('WebSocket error: ', error);
+    };
+
     socket.onmessage = event => {
       const data = JSON.parse(event.data);
       if (data.type === 'document:update') {
-        setCode(data.content);
+        setCode({ content: data.content, source: 'remote' });
       }
-      console.log('Got msg:', JSON.parse(event.data));
     };
 
     socket.onclose = () => {
@@ -81,14 +88,15 @@ export const DocumentEditor: FC<DocumentEditorProps> = ({ documentId }) => {
   }, [socket]);
 
   useEffect(() => {
-    console.log('useEffect', code);
     if (!socket || socket.readyState !== socket.OPEN) return;
+    // only relay local changes to the server
+    console.log('attempting', code);
+    if (code.source === 'remote') return;
 
-    console.log('GOT', socket.readyState === socket.OPEN);
     socket.send(
       JSON.stringify({
         type: 'document:update',
-        content: code,
+        content: code.content,
         documentId: documentId,
       })
     );
@@ -100,7 +108,7 @@ export const DocumentEditor: FC<DocumentEditorProps> = ({ documentId }) => {
         theme="snow"
         modules={modules}
         formats={formats}
-        value={code}
+        value={code.content}
         onChange={handleProcedureContentChange}
       />
     </>
