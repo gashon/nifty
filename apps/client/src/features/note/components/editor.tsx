@@ -1,5 +1,6 @@
 import { useState, useEffect, FC } from 'react';
 import dynamic from 'next/dynamic';
+import { useNoteSocket } from '@/features/socket/hooks/use-note-socket';
 import 'react-quill/dist/quill.snow.css';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
@@ -51,6 +52,29 @@ export const DocumentEditor: FC<DocumentEditorProps> = ({ documentId }) => {
     // this.quill.insertText(cursorPosition, "★");
     //this.quill.setSelection(cursorPosition + 1);
   };
+  const socket = useNoteSocket(documentId);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.onopen = () => {
+      console.log('Connected to WebSocket server');
+      const message = {
+        type: 'document:update',
+        content: 'this is a test',
+        documentId: documentId,
+      };
+      socket.send(JSON.stringify(message));
+    };
+
+    socket.onmessage = event => {
+      console.log('Got msg:', JSON.parse(event.data));
+    };
+
+    socket.onclose = () => {
+      console.log('Disconnected from WebSocket server');
+    };
+  }, [socket]);
 
   useEffect(() => {
     console.log('useEffect', code);

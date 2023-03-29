@@ -32,6 +32,9 @@ export class WebSocketServer extends Server {
       const documentId = request.url?.split("/").pop();
       if (!documentId) return;
 
+      console.log("GOT", request.url)
+
+      
       this.handleConnection(documentId, socket);
     });
 
@@ -54,7 +57,7 @@ export class WebSocketServer extends Server {
         socket.send(JSON.stringify({ type: SOCKET_EVENT.ERROR, message: "Invalid message format" }));
         return;
       }
-      
+
       switch (data.type) {
         case SOCKET_EVENT.DOCUMENT_UPDATE:
           this.handleDocumentUpdate(documentId, socket, data);

@@ -11,7 +11,7 @@ const DocumentEditor = dynamic(() => import('@/features/note/components/editor')
 export default function Document() {
   const router = useRouter();
   const { isOffline } = useAuth();
-  const { documentId } = router.query;
+  const { id } = router.query;
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function Document() {
             <h3 className="pb-6 text-3xl text-primary dark:text-zinc-400 ">Editor</h3>
             conte
             <div className="h-screen">
-              <DocumentEditor documentId={documentId as string} />
+              <DocumentEditor documentId={id as string} />
             </div>
             done
           </main>
