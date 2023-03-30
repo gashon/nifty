@@ -1,5 +1,5 @@
 import status from 'http-status';
-import { controller, httpGet, httpPost } from 'inversify-express-utils';
+import { controller, httpGet, httpPost, httpDelete } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { Request, Response } from 'express';
 
@@ -16,6 +16,7 @@ import {
 } from "@/domains/collaborator"
 import { DIRECTORY_TYPES, DirectoryCreateResponse } from '@/domains/directory/types';
 import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
+import collaborator from '@nifty/server-lib/models/collaborator';
 @controller('/v1/directories')
 export class DirectoryController implements IDirectoryController {
   constructor(
@@ -32,7 +33,7 @@ export class DirectoryController implements IDirectoryController {
   @httpGet('/', auth())
   async getDirectories(req: Request, res: Response): Promise<void> {
     const userId = res.locals.user._id;
-    const collaborators = await this.collaboratorService.paginateCollaborators({ user: userId }, req.query as PaginationParams);
+    const collaborators = await this.collaboratorService.paginateCollaborators({ user: userId, deleted_at: null }, req.query as PaginationParams);
 
     //@ts-ignore
     const collaboratorIds = collaborators.data.map(c => c.id);
@@ -60,6 +61,23 @@ export class DirectoryController implements IDirectoryController {
     const directory = await this.directoryService.createDirectory(createdBy, doc);
 
     return res.status(status.CREATED).json({ data: directory });
+  }
+
+  @httpDelete("/:id", auth())
+  async deleteDirectory(req: Request, res: Response): Promise<void> {
+    const userId = res.locals.user._id;
+    const directory = await this.directoryService.findDirectoryById(req.params.id);
+    if (!directory)
+      throw new CustomException('Directory not found', status.NOT_FOUND);
+
+    console.log("USER", userId, directory.id)
+    const collaborator = await this.collaboratorService.findCollaboratorByDirectoryIdAndUserId(directory.id, userId);
+    console.log("collaborator", collaborator, directory.collaborators)
+    if (!collaborator || !directory.collaborators.includes(collaborator.id))
+      throw new CustomException('You do not have access to this directory', 404);
+
+    await this.directoryService.deleteDirectoryById(directory.id);
+    res.status(status.NO_CONTENT).send();
   }
 
 }

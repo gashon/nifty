@@ -5,7 +5,7 @@ import { lazy } from 'react';
 import ThemeLayout from '@/layouts/theme';
 import DashboardLayout from '@/layouts/dashboard';
 import { AuthProtection, useAuth } from '@/features/auth';
-import { ModuleList, ModuleCreationButton } from '@/features/module';
+import { ModuleList, ModuleCreationButton,  } from '@/features/module';
 
 import { LoadingPage } from '@nifty/ui/pages/loading';
 

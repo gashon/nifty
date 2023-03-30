@@ -15,6 +15,7 @@ interface IDirectoryService {
   createDirectory(createdBy: string, data: Partial<IDirectory>): Promise<DirectoryDocument>;
   paginateDirectories(condition: FilterQuery<DirectoryDocument>, query: PaginationParams): Promise<Partial<DirectoryListResponse>>;
   findDirectoriesByCollaboratorIds(ids: string[]): Promise<DirectoryDocument[]>;
+  deleteDirectoryById(id: string): Promise<DirectoryDocument>;
 }
 
 export { IDirectory, IDirectoryController, IDirectoryService }; 

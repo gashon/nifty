@@ -10,8 +10,10 @@ interface ICollaboratorController {
 interface ICollaboratorService {
   findCollaboratorById(id: string): Promise<CollaboratorDocument | null>;
   findCollaboratorByDirectoryIdAndUserId(directoryId: string, userId: string): Promise<CollaboratorDocument | null>;
+  findCollaboratorByNoteIdAndUserId(noteId: string, userId: string): Promise<CollaboratorDocument | null>;
   paginateCollaborators(condition: FilterQuery<CollaboratorDocument>, query: PaginationParams): Promise<Partial<CollaboratorListResponse>>;
   createCollaborator(createdBy: string, data: Partial<ICollaborator>): Promise<CollaboratorDocument>;
+  findCollaboratorsByIds(ids: string[]): Promise<CollaboratorDocument[]>
 }
 
 export { ICollaborator, ICollaboratorController, ICollaboratorService };

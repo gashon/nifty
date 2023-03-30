@@ -2,6 +2,7 @@ import { inject, injectable } from 'inversify';
 import { FilterQuery } from 'mongoose';
 
 import Directory, { DirectoryDocument, DirectoryListResponse } from "@nifty/server-lib/models/directory";
+import Note, { NoteDocument, NoteListResponse } from "@nifty/server-lib/models/note";
 
 import { IBaseRepositoryFactory, IBaseRepository } from "../../lib/repository-base";
 import { IDirectoryService, IDirectory } from './interfaces';
@@ -10,11 +11,13 @@ import { PaginationParams } from '@/types';
 @injectable()
 export class DirectoryService implements IDirectoryService {
   private directoryModel: IBaseRepository<DirectoryDocument>;
+  private noteModel: IBaseRepository<NoteDocument>;
 
   constructor(
     @inject('RepositoryGetter') repo: IBaseRepositoryFactory,
   ) {
     this.directoryModel = repo.get<DirectoryDocument>(Directory);
+    this.noteModel = repo.get<NoteDocument>(Note);
   }
 
   async findDirectoryById(id: string): Promise<DirectoryDocument | null> {
@@ -25,7 +28,8 @@ export class DirectoryService implements IDirectoryService {
     return this.directoryModel.find({
       collaborators: {
         $in: ids
-      }
+      },
+      deleted_at: null
     }).sort({ created_at: -1 });
   }
 
@@ -51,6 +55,34 @@ export class DirectoryService implements IDirectoryService {
     if (directory) return [directory, false];
 
     return [await this.directoryModel.create(data), true];
+  }
+
+  async deleteDirectoryById(id: string): Promise<DirectoryDocument> {
+    const directory = await this.directoryModel.findById(id);
+    if (!directory) throw new Error('Directory not found');
+
+    const notes = directory.notes;
+
+    await Promise.all([
+      this.directoryModel.updateOne({
+        _id: id
+      }, {
+        $set: {
+          deleted_at: new Date(),
+        }
+      }, {}),
+      this.noteModel.updateMany({
+        _id: {
+          $in: notes
+        }
+      }, {
+        $set: {
+          deleted_at: new Date(),
+        }
+      }, {})
+    ])
+
+    return directory;
   }
 
 }

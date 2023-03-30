@@ -13,7 +13,7 @@ type UseCreateModuleOptions = {
 
 export const useDeleteNote = ({ config }: UseCreateModuleOptions = {}) => {
   return useMutation({
-    onMutate: async (newNote) => {
+    onMutate: async (deleteNote) => {
       await queryClient.cancelQueries('notes');
 
       // delete the note from the cache
@@ -21,7 +21,7 @@ export const useDeleteNote = ({ config }: UseCreateModuleOptions = {}) => {
       queryClient.setQueryData('notes', () => (
         {
           ...previousModules,
-          data: (previousModules?.data || []).filter((note) => note.id !== newNote.id),
+          data: (previousModules?.data || []).filter((note) => note.id !== deleteNote.id),
         }
       ));
 

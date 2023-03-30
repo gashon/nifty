@@ -116,8 +116,9 @@ export class NoteController implements INoteController {
     if (!note)
       throw new CustomException('Note not found', status.NOT_FOUND);
 
+    const collaborator = await this.collaboratorService.findCollaboratorById(userId);
     // validate user has access to note
-    if (!note.collaborators.includes(userId))
+    if (!collaborator || !note.collaborators.includes(collaborator.id))
       throw new CustomException('You do not have access to this note', status.FORBIDDEN);
 
     // delete note
@@ -125,6 +126,6 @@ export class NoteController implements INoteController {
 
     res.status(status.NO_CONTENT).json();
   }
-  
+
 
 }
