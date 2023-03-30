@@ -80,7 +80,7 @@ export const NotebookList: FC<NotebookListProps> = ({ moduleId }) => {
             {data.pages.map(({ data }: any) =>
               data.map(note => (
                 <div key={note.id}>
-                  <NotebookItem href={`/notes/${note.id}`} {...note} />
+                  <NotebookItem href={`/notes/${note.id}?name=${note.name}`} {...note} />
                 </div>
               ))
             )}

@@ -7,12 +7,17 @@ import ThemeLayout from '@/layouts/theme';
 import { AuthProtection, useAuth } from '@/features/auth';
 import { LoadingPage } from '@nifty/ui/pages/loading';
 const DocumentEditor = dynamic(() => import('@/features/note/components/editor'), { ssr: false });
+// import Editor from 'rich-markdown-editor';
+// import Dante, { darkTheme, defaultTheme, defaultPlugins } from '@nifty/dante3/index';
+// const Dante = dynamic(() => import('Dante2'), { ssr: false });
 
 export default function Document() {
   const router = useRouter();
   const { isOffline } = useAuth();
-  const { id } = router.query;
+  const { id, name } = router.query;
   const [isMounted, setIsMounted] = useState(false);
+  const [code, setCode] = useState('');
+  console.log('got NAME', name);
 
   useEffect(() => {
     setIsMounted(true);
@@ -31,14 +36,17 @@ export default function Document() {
       <NextSeo title={'Module'} noindex />
       <AuthProtection loadingComponent={<LoadingPage />}>
         <ThemeLayout>
-          <main className="flex flex-col order-1 pt-9">
-            <h3 className="pb-6 text-3xl text-primary dark:text-zinc-400 ">Editor</h3>
-            conte
-            <div className="h-screen">
-              <DocumentEditor documentId={id as string} />
+          <div className="flex items-center justify-center w-screen">
+            <div className="flex flex-col order-1 p-16 w-full lg:w-2/3">
+              <h1 className="mb-12 text-5xl text-primary dark:text-zinc-400 underline">{name}</h1>
+              <main className="h-screen">
+                <DocumentEditor />
+                {/* <Editor placeholder="test" value={code} onChange={e => setCode(e)} />{' '} */}
+                {/* <Dante content={'hello world'} /> */}
+              </main>
+              done
             </div>
-            done
-          </main>
+          </div>
         </ThemeLayout>
       </AuthProtection>
     </>

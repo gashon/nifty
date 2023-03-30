@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  font-family: 'Roboto', sans-serif;
+}
 :root {
   --font-inter: 'Inter', sans-serif;
 }
@@ -84,4 +87,74 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+body {
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+pre {
+  padding: 10px;
+  background-color: #eee;
+  white-space: pre-wrap;
+}
+
+:not(pre) > code {
+  font-family: monospace;
+  background-color: #eee;
+  padding: 3px;
+}
+
+blockquote {
+  border-left: 2px solid #ddd;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 10px;
+  color: #aaa;
+  font-style: italic;
+}
+
+blockquote[dir='rtl'] {
+  border-left: none;
+  padding-left: 0;
+  padding-right: 10px;
+  border-right: 2px solid #ddd;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td {
+  padding: 10px;
+  border: 2px solid #ddd;
+}
+
+[data-slate-editor] > * + * {
+  margin-top: 1em;
+}
+
+.fancy {
+  background-color: rgb(218, 225, 255);
+  padding: 40px;
+  font-size: 20px;
+  min-height: 150px;
+  outline: 3px dashed rgb(0, 94, 128);
+  border-radius: 20px;
+  outline-offset: -20px;
+  white-space: pre-wrap;
+}
+
+ul {
+  display: block;
+  list-style-type: disc;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  padding-inline-start: 40px;
 }

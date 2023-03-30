@@ -5,10 +5,12 @@
   "packageManager": "npm@9.2.0",
   "repository": "https://github.com/gashon/note-hive",
   "license": "MIT",
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*",
+      "apps/*"
+    ]
+  },
   "scripts": {
     "apps:build": "turbo run build",
     "apps:dev": "cross-env FORCE_COLOR=1 turbo run dev --parallel",
@@ -26,7 +28,6 @@
   },
   "engines": {
     "node": ">=16.15.0",
-    "yarn": ">=1.22.0",
-    "npm": "please-use-yarn"
+    "yarn": ">=1.22.0"
   }
 }
