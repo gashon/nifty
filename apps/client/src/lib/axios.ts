@@ -25,6 +25,13 @@ axios.interceptors.response.use(
       return
     }
 
+    if (error?.response?.status === 403) {
+      location.replace(`/error/external?message=${encodeURIComponent(
+        message || 'You are not authorized to access this page.'
+      )}&redirect=${encodeURIComponent(location.pathname + location.search)}`);
+      return
+    }
+
     if (message) {
       const isError = error.response?.status >= 400;
       if (isError) errorNotification(error.response?.status < 500 && error.response?.status !== 429 ? message : "We are experiencing an unexpected rise in traffic. Please try again later.")

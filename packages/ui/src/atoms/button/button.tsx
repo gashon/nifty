@@ -3,7 +3,7 @@ import { ButtonHTMLAttributes, DetailedHTMLProps, FC, PropsWithChildren, ReactNo
 import { Spinner } from '../spinner';
 
 const styles = cva(
-  ['flex', 'items-center', 'justify-center', 'font-semibold', 'rounded', 'transition-colors'],
+  ['flex', 'items-center', 'justify-center', 'font-semibold', 'transition-colors'],
   {
     variants: {
       size: {

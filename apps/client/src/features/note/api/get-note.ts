@@ -1,9 +1,13 @@
 import { useQuery } from 'react-query';
-import axios from 'axios';
+import { axios } from '@/lib/axios';
 
 const fetchNote = async (noteId) => {
-  const response = await axios.get(`/api/v1/notes/${noteId}`);
-  return response.data;
+  try {
+    const response = await axios.get(`/api/v1/notes/${noteId}`);
+    return response.data;
+  } catch (err) {
+    return null;
+  }
 };
 
 export const useGetNote = (noteId) => {

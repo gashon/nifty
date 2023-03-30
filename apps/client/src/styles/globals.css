@@ -149,7 +149,7 @@ td {
   white-space: pre-wrap;
 }
 
-ul {
+.editor-list {
   display: block;
   list-style-type: disc;
   margin-block-start: 1em;

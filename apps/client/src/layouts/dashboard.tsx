@@ -34,7 +34,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
           },
         ]}
       />
-      <div className="border-2 border-accent flex-1 overflow-y-scroll rounded-2xl p-8 scrollbar-hide dark:ring-zinc-800">
+      <div className=" flex-1 overflow-y-scroll  p-8 scrollbar-hide dark:ring-zinc-800">
         {children}
       </div>
     </main>

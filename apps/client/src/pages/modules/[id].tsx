@@ -5,8 +5,7 @@ import { lazy } from 'react';
 import ThemeLayout from '@/layouts/theme';
 import DashboardLayout from '@/layouts/dashboard';
 import { AuthProtection, useAuth } from '@/features/auth';
-import { NotebookList } from '@/features/note';
-import { NoteCreationButton } from '@/features/note';
+import { NoteCreationButton, NotebookList } from '@/features/note';
 
 import { LoadingPage } from '@nifty/ui/pages/loading';
 
@@ -28,16 +27,12 @@ export default function Module() {
       <AuthProtection loadingComponent={<LoadingPage />}>
         <ThemeLayout>
           <DashboardLayout>
-            <main className="flex flex-col order-1 pt-9">
+            <main className="flex flex-col order-1 pt-9 w-auto relative">
               <h3 className="pb-6 text-3xl text-primary dark:text-zinc-400 ">
                 Module: {moduleName}
               </h3>
-              <div className="flex gap-3 flex-col">
-                <div>
-                  <NoteCreationButton moduleId={id as string} />
-                </div>
-                <NotebookList moduleId={id as string} />
-              </div>
+              <NoteCreationButton moduleId={id as string} />
+              <NotebookList moduleId={id as string} />
             </main>
           </DashboardLayout>
         </ThemeLayout>

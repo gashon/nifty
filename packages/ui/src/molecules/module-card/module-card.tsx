@@ -56,7 +56,7 @@ export const ModuleCard: FC<ModuleCardProps> = ({
     return (
       <div
         role="status"
-        className="h-[168px] min-w-[300px] animate-pulse rounded-2xl bg-zinc-100 dark:bg-zinc-800"
+        className="h-[90px] min-w-[300px] animate-pulse bg-zinc-100 dark:bg-zinc-800"
       />
     );
   }
@@ -76,7 +76,7 @@ export const ModuleCard: FC<ModuleCardProps> = ({
   return (
     <a
       href={href as string}
-      className="text-primary bg-accent block rounded-2xl p-6 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 hover:dark:bg-zinc-700/50"
+      className="text-primary block p-6 transition-colors hover:bg-zinc-200 border-b-2 "
     >
       <span className="text-base lg:text-lg">{icon}</span>
       <h3 className="pt-2 text-base lg:text-lg">{name}</h3>

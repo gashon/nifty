@@ -9,7 +9,7 @@ export const ModuleList: FC = () => {
     useInfiniteDirectories({ limit: 100 });
 
   return (
-    <div className="grid grid-cols-[repeat(auto-fill,_minmax(488px,_1fr))] gap-6">
+    <div className="flex flex-col gap-4">
       {isFetching &&
         !isFetched &&
         [...Array(25)].map((_, i) => <ModuleCard key={i} variant="loading" />)}

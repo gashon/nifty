@@ -36,7 +36,11 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({ moduleId }) =>
       <FormDrawer
         isDone={createNodeMutation.isSuccess}
         title={'Create a document'}
-        triggerButton={<Button> Create Document </Button>}
+        triggerButton={
+          <div className="absolute right-0">
+            <Button> Create Document </Button>
+          </div>
+        }
         submitButton={
           <Button
             type="submit"

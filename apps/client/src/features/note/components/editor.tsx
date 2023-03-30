@@ -117,7 +117,7 @@ const MarkdownShortcuts = ({ documentId }) => {
     }
 
     return () => {
-      if(noteHandlerRef.current.saveStatus === 'not_saved') handleSave();
+      if (noteHandlerRef.current.saveStatus === 'not_saved') handleSave();
     };
   }, []);
 
@@ -252,7 +252,11 @@ const Element = ({ attributes, children, element }) => {
     case 'block-quote':
       return <blockquote {...attributes}>{children}</blockquote>;
     case 'bulleted-list':
-      return <ul {...attributes}>{children}</ul>;
+      return (
+        <ul className="editor-list text-xl" {...attributes}>
+          {children}
+        </ul>
+      );
     case 'heading-one':
       return (
         <h1 className="text-5xl" {...attributes}>
@@ -299,41 +303,6 @@ const Element = ({ attributes, children, element }) => {
       );
   }
 };
-
-const initialValue: Descendant[] = [
-  {
-    type: 'paragraph',
-    children: [
-      {
-        text: 'The editor gives you full control over the logic you can add. For example, it\'s fairly common to want to add markdown-like shortcuts to editors. So that, when you start a line with "> " you get a blockquote that looks like this:',
-      },
-    ],
-  },
-  {
-    type: 'block-quote',
-    children: [{ text: 'A wise quote.' }],
-  },
-  {
-    type: 'paragraph',
-    children: [
-      {
-        text: 'Order when you start a line with "## " you get a level-two heading, like this:',
-      },
-    ],
-  },
-  {
-    type: 'heading-two',
-    children: [{ text: 'Try it out!' }],
-  },
-  {
-    type: 'paragraph',
-    children: [
-      {
-        text: 'Try it out for yourself! Try starting a new line with ">", "-", or "#"s.',
-      },
-    ],
-  },
-];
 
 export default MarkdownShortcuts;
 

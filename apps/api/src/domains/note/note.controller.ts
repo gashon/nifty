@@ -29,7 +29,15 @@ export class NoteController implements INoteController {
 
   @httpGet('/:id', auth())
   async getNote(req: Request, res: Response): Promise<void> {
+    const userId = res.locals.user._id;
     const note = await this.noteService.findNoteById(req.params.id);
+
+    if (!note)
+      throw new CustomException('Note not found', status.NOT_FOUND);
+
+    if (!note.collaborators.includes(userId))
+      throw new CustomException('You do not have access to this note', status.FORBIDDEN);
+
     res.status(status.OK).json({ data: note });
   }
 
@@ -88,7 +96,6 @@ export class NoteController implements INoteController {
     if (!note)
       throw new CustomException('Note not found', status.NOT_FOUND);
 
-    console.log("ONTE collabs", note.collaborators);
     // validate user has access to note
     if (!note.collaborators.includes(userId))
       throw new CustomException('You do not have access to this note', status.FORBIDDEN);
