@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useEffect, useState, useRef } from 'react';
+import React, { memo, useCallback, useMemo, useEffect, useState, useRef } from 'react';
 import {
   createEditor,
   Descendant,
@@ -41,6 +41,8 @@ function SaveStatus({ status, onClick }) {
     );
   }
 }
+
+const SaveStatusComponent = memo(SaveStatus);
 
 const MarkdownShortcuts = ({ documentId }) => {
   const renderElement = useCallback(props => <Element {...props} />, []);
@@ -96,14 +98,14 @@ const MarkdownShortcuts = ({ documentId }) => {
     [editor]
   );
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     setNoteHandler(prevNoteHandler => ({ ...prevNoteHandler, saveStatus: 'saving' }));
     updateNote({
       content: JSON.stringify(editor.children),
       note_id: documentId,
     });
     setNoteHandler(prevNoteHandler => ({ ...prevNoteHandler, saveStatus: 'saved' }));
-  };
+  }, []);
 
   // autosave, note
   useEffect(() => {
@@ -122,11 +124,10 @@ const MarkdownShortcuts = ({ documentId }) => {
   }, []);
 
   if (!note?.data) return <p className="underline text-xl">Loading...</p>;
-  console.log(note?.data, note.data?.content.length !== 0, note.data?.content !== '[]');
 
   return (
     <>
-      <SaveStatus status={noteHandler.saveStatus} onClick={handleSave} />
+      <SaveStatusComponent status={noteHandler.saveStatus} onClick={handleSave} />
       <Slate
         editor={editor}
         value={

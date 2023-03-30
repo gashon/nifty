@@ -74,7 +74,7 @@ export class DirectoryController implements IDirectoryController {
     const collaborator = await this.collaboratorService.findCollaboratorByDirectoryIdAndUserId(directory.id, userId);
     console.log("collaborator", collaborator, directory.collaborators)
     if (!collaborator || !directory.collaborators.includes(collaborator.id))
-      throw new CustomException('You do not have access to this directory', 404);
+      throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
     await this.directoryService.deleteDirectoryById(directory.id);
     res.status(status.NO_CONTENT).send();

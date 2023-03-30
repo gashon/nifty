@@ -4,7 +4,6 @@ import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 import { BsArrowBarLeft } from 'react-icons/bs';
 
-import ThemeLayout from '@/layouts/theme';
 import { AuthProtection, useAuth } from '@/features/auth';
 import { LoadingPage } from '@nifty/ui/pages/loading';
 import { DocumentSection } from '@/features/note';
@@ -31,24 +30,19 @@ export default function Document() {
     <>
       <NextSeo title={name as string} noindex />
       <AuthProtection loadingComponent={<LoadingPage />}>
-        <ThemeLayout>
-          <header className="fixed w-full p-5">
-            <button className="cursor-pointer" onClick={() => router.back()}>
-              <BsArrowBarLeft size={35} />
-            </button>
-          </header>
-          <div className="flex items-center justify-center w-screen">
-            <div
-              className="flex flex-col order-1 p-16 w-full lg:w-2/3"
-              style={{ backgroundColor: 'rgba(150, 150, 150, 0.01)' }}
-            >
-              <h1 className="mb-12 text-5xl text-primary dark:text-zinc-400 underline">{name}</h1>
-              <main className="h-screen">
-                <DocumentSection />
-              </main>
-            </div>
+        <header className="fixed w-full p-5">
+          <button className="cursor-pointer" onClick={() => router.back()}>
+            <BsArrowBarLeft size={25} />
+          </button>
+        </header>
+        <div className="flex items-center justify-center w-screen">
+          <div className="flex flex-col order-1 p-16 w-full lg:w-2/3">
+            <h1 className="underline mb-12 text-5xl text-primary dark:text-zinc-400 ">{name}</h1>
+            <main className="h-screen">
+              <DocumentSection />
+            </main>
           </div>
-        </ThemeLayout>
+        </div>
       </AuthProtection>
     </>
   );

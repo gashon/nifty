@@ -65,15 +65,12 @@ export const NotebookItem: FC<NotebookItemProps> = ({
 
   return (
     <div className="relative w-full">
-      <button
-        onClick={onDelete}
-        className="absolute right-1 top-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-      >
+      <button onClick={onDelete} className="absolute right-1 top-1 accent-mask-hover">
         <AiOutlineDelete size={22} />
       </button>
       <a
         href={href as string}
-        className="border-b-2 flex items-center justify-between transition-colors hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700/50"
+        className="border-b-2 flex items-center justify-between transition-colors accent-mask-hover"
       >
         <span className="flex flex-1 items-center gap-3 truncate px-5 py-3">
           <span className="text-sm lg:text-base">{icon}</span>

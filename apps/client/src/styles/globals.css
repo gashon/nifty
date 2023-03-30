@@ -158,3 +158,11 @@ td {
   margin-inline-end: 0px;
   padding-inline-start: 40px;
 }
+
+.accent-mask {
+  background-color: rgba(100, 100, 100, 0.15);
+}
+
+.accent-mask-hover:hover {
+  background-color: rgba(100, 100, 100, 0.15);
+}

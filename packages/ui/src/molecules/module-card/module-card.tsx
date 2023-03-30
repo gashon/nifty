@@ -58,12 +58,7 @@ export const ModuleCard: FC<ModuleCardProps> = ({
   onDelete,
 }) => {
   if (variant === 'loading') {
-    return (
-      <div
-        role="status"
-        className="h-[90px] min-w-[300px] animate-pulse bg-zinc-100 dark:bg-zinc-800"
-      />
-    );
+    return <div role="status" className="h-[90px] min-w-[300px] animate-pulse accent-mask" />;
   }
 
   if (variant === 'button') {
@@ -80,15 +75,12 @@ export const ModuleCard: FC<ModuleCardProps> = ({
 
   return (
     <div className="relative">
-      <button
-        onClick={onDelete}
-        className="absolute p-5 right-0 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-      >
+      <button onClick={onDelete} className="absolute p-5 right-0 accent-mask-hover">
         <AiOutlineDelete size={22} />
       </button>
       <a
         href={href as string}
-        className="text-primary block p-6 transition-colors hover:bg-zinc-200 border-b-2 "
+        className="text-primary block p-6 transition-colors accent-mask-hover border-b-2 "
       >
         <span className="text-base lg:text-lg">{icon}</span>
         <h3 className="pt-2 text-base lg:text-lg">{name}</h3>
