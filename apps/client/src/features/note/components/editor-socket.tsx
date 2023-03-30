@@ -38,6 +38,7 @@ const MarkdownShortcuts = ({ documentId }) => {
     if (socket) {
       socket.onmessage = e => {
         const data = JSON.parse(e.data);
+        console.log('GOT event', data);
         if (data.event === SOCKET_EVENT.DOCUMENT_LOAD) {
           const { note } = data.payload;
           if (note.id === documentId) {

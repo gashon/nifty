@@ -3,7 +3,7 @@ import { SocketService } from "@/socket/socket.service";
 import { SOCKET_EVENT } from "@/types";
 import { RedisClientType } from "@/lib/redis";
 
-const AUTO_SAVE_INTERVAL = 5000; // 5 seconds
+const SAVE_TO_DISK_INTERVAL = 15000; // 15 seconds
 
 type SocketMessage = {
   event: SOCKET_EVENT;
@@ -49,20 +49,20 @@ export class WebSocketServer extends Server {
     await this.socketService.addEditorToDocument(documentId, socket);
 
     // broadcast the join to all connected users
-    const joinMessage = { event: SOCKET_EVENT.EDITOR_JOIN, documentId };
+    const joinMessage = { event: SOCKET_EVENT.EDITOR_JOIN, payload: { note: { id: documentId } } };
     this.socketService.broadcast(documentId, joinMessage, socket);
 
-    // // start autosave clock if not already started
-    // if (!this.autoSaveClocks[documentId]) {
-    //   this.autoSaveClocks[documentId] = setInterval(async () => {
-    //     await this.syncToDatabase(documentId);
-    //   }, AUTO_SAVE_INTERVAL);
-    // }
+    // start autosave clock if not already started
+    if (!this.autoSaveClocks[documentId]) {
+      this.autoSaveClocks[documentId] = setInterval(async () => {
+        console.log("Autosaving", documentId)
+        await this.syncToDatabase(documentId);
+      }, SAVE_TO_DISK_INTERVAL);
+    }
 
-    // // send the current content to the new user
+    // send the current content to the new user
     const content = await this.socketService.getContent(documentId);
     const contentMessage = { event: SOCKET_EVENT.DOCUMENT_LOAD, payload: { note: { id: documentId, content } } };
-    console.log("Sending content", contentMessage)
     socket.send(JSON.stringify(contentMessage));
 
     socket.on("message", (message: WebSocket.RawData, _isBinary: boolean) => {
