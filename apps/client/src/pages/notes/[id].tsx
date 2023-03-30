@@ -33,7 +33,7 @@ export default function Document() {
 
   return (
     <>
-      <NextSeo title={'Module'} noindex />
+      <NextSeo title={name as string} noindex />
       <AuthProtection loadingComponent={<LoadingPage />}>
         <ThemeLayout>
           <div className="flex items-center justify-center w-screen">

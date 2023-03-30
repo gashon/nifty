@@ -76,7 +76,7 @@ const MarkdownShortcuts = () => {
         },
       ]}
       onChange={value => {
-        console.log('CAUGHT', value);
+        console.log('value: ', value);
       }}
     >
       <Editable
