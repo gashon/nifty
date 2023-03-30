@@ -2,7 +2,10 @@ import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { useState, useEffect, FC } from 'react';
 
-const DocumentEditor = dynamic(() => import('@/features/note/components/editor'), { ssr: false });
+// const DocumentEditor = dynamic(() => import('@/features/note/components/editor'), { ssr: false });
+const DocumentEditorWithSocket = dynamic(() => import('@/features/note/components/editor-socket'), {
+  ssr: false,
+});
 
 export const DocumentSection: FC = () => {
   const router = useRouter();
@@ -17,7 +20,7 @@ export const DocumentSection: FC = () => {
 
   return (
     <>
-      <DocumentEditor documentId={id} />
+      <DocumentEditorWithSocket documentId={id} />
     </>
   );
 };

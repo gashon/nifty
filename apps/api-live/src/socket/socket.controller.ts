@@ -6,7 +6,7 @@ import { RedisClientType } from "@/lib/redis";
 const AUTO_SAVE_INTERVAL = 5000; // 5 seconds
 
 type SocketMessage = {
-  type: SOCKET_EVENT;
+  event: SOCKET_EVENT;
   senderId: string;
   data: any; // todo create different types for different events
 }
@@ -14,10 +14,10 @@ type SocketMessage = {
 function isSocketMessage(obj: any): obj is SocketMessage {
   return (
     typeof obj === "object" &&
-    "type" in obj &&
+    "event" in obj &&
     "senderId" in obj &&
     "data" in obj &&
-    Object.values(SOCKET_EVENT).includes(obj.type) &&
+    Object.values(SOCKET_EVENT).includes(obj.event) &&
     typeof obj.senderId === "string"
   );
 }
@@ -49,7 +49,7 @@ export class WebSocketServer extends Server {
     await this.socketService.addEditorToDocument(documentId, socket);
 
     // broadcast the join to all connected users
-    const joinMessage = { type: SOCKET_EVENT.EDITOR_JOIN, documentId };
+    const joinMessage = { event: SOCKET_EVENT.EDITOR_JOIN, documentId };
     this.socketService.broadcast(documentId, joinMessage, socket);
 
     // // start autosave clock if not already started
@@ -60,19 +60,20 @@ export class WebSocketServer extends Server {
     // }
 
     // // send the current content to the new user
-    // const content = await this.socketService.getContent(documentId);
-    // const contentMessage = { type: SOCKET_EVENT.DOCUMENT_LOAD, documentId, content };
-    // socket.send(JSON.stringify(contentMessage));
+    const content = await this.socketService.getContent(documentId);
+    const contentMessage = { event: SOCKET_EVENT.DOCUMENT_LOAD, payload: { note: { id: documentId, content } } };
+    console.log("Sending content", contentMessage)
+    socket.send(JSON.stringify(contentMessage));
 
     socket.on("message", (message: WebSocket.RawData, _isBinary: boolean) => {
       const data = this.socketService.parse(message);
 
       if (!data) {
-        socket.send(JSON.stringify({ type: SOCKET_EVENT.ERROR, message: "Invalid message format" }));
+        socket.send(JSON.stringify({ event: SOCKET_EVENT.ERROR, message: "Invalid message format" }));
         return;
       }
 
-      switch (data.type) {
+      switch (data.event) {
         case SOCKET_EVENT.DOCUMENT_UPDATE:
           this.handleDocumentUpdate(documentId, socket, data);
           break;
@@ -83,7 +84,7 @@ export class WebSocketServer extends Server {
           this.handleEditorIdle(documentId);
           break;
         default:
-          socket.send(JSON.stringify({ type: SOCKET_EVENT.ERROR, message: "Invalid message type" }));
+          socket.send(JSON.stringify({ event: SOCKET_EVENT.ERROR, message: "Invalid message event" }));
       }
 
     });
@@ -98,10 +99,10 @@ export class WebSocketServer extends Server {
   }
 
   async handleDocumentUpdate(documentId: string, socket: WebSocket, data: any) {
-    // const { content } = data;
-    // await this.socketService.setContent(documentId, content, socket);
+    const content = data.payload.note.content;
+    await this.socketService.setContent(documentId, content, socket);
 
-    const updateMessage = { type: SOCKET_EVENT.DOCUMENT_UPDATE, operations: data.operations };
+    const updateMessage = { event: SOCKET_EVENT.DOCUMENT_UPDATE, operations: data.operations };
     this.socketService.broadcast(documentId, updateMessage, socket);
   }
 
@@ -111,7 +112,7 @@ export class WebSocketServer extends Server {
       this.socketService.disconnectEditor(documentId, socket),
     ])
 
-    const leaveMessage = { type: SOCKET_EVENT.EDITOR_LEAVE, documentId };
+    const leaveMessage = { event: SOCKET_EVENT.EDITOR_LEAVE, documentId };
     this.socketService.broadcast(documentId, leaveMessage);
 
     // stop autosave clock if no editors left
@@ -125,7 +126,7 @@ export class WebSocketServer extends Server {
   }
 
   async handleEditorIdle(documentId: string) {
-    const idleMessage = { type: SOCKET_EVENT.EDITOR_IDLE, documentId };
+    const idleMessage = { event: SOCKET_EVENT.EDITOR_IDLE, documentId };
     this.socketService.broadcast(documentId, idleMessage);
   }
 
@@ -133,7 +134,7 @@ export class WebSocketServer extends Server {
     const [_, updated] = await this.socketService.saveContentToDisk(documentId);
 
     if (updated) {
-      const updateMessage = { type: SOCKET_EVENT.DOCUMENT_SAVE, documentId };
+      const updateMessage = { event: SOCKET_EVENT.DOCUMENT_SAVE, documentId };
       this.socketService.broadcast(documentId, updateMessage);
     }
   }

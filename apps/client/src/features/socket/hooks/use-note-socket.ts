@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 export const useNoteSocket = (noteId: string) => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [reconnect, forceReconnect] = useReducer((x) => x + 1, 0);
+  const [connectionFailed, setConnectionFailed] = useState<boolean>(false);
   const id = useRef(uuidv4());
 
   useEffect(() => {
@@ -22,6 +23,8 @@ export const useNoteSocket = (noteId: string) => {
 
       if (reconnect < 5) {
         forceReconnect();
+      } else {
+        if (!connectionFailed) setConnectionFailed(true);
       }
     };
 
@@ -32,5 +35,5 @@ export const useNoteSocket = (noteId: string) => {
     // };
   }, [noteId, reconnect]);
 
-  return [socket];
+  return { socket, connectionFailed };
 }
