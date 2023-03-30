@@ -8,6 +8,6 @@ export interface ICollaborator extends Resource {
   permissions: string[];
 }
 
-export type CollaboratorDocument = mongoose.Document<string, object, ICollaborator>;
+export type CollaboratorDocument = mongoose.Document<string, object, ICollaborator> & ICollaborator;
 
 export type CollaboratorListResponse = ListResponse<CollaboratorDocument>

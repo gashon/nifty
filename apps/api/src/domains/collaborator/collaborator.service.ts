@@ -34,28 +34,68 @@ export class CollaboratorService implements ICollaboratorService {
   }
 
   async findCollaboratorByDirectoryIdAndUserId(directoryId: string, userId: string): Promise<CollaboratorDocument | null> {
-    const directory = await this.directoryModel.findOne({
-      _id: directoryId
-    });
 
-    if (!directory) return null;
-    const collaborator = await this.collaboratorModel.findOne({
-      _id: directory.collaborators[0]
-    });
+    const collaborators = await this.collaboratorModel.aggregate([
+      {
+        $match: {
+          user: userId,
+        }
+      },
+      {
+        $lookup: {
+          from: 'directories',
+          localField: '_id',
+          foreignField: 'collaborators',
+          as: 'directory'
+        }
+      },
+      {
+        $unwind: {
+          path: '$directory',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $match: {
+          'directory._id': directoryId
+        }
+      }
+    ]);
 
-    return collaborator;
+    return collaborators[0] || null;
   }
 
   async findCollaboratorByNoteIdAndUserId(noteId: string, userId: string): Promise<CollaboratorDocument | null> {
-    const note = await this.noteModel.findOne({
-      id: noteId,
-    });
 
-    if (!note) return null;
-    const collaborator = await this.findCollaboratorsByIds(note.collaborators);
+    // use aggregate instead
+    const collaborators = await this.collaboratorModel.aggregate([
+      {
+        $match: {
+          user: userId,
+        }
+      },
+      {
+        $lookup: {
+          from: 'notes',
+          localField: '_id',
+          foreignField: 'collaborators',
+          as: 'note'
+        }
+      },
+      {
+        $unwind: {
+          path: '$note',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $match: {
+          'note._id': noteId
+        }
+      }
+    ]);
 
-    // @ts-ignore
-    return collaborator.find(c => c.user === userId) || null;
+    return collaborators[0] || null;
   }
 
   async paginateCollaborators(condition: FilterQuery<CollaboratorDocument>, query: PaginationParams): Promise<Partial<CollaboratorListResponse>> {

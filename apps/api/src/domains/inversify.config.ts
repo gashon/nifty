@@ -31,6 +31,7 @@ import {
 
 const container = new Container();
 
+// deprecated
 container.bind<IBaseRepositoryFactory>("RepositoryGetter").to(BaseRepositoryFactory);
 
 container.bind<IUserService>(USER_TYPES.SERVICE).to(UserService);
