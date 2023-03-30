@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo, useEffect, useState, useRef } from 'react';
+import React, { FC, useCallback, useMemo, useEffect, useState } from 'react';
 import {
   createEditor,
   Descendant,
@@ -28,10 +28,15 @@ const SHORTCUTS = {
   '######': 'heading-six',
 };
 
-const MarkdownShortcuts = ({ documentId }) => {
+type MarkdownShortcutsProps = {
+  documentId: string;
+  FallBackEditor: React.ReactNode;
+};
+
+const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({ documentId, FallBackEditor }) => {
   const renderElement = useCallback(props => <Element {...props} />, []);
   const editor = useMemo(() => withShortcuts(withReact(withHistory(createEditor()))), []);
-  const { socket } = useNoteSocket(documentId);
+  const { socket, connectionFailed } = useNoteSocket(documentId);
   const [initValue, setInitValue] = useState<Descendant[] | undefined>(undefined);
 
   useEffect(() => {
@@ -95,6 +100,8 @@ const MarkdownShortcuts = ({ documentId }) => {
   );
 
   if (!initValue) return <p className="underline text-xl">Loading...</p>;
+
+  if (connectionFailed) return <FallBackEditor />;
 
   return (
     <>
