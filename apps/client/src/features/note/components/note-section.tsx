@@ -22,7 +22,7 @@ export const DocumentSection: FC = () => {
     <>
       <SocketDocumentEditor
         documentId={id as string}
-        fallBackEditor={<LongPollDocumentEditor documentId={id} />}
+        fallBackEditor={<LongPollDocumentEditor documentId={id as string} />}
       />
     </>
   );

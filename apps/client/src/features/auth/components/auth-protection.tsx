@@ -1,12 +1,14 @@
-import { useEffect, FC, ReactElement } from 'react';
+import { useEffect, FC, ReactElement, PropsWithChildren } from 'react';
 import { useAuth } from '@/features/auth';
 
 type AuthProtectionProps = {
-  children: ReactElement;
   loadingComponent: ReactElement;
 };
 
-export const AuthProtection: FC<AuthProtectionProps> = ({ children, loadingComponent }) => {
+export const AuthProtection: FC<PropsWithChildren<AuthProtectionProps>> = ({
+  children,
+  loadingComponent,
+}) => {
   const { user, isLoading } = useAuth();
 
   useEffect(() => {
