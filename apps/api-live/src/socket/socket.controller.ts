@@ -1,27 +1,10 @@
 import WebSocket, { WebSocketServer as Server, ServerOptions } from "ws";
-import { SocketService } from "@/socket/socket.service";
+import logger from "@/lib/logger";
+import { SocketService } from "@/socket";
 import { SOCKET_EVENT } from "@/types";
 import { RedisClientType } from "@/lib/redis";
 
 const SAVE_TO_DISK_INTERVAL = 15000; // 15 seconds
-
-type SocketMessage = {
-  event: SOCKET_EVENT;
-  senderId: string;
-  data: any; // todo create different types for different events
-}
-
-function isSocketMessage(obj: any): obj is SocketMessage {
-  return (
-    typeof obj === "object" &&
-    "event" in obj &&
-    "senderId" in obj &&
-    "data" in obj &&
-    Object.values(SOCKET_EVENT).includes(obj.event) &&
-    typeof obj.senderId === "string"
-  );
-}
-
 export class WebSocketServer extends Server {
   private socketService: SocketService;
   private autoSaveClocks: Record<string, NodeJS.Timeout> = {};
@@ -35,12 +18,12 @@ export class WebSocketServer extends Server {
       const documentId = request.url?.split("/").pop();
       if (!documentId) return;
 
-      console.log("Connection to", documentId)
+      logger.info(`New connection to document: ${documentId}`)
       this.handleConnection(documentId, socket);
     });
 
     this.on("error", (error) => {
-      console.log("ERROR", error);
+      logger.error(error);
     });
   }
 
@@ -55,7 +38,7 @@ export class WebSocketServer extends Server {
     // start autosave clock if not already started
     if (!this.autoSaveClocks[documentId]) {
       this.autoSaveClocks[documentId] = setInterval(async () => {
-        console.log("Autosaving", documentId)
+        logger.info(`Autosaving document: ${documentId}...`)
         await this.syncToDatabase(documentId);
       }, SAVE_TO_DISK_INTERVAL);
     }
@@ -136,6 +119,7 @@ export class WebSocketServer extends Server {
     if (updated) {
       const updateMessage = { event: SOCKET_EVENT.DOCUMENT_SAVE, documentId };
       this.socketService.broadcast(documentId, updateMessage);
+      logger.info(`Saved document: ${documentId}`)
     }
   }
 
