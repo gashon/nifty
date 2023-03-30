@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ComponentProps, FC, memo, ReactElement } from 'react';
+import { AiOutlineDelete } from 'react-icons/ai';
 import { ModuleTag } from '../../atoms/module-tag';
 
 type NotebookItemProps =
@@ -11,6 +12,7 @@ type NotebookItemProps =
       label?: undefined;
       href?: undefined;
       onClick?: never;
+      onDelete?: never;
     }
   | {
       variant?: 'default';
@@ -20,10 +22,12 @@ type NotebookItemProps =
       label: ComponentProps<typeof ModuleTag>;
       href: string;
       onClick?: never;
+      onDelete?: () => void;
     }
   | {
       variant: 'button';
       onClick?: () => void;
+      onDelete?: never;
       icon: ReactElement;
       label?: string;
       title?: never;
@@ -39,6 +43,7 @@ export const NotebookItem: FC<NotebookItemProps> = ({
   label,
   href,
   onClick,
+  onDelete,
 }) => {
   if (variant === 'loading') {
     return (
@@ -59,25 +64,33 @@ export const NotebookItem: FC<NotebookItemProps> = ({
   }
 
   return (
-    <a
-      href={href as string}
-      className="border-b-2 flex items-center justify-between transition-colors hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700/50"
-    >
-      <span className="flex flex-1 items-center gap-3 truncate px-5 py-3">
-        <span className="text-sm lg:text-base">{icon}</span>
-        <span className="truncate text-sm text-primary dark:text-zinc-300 lg:text-base">
-          {title}
+    <div className="relative w-full">
+      <button
+        onClick={onDelete}
+        className="absolute right-1 top-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+      >
+        <AiOutlineDelete size={22} />
+      </button>
+      <a
+        href={href as string}
+        className="border-b-2 flex items-center justify-between transition-colors hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700/50"
+      >
+        <span className="flex flex-1 items-center gap-3 truncate px-5 py-3">
+          <span className="text-sm lg:text-base">{icon}</span>
+          <span className="truncate text-sm text-primary dark:text-zinc-300 lg:text-base">
+            {title}
+          </span>
         </span>
-      </span>
-      <div className="flex items-center gap-3 pr-5">
-        <p className="text-xs text-zinc-500">{lastEdited}</p>
-        {label && (
-          <div className="flex items-center gap-3">
-            <ModuleTag name={label.name} color={label.color} />
-          </div>
-        )}
-      </div>
-    </a>
+        <div className="flex items-center gap-3 pr-5">
+          <p className="text-xs text-zinc-500">{lastEdited}</p>
+          {label && (
+            <div className="flex items-center gap-3">
+              <ModuleTag name={label.name} color={label.color} />
+            </div>
+          )}
+        </div>
+      </a>
+    </div>
   );
 };
 

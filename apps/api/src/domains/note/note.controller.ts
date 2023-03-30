@@ -1,5 +1,5 @@
 import status from 'http-status';
-import { controller, httpGet, httpPost, httpPatch } from 'inversify-express-utils';
+import { controller, httpGet, httpPost, httpPatch, httpDelete } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { Request, Response } from 'express';
 
@@ -105,5 +105,26 @@ export class NoteController implements INoteController {
 
     res.status(status.OK).json({ data: updatedNote });
   }
+
+  @httpDelete("/:id", auth())
+  async deleteNoteById(req: Request, res: Response): Promise<void> {
+    const id = req.params.id;
+    const userId = res.locals.user._id;
+
+    // validate note exists
+    const note = await this.noteService.findNoteById(id);
+    if (!note)
+      throw new CustomException('Note not found', status.NOT_FOUND);
+
+    // validate user has access to note
+    if (!note.collaborators.includes(userId))
+      throw new CustomException('You do not have access to this note', status.FORBIDDEN);
+
+    // delete note
+    await this.noteService.deleteNoteById(id);
+
+    res.status(status.NO_CONTENT).json();
+  }
+  
 
 }

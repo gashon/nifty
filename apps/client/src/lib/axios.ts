@@ -1,5 +1,4 @@
-import Axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
-import { toast, ToastOptions } from 'react-toastify';
+import Axios from 'axios';
 
 import { errorNotification, successNotification } from "@/lib/notification";
 import { API_URL } from '@/config';

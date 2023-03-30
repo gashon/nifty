@@ -23,7 +23,8 @@ export class NoteService implements INoteService {
     return this.noteModel.find({
       _id: {
         $in: ids
-      }
+      },
+      deleted_at: null
     }).sort({ created_at: -1 })
   }
 
@@ -58,5 +59,13 @@ export class NoteService implements INoteService {
     if (note) return [note, false];
 
     return [await this.noteModel.create(data), true];
+  }
+
+  async deleteNoteById(id: string): Promise<NoteDocument> {
+    return this.noteModel.updateOne(
+      { _id: id },
+      { $set: { deleted_at: new Date() } },
+      { new: true }
+    )
   }
 }

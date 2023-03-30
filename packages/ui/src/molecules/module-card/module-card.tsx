@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { FC, ReactNode, memo } from 'react';
+import { AiOutlineDelete } from 'react-icons/ai';
 import { ProgressBar } from '../../atoms/progress-bar';
 
 type ModuleCardProps =
@@ -14,6 +15,7 @@ type ModuleCardProps =
       progress?: number;
       credits?: number;
       onClick?: never;
+      onDelete: () => void;
     }
   | {
       variant: 'button';
@@ -26,6 +28,7 @@ type ModuleCardProps =
       tasks?: never;
       progress?: never;
       credits?: never;
+      onDelete?: never;
     }
   | {
       variant: 'loading';
@@ -38,6 +41,7 @@ type ModuleCardProps =
       progress?: undefined;
       credits?: undefined;
       onClick?: never;
+      onDelete?: never;
     };
 
 export const ModuleCard: FC<ModuleCardProps> = ({
@@ -51,6 +55,7 @@ export const ModuleCard: FC<ModuleCardProps> = ({
   color,
   credits,
   onClick,
+  onDelete,
 }) => {
   if (variant === 'loading') {
     return (
@@ -74,25 +79,33 @@ export const ModuleCard: FC<ModuleCardProps> = ({
   }
 
   return (
-    <a
-      href={href as string}
-      className="text-primary block p-6 transition-colors hover:bg-zinc-200 border-b-2 "
-    >
-      <span className="text-base lg:text-lg">{icon}</span>
-      <h3 className="pt-2 text-base lg:text-lg">{name}</h3>
-      <p className="pt-1 text-sm opacity-75 dark:text-zinc-400">{alias}</p>
-      {credits && <p className="pt-1 pb-3 text-xs opacity-50">{credits} Credits</p>}
-      <div>
-        {progress && tasks && (
-          <div className="flex flex-col gap-1">
-            <span className="pb-[2px] text-xs text-zinc-500">
-              {tasks} {tasks === 1 ? 'task' : 'tasks'} remaining
-            </span>
-            <ProgressBar value={progress} color={color} />
-          </div>
-        )}
-      </div>
-    </a>
+    <div className="relative">
+      <button
+        onClick={onDelete}
+        className="absolute p-5 right-0 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+      >
+        <AiOutlineDelete size={22} />
+      </button>
+      <a
+        href={href as string}
+        className="text-primary block p-6 transition-colors hover:bg-zinc-200 border-b-2 "
+      >
+        <span className="text-base lg:text-lg">{icon}</span>
+        <h3 className="pt-2 text-base lg:text-lg">{name}</h3>
+        <p className="pt-1 text-sm opacity-75 dark:text-zinc-400">{alias}</p>
+        {credits && <p className="pt-1 pb-3 text-xs opacity-50">{credits} Credits</p>}
+        <div>
+          {progress && tasks && (
+            <div className="flex flex-col gap-1">
+              <span className="pb-[2px] text-xs text-zinc-500">
+                {tasks} {tasks === 1 ? 'task' : 'tasks'} remaining
+              </span>
+              <ProgressBar value={progress} color={color} />
+            </div>
+          )}
+        </div>
+      </a>
+    </div>
   );
 };
 
