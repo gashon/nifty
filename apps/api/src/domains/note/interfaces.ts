@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, Query } from 'mongoose';
 
 import { INote, NoteDocument, NoteListResponse } from "@nifty/server-lib/models/note";
 import { NoteCreateResponse } from "@/domains/note/types";
@@ -15,9 +15,9 @@ interface INoteService {
   findNoteById(id: string): Promise<NoteDocument | null>;
   createNote(createdBy: string, data: Partial<INote>): Promise<NoteDocument>;
   paginateNotes(condition: FilterQuery<NoteDocument>, query: PaginationParams): Promise<Partial<NoteListResponse>>;
-  findNotesByIds(ids: string[]): Promise<NoteDocument[]>;
-  updateNoteById(id: string, data: Partial<INote>): Promise<NoteDocument>;
-  deleteNoteById(id: string): Promise<NoteDocument>;
+  findNotesByIds(ids: string[]): Promise<Query<(NoteDocument & Required<{ _id: string; }>)[], NoteDocument & Required<{ _id: string; }>, {}, NoteDocument>>
+  updateNoteById(id: string, data: Partial<INote>): Promise<Query<any, NoteDocument & Required<{ _id: string; }>, {}, NoteDocument>>
+  deleteNoteById(id: string): Promise<Query<any, NoteDocument & Required<{ _id: string; }>, {}, NoteDocument>>;
 }
 
 export { INote, INoteController, INoteService }; 

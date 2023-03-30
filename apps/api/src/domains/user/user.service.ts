@@ -1,25 +1,13 @@
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 import { Model } from 'mongoose';
 import User, { UserDocument } from "@nifty/server-lib/models/user";
-import { IBaseRepositoryFactory, IBaseRepository } from "../../lib/repository-base";
 import { IUserService, IUser } from './interfaces';
 
 @injectable()
 export class UserService implements IUserService {
-  private userModel: IBaseRepository<UserDocument>;
-  constructor(
-    @inject('RepositoryGetter') repo: IBaseRepositoryFactory,
-  ) {
-    this.userModel = repo.get<UserDocument>(User);
-  }
-
-  async getMe(accessToken: string): Promise<UserDocument | null> {
-    // todo implement this (get token repository)
-    // const token = await Token.findById(req.cookies.access_token).populate('user');
-    // if (!token) return res.sendStatus(status.UNAUTHORIZED);
-
-    // res.send(token.user);
-    return null;
+  private userModel: Model<UserDocument>;
+  constructor() {
+    this.userModel = User
   }
 
   async findUserById(id: string): Promise<UserDocument | null> {

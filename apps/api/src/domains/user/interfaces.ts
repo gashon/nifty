@@ -6,7 +6,6 @@ interface IUserController {
 }
 
 interface IUserService {
-  getMe(accessToken: string): Promise<UserDocument | null>;
   findUserById(id: string): Promise<UserDocument | null>;
   createUser(data: Partial<IUser>): Promise<UserDocument>;
   findOrCreate(key: Partial<IUser>, data: Partial<IUser>): Promise<[UserDocument, boolean]>;

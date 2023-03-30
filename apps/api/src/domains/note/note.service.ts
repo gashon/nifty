@@ -1,34 +1,31 @@
 import { inject, injectable } from 'inversify';
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, Model, Query } from 'mongoose';
 
 import Note, { NoteDocument, NoteListResponse } from "@nifty/server-lib/models/note";
-import { IBaseRepositoryFactory, IBaseRepository } from "../../lib/repository-base";
 import { INoteService, INote } from './interfaces';
 import { PaginationParams } from '@/types';
 
 @injectable()
 export class NoteService implements INoteService {
-  private noteModel: IBaseRepository<NoteDocument>;
-  constructor(
-    @inject('RepositoryGetter') repo: IBaseRepositoryFactory,
-  ) {
-    this.noteModel = repo.get<NoteDocument>(Note);
+  private noteModel: Model<NoteDocument>;
+  constructor() {
+    this.noteModel = Note
   }
 
   async findNoteById(id: string): Promise<NoteDocument | null> {
     return this.noteModel.findById(id);
   }
 
-  findNotesByIds(ids: string[]): Promise<NoteDocument[]> {
+  async findNotesByIds(ids: string[]): Promise<Query<(NoteDocument & Required<{ _id: string; }>)[], NoteDocument & Required<{ _id: string; }>, {}, NoteDocument>> {
     return this.noteModel.find({
       _id: {
         $in: ids
       },
       deleted_at: null
-    }).sort({ created_at: -1 })
+    }).sort({ created_at: -1 });
   }
 
-  updateNoteById(id: string, data: Partial<INote>): Promise<NoteDocument> {
+  async updateNoteById(id: string, data: Partial<INote>): Promise<Query<any, NoteDocument & Required<{ _id: string; }>, {}, NoteDocument>> {
     return this.noteModel.updateOne({
       _id: id
     }, {
@@ -61,7 +58,7 @@ export class NoteService implements INoteService {
     return [await this.noteModel.create(data), true];
   }
 
-  async deleteNoteById(id: string): Promise<NoteDocument> {
+  async deleteNoteById(id: string): Promise<Query<any, NoteDocument & Required<{ _id: string; }>, {}, NoteDocument>> {
     return this.noteModel.updateOne(
       { _id: id },
       { $set: { deleted_at: new Date() } },

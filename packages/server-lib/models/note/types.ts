@@ -14,9 +14,9 @@ export interface INote extends Resource {
   is_public: boolean;
 }
 
-export type NoteDocument = mongoose.Document<string, object, INote> & INote;
+export type NoteDocument = mongoose.Document<string, object, INote>;
 
 export type NoteCreateRequest = Partial<Expand<Pick<INote, 'title' | 'description' | 'is_public'>>>
 export type NoteUpdateRequest = Partial<Expand<Omit<INote, 'created_by'>>>
 
-export type NoteListResponse = ListResponse<NoteDocument> & INote
+export type NoteListResponse = ListResponse<NoteDocument>

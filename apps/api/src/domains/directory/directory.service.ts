@@ -1,23 +1,20 @@
-import { inject, injectable } from 'inversify';
-import { FilterQuery } from 'mongoose';
+import { injectable } from 'inversify';
+import { FilterQuery, Model } from 'mongoose';
 
 import Directory, { DirectoryDocument, DirectoryListResponse } from "@nifty/server-lib/models/directory";
-import Note, { NoteDocument, NoteListResponse } from "@nifty/server-lib/models/note";
+import Note, { NoteDocument } from "@nifty/server-lib/models/note";
 
-import { IBaseRepositoryFactory, IBaseRepository } from "../../lib/repository-base";
 import { IDirectoryService, IDirectory } from './interfaces';
 import { PaginationParams } from '@/types';
 
 @injectable()
 export class DirectoryService implements IDirectoryService {
-  private directoryModel: IBaseRepository<DirectoryDocument>;
-  private noteModel: IBaseRepository<NoteDocument>;
+  private directoryModel: Model<DirectoryDocument>;
+  private noteModel: Model<NoteDocument>;
 
-  constructor(
-    @inject('RepositoryGetter') repo: IBaseRepositoryFactory,
-  ) {
-    this.directoryModel = repo.get<DirectoryDocument>(Directory);
-    this.noteModel = repo.get<NoteDocument>(Note);
+  constructor() {
+    this.directoryModel = Directory
+    this.noteModel = Note
   }
 
   async findDirectoryById(id: string): Promise<DirectoryDocument | null> {

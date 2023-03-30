@@ -1,3 +1,5 @@
+// This file is currently deprecated, but will be re-enabled in the future.
+
 import 'reflect-metadata';
 import { FilterQuery, Model, Document } from 'mongoose';
 import { injectable, interfaces } from 'inversify';
