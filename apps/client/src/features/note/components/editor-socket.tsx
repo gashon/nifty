@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useEffect, useState } from 'react';
+import { ComponentType, FC, useCallback, useMemo, useEffect, useState, ReactElement } from 'react';
 import {
   createEditor,
   Descendant,
@@ -30,10 +30,10 @@ const SHORTCUTS = {
 
 type MarkdownShortcutsProps = {
   documentId: string;
-  FallBackEditor: React.ReactNode;
+  fallBackEditor: ReactElement;
 };
 
-const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({ documentId, FallBackEditor }) => {
+const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({ documentId, fallBackEditor }) => {
   const renderElement = useCallback(props => <Element {...props} />, []);
   const editor = useMemo(() => withShortcuts(withReact(withHistory(createEditor()))), []);
   const { socket, connectionFailed } = useNoteSocket(documentId);
@@ -43,7 +43,6 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({ documentId, FallBackEdi
     if (socket) {
       socket.onmessage = e => {
         const data = JSON.parse(e.data);
-        console.log('GOT event', data);
         if (data.event === SOCKET_EVENT.DOCUMENT_LOAD) {
           const { note } = data.payload;
           if (note.id === documentId) {
@@ -100,8 +99,7 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({ documentId, FallBackEdi
   );
 
   if (!initValue) return <p className="underline text-xl">Loading...</p>;
-
-  if (connectionFailed) return <FallBackEditor />;
+  if (connectionFailed) return fallBackEditor;
 
   return (
     <>
