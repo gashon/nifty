@@ -43,6 +43,7 @@
     "slate-history": "0.86.0",
     "slate-react": "0.92.0",
     "styled-components": "5.3.9",
+    "uuidv4": "6.2.13",
     "zod": "^3.20.6"
   },
   "devDependencies": {

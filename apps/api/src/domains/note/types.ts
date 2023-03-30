@@ -8,3 +8,6 @@ export enum NOTE_TYPES {
 export type NoteCreateResponse = {
   data: INote,
 }
+export type NoteUpdateResponse = {
+  data: INote,
+}

@@ -6,10 +6,8 @@ const fetchNote = async (noteId) => {
   return response.data;
 };
 
-const useGetNote = (noteId) => {
+export const useGetNote = (noteId) => {
   return useQuery(['note', noteId], () => fetchNote(noteId), {
     enabled: !!noteId,
   });
 };
-
-export default useGetNote;

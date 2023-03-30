@@ -27,6 +27,14 @@ export class NoteService implements INoteService {
     }).sort({ created_at: -1 })
   }
 
+  updateNoteById(id: string, data: Partial<INote>): Promise<NoteDocument> {
+    return this.noteModel.updateOne({
+      _id: id
+    }, {
+      $set: data
+    }, {})
+  }
+
   async paginateNotes(condition: FilterQuery<NoteDocument>, query: PaginationParams): Promise<Partial<NoteListResponse>> {
     return this.noteModel.paginate({
       ...condition,
@@ -39,6 +47,7 @@ export class NoteService implements INoteService {
       ...data,
       created_by: createdBy,
       parent: null,
+      collaborators: [createdBy],
     }
     const note = await this.noteModel.create(doc);
     return note;

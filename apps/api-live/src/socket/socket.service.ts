@@ -70,7 +70,6 @@ export class SocketService {
             ? message.toString()
             : message;
 
-      console.log(typeof data, "GOT", data)
       return JSON.parse(data as string)
     } catch (error) {
       return null;

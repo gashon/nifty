@@ -16,6 +16,7 @@ interface INoteService {
   createNote(createdBy: string, data: Partial<INote>): Promise<NoteDocument>;
   paginateNotes(condition: FilterQuery<NoteDocument>, query: PaginationParams): Promise<Partial<NoteListResponse>>;
   findNotesByIds(ids: string[]): Promise<NoteDocument[]>;
+  updateNoteById(id: string, data: Partial<INote>): Promise<NoteDocument>
 }
 
 export { INote, INoteController, INoteService }; 

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useEffect, useState, useRef } from 'react';
 import {
   createEditor,
   Descendant,
@@ -11,7 +11,9 @@ import {
 } from 'slate';
 import { withHistory } from 'slate-history';
 import { Editable, ReactEditor, Slate, withReact } from 'slate-react';
+import { useNoteSocket } from '@/features/socket/hooks/use-note-socket';
 import { BulletedListElement } from '../types';
+import { useGetNote, useUpdateNote } from '@/features/note/api';
 
 const SHORTCUTS = {
   '*': 'list-item',
@@ -26,9 +28,37 @@ const SHORTCUTS = {
   '######': 'heading-six',
 };
 
-const MarkdownShortcuts = () => {
+function SaveStatus({ status, onClick }) {
+  if (status === 'saved') {
+    return <p className={`opacity-25 cursor-default fixed right-10 bottom-10`}>Saved</p>;
+  } else if (status === 'saving') {
+    return <p className={`opacity-50 pointer fixed right-10 bottom-10`}>Saving...</p>;
+  } else {
+    return (
+      <button onClick={onClick} className={`opacity-50 pointer fixed right-10 bottom-10`}>
+        Not Saved
+      </button>
+    );
+  }
+}
+
+const MarkdownShortcuts = ({ documentId }) => {
   const renderElement = useCallback(props => <Element {...props} />, []);
   const editor = useMemo(() => withShortcuts(withReact(withHistory(createEditor()))), []);
+  const { data: note, isFetched } = useGetNote(documentId);
+  const { mutateAsync: updateNote } = useUpdateNote(documentId);
+  const [noteHandler, setNoteHandler] = useState<{
+    isMounted: boolean;
+    saveStatus: 'not_saved' | 'saved' | 'saving';
+  }>({
+    isMounted: false,
+    saveStatus: 'saved',
+  });
+  const noteHandlerRef = useRef(noteHandler);
+
+  useEffect(() => {
+    noteHandlerRef.current = noteHandler;
+  }, [noteHandler]);
 
   const handleDOMBeforeInput = useCallback(
     (e: InputEvent) => {
@@ -66,27 +96,64 @@ const MarkdownShortcuts = () => {
     [editor]
   );
 
+  const handleSave = () => {
+    setNoteHandler(prevNoteHandler => ({ ...prevNoteHandler, saveStatus: 'saving' }));
+    updateNote({
+      content: JSON.stringify(editor.children),
+      note_id: documentId,
+    });
+    setNoteHandler(prevNoteHandler => ({ ...prevNoteHandler, saveStatus: 'saved' }));
+  };
+
+  // autosave, note
+  useEffect(() => {
+    if (!noteHandler.isMounted) {
+      setNoteHandler(prevNoteHandler => ({ ...prevNoteHandler, isMounted: true }));
+      setInterval(() => {
+        if (noteHandlerRef.current.saveStatus === 'not_saved') {
+          handleSave();
+        }
+      }, 7000);
+    }
+
+    return () => {
+      if(noteHandlerRef.current.saveStatus === 'not_saved') handleSave();
+    };
+  }, []);
+
+  if (!note?.data) return <p className="underline text-xl">Loading...</p>;
+  console.log(note?.data, note.data?.content.length !== 0, note.data?.content !== '[]');
+
   return (
-    <Slate
-      editor={editor}
-      value={[
-        {
-          type: 'paragraph',
-          children: [{ text: '' }],
-        },
-      ]}
-      onChange={value => {
-        console.log('value: ', value);
-      }}
-    >
-      <Editable
-        onDOMBeforeInput={handleDOMBeforeInput}
-        renderElement={renderElement}
-        placeholder="Write some markdown..."
-        spellCheck
-        autoFocus
-      />
-    </Slate>
+    <>
+      <SaveStatus status={noteHandler.saveStatus} onClick={handleSave} />
+      <Slate
+        editor={editor}
+        value={
+          (note.data?.content.length !== 0 &&
+            note.data?.content !== '[]' &&
+            JSON.parse(note.data.content)) || [
+            {
+              type: 'paragraph',
+              children: [{ text: '' }],
+            },
+          ]
+        }
+        onChange={value => {
+          // @ts-ignore
+          if (value[0]?.children[0].text === '') return;
+          setNoteHandler(prevNoteHandler => ({ ...prevNoteHandler, saveStatus: 'not_saved' }));
+        }}
+      >
+        <Editable
+          onDOMBeforeInput={handleDOMBeforeInput}
+          renderElement={renderElement}
+          placeholder="Write some markdown..."
+          spellCheck
+          autoFocus
+        />
+      </Slate>
+    </>
   );
 };
 

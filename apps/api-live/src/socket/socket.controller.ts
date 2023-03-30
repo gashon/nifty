@@ -52,20 +52,21 @@ export class WebSocketServer extends Server {
     const joinMessage = { type: SOCKET_EVENT.EDITOR_JOIN, documentId };
     this.socketService.broadcast(documentId, joinMessage, socket);
 
-    // start autosave clock if not already started
-    if (!this.autoSaveClocks[documentId]) {
-      this.autoSaveClocks[documentId] = setInterval(async () => {
-        await this.syncToDatabase(documentId);
-      }, AUTO_SAVE_INTERVAL);
-    }
+    // // start autosave clock if not already started
+    // if (!this.autoSaveClocks[documentId]) {
+    //   this.autoSaveClocks[documentId] = setInterval(async () => {
+    //     await this.syncToDatabase(documentId);
+    //   }, AUTO_SAVE_INTERVAL);
+    // }
 
-    // send the current content to the new user
-    const content = await this.socketService.getContent(documentId);
-    const contentMessage = { type: SOCKET_EVENT.DOCUMENT_LOAD, documentId, content };
-    socket.send(JSON.stringify(contentMessage));
+    // // send the current content to the new user
+    // const content = await this.socketService.getContent(documentId);
+    // const contentMessage = { type: SOCKET_EVENT.DOCUMENT_LOAD, documentId, content };
+    // socket.send(JSON.stringify(contentMessage));
 
     socket.on("message", (message: WebSocket.RawData, _isBinary: boolean) => {
       const data = this.socketService.parse(message);
+
       if (!data) {
         socket.send(JSON.stringify({ type: SOCKET_EVENT.ERROR, message: "Invalid message format" }));
         return;
@@ -97,10 +98,10 @@ export class WebSocketServer extends Server {
   }
 
   async handleDocumentUpdate(documentId: string, socket: WebSocket, data: any) {
-    const { content } = data;
-    await this.socketService.setContent(documentId, content, socket);
+    // const { content } = data;
+    // await this.socketService.setContent(documentId, content, socket);
 
-    const updateMessage = { type: SOCKET_EVENT.DOCUMENT_UPDATE, content };
+    const updateMessage = { type: SOCKET_EVENT.DOCUMENT_UPDATE, operations: data.operations };
     this.socketService.broadcast(documentId, updateMessage, socket);
   }
 

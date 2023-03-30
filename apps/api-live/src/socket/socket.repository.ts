@@ -39,7 +39,7 @@ export class SocketRepository {
     const editorIds = await this.getEditors(documentId);
     const editorId = this.getEditorIdBySocket(editor)
 
-    if (!editorId) throw new Error("Editor not found");
+    if (!editorId) return;
 
     this.socketMap.delete(editorId);
     const newEditors = editorIds.filter((e) => e !== editorId);
