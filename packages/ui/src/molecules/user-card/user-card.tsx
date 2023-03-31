@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { FiChevronUp, FiLogOut, FiSettings, FiUser } from 'react-icons/fi';
 import { twMerge } from 'tailwind-merge';
 import { useMediaQuery } from 'usehooks-ts';
@@ -58,3 +58,5 @@ export const UserCard: FC<UserCardProps> = ({ name, avatar, signOut }) => {
     </DropdownMenu>
   );
 };
+
+export default UserCard;

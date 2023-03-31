@@ -7,8 +7,10 @@ import { IUser } from '@api/lib/models/user';
 
 import { LoginFormData } from '../types';
 
-export const getUser = async () => {
-  return await axios.get('/api/ajax/auth/user');
+export const getUser = async (headers?: { [key: string]: string }) => {
+  return axios.get('/api/ajax/auth/user', {
+    headers,
+  });
 };
 
 export const emailLogin = async (payload: LoginFormData, params: ParsedUrlQuery, enabled?: boolean) => {

@@ -17,14 +17,14 @@ axios.interceptors.response.use(
     const message = data?.message || data?.error?.message || error.message;
 
     // token expired
-    if (error?.response?.status === 401) {
+    if (typeof window !== "undefined" && error?.response?.status === 401) {
       location.replace(`/error/external?message=${encodeURIComponent(
         message || 'Your session has expired. Please login again.'
       )}&redirect=${encodeURIComponent(location.pathname + location.search)}`);
       return
     }
 
-    if (error?.response?.status === 403) {
+    if (typeof window !== "undefined" && error?.response?.status === 403) {
       location.replace(`/error/external?message=${encodeURIComponent(
         message || 'You are not authorized to access this page.'
       )}&redirect=${encodeURIComponent(location.pathname + location.search)}`);

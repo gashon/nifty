@@ -3,13 +3,15 @@ import { useAuth } from '@/features/auth';
 
 type AuthProtectionProps = {
   loadingComponent: ReactElement;
+  preloadedUser?: any;
 };
 
 export const AuthProtection: FC<PropsWithChildren<AuthProtectionProps>> = ({
   children,
+  preloadedUser,
   loadingComponent,
 }) => {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading } = preloadedUser ? { user: preloadedUser, isLoading: false } : useAuth();
 
   useEffect(() => {
     if (user === null) {

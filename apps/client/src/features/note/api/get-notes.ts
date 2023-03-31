@@ -4,7 +4,7 @@ import { NoteListResponse } from '@nifty/server-lib/models/note';
 import { PaginationParams } from '@nifty/api/types';
 import { axios } from '@/lib/axios';
 
-export const getNotes = async (directoryId: string, { sort, limit, page, expand }: PaginationParams): Promise<NoteListResponse> => {
+export const getNotes = async (directoryId: string, { sort, limit, page, expand }: PaginationParams, headers?: { [key: string]: string }): Promise<NoteListResponse> => {
   const { data } = await axios.get(`/api/v1/notes`, {
     params: {
       directory_id: directoryId,
@@ -13,6 +13,7 @@ export const getNotes = async (directoryId: string, { sort, limit, page, expand 
       page,
       expand
     },
+    headers
   });
   return data;
 };

@@ -40,6 +40,18 @@ export class NoteService implements INoteService {
     });
   }
 
+  async paginateNotesByCollaboratorId(collaboratorId: string, query: PaginationParams): Promise<Partial<NoteListResponse>> {
+    return this.noteModel.paginate({
+      collaborators: {
+        $elemMatch: {
+          $eq: collaboratorId
+        }
+      },
+      ...query
+    },);
+
+  }
+
   async createNote(createdBy: string, data: Partial<INote>): Promise<NoteDocument> {
     const doc = {
       ...data,

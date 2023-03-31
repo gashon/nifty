@@ -18,6 +18,7 @@ interface INoteService {
   findNotesByIds(ids: string[]): Promise<Query<(NoteDocument & Required<{ _id: string; }>)[], NoteDocument & Required<{ _id: string; }>, {}, NoteDocument>>
   updateNoteById(id: string, data: Partial<INote>): Promise<Query<any, NoteDocument & Required<{ _id: string; }>, {}, NoteDocument>>
   deleteNoteById(id: string): Promise<Query<any, NoteDocument & Required<{ _id: string; }>, {}, NoteDocument>>;
+  paginateNotesByCollaboratorId(collaboratorId: string, query: PaginationParams): Promise<Partial<NoteListResponse>>
 }
 
 export { INote, INoteController, INoteService }; 

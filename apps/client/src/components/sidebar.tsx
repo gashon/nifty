@@ -1,11 +1,13 @@
-import { FC, ComponentProps, useState } from 'react';
+import { FC, ComponentProps, useState, useEffect } from 'react';
 import { useMediaQuery } from 'usehooks-ts';
+import dynamic from 'next/dynamic';
 import { FiMenu, FiX } from 'react-icons/fi';
 import AnimateHeight from 'react-animate-height';
 
 import { useAuth } from '@/features/auth';
 import { Brand } from '@nifty/ui/atoms';
-import { SidebarLink, UserCard } from '@nifty/ui/molecules';
+import { SidebarLink } from '@nifty/ui/molecules';
+const UserCard = dynamic(() => import('@nifty/ui/molecules/user-card'), { ssr: false });
 
 type SidebarProps = {
   links: ComponentProps<typeof SidebarLink>[];
@@ -14,9 +16,15 @@ type SidebarProps = {
 export const Sidebar: FC<SidebarProps> = ({ links }) => {
   const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  const isDesktop = useMediaQuery('(min-width: 1024px)');
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
+  const isDesktop = useMediaQuery('(min-width: 1024px)') && mounted;
+
+  console.log('GG', isDesktop);
   // eslint-disable-next-line no-nested-ternary
   const menuHeight = isDesktop ? 'auto' : menuOpen ? 'auto' : 0;
   return (
@@ -28,7 +36,7 @@ export const Sidebar: FC<SidebarProps> = ({ links }) => {
             <span>Nifty</span>
           </a>
           <div className="flex items-center gap-3">
-            {!isDesktop && <UserCard {...user} />}
+            {!isDesktop && mounted && <UserCard {...user} />}
             <button
               data-testid="menu-button"
               type="button"
@@ -53,7 +61,7 @@ export const Sidebar: FC<SidebarProps> = ({ links }) => {
           </ul>
         </AnimateHeight>
       </div>
-      {isDesktop && <UserCard signOut={logout} {...user} />}
+      {isDesktop && mounted && <UserCard signOut={logout} {...user} />}
     </nav>
   );
 };

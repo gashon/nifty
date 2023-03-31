@@ -5,16 +5,17 @@ import { useInfiniteNotes, useDeleteNote } from '@/features/note';
 
 type NotebookListProps = {
   moduleId: string;
+  notes: any;
 };
 
-export const NotebookList: FC<NotebookListProps> = ({ moduleId }) => {
-  const { data, isFetched } = useInfiniteNotes({ directoryId: moduleId, limit: 1000 });
+export const NotebookList: FC<NotebookListProps> = ({ moduleId, notes }) => {
+  // const { data, isFetched } = useInfiniteNotes({ directoryId: moduleId, limit: 1000 });
   const { mutate: deleteNote } = useDeleteNote();
 
   return (
     <>
       <div className="flex flex-col gap-3">
-        {!isFetched && (
+        {/* {!isFetched && (
           <>
             <NotebookItem variant="loading" />
             <NotebookItem variant="loading" />
@@ -22,14 +23,14 @@ export const NotebookList: FC<NotebookListProps> = ({ moduleId }) => {
             <NotebookItem variant="loading" />
             <NotebookItem variant="loading" />
           </>
-        )}
+        )} */}
         {/* @ts-ignore */}
-        {isFetched && data && data.pages[0].data.length === 0 && (
+        {notes && notes.pages[0]?.data.length === 0 && (
           <div className="text-gray-500">No notes found</div>
         )}
-        {isFetched && data && (
+        {notes && (
           <>
-            {data.pages.map(({ data }: any) =>
+            {notes.pages.map(({ data }: any) =>
               data.map(note => (
                 <div key={note.id}>
                   <NotebookItem

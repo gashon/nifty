@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import React, { createContext, useState, useCallback, useEffect } from 'react';
+import React, { FC, createContext, useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { AxiosResponse } from 'axios';
 import storage from '@/lib/storage';
@@ -21,10 +21,15 @@ type AuthContextType = {
 
 export const AuthContext = createContext<AuthContextType>(undefined);
 
-export const AuthProvider = ({ children }) => {
+type AuthProviderProps = {
+  children: React.ReactNode;
+  preloadedUser?: AuthUserDTO;
+};
+
+export const AuthProvider: FC<AuthProviderProps> = ({ children, preloadedUser }) => {
   const router = useRouter();
   const [isOffline, setIsOffline] = useState<boolean | undefined>(false);
-  const [user, setUser] = useState<AuthUserDTO | undefined>(undefined);
+  const [user, setUser] = useState<AuthUserDTO | undefined>(preloadedUser);
   const [error, setError] = useState<Error | undefined>(undefined);
 
   useEffect(() => {
