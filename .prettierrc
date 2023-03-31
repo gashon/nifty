@@ -1,19 +1,18 @@
 {
-  "singleQuote": true,
-  "semi": true,
-  "bracketSpacing": true,
-  "trailingComma": "es5",
-  "arrowParens": "avoid",
-  "printWidth": 100,
+  "printWidth": 80,
   "tabWidth": 2,
-  "endOfLine": "lf",
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "quoteProps": "as-needed",
+  "jsxSingleQuote": false,
+  "trailingComma": "es5",
+  "bracketSpacing": true,
   "jsxBracketSameLine": false,
-  "overrides": [
-    {
-      "files": "*.md",
-      "options": {
-        "printWidth": 80
-      }
-    }
-  ]
+  "arrowParens": "always",
+  "requirePragma": false,
+  "insertPragma": false,
+  "proseWrap": "preserve",
+  "htmlWhitespaceSensitivity": "css",
+  "endOfLine": "lf"
 }
