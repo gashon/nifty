@@ -394,8 +394,3 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/jetbrains,node,macos,windows,linux,sublimetext,vim,emacs,redis
-
-packages/contracts/build/
-packages/contracts/test-ledger/
-packages/utils/bin/
-packages/utils/data/
