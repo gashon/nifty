@@ -1,12 +1,10 @@
 import { NextSeo } from 'next-seo';
 import { useRouter } from 'next/router';
-import { lazy } from 'react';
 
-import storage from '@/lib/storage';
 import ThemeLayout from '@/layouts/theme';
 import DashboardLayout from '@/layouts/dashboard';
-import { AuthProtection, useAuth, getUser, AuthProvider } from '@/features/auth';
-import { NoteCreationButton, NotebookList, getNotes } from '@/features/note';
+import { AuthProtection, getUser, AuthProvider } from '@/features/auth';
+import { NoteCreationButton, NotebookList, NotebookListSSR, getNotes } from '@/features/note';
 
 import { LoadingPage } from '@nifty/ui/pages/loading';
 
