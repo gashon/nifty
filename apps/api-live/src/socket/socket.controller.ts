@@ -120,7 +120,7 @@ export class WebSocketServer extends Server {
   async handleEditorLeave(socket: WebSocket): Promise<void>
   async handleEditorLeave(socket: WebSocket, docId: string,): Promise<void>
   async handleEditorLeave(socket: WebSocket, docId?: string): Promise<void> {
-    await this.syncLock.acquire(["disconnection", docId], async () => {
+    await this.syncLock.acquire(["disconnection", docId || "unknown"], async () => {
       const documentId = docId || await this.socketService.getDocumentIdBySocket(socket);
       if (!documentId) return;
 
