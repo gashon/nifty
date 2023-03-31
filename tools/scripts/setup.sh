@@ -1,5 +1,11 @@
-cd ./apps/api && doppler setup --no-interactive
-cd ../../
-cd ./apps/client && doppler setup --no-interactive
-cd ../../
-cd ./apps/api-live && doppler setup --no-interactive
+#!/bin/bash
+
+app_directories=("apps/api", "apps/client", "apps/api-live")
+
+for dir in "${app_directories[@]}"; do
+  echo "Setting up doppler for $dir"
+  (
+    cd $dir || exit
+    doppler setup --no-interactive
+  )
+done
