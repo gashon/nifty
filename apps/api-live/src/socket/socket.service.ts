@@ -24,6 +24,10 @@ export class SocketService {
     });
   }
 
+  clearRedis() {
+    return this.socketRepository.clearRedis();
+  }
+
   async getEditors(documentId: string): Promise<string[]> {
     return this.socketRepository.getEditors(documentId);
   }

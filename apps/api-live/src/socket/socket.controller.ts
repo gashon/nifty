@@ -6,6 +6,8 @@ import { SOCKET_EVENT } from "@/types";
 import { RedisClientType } from "@/lib/redis";
 
 const SAVE_TO_DISK_INTERVAL = 15000; // 15 seconds
+const HEARTBEAT_INTERVAL = 30000; // 30 seconds
+const LOCK_TIMEOUT = 10000; // 10 seconds
 
 interface WebSocketWithHeartbeat extends WebSocket {
   isAlive?: boolean;
@@ -13,14 +15,15 @@ interface WebSocketWithHeartbeat extends WebSocket {
 export class WebSocketServer extends Server {
   private socketService: SocketService;
   private autoSaveClocks: Record<string, NodeJS.Timeout> = {};
-  private syncLock: AsyncLock = new AsyncLock({ timeout: 10000 });
+  private syncLock: AsyncLock = new AsyncLock({ timeout: LOCK_TIMEOUT });
 
   constructor(redisClient: RedisClientType, options: ServerOptions) {
     super(options);
     this.socketService = new SocketService(redisClient);
     this.autoSaveClocks = {};
 
-    const heartbeatInterval = setInterval(() => this.heartbeat(), 5000);
+    const heartbeatInterval = setInterval(() => this.heartbeat(), HEARTBEAT_INTERVAL);
+    this.socketService.clearRedis();
 
     this.on("connection", async (socket, request) => {
       const documentId = request.url?.split("/").pop();
@@ -43,8 +46,6 @@ export class WebSocketServer extends Server {
 
   heartbeat() {
     this.clients.forEach((socket: WebSocketWithHeartbeat) => {
-      console.log("SENDING HEARBEAT", socket.isAlive)
-
       if (socket.isAlive === false) {
         this.handleEditorLeave(socket);
         return socket.terminate();
@@ -60,17 +61,15 @@ export class WebSocketServer extends Server {
     await this.syncLock.acquire(["connection", documentId], async () => {
       await this.socketService.addEditorToDocument(documentId, socket);
 
+      socket.isAlive = true;
       // broadcast the join to all connected users
       this.broadcastJoin(documentId, socket);
-
       // start autosave clock if not already started
       this.findOrStartAutoSaveClock(documentId)
-
       // send the current content to the new user
-      await this.sendCurrentDocumentContent(documentId, socket);
+      this.sendCurrentDocumentContent(documentId, socket);
 
       socket.on("pong", () => {
-        console.log("GOT PING")
         socket.isAlive = true;
       });
 
@@ -142,7 +141,6 @@ export class WebSocketServer extends Server {
         await this.socketService.removeDocumentFromMemory(documentId);
       }
     })
-
   }
 
   async handleEditorIdle(documentId: string) {

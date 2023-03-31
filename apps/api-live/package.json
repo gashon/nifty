@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@nifty/server-lib": "*",
+    "@types/async-lock": "1.4.0",
     "async-lock": "1.4.0",
     "debug": "~2.6.9",
     "eslint-utils": "^3.0.0",

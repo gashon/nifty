@@ -15,6 +15,10 @@ export class SocketRepository {
     this.noteModel = Note;
   }
 
+  clearRedis() {
+    return this.redis.flushAll();
+  }
+
   async getEditors(documentId: string) {
     const editors = await this._redisGet(`document:${documentId}:editors`);
     console.log("REMAINDING: ", editors)
