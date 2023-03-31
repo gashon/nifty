@@ -1,9 +1,6 @@
 import { FC, ReactElement, PropsWithChildren } from 'react';
 import { FiBook, FiCheck, FiGrid, FiHome } from 'react-icons/fi';
-// import dynamic from 'next/dynamic';
 import { Sidebar } from '@/components/sidebar';
-// const Sidebar = dynamic(() => import('@/components/sidebar'));
-// const Sidebar = dynamic(() => import('@/components/sidebar'), { ssr: true });
 
 type DashboardLayoutProps = {
   children: ReactElement | ReactElement[];
