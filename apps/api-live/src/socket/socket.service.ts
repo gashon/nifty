@@ -36,6 +36,10 @@ export class SocketService {
     return this.socketRepository.disconnectEditor(documentId, editor);
   }
 
+  async getDocumentIdBySocket(editor: WebSocket): Promise<string | null> {
+    return this.socketRepository.getDocumentIdBySocket(editor);
+  }
+
   async setContent(documentId: string, content: string, editor: WebSocket) {
     if (!this.socketRepository.socketIsEditor(documentId, editor)) throw new Error("You are not an editor of this document");
     return this.socketRepository.setContent(documentId, content, editor);

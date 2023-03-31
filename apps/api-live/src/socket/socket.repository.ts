@@ -17,6 +17,7 @@ export class SocketRepository {
 
   async getEditors(documentId: string) {
     const editors = await this._redisGet(`document:${documentId}:editors`);
+    console.log("REMAINDING: ", editors)
     return editors ? JSON.parse(editors) as string[] : [] as string[];
   }
 
@@ -39,11 +40,13 @@ export class SocketRepository {
     const editorIds = await this.getEditors(documentId);
     const editorId = this.getEditorIdBySocket(editor)
 
+    console.log("Disconeccting", editorId, editorIds)
     if (!editorId) return;
 
     this.socketMap.delete(editorId);
     const newEditors = editorIds.filter((e) => e !== editorId);
-    await this.redis.set(`document:${documentId}:editors`, JSON.stringify(newEditors));
+    console.log("UPDATE", newEditors)
+    await this._redisSet(`document:${documentId}:editors`, JSON.stringify(newEditors));
   }
 
   getEditorIdBySocket(editor: WebSocket) {
@@ -64,6 +67,20 @@ export class SocketRepository {
 
   async setContent(documentId: string, content: string, editor: WebSocket) {
     await this.redis.set(`document:${documentId}:content`, content);
+  }
+
+  async getDocumentIdBySocket(editor: WebSocket) {
+    const editorId = this.getEditorIdBySocket(editor);
+    if (editorId) {
+      const documentIds = await this.redis.keys("document:*:editors");
+      for (const documentId of documentIds) {
+        const editors = await this._redisGet(documentId);
+        if (editors && editors.includes(editorId)) {
+          return documentId.split(":")[1];
+        }
+      }
+    }
+    return null;
   }
 
   async removeDocumentFromMemory(documentId: string) {
@@ -102,4 +119,14 @@ export class SocketRepository {
     });
   };
 
+  _redisSet(key: string, value: string) {
+    return new Promise<void>((resolve, reject) => {
+      this.redis.set(key, value).then(() => {
+        resolve();
+      }).catch((err) => {
+        reject(err);
+      });
+    }
+    );
+  }
 }

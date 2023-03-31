@@ -1,18 +1,26 @@
 import WebSocket, { WebSocketServer as Server, ServerOptions } from "ws";
+import AsyncLock from "async-lock";
 import logger from "@/lib/logger";
 import { SocketService } from "@/socket";
 import { SOCKET_EVENT } from "@/types";
 import { RedisClientType } from "@/lib/redis";
 
 const SAVE_TO_DISK_INTERVAL = 15000; // 15 seconds
+
+interface WebSocketWithHeartbeat extends WebSocket {
+  isAlive?: boolean;
+}
 export class WebSocketServer extends Server {
   private socketService: SocketService;
   private autoSaveClocks: Record<string, NodeJS.Timeout> = {};
+  private disconnectionLock: AsyncLock = new AsyncLock();
 
   constructor(redisClient: RedisClientType, options: ServerOptions) {
     super(options);
     this.socketService = new SocketService(redisClient);
     this.autoSaveClocks = {};
+
+    const heartbeatInterval = setInterval(() => this.heartbeat(), 5000);
 
     this.on("connection", async (socket, request) => {
       const documentId = request.url?.split("/").pop();
@@ -24,11 +32,31 @@ export class WebSocketServer extends Server {
 
     this.on("error", (error) => {
       logger.error(error);
+      clearInterval(heartbeatInterval)
+    });
+
+    this.on("close", () => {
+      logger.info("Closing websocket server...");
+      clearInterval(heartbeatInterval)
+    });
+  }
+
+  heartbeat() {
+    this.clients.forEach((socket: WebSocketWithHeartbeat) => {
+      console.log("SENDING HEARBEAT", socket.isAlive)
+
+      if (socket.isAlive === false) {
+        this.handleEditorLeave(socket);
+        return socket.terminate();
+      }
+
+      socket.isAlive = false;
+      socket.ping();
     });
   }
 
   // todo broadcast user information from all users on join
-  async handleConnection(documentId: string, socket: WebSocket) {
+  async handleConnection(documentId: string, socket: WebSocketWithHeartbeat) {
     await this.socketService.addEditorToDocument(documentId, socket);
 
     // broadcast the join to all connected users
@@ -48,6 +76,12 @@ export class WebSocketServer extends Server {
     const contentMessage = { event: SOCKET_EVENT.DOCUMENT_LOAD, payload: { note: { id: documentId, content } } };
     socket.send(JSON.stringify(contentMessage));
 
+
+    socket.on("pong", () => {
+      console.log("GOT PING")
+      socket.isAlive = true;
+    });
+
     socket.on("message", (message: WebSocket.RawData, _isBinary: boolean) => {
       const data = this.socketService.parse(message);
 
@@ -61,7 +95,7 @@ export class WebSocketServer extends Server {
           this.handleDocumentUpdate(documentId, socket, data);
           break;
         case SOCKET_EVENT.EDITOR_LEAVE:
-          this.handleEditorLeave(documentId, socket);
+          this.handleEditorLeave(socket, documentId);
           break;
         case SOCKET_EVENT.EDITOR_IDLE:
           this.handleEditorIdle(documentId);
@@ -73,11 +107,11 @@ export class WebSocketServer extends Server {
     });
 
     socket.on("close", () => {
-      this.handleEditorLeave(documentId, socket);
+      this.handleEditorLeave(socket, documentId);
     });
 
     socket.on("error", () => {
-      this.handleEditorLeave(documentId, socket);
+      this.handleEditorLeave(socket, documentId);
     })
   }
 
@@ -89,23 +123,33 @@ export class WebSocketServer extends Server {
     this.socketService.broadcast(documentId, updateMessage, socket);
   }
 
-  async handleEditorLeave(documentId: string, socket: WebSocket) {
-    await Promise.all([
-      this.syncToDatabase(documentId),
-      this.socketService.disconnectEditor(documentId, socket),
-    ])
+  async handleEditorLeave(socket: WebSocket): Promise<void>
+  async handleEditorLeave(socket: WebSocket, docId: string,): Promise<void>
+  async handleEditorLeave(socket: WebSocket, docId?: string): Promise<void> {
 
-    const leaveMessage = { event: SOCKET_EVENT.EDITOR_LEAVE, documentId };
-    this.socketService.broadcast(documentId, leaveMessage);
+    await this.disconnectionLock.acquire("disconnection", async () => {
+      const documentId = docId || await this.socketService.getDocumentIdBySocket(socket);
+      if (!documentId) return;
 
-    // stop autosave clock if no editors left
-    const editors = await this.socketService.getEditors(documentId);
-    if (editors.length === 0) {
-      clearInterval(this.autoSaveClocks[documentId]);
-      delete this.autoSaveClocks[documentId];
+      await Promise.all([
+        this.syncToDatabase(documentId),
+        this.socketService.disconnectEditor(documentId, socket),
+      ])
 
-      await this.socketService.removeDocumentFromMemory(documentId);
-    }
+      const leaveMessage = { event: SOCKET_EVENT.EDITOR_LEAVE, documentId };
+      this.socketService.broadcast(documentId, leaveMessage);
+
+      // stop autosave clock if no editors left
+      const editors = await this.socketService.getEditors(documentId);
+      console.log("leaving", editors.length, documentId)
+      if (editors.length === 0) {
+        clearInterval(this.autoSaveClocks[documentId]);
+        delete this.autoSaveClocks[documentId];
+
+        await this.socketService.removeDocumentFromMemory(documentId);
+      }
+    })
+
   }
 
   async handleEditorIdle(documentId: string) {
