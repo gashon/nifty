@@ -1,7 +1,7 @@
 import WebSocket, { WebSocketServer as Server, ServerOptions } from "ws";
 import AsyncLock from "async-lock";
 import logger from "@/lib/logger";
-import { SocketService } from "@/socket";
+import { SocketService, closeSocketOnError } from "@/socket";
 import { SOCKET_EVENT } from "@/types";
 import { RedisClientType } from "@/lib/redis";
 
@@ -57,6 +57,7 @@ export class WebSocketServer extends Server {
   }
 
   // todo broadcast user information from all users on join
+  @closeSocketOnError
   async handleConnection(documentId: string, socket: WebSocketWithHeartbeat) {
     await this.syncLock.acquire(["connection", documentId], async () => {
       await this.socketService.addEditorToDocument(documentId, socket);
@@ -88,33 +89,51 @@ export class WebSocketServer extends Server {
   }
 
   async broadcastJoin(documentId: string, socket: WebSocketWithHeartbeat) {
-    const joinMessage = { event: SOCKET_EVENT.EDITOR_JOIN, payload: { note: { id: documentId } } };
-    this.socketService.broadcast(documentId, joinMessage, socket);
+    try {
+      const joinMessage = { event: SOCKET_EVENT.EDITOR_JOIN, payload: { note: { id: documentId } } };
+      this.socketService.broadcast(documentId, joinMessage, socket);
+    } catch (err) {
+      logger.error(err);
+    }
   }
 
   async findOrStartAutoSaveClock(documentId: string) {
-    await this.syncLock.acquire(["autosave", documentId], async () => {
-      if (!this.autoSaveClocks[documentId]) {
-        this.autoSaveClocks[documentId] = setInterval(async () => {
-          logger.info(`Autosaving document: ${documentId}...`)
-          await this.syncToDatabase(documentId);
-        }, SAVE_TO_DISK_INTERVAL);
-      }
-    })
+    try {
+      await this.syncLock.acquire(["autosave", documentId], async () => {
+        if (!this.autoSaveClocks[documentId]) {
+          this.autoSaveClocks[documentId] = setInterval(async () => {
+            logger.info(`Autosaving document: ${documentId}...`)
+            await this.syncToDatabase(documentId);
+          }, SAVE_TO_DISK_INTERVAL);
+        }
+      })
+    } catch (err) {
+      logger.error(err);
+    }
   }
 
   async sendCurrentDocumentContent(documentId: string, socket: WebSocket) {
-    const content = await this.socketService.getContent(documentId);
-    const contentMessage = { event: SOCKET_EVENT.DOCUMENT_LOAD, payload: { note: { id: documentId, content } } };
-    socket.send(JSON.stringify(contentMessage));
+    try {
+      const content = await this.socketService.getContent(documentId);
+      const contentMessage = { event: SOCKET_EVENT.DOCUMENT_LOAD, payload: { note: { id: documentId, content } } };
+      socket.send(JSON.stringify(contentMessage));
+    } catch (err) {
+      logger.error(err);
+      socket.close();
+    }
   }
 
   async handleDocumentUpdate(documentId: string, socket: WebSocket, data: any) {
-    const content = data.payload.note.content;
-    await this.socketService.setContent(documentId, content, socket);
+    try {
+      const content = data.payload.note.content;
+      await this.socketService.setContent(documentId, content, socket);
 
-    const updateMessage = { event: SOCKET_EVENT.DOCUMENT_UPDATE, operations: data.operations };
-    this.socketService.broadcast(documentId, updateMessage, socket);
+      const updateMessage = { event: SOCKET_EVENT.DOCUMENT_UPDATE, operations: data.operations };
+      this.socketService.broadcast(documentId, updateMessage, socket);
+    } catch (err) {
+      logger.error(err);
+      socket.close();
+    }
   }
 
   async handleEditorLeave(socket: WebSocket): Promise<void>
@@ -143,41 +162,56 @@ export class WebSocketServer extends Server {
     })
   }
 
+  @closeSocketOnError
   async handleEditorIdle(documentId: string) {
-    const idleMessage = { event: SOCKET_EVENT.EDITOR_IDLE, documentId };
-    this.socketService.broadcast(documentId, idleMessage);
+    try {
+      const idleMessage = { event: SOCKET_EVENT.EDITOR_IDLE, documentId };
+      this.socketService.broadcast(documentId, idleMessage);
+    } catch (err) {
+      logger.error(err);
+    }
   }
 
   async syncToDatabase(documentId: string) {
-    const [_, updated] = await this.socketService.saveContentToDisk(documentId);
+    try {
+      const [_, updated] = await this.socketService.saveContentToDisk(documentId);
 
-    if (updated) {
-      const updateMessage = { event: SOCKET_EVENT.DOCUMENT_SAVE, documentId };
-      this.socketService.broadcast(documentId, updateMessage);
-      logger.info(`Saved document: ${documentId}`)
+      if (updated) {
+        const updateMessage = { event: SOCKET_EVENT.DOCUMENT_SAVE, documentId };
+        this.socketService.broadcast(documentId, updateMessage);
+        logger.info(`Saved document: ${documentId}`)
+      }
+    } catch (err) {
+      logger.error(err);
     }
   }
 
+  @closeSocketOnError
   handleMessage(documentId: string, message: WebSocket.RawData, socket: WebSocketWithHeartbeat) {
-    const data = this.socketService.parse(message);
+    try {
+      const data = this.socketService.parse(message);
 
-    if (!data) {
-      socket.send(JSON.stringify({ event: SOCKET_EVENT.ERROR, message: "Invalid message format" }));
-      return;
-    }
+      if (!data) {
+        socket.send(JSON.stringify({ event: SOCKET_EVENT.ERROR, message: "Invalid message format" }));
+        return;
+      }
 
-    switch (data.event) {
-      case SOCKET_EVENT.DOCUMENT_UPDATE:
-        this.handleDocumentUpdate(documentId, socket, data);
-        break;
-      case SOCKET_EVENT.EDITOR_LEAVE:
-        this.handleEditorLeave(socket, documentId);
-        break;
-      case SOCKET_EVENT.EDITOR_IDLE:
-        this.handleEditorIdle(documentId);
-        break;
-      default:
-        socket.send(JSON.stringify({ event: SOCKET_EVENT.ERROR, message: "Invalid message event" }));
+      switch (data.event) {
+        case SOCKET_EVENT.DOCUMENT_UPDATE:
+          this.handleDocumentUpdate(documentId, socket, data);
+          break;
+        case SOCKET_EVENT.EDITOR_LEAVE:
+          this.handleEditorLeave(socket, documentId);
+          break;
+        case SOCKET_EVENT.EDITOR_IDLE:
+          this.handleEditorIdle(documentId);
+          break;
+        default:
+          socket.send(JSON.stringify({ event: SOCKET_EVENT.ERROR, message: "Invalid message event" }));
+      }
+    } catch (err) {
+      logger.error(err);
+      socket.close();
     }
   }
 

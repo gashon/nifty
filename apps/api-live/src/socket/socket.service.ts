@@ -55,7 +55,7 @@ export class SocketService {
     return this.socketRepository.getContent(documentId);
   }
 
-  async removeDocumentFromMemory(documentId: string){
+  async removeDocumentFromMemory(documentId: string) {
     return this.socketRepository.removeDocumentFromMemory(documentId);
   }
 
