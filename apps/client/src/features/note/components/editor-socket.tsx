@@ -1,4 +1,12 @@
-import { ComponentType, FC, useCallback, useMemo, useEffect, useState, ReactElement } from 'react';
+import {
+  ComponentType,
+  FC,
+  useCallback,
+  useMemo,
+  useEffect,
+  useState,
+  ReactElement,
+} from 'react';
 import {
   createEditor,
   Descendant,
@@ -33,20 +41,35 @@ type MarkdownShortcutsProps = {
   fallBackEditor: ReactElement;
 };
 
-const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({ documentId, fallBackEditor }) => {
-  const renderElement = useCallback(props => <Element {...props} />, []);
-  const editor = useMemo(() => withShortcuts(withReact(withHistory(createEditor()))), []);
+const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
+  documentId,
+  fallBackEditor,
+}) => {
+  const renderElement = useCallback((props) => <Element {...props} />, []);
+  const editor = useMemo(
+    () => withShortcuts(withReact(withHistory(createEditor()))),
+    []
+  );
   const { socket, connectionFailed } = useNoteSocket(documentId);
-  const [initValue, setInitValue] = useState<Descendant[] | undefined>(undefined);
+  const [initValue, setInitValue] = useState<Descendant[] | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     if (socket) {
-      socket.onmessage = e => {
+      socket.onmessage = (e) => {
         const data = JSON.parse(e.data);
         if (data.event === SOCKET_EVENT.DOCUMENT_LOAD) {
           const { note } = data.payload;
           if (note.id === documentId) {
-            setInitValue(JSON.parse(note.content));
+            setInitValue(
+              note.content || [
+                {
+                  type: 'paragraph',
+                  children: [{ text: '' }],
+                },
+              ]
+            );
           }
         }
         // todo implement collaboration
@@ -80,7 +103,8 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({ documentId, fallBackEdi
 
           const blockEntry = Editor.above(editor, {
             at: path,
-            match: n => SlateElement.isElement(n) && Editor.isBlock(editor, n),
+            match: (n) =>
+              SlateElement.isElement(n) && Editor.isBlock(editor, n),
           });
           if (!blockEntry) {
             return false;
@@ -106,7 +130,7 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({ documentId, fallBackEdi
       <Slate
         editor={editor}
         value={initValue}
-        onChange={value => {
+        onChange={(value) => {
           // @ts-ignore
           // todo send cursor updates
           if (value[0]?.children[0].text === '') return;
@@ -136,16 +160,16 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({ documentId, fallBackEdi
   );
 };
 
-const withShortcuts = editor => {
+const withShortcuts = (editor) => {
   const { deleteBackward, insertText } = editor;
 
-  editor.insertText = text => {
+  editor.insertText = (text) => {
     const { selection } = editor;
 
     if (text.endsWith(' ') && selection && Range.isCollapsed(selection)) {
       const { anchor } = selection;
       const block = Editor.above(editor, {
-        match: n => SlateElement.isElement(n) && Editor.isBlock(editor, n),
+        match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n),
       });
       const path = block ? block[1] : [];
       const start = Editor.start(editor, path);
@@ -164,7 +188,7 @@ const withShortcuts = editor => {
           type,
         };
         Transforms.setNodes<SlateElement>(editor, newProperties, {
-          match: n => SlateElement.isElement(n) && Editor.isBlock(editor, n),
+          match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n),
         });
 
         if (type === 'list-item') {
@@ -173,7 +197,10 @@ const withShortcuts = editor => {
             children: [],
           };
           Transforms.wrapNodes(editor, list, {
-            match: n => !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === 'list-item',
+            match: (n) =>
+              !Editor.isEditor(n) &&
+              SlateElement.isElement(n) &&
+              n.type === 'list-item',
           });
         }
 
@@ -189,7 +216,7 @@ const withShortcuts = editor => {
 
     if (selection && Range.isCollapsed(selection)) {
       const match = Editor.above(editor, {
-        match: n => SlateElement.isElement(n) && Editor.isBlock(editor, n),
+        match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n),
       });
 
       if (match) {
@@ -209,8 +236,10 @@ const withShortcuts = editor => {
 
           if (block.type === 'list-item') {
             Transforms.unwrapNodes(editor, {
-              match: n =>
-                !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === 'bulleted-list',
+              match: (n) =>
+                !Editor.isEditor(n) &&
+                SlateElement.isElement(n) &&
+                n.type === 'bulleted-list',
               split: true,
             });
           }
