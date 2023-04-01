@@ -22,33 +22,36 @@ export const useCreateNote = ({ config }: UseCreateModuleOptions = {}) => {
   return useMutation({
     onMutate: async (newNote) => {
       await queryClient.cancelQueries('notes');
-
-      const previousModules: InfiniteQueryData = queryClient.getQueryData('notes');
-
-      queryClient.setQueryData(['notes'], () => (
-        {
-          ...previousModules,
-          pages: previousModules?.pages?.length > 0 ? [
-            {
-              ...previousModules.pages[0],
-              data: [
-                newNote,
-                ...previousModules.pages[0].data,
-              ],
-            },
-            ...previousModules.pages.slice(1),
-          ] : [{ data: newNote }],
-        }
-      ));
-      return { previousModules };
+      return { previousModules: queryClient.getQueryData('notes') };
     },
     onError: (_, __, context: any) => {
       if (context?.previousModules) {
         queryClient.setQueryData('notes', context.previousModules);
       }
     },
-    onSuccess: () => {
+    onSuccess: (noteCreateResponse) => {
+      const createdNote = noteCreateResponse.data.data;
+      queryClient.setQueryData<InfiniteQueryData>('notes', (previousModules) => {
+        if (previousModules?.pages?.length > 0) {
+          return {
+            ...previousModules,
+            pages: [
+              {
+                ...previousModules.pages[0],
+                data: [
+                  createdNote,
+                  ...previousModules.pages[0].data,
+                ],
+              },
+              ...previousModules.pages.slice(1),
+            ],
+          };
+        } else {
+          return { pages: [{ data: [createdNote] }], pageParams: [] };
+        }
+      });
       queryClient.invalidateQueries('notes');
+
     },
     ...config,
     mutationFn: createNote,

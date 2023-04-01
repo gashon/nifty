@@ -29,7 +29,9 @@ export const NotebookListSSR: FC<NotebookListProps> = ({ moduleId, notes }) => {
         {data && (
           <>
             {data.pages.map(({ data: page }: any) =>
-              page.map((note) => (
+              page.map((note) => {
+                  console.log("GOTTT", note)
+                return (
                 <div key={note.id}>
                   <NotebookItem
                     onDelete={() => deleteNote(note.id)}
@@ -37,7 +39,7 @@ export const NotebookListSSR: FC<NotebookListProps> = ({ moduleId, notes }) => {
                     {...note}
                   />
                 </div>
-              ))
+              )})
             )}
           </>
         )}
