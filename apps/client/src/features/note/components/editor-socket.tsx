@@ -63,12 +63,14 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
           const { note } = data.payload;
           if (note.id === documentId) {
             setInitValue(
-              note.content || [
-                {
-                  type: 'paragraph',
-                  children: [{ text: '' }],
-                },
-              ]
+              note.content
+                ? JSON.parse(note.content)
+                : [
+                    {
+                      type: 'paragraph',
+                      children: [{ text: '' }],
+                    },
+                  ]
             );
           }
         }
