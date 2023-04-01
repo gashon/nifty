@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { Dispatch, FC, SetStateAction, useState, useCallback } from 'react';
 import ThemeLayout from '@/layouts/theme';
 import { subscribeUser } from '@/features/user';
+import { AuthProvider } from '@/features/auth';
 
 import { Modal } from '@nifty/ui/molecules/modal';
 import { Navbar } from '@nifty/ui/templates/Navbar';
@@ -14,7 +15,9 @@ const schema = z.object({
 
 type EmailFormData = { email: string };
 
-const EmailForm: FC<{ setIsOpen: Dispatch<SetStateAction<boolean>> }> = ({ setIsOpen }) => {
+const EmailForm: FC<{ setIsOpen: Dispatch<SetStateAction<boolean>> }> = ({
+  setIsOpen,
+}) => {
   const onSubmit = useCallback(
     async (values: z.infer<typeof schema>) => {
       const res = await subscribeUser(values.email);
@@ -64,37 +67,45 @@ const Landing: FC<LandingProps> = ({ onWaitListFormSubmit }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <ThemeLayout>
-      <div className="min-h-screen overflow-hidden bg-[url('/bg.svg')] bg-cover bg-bottom bg-no-repeat bg-primary">
-        <main className="container mx-auto px-6 py-8 md:px-0">
-          <Navbar />
-          <header className="pt-24 text-center">
-            <h1 className="text-primary text-2xl font-extrabold md:text-3xl lg:text-4xl xl:text-5xl">
-              Rethinking student productivity.
-            </h1>
-            <p className="mx-auto max-w-2xl pt-3 text-sm text-tertiary md:text-base">
-              Nifty is an open source student productivity tool, providing students with all the
-              tools they need to organise their life and study more efficiently.
-            </p>
-            <div className="mt-12 flex flex-col items-center">
-              <EmailForm setIsOpen={setIsOpen} />
-              <Modal
-                image="/waitlist-illustration.svg"
-                alt="waitlist illustration"
-                title="You're on the waiting list!"
-                description="We will send you an email as soon as Nifty is ready.
+    <AuthProvider>
+      <ThemeLayout>
+        <div className="min-h-screen overflow-hidden bg-[url('/bg.svg')] bg-cover bg-bottom bg-no-repeat bg-primary">
+          <main className="container mx-auto px-6 py-8 md:px-0">
+            <Navbar />
+            <header className="pt-24 text-center">
+              <h1 className="text-primary text-2xl font-extrabold md:text-3xl lg:text-4xl xl:text-5xl">
+                Rethinking student productivity.
+              </h1>
+              <p className="mx-auto max-w-2xl pt-3 text-sm text-tertiary md:text-base">
+                Nifty is an open source student productivity tool, providing
+                students with all the tools they need to organise their life and
+                study more efficiently.
+              </p>
+              <div className="mt-12 flex flex-col items-center">
+                <EmailForm setIsOpen={setIsOpen} />
+                <Modal
+                  image="/waitlist-illustration.svg"
+                  alt="waitlist illustration"
+                  title="You're on the waiting list!"
+                  description="We will send you an email as soon as Nifty is ready.
                           Thanks for your interest 🤟"
-                open={isOpen}
-                onClose={() => setIsOpen(false)}
+                  open={isOpen}
+                  onClose={() => setIsOpen(false)}
+                />
+              </div>
+            </header>
+            <div className="mx-auto max-w-5xl pt-36 md:pt-64">
+              <Image
+                src="/preview.png"
+                alt="Preview"
+                width={1920}
+                height={1080}
               />
             </div>
-          </header>
-          <div className="mx-auto max-w-5xl pt-36 md:pt-64">
-            <Image src="/preview.png" alt="Preview" width={1920} height={1080} />
-          </div>
-        </main>
-      </div>
-    </ThemeLayout>
+          </main>
+        </div>
+      </ThemeLayout>
+    </AuthProvider>
   );
 };
 

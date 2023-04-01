@@ -55,7 +55,7 @@ const noteSchema = new mongoose.Schema<INote>({
 
 noteSchema.plugin(mongooseObjectId("note", "note"));
 
-noteSchema.index({ created_by: 1, title: 1 }, { unique: true });
+noteSchema.index({ created_by: 1, title: 1 }, {});
 
 export * from "./types";
 export default mongoose.models.Note as Model<NoteDocument> ||

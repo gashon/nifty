@@ -1,4 +1,4 @@
-import { useInfiniteQuery, UseInfiniteQueryResult } from 'react-query';
+import {  InfiniteData, useInfiniteQuery, UseInfiniteQueryResult } from 'react-query';
 
 import { NoteListResponse } from '@nifty/server-lib/models/note';
 import { PaginationParams } from '@nifty/api/types';
@@ -22,15 +22,27 @@ type UseNotesOptions = PaginationParams & {
   directoryId: string;
 };
 
-export const useInfiniteNotes = ({ directoryId, ...pagination }: UseNotesOptions): UseInfiniteQueryResult<PaginationParams> => {
+export const useInfiniteNotes = ({ page, directoryId, ...pagination }: UseNotesOptions, initialData?: InfiniteData<NoteListResponse>): UseInfiniteQueryResult<NoteListResponse> => {
   return useInfiniteQuery({
     queryKey: ['notes'],
-    queryFn: ({ pageParam = 1 }) => getNotes(directoryId, { ...pagination, page: pageParam }),
+    queryFn: ({ pageParam = (page || 1) }) => {
+      return new Promise((resolve, reject) => {
+        getNotes(directoryId, { ...pagination, page: pageParam })
+          .then((data) => {
+            resolve(data);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
     getNextPageParam: (lastPage, _pages) => {
       if (lastPage.has_more) {
         return lastPage.page + 1;
       }
     },
+    initialData,
+    enabled: !initialData,
   });
 };
 

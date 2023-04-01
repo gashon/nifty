@@ -4,7 +4,12 @@ import { useRouter } from 'next/router';
 import ThemeLayout from '@/layouts/theme';
 import DashboardLayout from '@/layouts/dashboard';
 import { AuthProtection, getUser, AuthProvider } from '@/features/auth';
-import { NoteCreationButton, NotebookList, NotebookListSSR, getNotes } from '@/features/note';
+import {
+  NoteCreationButton,
+  NotebookList,
+  NotebookListSSR,
+  getNotes,
+} from '@/features/note';
 
 import { LoadingPage } from '@nifty/ui/pages/loading';
 
@@ -27,7 +32,7 @@ function Module({ notes, user, id }) {
                   Module: {moduleName}
                 </h3>
                 <NoteCreationButton moduleId={id as string} />
-                <NotebookList notes={notes} moduleId={id as string} />
+                <NotebookListSSR notes={notes} moduleId={id as string} />
               </main>
             </DashboardLayout>
           </ThemeLayout>
@@ -41,7 +46,7 @@ export async function getServerSideProps(context) {
   const { id } = context.params;
 
   const [{ data: notes }, { data: user }] = await Promise.all([
-    getNotes(id, { limit: 0 }, context.req.headers),
+    getNotes(id, { limit: 5 }, context.req.headers),
     getUser(context.req.headers),
   ]);
 
@@ -49,7 +54,7 @@ export async function getServerSideProps(context) {
     props: {
       id,
       user,
-      notes: notes ? { pages: [notes] } : { pages: [] },
+      notes: notes || { pages: [] },
     },
   };
 }

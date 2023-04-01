@@ -5,6 +5,7 @@
   "packageManager": "npm@9.2.0",
   "repository": "https://github.com/gashon/note-hive",
   "license": "MIT",
+  "npmScope": "@nifty",
   "workspaces": {
     "packages": [
       "packages/*",
@@ -15,7 +16,9 @@
     "apps:build": "turbo run build",
     "apps:dev": "cross-env FORCE_COLOR=1 turbo run dev --parallel",
     "apps:lint": "turbo run lint",
-    "apps:format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "apps:format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "format": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,scss,md}\"",
+    "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,scss,md}\""
   },
   "dependencies": {
     "cross-env": "7.0.3"

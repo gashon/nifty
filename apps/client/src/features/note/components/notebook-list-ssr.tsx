@@ -9,20 +9,27 @@ type NotebookListProps = {
 };
 
 export const NotebookListSSR: FC<NotebookListProps> = ({ moduleId, notes }) => {
-  // const { data, isFetched } = useInfiniteNotes({ directoryId: moduleId, limit: 1000 });
+  // prefetch page 2
+  const { data, isFetched } = useInfiniteNotes(
+    {
+      page: 2,
+      directoryId: moduleId,
+      limit: 1000,
+    },
+    { pages: [notes], pageParams: [] }
+  );
   const { mutate: deleteNote } = useDeleteNote();
 
   return (
     <>
       <div className="flex flex-col gap-3">
-        {/* @ts-ignore */}
-        {notes && notes.pages[0]?.data.length === 0 && (
+        {data && data.pages[0]?.data?.length === 0 && (
           <div className="text-gray-500">No notes found</div>
         )}
-        {notes && (
+        {data && (
           <>
-            {notes.pages.map(({ data }: any) =>
-              data.map(note => (
+            {data.pages.map(({ data: page }: any) =>
+              page.map((note) => (
                 <div key={note.id}>
                   <NotebookItem
                     onDelete={() => deleteNote(note.id)}
