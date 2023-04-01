@@ -30,7 +30,6 @@ export const NotebookListSSR: FC<NotebookListProps> = ({ moduleId, notes }) => {
           <>
             {data.pages.map(({ data: page }: any) =>
               page.map((note) => {
-                  console.log("GOTTT", note)
                 return (
                 <div key={note.id}>
                   <NotebookItem

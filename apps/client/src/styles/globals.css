@@ -11,19 +11,43 @@ html {
 
 :root {
   --bg-primary: var(--bg-primary-, var(--primary, theme('colors.white')));
-  --bg-secondary: var(--bg-secondary-, var(--secondary, theme('colors.zinc.100')));
+  --bg-secondary: var(
+    --bg-secondary-,
+    var(--secondary, theme('colors.zinc.100'))
+  );
   --bg-tertiary: var(--bg-tertiary-, var(--tertiary, theme('colors.zinc.200')));
   --bg-accent: var(--bg-accent-, var(--accent, theme('colors.zinc.300')));
 
-  --text-primary: var(--text-primary-, var(--primary, theme('colors.zinc.900')));
-  --text-secondary: var(--text-secondary-, var(--secondary, theme('colors.zinc.700')));
-  --text-tertiary: var(--text-tertiary-, var(--tertiary, theme('colors.zinc.500')));
+  --text-primary: var(
+    --text-primary-,
+    var(--primary, theme('colors.zinc.900'))
+  );
+  --text-secondary: var(
+    --text-secondary-,
+    var(--secondary, theme('colors.zinc.700'))
+  );
+  --text-tertiary: var(
+    --text-tertiary-,
+    var(--tertiary, theme('colors.zinc.500'))
+  );
   --text-accent: var(--text-accent-, var(--accent, theme('colors.zinc.400')));
 
-  --border-primary: var(--border-primary-, var(--primary, theme('colors.zinc.100')));
-  --border-secondary: var(--border-secondary-, var(--secondary, theme('colors.zinc.50')));
-  --border-tertiary: var(--border-tertiary-, var(--tertiary, theme('colors.zinc.200')));
-  --border-accent: var(--border-accent-, var(--accent, theme('colors.zinc.300')));
+  --border-primary: var(
+    --border-primary-,
+    var(--primary, theme('colors.zinc.100'))
+  );
+  --border-secondary: var(
+    --border-secondary-,
+    var(--secondary, theme('colors.zinc.50'))
+  );
+  --border-tertiary: var(
+    --border-tertiary-,
+    var(--tertiary, theme('colors.zinc.200'))
+  );
+  --border-accent: var(
+    --border-accent-,
+    var(--accent, theme('colors.zinc.300'))
+  );
 }
 
 @tailwind base;
@@ -87,6 +111,10 @@ html {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.m {
+  box-shadow: 0px 0px 57px 13px rgba(255, 255, 255, 0.2);
 }
 
 body {
