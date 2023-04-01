@@ -5,11 +5,11 @@ import { FC, ReactNode } from 'react';
 
 const styles = cva(
   [
-    'text-zinc-600',
+    'text-primary',
+    'opacity-75',
     'dark:text-zinc-400',
     'transition-colors',
-    'hover:text-zinc-900',
-    'dark:hover:text-zinc-200',
+    'hover:opacity-100',
   ],
   {
     variants: {
@@ -50,7 +50,9 @@ export const NavLink: FC<NavLinkProps> = ({ href, children, external }) => {
 
   return (
     <Link href={href}>
-      <div className={styles({ active: router && router.pathname === href })}>{children}</div>
+      <div className={styles({ active: router && router.pathname === href })}>
+        {children}
+      </div>
     </Link>
   );
 };
