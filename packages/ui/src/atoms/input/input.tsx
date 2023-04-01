@@ -18,7 +18,9 @@ export const Input: FC<InputProps> = ({ label, registration, ...rest }) => (
       {...rest}
       data-testid="input-atom"
       type="text"
-      className={'peer w-full bg-transparent px-3 py-3 outline-none transition-colors'}
+      className={
+        'text-black peer w-full bg-transparent px-3 py-3 outline-none transition-colors'
+      }
       placeholder=" "
       style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
       {...registration}
@@ -44,7 +46,9 @@ export const Input: FC<InputProps> = ({ label, registration, ...rest }) => (
       className="pointer-events-none visible absolute inset-0 mt-[-9px] rounded border border-zinc-600 transition-colors group-focus-within:border-2
   group-focus-within:!border-primary-500 group-hover:border-zinc-700 peer-placeholder-shown:invisible border-tertiary"
     >
-      <legend className="invisible ml-2 max-w-full whitespace-nowrap px-1 text-sm">{label}</legend>
+      <legend className="invisible ml-2 max-w-full whitespace-nowrap px-1 text-sm">
+        {label}
+      </legend>
     </fieldset>
   </div>
 );
