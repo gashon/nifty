@@ -20,14 +20,12 @@
     "format": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,scss,md}\"",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,scss,md}\""
   },
-  "dependencies": {
-    "cross-env": "7.0.3"
-  },
   "devDependencies": {
     "eslint": "^7.32.0",
     "eslint-config-custom": "*",
     "prettier": "^2.7.1",
-    "turbo": "latest"
+    "turbo": "latest",
+    "cross-env": "7.0.3"
   },
   "engines": {
     "node": ">=16.15.0",
