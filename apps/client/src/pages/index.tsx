@@ -74,7 +74,7 @@ const Landing: FC<LandingProps> = ({ onWaitListFormSubmit }) => {
             <Navbar />
             <header className="pt-24 text-center">
               <h1 className="text-primary text-2xl font-extrabold md:text-3xl lg:text-4xl xl:text-5xl">
-                Rethinking memory recall.
+                Rethinking memory retention.
               </h1>
               <p className="mx-auto max-w-2xl pt-3 text-sm text-tertiary md:text-base">
                 Unlock your note's full potential with our AI-powered

@@ -2,14 +2,18 @@ import { inject, injectable } from 'inversify';
 import { FilterQuery, Model, Query } from 'mongoose';
 
 import Note, { NoteDocument, NoteListResponse } from "@nifty/server-lib/models/note";
+import Directory, { DirectoryDocument } from "@nifty/server-lib/models/directory";
 import { INoteService, INote } from './interfaces';
 import { PaginationParams } from '@/types';
 
 @injectable()
 export class NoteService implements INoteService {
   private noteModel: Model<NoteDocument>;
+  private directoryModel: Model<DirectoryDocument>;
+
   constructor() {
-    this.noteModel = Note
+    this.noteModel = Note;
+    this.directoryModel = Directory;
   }
 
   async findNoteById(id: string): Promise<NoteDocument | null> {
@@ -49,7 +53,18 @@ export class NoteService implements INoteService {
       },
       ...query
     },);
+  }
 
+  async paginateNotesByDirectoryId(directoryId: string, query: PaginationParams): Promise<Partial<NoteListResponse>> {
+    const directory = await this.directoryModel.findById(directoryId);
+    if (!directory) return { data: [], total: 0, page: 0, has_more: false };
+
+    return this.noteModel.paginate({
+      _id: {
+        $in: directory.notes
+      },
+      ...query
+    });
   }
 
   async createNote(createdBy: string, data: Partial<INote>): Promise<NoteDocument> {
@@ -57,7 +72,6 @@ export class NoteService implements INoteService {
       ...data,
       created_by: createdBy,
       parent: null,
-      collaborators: [createdBy],
     }
     const note = await this.noteModel.create(doc);
     return note;
@@ -78,7 +92,11 @@ export class NoteService implements INoteService {
     )
   }
 
-  async findNoteNeighbors(noteId: string, directoryId: string, sortBy: string, limit: number): Promise<{ before: NoteDocument[], after: NoteDocument[] }> {
+  async findNoteNeighbors(noteId: string, directoryId: string, sortBy: keyof NoteDocument, limit: number): Promise<{ before: NoteDocument[], after: NoteDocument[] }> {
+
+    const note = await this.findNoteById(noteId);
+    if (!note) return { before: [], after: [] };
+
     const query = {
       _id: {
         $ne: noteId
@@ -88,14 +106,12 @@ export class NoteService implements INoteService {
     }
 
     const [before, after] = await Promise.all([
-      this.noteModel.find(query)
+      this.noteModel.find({ ...query, [sortBy]: { $lt: note[sortBy] } })
         .sort({ [sortBy]: -1 })
+        .limit(limit),
+      this.noteModel.find({ ...query, [sortBy]: { $gt: note[sortBy] } })
+        .sort({ [sortBy]: 1 })
         .limit(limit)
-        .exec(),
-      this.noteModel.find(query)
-        .sort({ created_at: 1 })
-        .limit(limit)
-        .exec()
     ])
 
     return {

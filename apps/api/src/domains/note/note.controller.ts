@@ -49,8 +49,9 @@ export class NoteController implements INoteController {
     const noteId = req.params.id;
 
     const sortBy = sort || 'created_at';
-    if (!limit || limit % 2 === 0)
-      throw new CustomException('Limit must be an odd number', status.BAD_REQUEST);
+    // limit must be an even number to get the same number of notes before and after
+    if (!limit || limit % 2 !== 0 || limit < 0)
+      throw new CustomException('Limit must be an even number', status.BAD_REQUEST);
 
     const collaborator = await this.collaboratorService.findCollaboratorByNoteIdAndUserId(noteId, userId);
     if (!collaborator)
@@ -60,7 +61,7 @@ export class NoteController implements INoteController {
     if (!directory)
       throw new CustomException('Directory not found', status.NOT_FOUND);
 
-    const neighbors = await this.noteService.findNoteNeighbors(noteId, directory.id, sortBy, limit);
+    const neighbors = await this.noteService.findNoteNeighbors(noteId, directory.id, sortBy, limit / 2);
     res.status(status.OK).json({ data: neighbors });
   }
 
@@ -79,9 +80,10 @@ export class NoteController implements INoteController {
     if (!collaborator)
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
-    const notes = await this.noteService.paginateNotesByCollaboratorId(userId, req.query as PaginationParams);
-    // const noteIds = directory.notes;
-    // const data = await this.noteService.findNotesByIds(noteIds);
+    const query = { ...req.query, directory_id: undefined } as PaginationParams;
+    console.log("GOT", collaborator, collaborator._id, query)
+    const notes = await this.noteService.paginateNotesByDirectoryId(directoryId, query);
+    console.log("HERE", notes)
     res.status(status.OK).json({ data: notes });
   }
 
@@ -100,10 +102,11 @@ export class NoteController implements INoteController {
     if (!collaborator)
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
-    const note = await this.noteService.createNote(createdBy, req.body as NoteCreateRequest);
+    const { id: noteCollaboratorId } = await this.collaboratorService.createCollaborator(createdBy, { user: createdBy });
+    const note = await this.noteService.createNote(createdBy, { ...req.body, collaborators: [noteCollaboratorId] } as NoteCreateRequest);
 
     // add the note to the directory
-    directory.set({ notes: [...directory.notes, note.id] });
+    directory.set({ notes: [...directory.notes, note.id], collaborators: [...directory.collaborators] });
     await directory.save();
 
     return res.status(status.CREATED).json({ data: note });

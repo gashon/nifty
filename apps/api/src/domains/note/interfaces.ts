@@ -20,6 +20,7 @@ interface INoteService {
   deleteNoteById(id: string): Promise<Query<any, NoteDocument & Required<{ _id: string; }>, {}, NoteDocument>>;
   paginateNotesByCollaboratorId(collaboratorId: string, query: PaginationParams): Promise<Partial<NoteListResponse>>
   findNoteNeighbors(noteId: string, directoryId: string, sortBy: string, limit: number): Promise<{ before: NoteDocument[], after: NoteDocument[] }>
+  paginateNotesByDirectoryId(directoryId: string, query: PaginationParams): Promise<Partial<NoteListResponse>>
 }
 
 export { INote, INoteController, INoteService }; 
