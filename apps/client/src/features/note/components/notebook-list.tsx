@@ -11,7 +11,6 @@ type NotebookListProps = {
 export const NotebookList: FC<NotebookListProps> = ({ moduleId }) => {
   const { data, isFetched } = useInfiniteNotes({ directoryId: moduleId, limit: 1000 });
   const { mutate: deleteNote } = useDeleteNote();
-  console.log('GOT', data);
 
   return (
     <>

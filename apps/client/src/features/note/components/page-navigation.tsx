@@ -10,12 +10,10 @@ export const PageNavigation: FC<PageNavigationProps> = ({ id }) => {
   const { data: neighbors } = useGetNoteNeighbors(id, { limit: 2 });
 
   if (!neighbors?.data) return null;
-  console.log('GOT', neighbors);
   const [[beforeNote], [afterNote]] = [
     neighbors.data.before,
     neighbors.data.after,
   ];
-  console.log('BEFORE', beforeNote, 'AFTER', afterNote, 'ID', id, 'LIMIT', '2');
   return (
     <>
       {beforeNote && (

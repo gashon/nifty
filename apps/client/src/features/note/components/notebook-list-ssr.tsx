@@ -31,14 +31,15 @@ export const NotebookListSSR: FC<NotebookListProps> = ({ moduleId, notes }) => {
             {data.pages.map(({ data: page }: any) =>
               page.map((note) => {
                 return (
-                <div key={note.id}>
-                  <NotebookItem
-                    onDelete={() => deleteNote(note.id)}
-                    href={`/notes/${note.id}?name=${note.title}`}
-                    {...note}
-                  />
-                </div>
-              )})
+                  <div key={note.id}>
+                    <NotebookItem
+                      onDelete={() => deleteNote(note.id)}
+                      href={`/notes/${note.id}?title=${note.title}`}
+                      {...note}
+                    />
+                  </div>
+                );
+              })
             )}
           </>
         )}

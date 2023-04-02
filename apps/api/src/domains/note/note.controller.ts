@@ -81,9 +81,8 @@ export class NoteController implements INoteController {
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
     const query = { ...req.query, directory_id: undefined } as PaginationParams;
-    console.log("GOT", collaborator, collaborator._id, query)
     const notes = await this.noteService.paginateNotesByDirectoryId(directoryId, query);
-    console.log("HERE", notes)
+    
     res.status(status.OK).json({ data: notes });
   }
 

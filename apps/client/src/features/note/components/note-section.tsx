@@ -24,7 +24,6 @@ export const DocumentSection: FC = () => {
   const { id } = router.query;
   const [isMounted, setIsMounted] = useState(false);
 
-  console.log('ID', id);
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -33,11 +32,15 @@ export const DocumentSection: FC = () => {
 
   return (
     <>
-      <SocketDocumentEditor
-        documentId={id as string}
-        fallBackEditor={<LongPollDocumentEditor documentId={id as string} />}
-      />
-      <PageNavigation id={id as string} />
+      <section className="h-screen">
+        <SocketDocumentEditor
+          documentId={id as string}
+          fallBackEditor={<LongPollDocumentEditor documentId={id as string} />}
+        />
+      </section>
+      <section className="w-full flex justify-between">
+        <PageNavigation id={id as string} />
+      </section>
     </>
   );
 };

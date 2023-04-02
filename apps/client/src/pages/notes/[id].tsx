@@ -11,7 +11,7 @@ function Document({ user }) {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
 
-  const { id, name } = router.query;
+  const { id, title } = router.query;
 
   useEffect(() => {
     setIsMounted(true);
@@ -21,7 +21,7 @@ function Document({ user }) {
 
   return (
     <>
-      <NextSeo title={name as string} noindex />
+      <NextSeo title={title as string} noindex />
       <AuthProvider preloadedUser={user}>
         <AuthProtection loadingComponent={<LoadingPage />}>
           <header className="fixed w-full p-5">
@@ -31,7 +31,7 @@ function Document({ user }) {
           </header>
           <div className="flex items-center justify-center w-screen">
             <div className="flex flex-col order-1 p-16 w-full lg:w-2/3">
-              <h1 className="underline mb-12 text-5xl text-primary dark:text-zinc-400 ">{name}</h1>
+              <h1 className="underline mb-12 text-5xl text-primary dark:text-zinc-400 ">{title}</h1>
               <main className="h-screen">
                 <DocumentSection />
               </main>
