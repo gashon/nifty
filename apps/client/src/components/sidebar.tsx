@@ -24,7 +24,6 @@ export const Sidebar: FC<SidebarProps> = ({ links }) => {
 
   const isDesktop = useMediaQuery('(min-width: 1024px)') && mounted;
 
-  console.log('GG', isDesktop);
   // eslint-disable-next-line no-nested-ternary
   const menuHeight = isDesktop ? 'auto' : menuOpen ? 'auto' : 0;
   return (
