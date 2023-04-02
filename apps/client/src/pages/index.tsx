@@ -74,12 +74,11 @@ const Landing: FC<LandingProps> = ({ onWaitListFormSubmit }) => {
             <Navbar />
             <header className="pt-24 text-center">
               <h1 className="text-primary text-2xl font-extrabold md:text-3xl lg:text-4xl xl:text-5xl">
-                Rethinking student productivity.
+                Rethinking memory recall.
               </h1>
               <p className="mx-auto max-w-2xl pt-3 text-sm text-tertiary md:text-base">
-                Nifty is an open source student productivity tool, providing
-                students with all the tools they need to organise their life and
-                study more efficiently.
+                Unlock your note's full potential with our AI-powered
+                improvements.
               </p>
               <div className="mt-12 flex flex-col items-center">
                 <EmailForm setIsOpen={setIsOpen} />
@@ -95,7 +94,12 @@ const Landing: FC<LandingProps> = ({ onWaitListFormSubmit }) => {
               </div>
             </header>
             <div className="mx-auto max-w-5xl pt-36 md:pt-64">
-              <div className="w-auto h-auto m">
+              <div
+                className="w-auto h-auto "
+                style={{
+                  boxShadow: '0px 0px 57px 13px rgba(255, 255, 255, 0.2)',
+                }}
+              >
                 <Image
                   src="/preview.png"
                   alt="Preview"

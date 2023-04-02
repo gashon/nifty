@@ -41,6 +41,29 @@ export class NoteController implements INoteController {
     res.status(status.OK).json({ data: note });
   }
 
+  @httpGet('/:id/neighbors', auth())
+  async getNoteNeighbors(req: Request, res: Response): Promise<void> {
+
+    const { sort, limit } = req.query as PaginationParams;
+    const userId = res.locals.user._id;
+    const noteId = req.params.id;
+
+    const sortBy = sort || 'created_at';
+    if (!limit || limit % 2 === 0)
+      throw new CustomException('Limit must be an odd number', status.BAD_REQUEST);
+
+    const collaborator = await this.collaboratorService.findCollaboratorByNoteIdAndUserId(noteId, userId);
+    if (!collaborator)
+      throw new CustomException('You do not have access to this note', status.FORBIDDEN);
+
+    const directory = await this.directoryService.findDirectoryByNoteId(noteId);
+    if (!directory)
+      throw new CustomException('Directory not found', status.NOT_FOUND);
+
+    const neighbors = await this.noteService.findNoteNeighbors(noteId, directory.id, sortBy, limit);
+    res.status(status.OK).json({ data: neighbors });
+  }
+
   @httpGet('/', auth())
   async getNotes(req: Request, res: Response): Promise<void> {
     const userId = res.locals.user._id;

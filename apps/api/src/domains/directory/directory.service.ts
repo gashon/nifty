@@ -82,4 +82,11 @@ export class DirectoryService implements IDirectoryService {
     return directory;
   }
 
+  async findDirectoryByNoteId(id: string): Promise<DirectoryDocument | null> {
+    return this.directoryModel.findOne({
+      notes: {
+        $in: [id]
+      }
+    })
+  }
 }

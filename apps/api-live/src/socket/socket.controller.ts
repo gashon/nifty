@@ -56,7 +56,6 @@ export class WebSocketServer extends Server {
     });
   }
 
-  // todo broadcast user information from all users on join
   @closeSocketOnError
   async handleConnection(documentId: string, socket: WebSocketWithHeartbeat) {
     await this.syncLock.acquire(["connection", documentId], async () => {

@@ -77,4 +77,30 @@ export class NoteService implements INoteService {
       { new: true }
     )
   }
+
+  async findNoteNeighbors(noteId: string, directoryId: string, sortBy: string, limit: number): Promise<{ before: NoteDocument[], after: NoteDocument[] }> {
+    const query = {
+      _id: {
+        $ne: noteId
+      },
+      directory_id: directoryId,
+      deleted_at: null
+    }
+
+    const [before, after] = await Promise.all([
+      this.noteModel.find(query)
+        .sort({ [sortBy]: -1 })
+        .limit(limit)
+        .exec(),
+      this.noteModel.find(query)
+        .sort({ created_at: 1 })
+        .limit(limit)
+        .exec()
+    ])
+
+    return {
+      before,
+      after
+    }
+  }
 }

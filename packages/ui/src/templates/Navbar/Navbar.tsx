@@ -29,7 +29,7 @@ export const Navbar = () => {
             <NavLink href="/">Home</NavLink>
           </li>
           <li>
-            <NavLink href="/auth">Login</NavLink>
+            <NavLink href="/auth">Login/Register</NavLink>
           </li>
         </ul>
         <div className="hidden h-8 w-[1px] bg-zinc-200 dark:bg-zinc-700 md:inline-block" />

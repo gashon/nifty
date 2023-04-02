@@ -16,6 +16,7 @@ interface IDirectoryService {
   paginateDirectories(condition: FilterQuery<DirectoryDocument>, query: PaginationParams): Promise<Partial<DirectoryListResponse>>;
   findDirectoriesByCollaboratorIds(ids: string[]): Promise<DirectoryDocument[]>;
   deleteDirectoryById(id: string): Promise<DirectoryDocument>;
+  findDirectoryByNoteId(id: string): Promise<DirectoryDocument | null>
 }
 
 export { IDirectory, IDirectoryController, IDirectoryService }; 
