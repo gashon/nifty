@@ -2,6 +2,15 @@
 # This script checks if Nginx is installed, installs it if necessary,
 # starts the Nginx server with a given configuration file, and starts all applications
 
+wait_for_port() {
+  local port=$1
+  local timeout=$2
+
+  while ! timeout $timeout bash -c "echo > /dev/tcp/localhost/$port" 2> /dev/null; do
+    sleep 1
+  done
+}
+
 # Check if Nginx is installed
 if ! command -v nginx >/dev/null 2>&1; then
   echo "Nginx not found. Installing Nginx..."
@@ -18,6 +27,12 @@ echo "Setting up Doppler..."
 # Start all applications
 echo "Starting all applications..."
 yarn apps:start &
+
+# Wait for the applications to start listening on their respective ports
+echo "Waiting for applications to start listening on ports 7000, 8080, and 3000..."
+wait_for_port 7000 30
+wait_for_port 8080 30
+wait_for_port 3000 30
 
 nginx_conf_file="/home/ec2-user/app/conf/nginx.conf"
 
