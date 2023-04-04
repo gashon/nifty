@@ -41,19 +41,19 @@ EXPOSE 3000
 CMD doppler run -t $DOPPLER_TOKEN -- ./node_modules/.bin/next build && doppler run -t $DOPPLER_TOKEN -- ./node_modules/.bin/next start
 
 # ---- Client dev ----
-FROM client AS client-dev
+FROM builder AS client-dev
 WORKDIR /usr/src/app/apps/client
 EXPOSE 3000
 CMD doppler run -t $DOPPLER_TOKEN -- ./node_modules/.bin/next dev
 
 # ---- Api dev ----
-FROM api AS api-dev
+FROM builder AS api-dev
 WORKDIR /usr/src/app/apps/client
 EXPOSE 7000
 CMD doppler run -t $DOPPLER_TOKEN -- yarn dev
 
 # ---- Api-live dev ----
-FROM api-live AS api-live-dev
+FROM builder AS api-live-dev
 WORKDIR /usr/src/app/apps/api-live
 EXPOSE 8080
 CMD doppler run -t $DOPPLER_TOKEN -- yarn dev

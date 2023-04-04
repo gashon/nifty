@@ -20,10 +20,6 @@ else
   echo "Nginx is already installed."
 fi
 
-# Setup doppler
-echo "Setting up Doppler..."
-./setup_doppler.sh
-
 # Start all applications
 echo "Starting all applications..."
 yarn apps:start &

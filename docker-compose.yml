@@ -19,8 +19,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-      args:
-        APP_TARGET: client
+      target: client
     environment:
       DOPPLER_TOKEN: ${DOPPLER_TOKEN_CLIENT}
       API_BASE_URL: http://api:7000
@@ -39,12 +38,13 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-      args:
-        APP_TARGET: 'api'
+      target: 'api'
     environment:
       DOPPLER_TOKEN: ${DOPPLER_TOKEN_API}
-    expose:
-      - 7000
+    # expose:
+    #   - 7000
+    ports: 
+      - 7000:7000
     depends_on:
       - mongo
     healthcheck:
