@@ -13,23 +13,24 @@ else
   echo "Nginx is already installed."
 fi
 
-# Start Nginx with the specified configuration file
-echo "Starting Nginx with the provided configuration file..."
-sudo nginx -c $nginx_conf_file
+# # Start Nginx with the specified configuration file
+# echo "Starting Nginx with the provided configuration file..."
+# sudo nginx -c $nginx_conf_file
 
-# Check if Nginx started successfully
-if [ $? -eq 0 ]; then
-  echo "Nginx started successfully."
-else
-  echo "Failed to start Nginx."
-  exit 1
-fi
+# # Check if Nginx started successfully
+# if [ $? -eq 0 ]; then
+#   echo "Nginx started successfully."
+# else
+#   echo "Failed to start Nginx."
+#   exit 1
+# fi
 
-# Setup doppler
-echo "Setting up Doppler..."
-./setup_doppler.sh
+# # Setup doppler
+# echo "Setting up Doppler..."
+# ./setup_doppler.sh
 
-# Start all applications
-echo "Starting all applications..."
-yarn apps:start &
+# # Start all applications
+# echo "Starting all applications..."
+# yarn apps:start &
 
+ls
