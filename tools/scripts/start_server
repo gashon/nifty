@@ -7,8 +7,7 @@ nginx_conf_file="/home/ec2-user/note-hive/conf/nginx.conf"
 # Check if Nginx is installed
 if ! command -v nginx >/dev/null 2>&1; then
   echo "Nginx not found. Installing Nginx..."
-  sudo apt-get update
-  sudo apt-get install -y nginx
+  sudo yum install -y nginx
   echo "Nginx installed."
 else
   echo "Nginx is already installed."
