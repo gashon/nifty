@@ -35,3 +35,7 @@ jobs:
             --deployment-group-name nifty-deployment-group \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
+        shell: /usr/bin/bash -e {0}
+        env:
+          AWS_DEFAULT_REGION: us-west-1
+          AWS_REGION: us-west-1
