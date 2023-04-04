@@ -1,0 +1,15 @@
+# Ignore all files with the .git extension
+.git
+
+# Ignore node_modules directory and its contents
+node_modules
+
+# Ignore build artifacts
+build
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+
+# Ignore all .DS_Store files
+.DS_Store
