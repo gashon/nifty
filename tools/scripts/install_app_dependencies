@@ -18,6 +18,19 @@ else
   echo "Python already installed."
 fi
 
+# Check for Yarn installation
+echo "Checking for Yarn installation..."
+yarn_installed=$(which yarn)
+
+if [ -z "$yarn_installed" ]; then
+  # Install Yarn if not found
+  echo "Yarn not found, installing..."
+  curl -sL https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
+  sudo yum install -y yarn
+else
+  echo "Yarn already installed."
+fi
+
 # Check for Doppler CLI installation
 echo "Checking for Doppler CLI installation..."
 doppler_installed=$(which doppler)

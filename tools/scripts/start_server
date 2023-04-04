@@ -2,8 +2,6 @@
 # This script checks if Nginx is installed, installs it if necessary,
 # starts the Nginx server with a given configuration file, and starts all applications
 
-nginx_conf_file="/home/ec2-user/note-hive/conf/nginx.conf"
-
 # Check if Nginx is installed
 if ! command -v nginx >/dev/null 2>&1; then
   echo "Nginx not found. Installing Nginx..."
@@ -13,24 +11,24 @@ else
   echo "Nginx is already installed."
 fi
 
-# # Start Nginx with the specified configuration file
-# echo "Starting Nginx with the provided configuration file..."
-# sudo nginx -c $nginx_conf_file
+# Setup doppler
+echo "Setting up Doppler..."
+./setup_doppler.sh
 
-# # Check if Nginx started successfully
-# if [ $? -eq 0 ]; then
-#   echo "Nginx started successfully."
-# else
-#   echo "Failed to start Nginx."
-#   exit 1
-# fi
+# Start all applications
+echo "Starting all applications..."
+yarn apps:start &
 
-# # Setup doppler
-# echo "Setting up Doppler..."
-# ./setup_doppler.sh
+nginx_conf_file="/home/ec2-user/app/conf/nginx.conf"
 
-# # Start all applications
-# echo "Starting all applications..."
-# yarn apps:start &
+# Start Nginx with the specified configuration file
+echo "Starting Nginx with the provided configuration file..."
+sudo nginx -c $nginx_conf_file
 
-ls
+# Check if Nginx started successfully
+if [ $? -eq 0 ]; then
+  echo "Nginx started successfully."
+else
+  echo "Failed to start Nginx."
+  exit 1
+fi
