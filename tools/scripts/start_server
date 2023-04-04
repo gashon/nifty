@@ -4,6 +4,17 @@
 
 nginx_conf_file="/home/ec2-user/note-hive/conf/nginx.conf"
 
+if ! command -v nginx &> /dev/null
+then
+    echo "Nginx is not installed. Installing now..."
+    sudo amazon-linux-extras install nginx1.12 -y
+    sudo systemctl start nginx
+    sudo systemctl enable nginx
+    echo "Nginx has been installed and started."
+else
+    echo "Nginx is already installed."
+fi
+
 # Start Nginx with the specified configuration file
 echo "Starting Nginx with the provided configuration file..."
 sudo nginx -c $nginx_conf_file
