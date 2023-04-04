@@ -25,7 +25,7 @@
     "randomstring": "^1.2.3",
     "snowflake-sdk": "^1.6.18",
     "yup": "^0.32.11",
-    "common": "*"
+    "common": "file:../common"
   },
   "devDependencies": {
     "@types/flat": "^5.0.2",
@@ -37,7 +37,7 @@
     "@types/randomstring": "^1.1.8",
     "@types/snowflake-sdk": "^1.6.12",
     "eslint": "8.22.0",
-    "eslint-config-custom": "*",
-    "@nifty/tsconfig": "*"
+    "eslint-config-custom": "file:../eslint-config-custom",
+    "@nifty/tsconfig": "file:../tsconfig"
   }
 }

@@ -53,6 +53,7 @@
     "@babel/core": "^7.0.0",
     "@nifty/tsconfig": "file:../../packages/tsconfig",
     "@nifty/ui": "file:../../packages/ui",
+    "@nifty/api-live": "file:../api-live",
     "@tailwindcss/forms": "^0.5.3",
     "@types/node": "^17.0.12",
     "@types/prismjs": "^1.26.0",

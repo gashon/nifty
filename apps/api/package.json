@@ -8,7 +8,8 @@
     "lint": "tsc --noEmit && eslint . --fix --ext js,ts"
   },
   "dependencies": {
-    "@nifty/server-lib": "*",
+    "@nifty/server-lib": "file:../../packages/server-lib",
+    "oauth": "file:../../packages/oauth",
     "@sentry/node": "7.45.0",
     "@types/passport-github2": "1.2.5",
     "cookie-parser": "~1.4.4",
@@ -30,7 +31,7 @@
     "ts-node": "^10.9.1"
   },
   "devDependencies": {
-    "@nifty/tsconfig": "*",
+    "@nifty/tsconfig": "file:../../packages/tsconfig",
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.14",
@@ -38,11 +39,11 @@
     "@types/multer": "^1.4.7",
     "@types/node": "^18.11.9",
     "@types/throng": "^5.0.4",
-    "common": "*",
+    "common": "file:../../packages/common",
     "esbuild": "^0.15.13",
     "esbuild-register": "^3.3.3",
     "eslint": "8.22.0",
-    "eslint-config-custom": "*",
+    "eslint-config-custom": "file:../../packages/eslint-config-custom",
     "nodemon": "^2.0.20",
     "typescript": "^4.8.4"
   }
