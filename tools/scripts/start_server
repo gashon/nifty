@@ -1,18 +1,17 @@
 #!/bin/bash
-# This script starts the Nginx server with a given configuration file
-# and starts all applications
+# This script checks if Nginx is installed, installs it if necessary,
+# starts the Nginx server with a given configuration file, and starts all applications
 
 nginx_conf_file="/home/ec2-user/note-hive/conf/nginx.conf"
 
-if ! command -v nginx &> /dev/null
-then
-    echo "Nginx is not installed. Installing now..."
-    sudo yum install -y amazon-linux-extras
-    sudo amazon-linux-extras install nginx1.12 -y
-    sudo systemctl enable nginx
-    echo "Nginx has been installed."
+# Check if Nginx is installed
+if ! command -v nginx >/dev/null 2>&1; then
+  echo "Nginx not found. Installing Nginx..."
+  sudo apt-get update
+  sudo apt-get install -y nginx
+  echo "Nginx installed."
 else
-    echo "Nginx is already installed."
+  echo "Nginx is already installed."
 fi
 
 # Start Nginx with the specified configuration file
