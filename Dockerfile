@@ -2,7 +2,7 @@
 FROM node:16.15.0-alpine AS base
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
-COPY package.json turbo.json yarn.lock ./
+COPY package.json turbo.json yarn.lock tailwind.config.js ./
 
 # ---- Dependencies ----
 FROM base AS dependencies
@@ -26,20 +26,18 @@ RUN yarn install --non-interactive
 FROM builder AS api
 WORKDIR /usr/src/app/apps/api
 EXPOSE 7000
-ENTRYPOINT [ "doppler", "run", "-t","$DOPPLER_TOKEN", "--" ]
-CMD [ "yarn", "start"]
+# CMD ["sleep", "infinity"]
+CMD doppler run -t $DOPPLER_TOKEN -- yarn start
 
 # ---- Api-live Build ----
 FROM builder AS api-live
 WORKDIR /usr/src/app/apps/api-live
 EXPOSE 8080
-ENTRYPOINT [ "doppler", "run", "-t","$DOPPLER_TOKEN", "--" ]
-CMD [ "yarn", "start"]
+CMD doppler run -t $DOPPLER_TOKEN -- yarn start
 
 # ---- Client Build ----
 FROM builder AS client
 WORKDIR /usr/src/app/apps/client
 EXPOSE 3000
-ENTRYPOINT [ "doppler", "run", "-t","$DOPPLER_TOKEN", "--"]
-# CMD ["./node_modules/.bin/next", "start"]
-CMD ["sleep", "infinity"]
+# CMD ["sleep", "infinity"]
+CMD doppler run -t $DOPPLER_TOKEN -- ./node_modules/.bin/next build && doppler run -t $DOPPLER_TOKEN -- ./node_modules/.bin/next start
