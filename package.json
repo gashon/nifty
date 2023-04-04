@@ -15,6 +15,7 @@
   "scripts": {
     "apps:build": "turbo run build",
     "apps:dev": "cross-env FORCE_COLOR=1 turbo run dev --parallel",
+    "apps:start": "cross-env turbo run start --parallel",
     "apps:lint": "turbo run lint",
     "apps:format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "format": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,scss,md}\"",

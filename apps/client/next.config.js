@@ -14,7 +14,7 @@ module.exports = {
   poweredByHeader: false,
   eslint: { ignoreDuringBuilds: true },
   async rewrites() {
-    const HOST = 'http://host.docker.internal:3001' || process.env.API_BASE_URL;
+    const HOST = process.env.API_BASE_URL;
     return [
       {
         source: '/ajax/:path*',
