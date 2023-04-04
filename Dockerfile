@@ -26,7 +26,6 @@ RUN yarn install --non-interactive
 FROM builder AS api
 WORKDIR /usr/src/app/apps/api
 EXPOSE 7000
-# CMD ["sleep", "infinity"]
 CMD doppler run -t $DOPPLER_TOKEN -- yarn start
 
 # ---- Api-live Build ----
@@ -39,5 +38,22 @@ CMD doppler run -t $DOPPLER_TOKEN -- yarn start
 FROM builder AS client
 WORKDIR /usr/src/app/apps/client
 EXPOSE 3000
-# CMD ["sleep", "infinity"]
 CMD doppler run -t $DOPPLER_TOKEN -- ./node_modules/.bin/next build && doppler run -t $DOPPLER_TOKEN -- ./node_modules/.bin/next start
+
+# ---- Client dev ----
+FROM client AS client-dev
+WORKDIR /usr/src/app/apps/client
+EXPOSE 3000
+CMD doppler run -t $DOPPLER_TOKEN -- ./node_modules/.bin/next dev
+
+# ---- Api dev ----
+FROM api AS api-dev
+WORKDIR /usr/src/app/apps/client
+EXPOSE 7000
+CMD doppler run -t $DOPPLER_TOKEN -- yarn dev
+
+# ---- Api-live dev ----
+FROM api-live AS api-live-dev
+WORKDIR /usr/src/app/apps/api-live
+EXPOSE 8080
+CMD doppler run -t $DOPPLER_TOKEN -- yarn dev
