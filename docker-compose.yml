@@ -1,19 +1,67 @@
 version: '3.9'
 
 services:
-  mongo:
-    image: mongo:4.4
+  nginx:
+    image: nginx:latest
     ports:
-      - 27017:27017
+      - 80:80
     volumes:
-      - mongo_data:/data/db
-      - ./mongo-init:/docker-entrypoint-initdb.d
-  redis:
-    ports:
-      - 6379:6379
-    image: redis:latest
-    volumes:
-      - redis_data:/data
-volumes:
-  mongo_data:
-  redis_data:
+      - ./conf/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - client
+      - api
+      - api_live
+  client:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        APP_TARGET: client
+    environment:
+      DOPPLER_TOKEN: ${DOPPLER_TOKEN_CLIENT}
+    expose:
+      - 3000
+    depends_on:
+      - api
+      - api_live
+  api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        APP_TARGET: 'api'
+    environment:
+      DOPPLER_TOKEN: ${DOPPLER_TOKEN_API}
+    expose:
+      - 7000
+    # depends_on:
+    #   - mongo
+  api_live:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        DOPPLER_TOKEN: ${DOPPLER_TOKEN_API_LIVE}
+    environment:
+      DOPPLER_TOKEN: ${DOPPLER_TOKEN_API_LIVE}
+    expose:
+      - 8080
+    # depends_on:
+    #   - mongo
+    #   - redis
+  # mongo:
+  #   image: mongo:4.4
+  #   ports:
+  #     - 27017:27017
+  #   volumes:
+  #     - mongo_data:/data/db
+  #     - ./mongo-init:/docker-entrypoint-initdb.d
+  # redis:
+  #   ports:
+  #     - 6379:6379
+  #   image: redis:latest
+  #   volumes:
+  #     - redis_data:/data
+# volumes:
+#   mongo_data:
+#   redis_data:
