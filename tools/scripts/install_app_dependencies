@@ -34,4 +34,8 @@ fi
 echo "Running 'yarn install --no-interactive'..."
 yarn install --no-interactive
 
+# build
+echo "Running 'yarn build'..."
+yarn apps:build
+
 echo "Script completed."
