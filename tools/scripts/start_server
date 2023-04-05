@@ -11,6 +11,10 @@ wait_for_port() {
   done
 }
 
+# Kill all running applications
+echo "Killing all running applications..."
+pkill -f "yarn apps:start"
+
 # Check if Nginx is installed
 if ! command -v nginx >/dev/null 2>&1; then
   echo "Nginx not found. Installing Nginx..."
@@ -32,8 +36,9 @@ wait_for_port 6379 60
 # Start all applications
 echo "Starting all applications..."
 cd /home/ec2-user/app 
+yarn cache clean
 yarn install --no-interactive
-yarn apps:build
+(cd ./apps/client && yarn build)
 yarn apps:start > app_start.log 2>&1 &
 
 # Wait for the applications to start listening on their respective ports
