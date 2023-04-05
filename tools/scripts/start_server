@@ -2,6 +2,10 @@
 # This script checks if Nginx is installed, installs it if necessary,
 # starts the Nginx server with a given configuration file, and starts all applications
 
+# Kill all running applications
+echo "Killing all running applications..."
+pkill -f "yarn apps:start"
+
 # Exit the script if any command fails
 set -e
 
@@ -13,10 +17,6 @@ wait_for_port() {
     sleep 1
   done
 }
-
-# Kill all running applications
-echo "Killing all running applications..."
-pkill -f "yarn apps:start"
 
 # Check if Nginx is installed
 if ! command -v nginx >/dev/null 2>&1; then
