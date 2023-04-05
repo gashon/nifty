@@ -33,6 +33,7 @@ wait_for_port 6379 60
 echo "Starting all applications..."
 cd /home/ec2-user/app 
 yarn install --no-interactive
+yarn apps:build
 yarn apps:start > app_start.log 2>&1 &
 
 # Wait for the applications to start listening on their respective ports
