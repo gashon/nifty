@@ -2536,35 +2536,6 @@
   resolved "https://registry.npmjs.org/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-13.0.0.tgz"
   integrity sha512-FFOGGWwTCRMu9W7MF496Urefxtuo2lttxF1vwS+1rIRsKvuLrWhVaVTj3T8sf2EBL6gtJbmh4TYlizS+obnGKA==
 
-"@nifty/common@file:packages/common", "common@file:packages/common":
-  version "0.1.0"
-
-"@nifty/server-lib@file:packages/server-lib":
-  version "0.0.0"
-  dependencies:
-    "@fast-csv/format" "^4.3.5"
-    "@google-cloud/bigquery" "^6.1.0"
-    "@google-cloud/storage" "^6.9.0"
-    "@sendgrid/mail" "^7.7.0"
-    common "file:../../../Library/Caches/Yarn/v6/npm-@nifty-server-lib-0.0.0-5b7b17e6-afc5-4b34-b838-77465d73e001-1680438729333/node_modules/@nifty/common"
-    dayjs "^1.11.6"
-    flat "^5.0.2"
-    handlebars "^4.7.7"
-    knex "^2.3.0"
-    lodash "^4.17.21"
-    md5 "^2.3.0"
-    mongoose "^6.3.8"
-    mongoose-autopopulate "^0.17.1"
-    openai "^3.1.0"
-    passport "^0.6.0"
-    passport-google-oauth20 "^2.0.0"
-    pg "^8.8.0"
-    pluralize "^8.0.0"
-    qs "^6.11.0"
-    randomstring "^1.2.3"
-    snowflake-sdk "^1.6.18"
-    yup "^0.32.11"
-
 "@nifty/tsconfig@file:packages/tsconfig":
   version "0.0.0"
 
@@ -6624,6 +6595,14 @@ common-path-prefix@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/common-path-prefix/-/common-path-prefix-3.0.0.tgz"
   integrity sha512-QE33hToZseCH3jS0qN96O/bSh3kaw/h+Tq7ngyY9eWDUnTlTNUyqfqvCXioLe5Na5jFsL78ra/wuBU4iuEgd4w==
+
+common@*:
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/common/-/common-0.2.5.tgz#3c7182f678bd1e3681cd5cc348c759fe8dd22394"
+  integrity sha512-bjuztiY8Wcz2V9dPpa0XdF0unGWqAGsnyKDGV7g6xDcaZfpufRrxV35qhuhjwv1h0jEPeiCHWKAQFLj702jGnA==
+
+"common@file:packages/common":
+  version "0.1.0"
 
 commondir@^1.0.1:
   version "1.0.1"
@@ -11921,9 +11900,6 @@ nx@15.8.8:
     "@nrwl/nx-linux-x64-musl" "15.8.8"
     "@nrwl/nx-win32-arm64-msvc" "15.8.8"
     "@nrwl/nx-win32-x64-msvc" "15.8.8"
-
-"oauth@file:packages/oauth":
-  version "0.9.15"
 
 object-assign@^4, object-assign@^4.0.1, object-assign@^4.1.1:
   version "4.1.1"
