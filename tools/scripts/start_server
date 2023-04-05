@@ -2,6 +2,9 @@
 # This script checks if Nginx is installed, installs it if necessary,
 # starts the Nginx server with a given configuration file, and starts all applications
 
+# Exit the script if any command fails
+set -e
+
 wait_for_port() {
   local port=$1
   local timeout=$2

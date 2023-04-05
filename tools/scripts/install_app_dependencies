@@ -2,6 +2,9 @@
 # This script checks for Python and Doppler CLI installations and installs them if necessary.
 # It also runs `yarn install --no-interactive`.
 
+# Exit the script if any command fails
+set -e
+
 # Update package lists
 echo "Updating package lists..."
 sudo yum update -y
