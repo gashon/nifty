@@ -39,6 +39,7 @@ wait_for_port 6379 60
 
 # Start all applications
 echo "Starting all applications..."
+whoami
 (cd /home/ec2-user/app/apps/client && yarn build)
 yarn apps:start > app_start.log 2>&1 &
 
