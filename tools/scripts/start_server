@@ -26,6 +26,7 @@ fi
 
 # Start local Mongo and Redis instances using Docker Compose
 echo "Starting local Mongo and Redis instances..."
+docker-compose down
 docker-compose -f /home/ec2-user/app/docker-compose.prod.yml up -d
 
 # Wait for Mongo and Redis to be ready
