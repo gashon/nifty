@@ -64,6 +64,7 @@ echo "Running 'yarn install --no-interactive'..."
 cd /home/ec2-user/app 
 yarn cache clean
 yarn install --no-interactive
+(cd ./apps/client && doppler configure --scope .)
 (cd ./apps/client && yarn build)
 
 echo "Script completed."
