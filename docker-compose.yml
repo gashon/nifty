@@ -12,8 +12,8 @@ services:
         condition: service_healthy
       api:
         condition: service_healthy
-      # api_live:
-      #   condition: service_healthy
+      api_live:
+        condition: service_healthy
 
   client:
     build:
@@ -27,7 +27,7 @@ services:
       - 3000
     depends_on:
       - api
-      # - api_live
+      - api_live
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3000']
       interval: 30s
@@ -41,8 +41,8 @@ services:
       target: 'api'
     environment:
       DOPPLER_TOKEN: ${DOPPLER_TOKEN_API}
-    # expose:
-    #   - 7000
+    expose:
+      - 7000
     ports: 
       - 7000:7000
     depends_on:
@@ -53,24 +53,24 @@ services:
       timeout: 10s
       retries: 3
 
-  # api_live:
-  #   build:
-  #     context: .
-  #     dockerfile: ./Dockerfile
-  #     args:
-  #       DOPPLER_TOKEN: ${DOPPLER_TOKEN_API_LIVE}
-  #   environment:
-  #     DOPPLER_TOKEN: ${DOPPLER_TOKEN_API_LIVE}
-  #   expose:
-  #     - 8080
-  #   depends_on:
-  #     - mongo
-  #     - redis
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:8080"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
+  api_live:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        DOPPLER_TOKEN: ${DOPPLER_TOKEN_API_LIVE}
+    environment:
+      DOPPLER_TOKEN: ${DOPPLER_TOKEN_API_LIVE}
+    expose:
+      - 8080
+    depends_on:
+      - mongo
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   mongo:
     image: mongo:4.4
