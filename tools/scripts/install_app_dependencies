@@ -61,10 +61,9 @@ sudo service docker start
 
 # Run yarn install
 echo "Running 'yarn install --no-interactive'..."
+cd /home/ec2-user/app 
+yarn cache clean
 yarn install --no-interactive
-
-# build
-echo "Running 'yarn build'..."
-yarn apps:build
+(cd ./apps/client && yarn build)
 
 echo "Script completed."
