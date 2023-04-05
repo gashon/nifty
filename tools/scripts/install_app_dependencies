@@ -61,10 +61,11 @@ sudo service docker start
 
 # Run yarn install
 echo "Running 'yarn install --no-interactive'..."
-cd /home/ec2-user/app 
-yarn cache clean
-yarn install --no-interactive
-(cd ./apps/client && doppler configure --scope .)
-(cd ./apps/client && yarn build)
+
+(
+  cd /home/ec2-user/app &&
+  yarn cache clean &&
+  yarn install --no-interactive
+)
 
 echo "Script completed."
