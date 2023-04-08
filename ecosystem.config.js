@@ -4,7 +4,7 @@ module.exports = {
       name: 'client',
       script: 'yarn',
       args: 'run start',
-      cwd: '/apps/client',
+      cwd: '/home/ec2-user/app/apps/client',
       env: {
         NODE_ENV: 'development',
       },
@@ -19,7 +19,7 @@ module.exports = {
       name: 'api',
       script: 'yarn',
       args: 'run start',
-      cwd: '/apps/api',
+      cwd: '/home/ec2-user/app/apps/api',
       env: {
         NODE_ENV: 'development',
       },
@@ -34,7 +34,7 @@ module.exports = {
       name: 'api-live',
       script: 'yarn',
       args: 'run start',
-      cwd: '/apps/api-live',
+      cwd: '/home/ec2-user/app/apps/api-live',
       env: {
         NODE_ENV: 'development',
       },
