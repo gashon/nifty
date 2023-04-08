@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script checks for Python and Doppler CLI installations and installs them if necessary.
+# This script checks for Python, Doppler CLI, pm2 installations and installs them if necessary.
 # It also runs `yarn install --no-interactive`.
 
 # Exit the script if any command fails
@@ -46,8 +46,19 @@ else
   echo "Doppler CLI already installed."
 fi
 
+# Check for pm2 installation
+echo "Checking for pm2 installation..."
+pm2_installed=$(which pm2)
 
-# install docker and docker-compose
+if [ -z "$pm2_installed" ]; then
+  # Install pm2 if not found
+  echo "pm2 not found, installing..."
+  yarn global add pm2
+else
+  echo "pm2 already installed."
+fi
+
+# Install docker and docker-compose
 echo "Installing docker and docker-compose..."
 sudo yum install -y docker
 sudo usermod -a -G docker ec2-user
