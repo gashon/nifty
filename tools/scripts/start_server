@@ -51,16 +51,19 @@ wait_for_port 3000 30
 
 nginx_conf_file="/home/ec2-user/app/conf/nginx.conf"
 
-# Start Nginx with the specified configuration file
-echo "Starting Nginx with the provided configuration file..."
-sudo fuser -k 80/tcp
-sudo systemctl stop nginx
-sudo nginx -c $nginx_conf_file
+# Check if Nginx is running
+if pgrep nginx >/dev/null 2>&1; then
+  echo "Nginx is running. Reloading the configuration file..."
+  sudo nginx -c $nginx_conf_file -s reload
+else
+  echo "Nginx is not running. Starting Nginx with the provided configuration file..."
+  sudo nginx -c $nginx_conf_file
+fi
 
 # Check if Nginx started successfully
 if [ $? -eq 0 ]; then
-  echo "Nginx started successfully."
+  echo "Nginx operation completed successfully."
 else
-  echo "Failed to start Nginx."
+  echo "Failed to start or reload Nginx."
   exit 1
 fi
