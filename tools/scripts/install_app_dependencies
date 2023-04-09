@@ -64,8 +64,7 @@ sudo yum install -y docker
 sudo usermod -a -G docker ec2-user
 id ec2-user
 newgrp docker
-wget https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) 
-sudo mv docker-compose-$(uname -s)-$(uname -m) /usr/local/bin/docker-compose
+sudo wget -O /usr/local/bin/docker-compose https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)
 sudo chmod -v +x /usr/local/bin/docker-compose
 # start docker
 sudo service docker start
