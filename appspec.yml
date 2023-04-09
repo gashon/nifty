@@ -11,8 +11,8 @@ hooks:
   AfterInstall:
    - location: tools/scripts/install_app_dependencies
      timeout: 300
-     runas: root
+     runas: ec2-user
   ApplicationStart:
    - location: tools/scripts/start_server
      timeout: 1200
-     runas: root
+     runas: ec2-user
