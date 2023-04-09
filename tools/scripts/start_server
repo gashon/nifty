@@ -30,7 +30,6 @@ fi
 # Start local Mongo and Redis instances using Docker Compose
 echo "Starting local Mongo and Redis instances..."
 docker_compose_path="/home/ec2-user/app/docker-compose.prod.yml"
-docker-compose -f $docker_compose_path down
 docker-compose -f $docker_compose_path up -d
 
 # Wait for Mongo and Redis to be ready
@@ -40,7 +39,7 @@ wait_for_port 6379 60
 
 # Start all applications
 echo "Starting all applications..."
-su - ec2-user -c '(cd /home/ec2-user/app/apps/client && yarn build)'
+(cd /home/ec2-user/app/apps/client && yarn build)
 # su - ec2-user -c 'yarn apps:start > app_start.log 2>&1 &'
 pm2 startOrReload ecosystem.config.js --interpreter $(which node) --update-env --env production --user ec2-user --log-date-format "YYYY-MM-DD HH:mm:ss.SSS"
 
