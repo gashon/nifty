@@ -4,11 +4,15 @@ files:
  - source: .
    destination: /home/ec2-user/app
 hooks:
+  BeforeInstall:
+    - location: tools/scripts/delete_ecosystem_config
+      timeout: 60
+      runas: ec2-user
   AfterInstall:
    - location: tools/scripts/install_app_dependencies
      timeout: 300
-     runas: root
+     runas: ec2-user
   ApplicationStart:
    - location: tools/scripts/start_server
-     timeout: 300
-     runas: root
+     timeout: 1200
+     runas: ec2-user

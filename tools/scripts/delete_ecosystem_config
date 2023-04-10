@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+file_path="/home/ec2-user/app/ecosystem.config.js"
+
+if [ -f "$file_path" ]; then
+    echo "Deleting existing ecosystem.config.js file"
+    rm -f "$file_path"
+else
+    echo "No existing ecosystem.config.js file found"
+fi
+

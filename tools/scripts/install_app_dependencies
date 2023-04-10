@@ -1,6 +1,9 @@
 #!/bin/bash
-# This script checks for Python and Doppler CLI installations and installs them if necessary.
+# This script checks for Python, Doppler CLI, pm2 installations and installs them if necessary.
 # It also runs `yarn install --no-interactive`.
+
+# Exit the script if any command fails
+set -e
 
 # Update package lists
 echo "Updating package lists..."
@@ -43,25 +46,36 @@ else
   echo "Doppler CLI already installed."
 fi
 
+# Check for pm2 installation
+echo "Checking for pm2 installation..."
+pm2_installed=$(which pm2)
 
-# install docker and docker-compose
+if [ -z "$pm2_installed" ]; then
+  # Install pm2 if not found
+  echo "pm2 not found, installing..."
+  yarn global add pm2
+else
+  echo "pm2 already installed."
+fi
+
+# Install docker and docker-compose
 echo "Installing docker and docker-compose..."
 sudo yum install -y docker
 sudo usermod -a -G docker ec2-user
 id ec2-user
 newgrp docker
-wget https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) 
-sudo mv docker-compose-$(uname -s)-$(uname -m) /usr/local/bin/docker-compose
+sudo wget -O /usr/local/bin/docker-compose https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)
 sudo chmod -v +x /usr/local/bin/docker-compose
 # start docker
 sudo service docker start
 
 # Run yarn install
 echo "Running 'yarn install --no-interactive'..."
-yarn install --no-interactive
 
-# build
-echo "Running 'yarn build'..."
-yarn apps:build
+(
+  cd /home/ec2-user/app &&
+  yarn cache clean &&
+  yarn install --no-interactive
+)
 
 echo "Script completed."
