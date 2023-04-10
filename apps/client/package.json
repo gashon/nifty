@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "doppler run next dev",
     "build": "doppler run -- next build",
-    "start": "next start",
+    "start": "doppler run -- next start",
     "lint": "next lint"
   },
   "dependencies": {
