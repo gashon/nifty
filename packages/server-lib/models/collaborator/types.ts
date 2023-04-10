@@ -7,6 +7,7 @@ export interface ICollaborator extends Resource {
   user: string;
   type: "directory" | "note" | "quiz";
   permissions: string[];
+  foreign_key: string;
 }
 
 export type CollaboratorDocument = mongoose.Document<string, object, ICollaborator> & ICollaborator;

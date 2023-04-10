@@ -22,6 +22,11 @@ const collaboratorSchema = new mongoose.Schema<ICollaborator>({
     required: true,
     immutable: true,
   },
+  foreign_key: {
+    type: String,
+    required: true,
+    immutable: true,
+  },
   permissions: {
     type: [String],
     default: [],

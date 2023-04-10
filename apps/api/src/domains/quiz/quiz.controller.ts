@@ -2,6 +2,7 @@ import status from 'http-status';
 import { controller, httpGet, httpPost, httpPatch, httpDelete } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { Request, Response } from 'express';
+import { FilterQuery } from 'mongoose';
 
 import auth from '@/middlewares/auth';
 import { CustomException } from '@/exceptions';
@@ -20,6 +21,7 @@ import { NOTE_TYPES } from '@/domains/note/types';
 import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
 import { DIRECTORY_TYPES } from '@/domains/directory/types';
 import { INoteService } from '../note';
+import { CollaboratorDocument } from '@nifty/server-lib/models/collaborator';
 
 @controller('/v1/quizzes')
 export class QuizController implements IQuizController {
@@ -50,20 +52,22 @@ export class QuizController implements IQuizController {
   @httpGet('/', auth())
   async getQuizzes(req: Request, res: Response): Promise<void> {
     const userId = res.locals.user._id;
-    const directoryId = req.query.directory_id as string;
+    const query = { ...req.query } as PaginationParams;
 
-    // validate directory exists
-    const directory = await this.directoryService.findDirectoryById(directoryId);
-    if (!directory)
-      throw new CustomException('Directory not found', status.NOT_FOUND);
+    const condition: FilterQuery<CollaboratorDocument> = {
+      // @ts-ignore
+      deleted_at: { $exists: false },
+      type: "quiz",
+      user: userId
+    }
 
-    // validate user has access to directory
-    const collaborator = await this.collaboratorService.findCollaboratorByDirectoryIdAndUserId(directory.id, userId);
-    if (!collaborator)
-      throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
+    const collaborators = await this.collaboratorService.paginateCollaborators(condition, query);
+    if (!collaborators?.data || collaborators.data.length == 0) {
+      res.status(status.OK).json({ data: [] });
+      return;
+    }
 
-    const query = { ...req.query, directory_id: undefined } as PaginationParams;
-    const quizzes = await this.quizService.paginateQuizzesByDirectoryId(directoryId, query);
+    const quizzes = await this.quizService.findQuizzesByIds(collaborators.data.map(collaborator => collaborator.foreign_key));
 
     res.status(status.OK).json({ data: quizzes });
   }
