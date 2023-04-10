@@ -38,7 +38,10 @@ export class QuizController implements IQuizController {
     if (!quiz)
       throw new CustomException('Quiz not found', status.NOT_FOUND);
 
-    if (!quiz.collaborators.includes(userId))
+    // validate permissions
+    const collaborators = await quiz.populate('collaborators').execPopulate();
+    const collaborator = collaborators.collaborators.find((collaborator: any) => collaborator.user_id === userId);
+    if (!collaborator)
       throw new CustomException('You do not have access to this quiz', status.FORBIDDEN);
 
     res.status(status.OK).json({ data: quiz });
@@ -70,7 +73,7 @@ export class QuizController implements IQuizController {
     const createdBy = res.locals.user._id;
     const noteId = req.body.note_id;
 
-    // valdiate note exists
+    // validate note exists
     const note = await this.noteService.findNoteById(noteId);
     if (!note)
       throw new CustomException('Note not found', status.NOT_FOUND);
@@ -83,10 +86,6 @@ export class QuizController implements IQuizController {
     // create the quiz
     const { id: quizCollaboratorId } = await this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz" });
     const quiz = await this.quizService.createQuiz(createdBy, { note: noteId, collaborators: [quizCollaboratorId] } as QuizCreateRequest);
-
-    // add the quiz to the directory
-    directory.set({ quizzes: [...directory.quizzes, quiz.id], collaborators: [...directory.collaborators] });
-    await directory.save();
 
     return res.status(status.CREATED).json({ data: quiz });
   }
