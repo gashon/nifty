@@ -88,7 +88,7 @@ export class QuizController implements IQuizController {
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
     // create the quiz
-    const { id: quizCollaboratorId } = await this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz" });
+    const { id: quizCollaboratorId } = await this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: ['r', 'w', 'd'] });
     const quiz = await this.quizService.createQuiz(createdBy, { note: noteId, collaborators: [quizCollaboratorId] } as QuizCreateRequest);
 
     return res.status(status.CREATED).json({ data: quiz });

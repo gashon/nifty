@@ -2,7 +2,7 @@ import mongoose from "../../mongoose";
 import Resource from '../../utils/types/resource';
 import { ListResponse } from '../../utils/types/tsoa/list-response';
 
-export type PermissionsType = 'r' | 'w' | 'rw' | 'd' | 'rd' | 'wd' | 'rwd';
+export type PermissionsType = 'r' | 'w' | 'd'; // read, write, delete
 export interface ICollaborator extends Resource {
   created_by: string;
   user: string;

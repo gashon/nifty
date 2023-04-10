@@ -32,7 +32,7 @@ const collaboratorSchema = new mongoose.Schema<ICollaborator>({
     default: [],
     immutable: false,
     required: true,
-    enum: ['r', 'w', 'rw', 'd', 'rd', 'wd', 'rwd'],
+    enum: ['r', 'w', 'd'],
   },
   deleted_at: {
     type: Date,

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { FilterQuery } from 'mongoose';
 
 import { PaginationParams } from "@/types";
-import { ICollaborator, CollaboratorDocument, CollaboratorListResponse } from "@nifty/server-lib/models/collaborator";
+import { ICollaborator, CollaboratorDocument, CollaboratorCreateRequest, CollaboratorListResponse } from "@nifty/server-lib/models/collaborator";
 interface ICollaboratorController {
 
 }
@@ -12,7 +12,7 @@ interface ICollaboratorService {
   findCollaboratorByDirectoryIdAndUserId(directoryId: string, userId: string): Promise<CollaboratorDocument | null>;
   findCollaboratorByNoteIdAndUserId(noteId: string, userId: string): Promise<CollaboratorDocument | null>;
   paginateCollaborators(condition: FilterQuery<CollaboratorDocument>, query: PaginationParams): Promise<Partial<CollaboratorListResponse>>;
-  createCollaborator(createdBy: string, data: Partial<ICollaborator>): Promise<CollaboratorDocument>;
+  createCollaborator(createdBy: string, data: CollaboratorCreateRequest): Promise<CollaboratorDocument>;
   findCollaboratorsByIds(ids: string[]): Promise<CollaboratorDocument[]>
 }
 
