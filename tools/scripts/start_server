@@ -39,9 +39,10 @@ wait_for_port 6379 60
 
 # Start all applications
 echo "Starting all applications..."
+# stop apps for rebuild
+pm2 stop /home/ec2-user/app/ecosystem.config.js --user ec2-user 
 (cd /home/ec2-user/app/apps/client && yarn build)
-# su - ec2-user -c 'yarn apps:start > app_start.log 2>&1 &'
-pm2 startOrReload ecosystem.config.js --interpreter $(which node) --update-env --env production --user ec2-user --log-date-format "YYYY-MM-DD HH:mm:ss.SSS"
+pm2 startOrReload /home/ec2-user/app/ecosystem.config.js --interpreter $(which node) --update-env --env production --user ec2-user --log-date-format "YYYY-MM-DD HH:mm:ss.SSS"
 
 # Wait for the applications to start listening on their respective ports
 echo "Waiting for applications to start listening on ports 7000, 8080, and 3000..."
