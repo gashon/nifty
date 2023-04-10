@@ -113,4 +113,11 @@ export class CollaboratorService implements ICollaboratorService {
     const collaborator = await this.collaboratorModel.create(doc);
     return collaborator;
   }
+
+  async findCollaboratorByForeignKeyAndUserId(foreignKey: string, userId: string): Promise<CollaboratorDocument | null> {
+    return this.collaboratorModel.findOne({
+      user: userId,
+      foreign_key: foreignKey
+    })
+  }
 }

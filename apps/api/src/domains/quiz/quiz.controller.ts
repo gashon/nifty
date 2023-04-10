@@ -89,31 +89,10 @@ export class QuizController implements IQuizController {
 
     // create the quiz
     const { id: quizCollaboratorId } = await this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: ['r', 'w', 'd'] });
+    // todo fetch the quiz material from openAI
     const quiz = await this.quizService.createQuiz(createdBy, { note: noteId, collaborators: [quizCollaboratorId] } as QuizCreateRequest);
 
     return res.status(status.CREATED).json({ data: quiz });
-  }
-
-  @httpPatch("/:id", auth())
-  async updateQuiz(req: Request, res: Response): Promise<void> {
-    const id = req.params.id;
-    const userId = res.locals.user._id;
-    const data = req.body;
-
-    // validate quiz exists
-    const quiz = await this.quizService.findQuizById(id);
-    if (!quiz)
-      throw new CustomException('Quiz not found', status.NOT_FOUND);
-
-    const collaborator = await this.collaboratorService.findCollaboratorByQuizIdAndUserId(quiz.id, userId);
-    // validate user has access to quiz
-    if (!collaborator || !quiz.collaborators.includes(collaborator.id))
-      throw new CustomException('You do not have access to this quiz', status.FORBIDDEN);
-
-    // update quiz
-    const updatedQuiz = await this.quizService.updateQuizById(id, data);
-
-    res.status(status.OK).json({ data: updatedQuiz });
   }
 
   @httpDelete("/:id", auth())
@@ -126,7 +105,7 @@ export class QuizController implements IQuizController {
     if (!quiz)
       throw new CustomException('Quiz not found', status.NOT_FOUND);
 
-    const collaborator = await this.collaboratorService.findCollaboratorById(userId);
+    const collaborator = await this.collaboratorService.findCollaboratorByForeignKeyAndUserId(quiz.id, userId);
     // validate user has access to quiz
     if (!collaborator || !quiz.collaborators.includes(collaborator.id))
       throw new CustomException('You do not have access to this quiz', status.FORBIDDEN);

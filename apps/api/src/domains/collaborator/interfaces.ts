@@ -14,6 +14,7 @@ interface ICollaboratorService {
   paginateCollaborators(condition: FilterQuery<CollaboratorDocument>, query: PaginationParams): Promise<Partial<CollaboratorListResponse>>;
   createCollaborator(createdBy: string, data: CollaboratorCreateRequest): Promise<CollaboratorDocument>;
   findCollaboratorsByIds(ids: string[]): Promise<CollaboratorDocument[]>
+  findCollaboratorByForeignKeyAndUserId(foreignKey: string, userId: string): Promise<CollaboratorDocument | null>;
 }
 
 export { ICollaborator, ICollaboratorController, ICollaboratorService };
