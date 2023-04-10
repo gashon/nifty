@@ -53,7 +53,7 @@ export class DirectoryController implements IDirectoryController {
         throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
     }
 
-    const rootCollaborator = await this.collaboratorService.createCollaborator(createdBy, { user: createdBy });
+    const rootCollaborator = await this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "directory" });
     const doc = {
       ...(req.body as DirectoryCreateRequest),
       collaborators: [rootCollaborator.id],

@@ -28,6 +28,13 @@ import {
   NoteService,
   NOTE_TYPES,
 } from '@/domains/note';
+import {
+  IQuizController,
+  IQuizService,
+  QuizController,
+  QuizService,
+  QUIZ_TYPES,
+} from '@/domains/quiz';
 
 const container = new Container();
 
@@ -45,5 +52,8 @@ container.bind<ICollaboratorController>(COLLABORATOR_TYPES.CONTROLLER).to(Collab
 
 container.bind<INoteService>(NOTE_TYPES.SERVICE).to(NoteService);
 container.bind<INoteController>(NOTE_TYPES.CONTROLLER).to(NoteController);
+
+container.bind<IQuizService>(QUIZ_TYPES.SERVICE).to(QuizService);
+container.bind<IQuizController>(QUIZ_TYPES.CONTROLLER).to(QuizController);
 
 export { container };

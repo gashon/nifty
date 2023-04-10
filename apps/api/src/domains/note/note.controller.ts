@@ -82,7 +82,7 @@ export class NoteController implements INoteController {
 
     const query = { ...req.query, directory_id: undefined } as PaginationParams;
     const notes = await this.noteService.paginateNotesByDirectoryId(directoryId, query);
-    
+
     res.status(status.OK).json({ data: notes });
   }
 
@@ -101,7 +101,7 @@ export class NoteController implements INoteController {
     if (!collaborator)
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
-    const { id: noteCollaboratorId } = await this.collaboratorService.createCollaborator(createdBy, { user: createdBy });
+    const { id: noteCollaboratorId } = await this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "note" });
     const note = await this.noteService.createNote(createdBy, { ...req.body, collaborators: [noteCollaboratorId] } as NoteCreateRequest);
 
     // add the note to the directory

@@ -17,6 +17,11 @@ const collaboratorSchema = new mongoose.Schema<ICollaborator>({
     required: true,
     immutable: true,
   },
+  type: {
+    type: String,
+    required: true,
+    immutable: true,
+  },
   permissions: {
     type: [String],
     default: [],
@@ -32,6 +37,7 @@ const collaboratorSchema = new mongoose.Schema<ICollaborator>({
 
 collaboratorSchema.plugin(mongooseObjectId('col', 'collaborator'));
 
+collaboratorSchema.index({ type: 1 }, {});
 collaboratorSchema.index({ user: 1 }, {});
 
 export * from './types';

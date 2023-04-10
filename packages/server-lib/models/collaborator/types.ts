@@ -5,6 +5,7 @@ import { ListResponse } from '../../utils/types/tsoa/list-response';
 export interface ICollaborator extends Resource {
   created_by: string;
   user: string;
+  type: "directory" | "note" | "quiz";
   permissions: string[];
 }
 

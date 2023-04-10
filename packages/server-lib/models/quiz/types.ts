@@ -13,7 +13,7 @@ export interface IQuiz extends Resource {
 
 export type QuizDocument = mongoose.Document<string, object, IQuiz> & IQuiz;
 
-export type QuizCreateRequest = Partial<Expand<Pick<IQuiz, 'note'>>>
+export type QuizCreateRequest = Partial<Expand<Pick<IQuiz, 'note' | 'collaborators'>>>
 export type QuizUpdateRequest = Partial<Expand<Omit<IQuiz, 'created_by'>>>
 
 export type QuizListResponse = ListResponse<QuizDocument>
