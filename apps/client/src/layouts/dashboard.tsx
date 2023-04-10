@@ -22,13 +22,8 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
             icon: <FiGrid />,
           },
           {
-            label: 'Task list',
-            href: '/tasks',
-            icon: <FiCheck />,
-          },
-          {
-            label: 'Notebooks',
-            href: '/notebooks',
+            label: 'Quizzes',
+            href: '/quizzes',
             icon: <FiBook />,
           },
         ]}
