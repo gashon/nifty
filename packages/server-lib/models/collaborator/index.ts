@@ -2,7 +2,7 @@ import { Model } from "mongoose";
 
 import mongoose from "../../mongoose";
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
-import { ICollaborator, CollaboratorDocument } from './types';
+import { ICollaborator, CollaboratorDocument, PermissionsType } from './types';
 
 const collaboratorSchema = new mongoose.Schema<ICollaborator>({
   created_by: {
@@ -32,7 +32,7 @@ const collaboratorSchema = new mongoose.Schema<ICollaborator>({
     default: [],
     immutable: false,
     required: true,
-    enum: ["read", "write", "delete"],
+    enum: ['r', 'w', 'rw', 'd', 'rd', 'wd', 'rwd'],
   },
   deleted_at: {
     type: Date,
