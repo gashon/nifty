@@ -1,5 +1,11 @@
 import * as z from 'zod';
-import React, { FC, createContext, useState, useCallback, useEffect } from 'react';
+import React, {
+  FC,
+  createContext,
+  useState,
+  useCallback,
+  useEffect,
+} from 'react';
 import { useRouter } from 'next/router';
 import { AxiosResponse } from 'axios';
 import storage from '@/lib/storage';
@@ -15,7 +21,9 @@ type AuthContextType = {
   isOffline: boolean;
   onGithubLogin: () => void;
   onGoogleLogin: () => void;
-  onMagicLinkLogin: (values: z.infer<typeof LoginFormSchema>) => Promise<AxiosResponse<any, any>>;
+  onMagicLinkLogin: (
+    values: z.infer<typeof LoginFormSchema>
+  ) => Promise<AxiosResponse<any, any>>;
   logout: () => void;
 };
 
@@ -26,7 +34,10 @@ type AuthProviderProps = {
   preloadedUser?: AuthUserDTO;
 };
 
-export const AuthProvider: FC<AuthProviderProps> = ({ children, preloadedUser }) => {
+export const AuthProvider: FC<AuthProviderProps> = ({
+  children,
+  preloadedUser,
+}) => {
   const router = useRouter();
   const [isOffline, setIsOffline] = useState<boolean | undefined>(false);
   const [user, setUser] = useState<AuthUserDTO | undefined>(preloadedUser);
@@ -51,7 +62,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children, preloadedUser })
           setUser(data);
           setIsOffline(false);
         })
-        .catch(err => {
+        .catch((err) => {
           if (err.message === 'Network Error' && persistedUser) {
             setIsOffline(true);
             return;
@@ -95,7 +106,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children, preloadedUser })
     // always remove user from local before destroying cookie (otherwise we mis-detect offlineMode)
     storage.remove('user');
     await signOut();
-    window.location.href = '/auth';
+    window.location.href = '/';
   }, []);
 
   const value = {

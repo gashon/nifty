@@ -6,12 +6,23 @@ import { CustomException } from "@/exceptions";
 export const generateQuizFromNote = async (noteContent: string) => {
   const prompt = createQuizGenerationPrompt(noteContent);
   try {
+    // todo validate prompt token count
+    // don't stream the response, just return the data
     const response = await openai.createCompletion({
-      model: "text-davinci-003",
       prompt,
-    })
+      model: "text-davinci-003",
+      temperature: 0.7,
+      top_p: 1,
+      frequency_penalty: 0.5,
+      presence_penalty: 0.5,
+      stream: false
+    });
 
-    return response.data.choices[0].text;
+    const choice = response.data.choices[0]
+    if (choice.finish_reason == "length")
+      throw new Error("Too many tokens in prompt :(")
+
+    return choice.text
   } catch (err) {
     // @ts-ignore
     const message = err.response.data.error.message;

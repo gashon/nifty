@@ -102,7 +102,13 @@ export class QuizController implements IQuizController {
     if (!stringifiedQuiz)
       throw new CustomException('Quiz could not be generated from note', status.BAD_REQUEST);
 
-    const quizContent = JSON.parse(stringifiedQuiz).questions
+    let quizContent;
+    try {
+      quizContent = JSON.parse(stringifiedQuiz).questions
+    } catch (err) {
+      throw new CustomException('Quiz could not be generated from note', status.BAD_REQUEST);
+    }
+
     // randomize the order of the questions and mark the correct_index
     const randomizedQuiz = shuffleQuiz(quizContent);
     const quiz = await this.quizService.createQuiz(createdBy, { questions: randomizedQuiz, note: noteId, collaborators: [quizCollaborator.id] } as QuizCreateRequest);
