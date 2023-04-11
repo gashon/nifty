@@ -89,7 +89,7 @@ export class QuizController implements IQuizController {
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
     // create the quiz
-    const [{ id: quizCollaboratorId }, stringifiedQuiz] = await Promise.all([
+    const [quizCollaborator, stringifiedQuiz] = await Promise.all([
       this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: ['r', 'w', 'd'] }),
       generateQuizFromNote(note.content)
     ]);
@@ -97,17 +97,13 @@ export class QuizController implements IQuizController {
     if (!stringifiedQuiz)
       throw new CustomException('Quiz could not be generated from note', status.BAD_REQUEST);
 
-    // answers match the index of the question
-    const quizContent = JSON.parse(stringifiedQuiz).questions.map((question: any) => {
-      return {
-        question: question.question,
-        answers: question.answers.map((answer: any) => answer.answer)
-      }
-    });
-
+    const quizContent = JSON.parse(stringifiedQuiz).questions
     // randomize the order of the questions and mark the correct_index
     const randomizedQuiz = shuffleQuiz(quizContent);
-    const quiz = await this.quizService.createQuiz(createdBy, { questions: randomizedQuiz, note: noteId, collaborators: [quizCollaboratorId] } as QuizCreateRequest);
+    const quiz = await this.quizService.createQuiz(createdBy, { questions: randomizedQuiz, note: noteId, collaborators: [quizCollaborator.id] } as QuizCreateRequest);
+
+    quizCollaborator.set({ foreign_key: quiz.id });
+    quizCollaborator.save();
 
     return res.status(status.CREATED).json({ data: quiz });
   }

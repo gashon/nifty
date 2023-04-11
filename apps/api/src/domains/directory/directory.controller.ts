@@ -60,6 +60,9 @@ export class DirectoryController implements IDirectoryController {
     };
     const directory = await this.directoryService.createDirectory(createdBy, doc);
 
+    rootCollaborator.set({ foreign_key: directory.id });
+    rootCollaborator.save();
+
     return res.status(status.CREATED).json({ data: directory });
   }
 

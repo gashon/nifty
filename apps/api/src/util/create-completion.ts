@@ -1,8 +1,8 @@
 import openai from "@/lib/openai";
 import { createQuizGenerationPrompt } from "@/util"
 
-export const generateQuizFromNote = async (note: string) => {
-  const prompt = createQuizGenerationPrompt(note);
+export const generateQuizFromNote = async (noteContent: string) => {
+  const prompt = createQuizGenerationPrompt(noteContent);
   const response = await openai.createCompletion({
     model: "text-davinci-003",
     prompt,

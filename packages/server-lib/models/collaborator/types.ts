@@ -8,7 +8,7 @@ export interface ICollaborator extends Resource {
   user: string;
   type: "directory" | "note" | "quiz";
   permissions: PermissionsType[];
-  foreign_key: string;
+  foreign_key?: string;
 }
 
 export type CollaboratorCreateRequest = Partial<Pick<ICollaborator, 'user' | 'type' | 'permissions' | 'foreign_key'>>;
