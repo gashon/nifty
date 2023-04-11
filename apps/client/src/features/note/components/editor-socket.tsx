@@ -1,5 +1,4 @@
 import {
-  ComponentType,
   FC,
   useCallback,
   useMemo,
@@ -19,7 +18,7 @@ import {
 } from 'slate';
 import { withHistory } from 'slate-history';
 import { Editable, ReactEditor, Slate, withReact } from 'slate-react';
-import { useNoteSocket } from '@/features/socket/hooks/use-note-socket';
+import { useNoteSocket, useSocketMessageHandler } from '@/features/socket/';
 import { BulletedListElement } from '../types';
 import { SOCKET_EVENT } from '@nifty/api-live/types';
 
@@ -53,49 +52,19 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
   const { socket, connectionFailed } = useNoteSocket(documentId);
   const [initValue, setInitValue] =
     useState<Descendant[] | undefined>(undefined);
-
-  useEffect(() => {
-    if (connectionFailed) {
-      throw new Error('Connection to server failed');
-    }
-    if (socket) {
-      socket.onmessage = (e) => {
-        const data = JSON.parse(e.data);
-        // todo move this to a separate hook
-        if (data.event === SOCKET_EVENT.DOCUMENT_LOAD) {
-          const { note } = data.payload;
-          if (note.id === documentId) {
-            setInitValue(
-              note.content
-                ? JSON.parse(note.content)
-                : [
-                    {
-                      type: 'paragraph',
-                      children: [{ text: '' }],
-                    },
-                  ]
-            );
-          }
-        } else if (data.event === SOCKET_EVENT.EDITOR_PING) {
-          socket.send(
-            JSON.stringify({
-              event: SOCKET_EVENT.EDITOR_PONG,
-              payload: {},
-            })
-          );
-        }
-        // todo implement collaboration
-        return;
-        if (data.event === SOCKET_EVENT.DOCUMENT_UPDATE) {
-          const { note } = data.payload;
-          if (note.id === documentId) {
-            Transforms.select(editor, Editor.end(editor, []));
-            ReactEditor.insertData(editor, JSON.parse(note.content));
-          }
-        }
-      };
-    }
-  }, [socket]);
+  const onDocumentLoad = useCallback((note) => {
+    setInitValue(
+      note.content
+        ? JSON.parse(note.content)
+        : [
+            {
+              type: 'paragraph',
+              children: [{ text: '' }],
+            },
+          ]
+    );
+  }, []);
+  useSocketMessageHandler({ socket, documentId, onDocumentLoad });
 
   const handleDOMBeforeInput = useCallback(
     (e: InputEvent) => {
