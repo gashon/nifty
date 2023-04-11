@@ -6,9 +6,9 @@ import { ListResponse } from '../../utils/types/tsoa/list-response';
 export interface IQuizQuestion {
   id: string;
   question: string;
-  answers: string[];
   type: "multiple-choice"
-  correct_index?: number;
+  answers?: string[]; // multiple choice
+  correct_index?: number; // multiple choice
 }
 
 export interface IQuiz extends Resource {
