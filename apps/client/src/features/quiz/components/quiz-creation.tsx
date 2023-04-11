@@ -7,14 +7,12 @@ import { NoteDropdown } from '@/features/note';
 import { useCreateQuiz } from '@/features/quiz';
 
 import { Button } from '@nifty/ui/atoms';
-import { FormDrawer, Form, InputField } from '@nifty/ui/form';
+import { FormDrawer, Form, InputField, FieldWrapper } from '@nifty/ui/form';
 import { QuizCreateRequest } from '@nifty/server-lib/models/quiz';
 
 const schema = z.object({
-  name: z.string().min(1).max(50),
-  alias: z.string().min(0).max(50).optional(),
-  credits: z.string().min(0).max(100).optional(),
-  is_public: z.boolean(),
+  title: z.string().min(1).max(50),
+  note: z.string().min(1).max(100), // note id
 });
 
 export const QuizCreationButton: FC = () => {
@@ -22,8 +20,9 @@ export const QuizCreationButton: FC = () => {
 
   const onSubmit = useCallback(
     async (values: QuizCreateRequest) => {
-      const payload = { ...values, parent: undefined };
-      await createQuizMutation.mutateAsync(payload);
+      const payload = { ...values };
+      console.log('SENDING', payload);
+      // await createQuizMutation.mutateAsync(payload);
     },
     [createQuizMutation]
   );
@@ -49,13 +48,33 @@ export const QuizCreationButton: FC = () => {
           onSubmit={onSubmit}
           className="w-full flex flex-col align-center justify-center"
         >
-          {({ formState, register }) => (
+          {({ formState, setValue, register }) => (
             <>
               <div
                 className="inline-flex text-left w-full mt-5"
                 style={{ marginBottom: -5 }}
               >
-                <NoteDropdown />
+                <InputField
+                  type="text"
+                  label="Quiz title"
+                  error={formState.errors['title'] as FieldError}
+                  registration={register('title')}
+                />
+              </div>
+              <div
+                className="inline-flex text-left w-full mt-5"
+                style={{ marginBottom: -5 }}
+              >
+                <FieldWrapper
+                  label="Note"
+                  error={formState.errors['note'] as FieldError}
+                >
+                  <NoteDropdown
+                    onChange={(noteId) => {
+                      setValue('note', noteId);
+                    }}
+                  />
+                </FieldWrapper>
               </div>
               <div
                 className="inline-flex float-right text-left w-full mt-5"

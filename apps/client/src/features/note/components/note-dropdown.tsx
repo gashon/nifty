@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import { FC, useState } from 'react';
 import { DropdownMenu } from '@nifty/ui/atoms';
 
-export const NoteDropdown: React.FC = () => {
+export const NoteDropdown: FC<{
+  onChange: (value: string | undefined) => void;
+}> = ({ onChange }) => {
   const [selection, setSelection] = useState<undefined | string>(undefined);
 
   const items = [
@@ -16,7 +18,10 @@ export const NoteDropdown: React.FC = () => {
           />
         </svg>
       ),
-      onClick: () => {},
+      onClick: () => {
+        setSelection('edit');
+        onChange('edit');
+      },
     },
     {
       label: 'Delete',
@@ -29,7 +34,10 @@ export const NoteDropdown: React.FC = () => {
           />
         </svg>
       ),
-      onClick: () => {},
+      onClick: () => {
+        setSelection('delete');
+        onChange('delete');
+      },
     },
   ];
 
