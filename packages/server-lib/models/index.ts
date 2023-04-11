@@ -5,3 +5,4 @@ export * from "./token"
 export * from "./refresh-token"
 export * from "./notification"
 export * from "./user";
+export * from "./quiz"

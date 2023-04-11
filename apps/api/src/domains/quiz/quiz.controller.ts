@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 import { FilterQuery } from 'mongoose';
 
 import auth from '@/middlewares/auth';
-import { generateQuizFromNote } from "@/util"
+import { generateQuizFromNote, shuffleQuiz } from "@/util"
 import { CustomException } from '@/exceptions';
 import { QuizCreateRequest } from '@nifty/server-lib/models/quiz';
 import { PaginationParams } from '@/types';
@@ -89,12 +89,25 @@ export class QuizController implements IQuizController {
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
     // create the quiz
-    const [{ id: quizCollaboratorId }, quizContent] = await Promise.all([
+    const [{ id: quizCollaboratorId }, stringifiedQuiz] = await Promise.all([
       this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: ['r', 'w', 'd'] }),
       generateQuizFromNote(note.content)
     ]);
-    
-    const quiz = await this.quizService.createQuiz(createdBy, { content: quizContent, note: noteId, collaborators: [quizCollaboratorId] } as QuizCreateRequest);
+
+    if (!stringifiedQuiz)
+      throw new CustomException('Quiz could not be generated from note', status.BAD_REQUEST);
+
+    // answers match the index of the question
+    const quizContent = JSON.parse(stringifiedQuiz).questions.map((question: any) => {
+      return {
+        question: question.question,
+        answers: question.answers.map((answer: any) => answer.answer)
+      }
+    });
+
+    // randomize the order of the questions and mark the correct_index
+    const randomizedQuiz = shuffleQuiz(quizContent);
+    const quiz = await this.quizService.createQuiz(createdBy, { questions: randomizedQuiz, note: noteId, collaborators: [quizCollaboratorId] } as QuizCreateRequest);
 
     return res.status(status.CREATED).json({ data: quiz });
   }

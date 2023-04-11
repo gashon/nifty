@@ -2,7 +2,7 @@ import { Model } from "mongoose";
 
 import mongoose from "../../mongoose";
 import mongooseObjectId from "../../mongoose/plugins/mongoose-object-id";
-import { IQuiz, QuizDocument } from "./types";
+import { IQuiz, QuizDocument, IQuestion } from "./types";
 
 const quizSchema = new mongoose.Schema<IQuiz>({
   created_by: {
@@ -23,6 +23,28 @@ const quizSchema = new mongoose.Schema<IQuiz>({
     trim: true,
     required: true,
     ref: "Note",
+  },
+  questions: {
+    type: [
+      {
+        question: {
+          type: String,
+          trim: true,
+          required: true,
+        },
+        answers: {
+          type: [String],
+          required: true,
+        },
+        correct_index: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
+    default: [],
+    immutable: false,
+    required: true,
   },
   title: {
     type: String,

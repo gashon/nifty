@@ -19,6 +19,8 @@ export const createQuizGenerationPrompt = (noteContent: string): string => {
       ]
     }
 
+    The response should be stringified JSON.
+    Do not include anything else in your response besides the quiz JSON object.
     ---
     ${noteContent}
   `
