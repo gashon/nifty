@@ -88,10 +88,15 @@ export class QuizController implements IQuizController {
     if (!collaborator)
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
+    const noteContent = JSON.parse(note.content).reduce((acc: string[], curr: any) => {
+      acc.push((curr.type.includes("heading") ? "# " : "") + curr.children[0].text)
+      return acc
+    }, []).join('\n')
+
     // create the quiz
     const [quizCollaborator, stringifiedQuiz] = await Promise.all([
       this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: ['r', 'w', 'd'] }),
-      generateQuizFromNote(note.content)
+      generateQuizFromNote(noteContent)
     ]);
 
     if (!stringifiedQuiz)
