@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import { useState, useEffect, FC } from 'react';
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
+import { useState, useEffect, FC, ComponentType } from 'react';
 
 const LongPollDocumentEditor = dynamic(
   () => import('@/features/note/components/editor'),
@@ -33,10 +34,14 @@ export const DocumentSection: FC = () => {
   return (
     <>
       <section className="h-screen">
-        <SocketDocumentEditor
-          documentId={id as string}
-          fallBackEditor={<LongPollDocumentEditor documentId={id as string} />}
-        />
+        <ErrorBoundary fallback={<p>Failed to connect</p>}>
+          <SocketDocumentEditor
+            documentId={id as string}
+            fallBackEditor={
+              <LongPollDocumentEditor documentId={id as string} />
+            }
+          />
+        </ErrorBoundary>
       </section>
       <section className="w-full flex justify-between">
         <PageNavigation id={id as string} />

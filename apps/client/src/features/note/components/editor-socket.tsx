@@ -56,6 +56,9 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
   );
 
   useEffect(() => {
+    if (connectionFailed) {
+      throw new Error('Connection to server failed');
+    }
     if (socket) {
       socket.onmessage = (e) => {
         const data = JSON.parse(e.data);
