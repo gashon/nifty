@@ -76,7 +76,7 @@ export class QuizController implements IQuizController {
   @httpPost("/", auth())
   async createQuiz(req: Request, res: Response): Promise<Response<QuizCreateResponse>> {
     const createdBy = res.locals.user._id;
-    const noteId = req.body.note_id;
+    const noteId = req.body.note;
 
     // validate note exists
     const note = await this.noteService.findNoteById(noteId);
