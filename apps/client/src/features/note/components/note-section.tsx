@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
-import { useState, useEffect, FC, ComponentType } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { useState, useEffect, FC } from 'react';
 
 const LongPollDocumentEditor = dynamic(
   () => import('@/features/note/components/editor'),
