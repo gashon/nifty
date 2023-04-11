@@ -38,6 +38,7 @@ export const DocumentSection: FC = () => {
           <SocketDocumentEditor
             documentId={id as string}
             fallBackEditor={
+              // todo: only use long poll if note has not collaborators (offline)
               <LongPollDocumentEditor documentId={id as string} />
             }
           />
