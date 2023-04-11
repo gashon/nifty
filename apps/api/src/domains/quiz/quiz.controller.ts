@@ -5,6 +5,7 @@ import { Request, Response } from 'express';
 import { FilterQuery } from 'mongoose';
 
 import auth from '@/middlewares/auth';
+import { generateQuizFromNote } from "@/util"
 import { CustomException } from '@/exceptions';
 import { QuizCreateRequest } from '@nifty/server-lib/models/quiz';
 import { PaginationParams } from '@/types';
@@ -88,9 +89,12 @@ export class QuizController implements IQuizController {
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
     // create the quiz
-    const { id: quizCollaboratorId } = await this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: ['r', 'w', 'd'] });
-    // todo fetch the quiz material from openAI
-    const quiz = await this.quizService.createQuiz(createdBy, { note: noteId, collaborators: [quizCollaboratorId] } as QuizCreateRequest);
+    const [{ id: quizCollaboratorId }, quizContent] = await Promise.all([
+      this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: ['r', 'w', 'd'] }),
+      generateQuizFromNote(note.content)
+    ]);
+    
+    const quiz = await this.quizService.createQuiz(createdBy, { content: quizContent, note: noteId, collaborators: [quizCollaboratorId] } as QuizCreateRequest);
 
     return res.status(status.CREATED).json({ data: quiz });
   }
