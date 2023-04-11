@@ -52,12 +52,13 @@ const QuizQuestion: FC<{
   };
 
   return (
-    <div>
+    <div className="w-full flex justify-center flex-col mt-5">
       <p>{question.question}</p>
       {question.answers &&
         question.answers.map((answer, index) => (
           <label key={index}>
             <input
+              className="mr-2"
               type="radio"
               name={`answer-${question.id}`}
               value={index}
@@ -109,13 +110,15 @@ export const QuizForm: FC<{ id: string }> = ({ id }) => {
               onAnswerChange={onAnswerChange}
             />
           ))}
-          <Button
-            type="submit"
-            disabled={formState.isSubmitting}
-            loading={formState.isSubmitting}
-          >
-            <FiArrowRight />
-          </Button>
+          <div className="mt-5 w-full flex justify-end">
+            <Button
+              type="submit"
+              disabled={formState.isSubmitting}
+              loading={formState.isSubmitting}
+            >
+              <FiArrowRight />
+            </Button>
+          </div>
         </>
       </form>
     </>
