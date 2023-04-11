@@ -2,9 +2,10 @@ import {
   FC,
   useCallback,
   useMemo,
-  useEffect,
+  useRef,
   useState,
   ReactElement,
+  useReducer,
 } from 'react';
 import {
   createEditor,
@@ -49,9 +50,12 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
     () => withShortcuts(withReact(withHistory(createEditor()))),
     []
   );
+  //useReducer forceRerender
+  const [_, forceRerender] = useReducer((s) => s + 1, 0);
   const { socket, connectionFailed } = useNoteSocket(documentId);
   const [initValue, setInitValue] =
     useState<Descendant[] | undefined>(undefined);
+  const remoteUpdateRef = useRef(false);
   const onDocumentLoad = useCallback((note) => {
     setInitValue(
       note.content
@@ -64,7 +68,30 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
           ]
     );
   }, []);
-  useSocketMessageHandler({ socket, documentId, onDocumentLoad });
+  const updateEditorContent = (newContent: Descendant[]) => {
+    // Replace the entire editor content with new content
+    editor.children = newContent;
+    // Re-render the editor
+    Editor.normalize(editor, { force: true });
+    // Focus the editor to ensure updates are displayed immediately
+    ReactEditor.focus(editor);
+    forceRerender();
+  };
+
+  const onDocumentUpdate = useCallback(
+    (note: any) => {
+      // todo handle collaboration
+      remoteUpdateRef.current = true;
+      updateEditorContent(JSON.parse(note.content));
+    },
+    [editor]
+  );
+  useSocketMessageHandler({
+    socket,
+    documentId,
+    onDocumentLoad,
+    onDocumentUpdate,
+  });
 
   const handleDOMBeforeInput = useCallback(
     (e: InputEvent) => {
@@ -112,6 +139,10 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
         editor={editor}
         value={initValue}
         onChange={(value) => {
+          if (remoteUpdateRef.current) {
+            remoteUpdateRef.current = false;
+            return;
+          }
           // @ts-ignore
           // todo send cursor updates
           if (value[0]?.children[0].text === '') return;

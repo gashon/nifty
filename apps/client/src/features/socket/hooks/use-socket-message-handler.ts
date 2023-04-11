@@ -6,12 +6,15 @@ type SocketMessageHandlerParams = {
   socket: WebSocket | null;
   documentId: string;
   onDocumentLoad: (note: any) => void;
+  onDocumentUpdate: (note: any) => void;
+
 };
 
 export const useSocketMessageHandler = ({
   socket,
   documentId,
   onDocumentLoad,
+  onDocumentUpdate
 }: SocketMessageHandlerParams): void => {
   useEffect(() => {
     if (socket) {
@@ -30,11 +33,12 @@ export const useSocketMessageHandler = ({
               payload: {},
             })
           );
+        } else if (data.event === SOCKET_EVENT.DOCUMENT_UPDATE) {
+          const { note } = data.payload;
+          if (note.id === documentId) {
+            onDocumentUpdate(note);
+          }
         }
-        // todo implement collaboration
-        // if (data.event === SOCKET_EVENT.DOCUMENT_UPDATE) {
-        // ...
-        // }
       };
     }
   }, [socket, documentId, onDocumentLoad]);

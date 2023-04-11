@@ -130,7 +130,11 @@ export class WebSocketServer extends Server {
       const content = data.payload.note.content;
       await this.socketService.setContent(documentId, content, socket);
 
-      const updateMessage = { event: SOCKET_EVENT.DOCUMENT_UPDATE, operations: data.operations };
+      const updateMessage = {
+        event: SOCKET_EVENT.DOCUMENT_UPDATE, payload: {
+          note: { id: documentId, content },
+        }
+      };
       this.socketService.broadcast(documentId, updateMessage, socket);
     } catch (err) {
       logger.error(err);
