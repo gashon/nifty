@@ -68,20 +68,32 @@ export class NoteController implements INoteController {
   @httpGet('/', auth())
   async getNotes(req: Request, res: Response): Promise<void> {
     const userId = res.locals.user._id;
-    const directoryId = req.query.directory_id as string;
+    const directoryId = req.query.directory_id as string | undefined;
+    let notes;
 
-    // validate directory exists
-    const directory = await this.directoryService.findDirectoryById(directoryId);
-    if (!directory)
-      throw new CustomException('Directory not found', status.NOT_FOUND);
+    if (directoryId) {
+      // validate directory exists
+      const directory = await this.directoryService.findDirectoryById(directoryId);
+      if (!directory)
+        throw new CustomException('Directory not found', status.NOT_FOUND);
 
-    // validate user has access to directory
-    const collaborator = await this.collaboratorService.findCollaboratorByDirectoryIdAndUserId(directory.id, userId);
-    if (!collaborator)
-      throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
+      // validate user has access to directory
+      const collaborator = await this.collaboratorService.findCollaboratorByDirectoryIdAndUserId(directory.id, userId);
+      if (!collaborator)
+        throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
-    const query = { ...req.query, directory_id: undefined } as PaginationParams;
-    const notes = await this.noteService.paginateNotesByDirectoryId(directoryId, query);
+      const query = { ...req.query, directory_id: undefined } as PaginationParams;
+      notes = await this.noteService.paginateNotesByDirectoryId(directoryId, query);
+    } else {
+      notes = await this.noteService.paginateNotes({
+        collaborators: {
+          $elemMatch: {
+            user: userId,
+          },
+        }
+      }, req.query as PaginationParams);
+    }
+
 
     res.status(status.OK).json({ data: notes });
   }

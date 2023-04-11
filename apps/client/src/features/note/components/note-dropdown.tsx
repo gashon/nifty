@@ -1,10 +1,14 @@
 import { FC, useState } from 'react';
 import { DropdownMenu } from '@nifty/ui/atoms';
+import { useInfiniteNotes } from '@/features/note';
 
 export const NoteDropdown: FC<{
   onChange: (value: string | undefined) => void;
 }> = ({ onChange }) => {
   const [selection, setSelection] = useState<undefined | string>(undefined);
+  const { data } = useInfiniteNotes({
+    limit: 100,
+  });
 
   const items = [
     {

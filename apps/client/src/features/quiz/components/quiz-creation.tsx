@@ -20,9 +20,7 @@ export const QuizCreationButton: FC = () => {
 
   const onSubmit = useCallback(
     async (values: QuizCreateRequest) => {
-      const payload = { ...values };
-      console.log('SENDING', payload);
-      // await createQuizMutation.mutateAsync(payload);
+      await createQuizMutation.mutateAsync(values);
     },
     [createQuizMutation]
   );
@@ -62,24 +60,26 @@ export const QuizCreationButton: FC = () => {
                 />
               </div>
               <div
-                className="inline-flex text-left w-full mt-5"
-                style={{ marginBottom: -5 }}
-              >
-                <FieldWrapper
-                  label="Note"
-                  error={formState.errors['note'] as FieldError}
-                >
-                  <NoteDropdown
-                    onChange={(noteId) => {
-                      setValue('note', noteId);
-                    }}
-                  />
-                </FieldWrapper>
-              </div>
-              <div
                 className="inline-flex float-right text-left w-full mt-5"
                 style={{ marginBottom: -5 }}
               >
+                <div
+                  className="flex items-center justify-between gap-2 inline-flex text-left w-full "
+                  style={{ marginBottom: -5 }}
+                >
+                  <div className="flex flex-row items-center gap-2">
+                    <FieldWrapper
+                      label="Note"
+                      error={formState.errors['note'] as FieldError}
+                    >
+                      <NoteDropdown
+                        onChange={(noteId) => {
+                          setValue('note', noteId);
+                        }}
+                      />
+                    </FieldWrapper>
+                  </div>
+                </div>
                 <Button
                   type="submit"
                   disabled={formState.isSubmitting}
