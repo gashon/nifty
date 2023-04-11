@@ -13,18 +13,20 @@ function Module({ user }) {
 
   return (
     <>
-      <NextSeo title={'Module'} noindex />
+      <NextSeo title={'Quiz'} noindex />
       <AuthProvider preloadedUser={user}>
         <AuthProtection loadingComponent={<LoadingPage />}>
           <ThemeLayout>
             <DashboardLayout>
               <main className="flex flex-col order-1 pt-9">
-                <h3 className="pb-6 text-3xl text-primary dark:text-zinc-400 ">Notebook Name</h3>
+                <h3 className="pb-6 text-3xl text-primary dark:text-zinc-400 ">
+                  Notebook Name
+                </h3>
                 <div className="flex flex-col">
                   <div className="mb-3">
-                    <ModuleCreationButton />
+                    <QuizCreationButton />
                   </div>
-                  <ModuleList />
+                  <QuizList />
                 </div>
               </main>
             </DashboardLayout>

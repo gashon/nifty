@@ -1,6 +1,5 @@
 import { Menu } from '@headlessui/react';
 import { cva, VariantProps } from 'class-variance-authority';
-import Link from 'next/link';
 import { FC, PropsWithChildren, ReactNode } from 'react';
 
 const menuContentStyles = cva(
@@ -53,15 +52,21 @@ export const DropdownMenu: FC<PropsWithChildren<DropdownMenuProps>> = ({
   return (
     <Menu as="div" className="relative inline-block text-left">
       <Menu.Button as={buttonAs}>{children}</Menu.Button>
-      <Menu.Items as="ul" className={`${menuContentStyles({ pos })} ${menuClassName}`}>
-        {list.map(item => (
+      <Menu.Items
+        as="ul"
+        className={`${menuContentStyles({ pos })} ${menuClassName}`}
+      >
+        {list.map((item) => (
           <Menu.Item
             key={item.label}
             as="li"
             className="rounded-xl transition-colors hover:bg-zinc-300 ui-active:bg-zinc-300 dark:hover:bg-zinc-700/50 dark:ui-active:bg-zinc-700/50"
           >
             {item.href ? (
-              <a href={item.href} className="flex h-9 items-center gap-3 px-3 text-sm">
+              <a
+                href={item.href}
+                className="flex h-9 items-center gap-3 px-3 text-sm"
+              >
                 <span>{item.icon}</span>
                 <span>{item.label}</span>
               </a>
