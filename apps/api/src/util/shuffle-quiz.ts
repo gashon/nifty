@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import { IQuizQuestion } from '@nifty/server-lib/models/quiz';
 
 export function shuffleQuiz(questions: IQuizQuestion[]) {
@@ -13,9 +14,11 @@ export function shuffleQuiz(questions: IQuizQuestion[]) {
     // find the correct index
     correctIndex = answers.findIndex((answer: any) => answer === question.answers[correctIndex]);
     return {
+      id: uuid(),
+      type: "multiple-choice",
       question: question.question,
       answers: answers,
-      correct_index: correctIndex
+      correct_index: correctIndex,
     }
   });
 }

@@ -27,6 +27,15 @@ const quizSchema = new mongoose.Schema<IQuiz>({
   questions: {
     type: [
       {
+        id: {
+          type: String,
+          required: true,
+        },
+        type: {
+          type: String,
+          required: true,
+          enum: ["multiple-choice"],
+        },
         question: {
           type: String,
           trim: true,

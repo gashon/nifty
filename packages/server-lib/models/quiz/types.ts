@@ -4,9 +4,11 @@ import { Expand } from '../../utils/types/tsoa/expand';
 import { ListResponse } from '../../utils/types/tsoa/list-response';
 
 export interface IQuizQuestion {
+  id: string;
   question: string;
   answers: string[];
-  correct_index: number;
+  type: "multiple-choice"
+  correct_index?: number;
 }
 
 export interface IQuiz extends Resource {
