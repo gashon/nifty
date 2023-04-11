@@ -4,11 +4,11 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import { FiArrowRight } from 'react-icons/fi';
 import { FieldError } from 'react-hook-form';
 
-import { useCreateModule } from '@/features/module';
+import { useCreateQuiz } from '@/features/quiz';
 
 import { Button } from '@nifty/ui/atoms';
 import { FormDrawer, Form, InputField } from '@nifty/ui/form';
-import { DirectoryCreateRequest } from '@nifty/server-lib/models/directory';
+import { QuizCreateRequest } from '@nifty/server-lib/models/quiz';
 
 const schema = z.object({
   name: z.string().min(1).max(50),
@@ -18,40 +18,43 @@ const schema = z.object({
 });
 
 export const QuizCreationButton: FC = () => {
-  const createModuleMutation = useCreateModule();
+  const createQuizMutation = useCreateQuiz();
 
   const onSubmit = useCallback(
-    async (values: DirectoryCreateRequest) => {
+    async (values: QuizCreateRequest) => {
       const payload = { ...values, parent: undefined };
-      await createModuleMutation.mutateAsync(payload);
+      await createQuizMutation.mutateAsync(payload);
     },
-    [createModuleMutation]
+    [createQuizMutation]
   );
 
   return (
     <>
       <FormDrawer
-        isDone={createModuleMutation.isSuccess}
-        title={'Create a module'}
+        isDone={createQuizMutation.isSuccess}
+        title={'Create a quiz'}
         triggerButton={<Button> Create Module</Button>}
         submitButton={
           <Button
             type="submit"
-            disabled={createModuleMutation.isLoading}
-            loading={createModuleMutation.isLoading}
+            disabled={createQuizMutation.isLoading}
+            loading={createQuizMutation.isLoading}
           >
             <FiArrowRight />
           </Button>
         }
       >
-        <Form<DirectoryCreateRequest, typeof schema>
+        <Form<QuizCreateRequest, typeof schema>
           schema={schema}
           onSubmit={onSubmit}
           className="w-full flex flex-col align-center justify-center"
         >
           {({ formState, register }) => (
             <>
-              <div className="inline-flex text-left w-full mt-5" style={{ marginBottom: -5 }}>
+              <div
+                className="inline-flex text-left w-full mt-5"
+                style={{ marginBottom: -5 }}
+              >
                 <InputField
                   type="text"
                   label="Class Name"
@@ -59,7 +62,10 @@ export const QuizCreationButton: FC = () => {
                   registration={register('name')}
                 />
               </div>
-              <div className="inline-flex text-left w-full mt-5" style={{ marginBottom: -5 }}>
+              <div
+                className="inline-flex text-left w-full mt-5"
+                style={{ marginBottom: -5 }}
+              >
                 <InputField
                   type="text"
                   label="Alias (optional): e.g. CS 101"
@@ -67,7 +73,10 @@ export const QuizCreationButton: FC = () => {
                   registration={register('alias')}
                 />
               </div>
-              <div className="inline-flex text-left w-full mt-5" style={{ marginBottom: -5 }}>
+              <div
+                className="inline-flex text-left w-full mt-5"
+                style={{ marginBottom: -5 }}
+              >
                 <InputField
                   type="text"
                   label="Number of Credits (optional)"

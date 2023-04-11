@@ -1,13 +1,19 @@
 import { FC } from 'react';
 
-import { useInfiniteDirectories, useDeleteModule } from '@/features/module';
+import { useInfiniteQuizzes, useDeleteQuiz } from '@/features/quiz';
 import ModuleCard from '@nifty/ui/molecules/module-card';
 
 export const QuizList: FC = () => {
   // todo implement frontend pagination
-  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, isFetched } =
-    useInfiniteDirectories({ limit: 100 });
-  const { mutate: deleteModule } = useDeleteModule();
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    isFetched,
+  } = useInfiniteQuizzes({ limit: 100 });
+  const { mutate: deleteQuiz } = useDeleteQuiz();
 
   return (
     <div className="flex flex-col gap-4">
@@ -18,12 +24,12 @@ export const QuizList: FC = () => {
       {isFetched && (
         <>
           {data.pages.map(({ data }: any) =>
-            data.map(module => (
-              <div key={module.id}>
+            data.map((quiz) => (
+              <div key={quiz.id}>
                 <ModuleCard
-                  onDelete={() => deleteModule(module.id)}
-                  {...module}
-                  href={`/modules/${module.id}?name=${module.name}`}
+                  onDelete={() => deleteQuiz(quiz.id)}
+                  {...quiz}
+                  href={`/quizzes/${quiz.id}?name=${quiz.name}`}
                 />
               </div>
             ))
