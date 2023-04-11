@@ -47,7 +47,6 @@ export class WebSocketServer extends Server {
 
   heartbeat() {
     this.clients.forEach((socket: WebSocketWithHeartbeat) => {
-      console.log("SENDING HEARTBEAT")
       if (socket.isAlive === false) {
         logger.info("Socket is dead, closing connection");
         this.handleEditorLeave(socket);
@@ -168,6 +167,7 @@ export class WebSocketServer extends Server {
 
   // ping all editors to make sure they are still alive
   // if they are not, remove them from the list of editors
+  // todo implement this as a fallback if the editor does not send a leave message
   async countAndPruneActiveEditors(documentId: string): Promise<number> {
     const sockets = await this.socketService.getEditorSockets(documentId);
 
@@ -229,7 +229,7 @@ export class WebSocketServer extends Server {
         case SOCKET_EVENT.EDITOR_IDLE:
           this.handleEditorIdle(documentId);
           break;
-        case SOCKET_EVENT.EDITOR_PONG:
+        case SOCKET_EVENT.EDITOR_PONG: // handled at the service layer (pingSocket)
           break;
         default:
           socket.send(JSON.stringify({ event: SOCKET_EVENT.ERROR, message: "Invalid message event" }));
