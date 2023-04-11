@@ -3,7 +3,6 @@ import { FilterQuery, Query } from 'mongoose';
 
 import { IQuiz, QuizDocument, QuizListResponse } from "@nifty/server-lib/models/quiz";
 import { QuizCreateResponse } from "@/domains/quiz/types";
-import { PaginationParams } from "@/types";
 
 interface IQuizController {
   getQuiz(req: Request, res: Response): Promise<void>;
