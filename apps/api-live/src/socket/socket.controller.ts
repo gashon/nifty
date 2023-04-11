@@ -20,6 +20,7 @@ export class WebSocketServer extends Server {
   constructor(redisClient: RedisClientType, options: ServerOptions) {
     super(options);
     this.socketService = new SocketService(redisClient);
+    // todo store in redis
     this.autoSaveClocks = {};
 
     const heartbeatInterval = setInterval(() => this.heartbeat(), HEARTBEAT_INTERVAL);
@@ -46,11 +47,14 @@ export class WebSocketServer extends Server {
 
   heartbeat() {
     this.clients.forEach((socket: WebSocketWithHeartbeat) => {
+      console.log("SENDING HEARTBEAT")
       if (socket.isAlive === false) {
+        logger.info("Socket is dead, closing connection");
         this.handleEditorLeave(socket);
         return socket.terminate();
       }
 
+      logger.info("Socket is alive, sending heartbeat");
       socket.isAlive = false;
       socket.ping();
     });
@@ -151,14 +155,34 @@ export class WebSocketServer extends Server {
       this.socketService.broadcast(documentId, leaveMessage);
 
       // stop autosave clock if no editors left
-      const editors = await this.socketService.getEditors(documentId);
+      const editors = await this.socketService.getEditorSockets(documentId);
       if (editors.length === 0) {
+        logger.info(`Stopping autosave clock for document: ${documentId}`);
         clearInterval(this.autoSaveClocks[documentId]);
         delete this.autoSaveClocks[documentId];
 
         await this.socketService.removeDocumentFromMemory(documentId);
       }
     })
+  }
+
+  // ping all editors to make sure they are still alive
+  // if they are not, remove them from the list of editors
+  async countAndPruneActiveEditors(documentId: string): Promise<number> {
+    const sockets = await this.socketService.getEditorSockets(documentId);
+
+    const activeEditors = await Promise.all(sockets.map(async (socket) => {
+      try {
+        logger.info("Pinging sockets");
+        await this.socketService.pingSocket(socket);
+        return socket;
+      } catch (err) {
+        logger.error(`Error: ${err}`);
+        this.handleEditorLeave(socket, documentId);
+        return null;
+      }
+    }));
+    return activeEditors.length;
   }
 
   @closeSocketOnError
@@ -204,6 +228,8 @@ export class WebSocketServer extends Server {
           break;
         case SOCKET_EVENT.EDITOR_IDLE:
           this.handleEditorIdle(documentId);
+          break;
+        case SOCKET_EVENT.EDITOR_PONG:
           break;
         default:
           socket.send(JSON.stringify({ event: SOCKET_EVENT.ERROR, message: "Invalid message event" }));

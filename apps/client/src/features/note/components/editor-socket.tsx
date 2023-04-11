@@ -51,9 +51,8 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
     []
   );
   const { socket, connectionFailed } = useNoteSocket(documentId);
-  const [initValue, setInitValue] = useState<Descendant[] | undefined>(
-    undefined
-  );
+  const [initValue, setInitValue] =
+    useState<Descendant[] | undefined>(undefined);
 
   useEffect(() => {
     if (connectionFailed) {
@@ -62,6 +61,7 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
     if (socket) {
       socket.onmessage = (e) => {
         const data = JSON.parse(e.data);
+        // todo move this to a separate hook
         if (data.event === SOCKET_EVENT.DOCUMENT_LOAD) {
           const { note } = data.payload;
           if (note.id === documentId) {
@@ -76,6 +76,13 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
                   ]
             );
           }
+        } else if (data.event === SOCKET_EVENT.EDITOR_PING) {
+          socket.send(
+            JSON.stringify({
+              event: SOCKET_EVENT.EDITOR_PONG,
+              payload: {},
+            })
+          );
         }
         // todo implement collaboration
         return;

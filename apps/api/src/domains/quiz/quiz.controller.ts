@@ -90,17 +90,17 @@ export class QuizController implements IQuizController {
     const { format, sendRequest, reformat } = openaiRequestHandler.quizGenerator;
 
     const noteContent = format(note.content);
-    const [quizCollaborator, stringifiedQuiz] = await Promise.all([
+    const [quizCollaborator, requestResult] = await Promise.all([
       this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: ['r', 'w', 'd'] }),
       sendRequest(noteContent)
     ]);
 
-    if (!stringifiedQuiz)
+    if (!requestResult)
       throw new CustomException('Quiz could not be generated from note', status.BAD_REQUEST);
 
     let randomizedQuiz
     try {
-      randomizedQuiz = reformat(stringifiedQuiz);
+      randomizedQuiz = reformat(requestResult);
     } catch (err) {
       throw new CustomException('Quiz could not be generated from note', status.BAD_REQUEST);
     }

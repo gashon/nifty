@@ -2,7 +2,7 @@ import WebSocket, { RawData, OPEN } from "ws";
 import { RedisClientType } from "@/lib/redis";
 import { SocketRepository } from "./socket.repository";
 import { NoteDocument } from "@nifty/server-lib/models/note";
-
+import { SOCKET_EVENT } from "@/types";
 
 export class SocketService {
   private socketRepository: SocketRepository;
@@ -26,6 +26,10 @@ export class SocketService {
 
   clearRedis() {
     return this.socketRepository.clearRedis();
+  }
+
+  async getEditorSockets(documentId: string): Promise<WebSocket[]> {
+    return this.socketRepository.getEditorSockets(documentId);
   }
 
   async getEditors(documentId: string): Promise<string[]> {
@@ -57,6 +61,27 @@ export class SocketService {
 
   async removeDocumentFromMemory(documentId: string) {
     return this.socketRepository.removeDocumentFromMemory(documentId);
+  }
+
+  // send a request to the socket to see if it's still alive
+  // if it's not, throw an error
+  async pingSocket(socket: WebSocket) {
+    return new Promise((resolve, reject) => {
+      const pingMessage = { event: SOCKET_EVENT.EDITOR_PING };
+      socket.send(JSON.stringify(pingMessage));
+      const timeout = setTimeout(() => {
+        reject(new Error("Socket timed out"));
+      }, 1000);
+      socket.once("message", (data) => {
+        clearTimeout(timeout);
+        const message = JSON.parse(data.toString());
+        if (message.event === SOCKET_EVENT.EDITOR_PONG) {
+          resolve(true);
+        } else {
+          reject(new Error("Socket did not respond with PONG"));
+        }
+      });
+    });
   }
 
   // pass editor to require permissions
