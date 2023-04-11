@@ -6,9 +6,11 @@ export const NoteDropdown: FC<{
   onChange: (value: string | undefined) => void;
 }> = ({ onChange }) => {
   const [selection, setSelection] = useState<undefined | string>(undefined);
-  const { data } = useInfiniteNotes({
+  const { data: notes } = useInfiniteNotes({
     limit: 100,
   });
+
+  console.log('GOT', notes);
 
   const items = [
     {

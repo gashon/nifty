@@ -86,10 +86,8 @@ export class NoteController implements INoteController {
       notes = await this.noteService.paginateNotesByDirectoryId(directoryId, query);
     } else {
       notes = await this.noteService.paginateNotes({
-        collaborators: {
-          $elemMatch: {
-            user: userId,
-          },
+        filter: {
+          "collaborators.user": userId
         }
       }, req.query as PaginationParams);
     }
