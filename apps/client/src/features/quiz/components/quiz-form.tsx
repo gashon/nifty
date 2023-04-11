@@ -1,4 +1,3 @@
-import * as z from 'zod';
 import { memo, FC, useCallback, useState } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
 import { useForm } from 'react-hook-form';

@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 import { FilterQuery } from 'mongoose';
 
 import auth from '@/middlewares/auth';
-import { generateQuizFromNote, shuffleQuiz } from "@/util"
+import { openaiRequestHandler } from "@/lib/openai-request"
 import { CustomException } from '@/exceptions';
 import { QuizCreateRequest } from '@nifty/server-lib/models/quiz';
 import { PaginationParams } from '@/types';
@@ -69,7 +69,6 @@ export class QuizController implements IQuizController {
     }
 
     const quizzes = await this.quizService.findQuizzesByIds(collaborators.data.map(collaborator => collaborator.foreign_key));
-
     res.status(status.OK).json({ data: quizzes });
   }
 
@@ -88,29 +87,24 @@ export class QuizController implements IQuizController {
     if (!collaborator)
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
-    const noteContent = JSON.parse(note.content).reduce((acc: string[], curr: any) => {
-      acc.push((curr.type.includes("heading") ? "# " : "") + curr.children[0].text)
-      return acc
-    }, []).join('\n')
+    const { format, sendRequest, reformat } = openaiRequestHandler.quizGenerator;
 
-    // create the quiz
+    const noteContent = format(note.content);
     const [quizCollaborator, stringifiedQuiz] = await Promise.all([
       this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: ['r', 'w', 'd'] }),
-      generateQuizFromNote(noteContent)
+      sendRequest(noteContent)
     ]);
 
     if (!stringifiedQuiz)
       throw new CustomException('Quiz could not be generated from note', status.BAD_REQUEST);
 
-    let quizContent;
+    let randomizedQuiz
     try {
-      quizContent = JSON.parse(stringifiedQuiz).questions
+      randomizedQuiz = reformat(stringifiedQuiz);
     } catch (err) {
       throw new CustomException('Quiz could not be generated from note', status.BAD_REQUEST);
     }
 
-    // randomize the order of the questions and mark the correct_index
-    const randomizedQuiz = shuffleQuiz(quizContent);
     const quiz = await this.quizService.createQuiz(createdBy, { questions: randomizedQuiz, note: noteId, collaborators: [quizCollaborator.id] } as QuizCreateRequest);
 
     quizCollaborator.set({ foreign_key: quiz.id });
