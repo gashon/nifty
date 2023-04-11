@@ -1,6 +1,5 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, } from 'react';
 import { SOCKET_EVENT } from '@nifty/api-live/types';
-import { Descendant } from 'slate';
 
 type SocketMessageHandlerParams = {
   socket: WebSocket | null;

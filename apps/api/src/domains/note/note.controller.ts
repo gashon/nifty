@@ -117,9 +117,10 @@ export class NoteController implements INoteController {
     // add the note to the directory
     directory.set({ notes: [...directory.notes, note.id], collaborators: [...directory.collaborators] });
     noteCollaborator.set({ foreign_key: note.id });
+
     await Promise.all([
       directory.save(),
-      noteCollaborator.save(),
+      noteCollaborator.save()
     ])
 
     return res.status(status.CREATED).json({ data: note });
@@ -157,9 +158,10 @@ export class NoteController implements INoteController {
     if (!note)
       throw new CustomException('Note not found', status.NOT_FOUND);
 
-    const collaborator = await this.collaboratorService.findCollaboratorById(userId);
+    const collaborator = await this.collaboratorService.findCollaboratorByForeignKey(note.id, "note", userId);
+    console.log("GOT COLLABORATOR", collaborator, note.id, "note", userId)
     // validate user has access to note
-    if (!collaborator || !note.collaborators.includes(collaborator.id))
+    if (!collaborator)
       throw new CustomException('You do not have access to this note', status.FORBIDDEN);
 
     // delete note
