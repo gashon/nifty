@@ -2,6 +2,7 @@ import WebSocket, { RawData, OPEN } from "ws";
 import { Model } from "mongoose"
 import { RedisClientType } from "@/lib/redis";
 import { SocketRepository } from "./socket.repository";
+import { UserDocument } from "@nifty/server-lib/models/user"
 import Note, { NoteDocument } from "@nifty/server-lib/models/note";
 import AccessToken, { TokenDocument } from "@nifty/server-lib/models/token";
 import Collaborator, { CollaboratorDocument } from "@nifty/server-lib/models/collaborator";
@@ -37,7 +38,7 @@ export class SocketService {
     return this.socketRepository.clearRedis();
   }
 
-  async validateAccess(accessToken: string, documentId: string): Promise<boolean> {
+  async validateAccess(accessToken: string, documentId: string): Promise<[boolean, UserDocument]> {
     const note = await this.noteModel.findById(documentId);
     if (!note) throw new Error("Document not found");
     // token is in req headers
@@ -51,7 +52,9 @@ export class SocketService {
     });
     if (!collaborator && !note.is_public) throw new Error("You don't have access to this document");
 
-    return true;
+    // populate user in token
+    const user = await token.populate("user").execPopulate();
+    return [true, user];
   }
 
   async getEditorSockets(documentId: string): Promise<WebSocket[]> {

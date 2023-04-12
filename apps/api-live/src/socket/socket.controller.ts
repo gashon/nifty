@@ -4,13 +4,15 @@ import logger from "@/lib/logger";
 import { SocketService, closeSocketOnError } from "@/socket";
 import { SOCKET_EVENT } from "@/types";
 import { RedisClientType } from "@/lib/redis";
+import { UserDocument } from "@nifty/server-lib/models/user";
 
 const SAVE_TO_DISK_INTERVAL = 15000; // 15 seconds
 const HEARTBEAT_INTERVAL = 30000; // 30 seconds
 const LOCK_TIMEOUT = 10000; // 10 seconds
 
-interface WebSocketWithHeartbeat extends WebSocket {
+interface WebSocketSession extends WebSocket {
   isAlive?: boolean;
+  user?: UserDocument;
 }
 
 // todo attach permissions to the note editing socket
@@ -28,7 +30,7 @@ export class WebSocketServer extends Server {
     const heartbeatInterval = setInterval(() => this.heartbeat(), HEARTBEAT_INTERVAL);
     this.socketService.clearRedis();
 
-    this.on("connection", async (socket, request) => {
+    this.on("connection", async (socket: WebSocketSession, request) => {
       const documentId = request.url?.split("/").pop();
       if (!documentId) return;
 
@@ -40,9 +42,13 @@ export class WebSocketServer extends Server {
       }
 
       try {
-        const hasAccess = await this.socketService.validateAccess(accessToken as string, documentId);
+        const [hasAccess, user] = await this.socketService.validateAccess(accessToken as string, documentId);
         if (!hasAccess)
           throw new Error("You do not have access to this document");
+
+        // attach user permissions to the socket
+        socket["user"] = user;
+        console.log("attached", user)
       } catch (err) {
         // @ts-ignore
         logger.error(err.message)
@@ -66,7 +72,7 @@ export class WebSocketServer extends Server {
   }
 
   heartbeat() {
-    this.clients.forEach((socket: WebSocketWithHeartbeat) => {
+    this.clients.forEach((socket: WebSocketSession) => {
       if (socket.isAlive === false) {
         logger.info("Socket is dead, closing connection");
         this.handleEditorLeave(socket);
@@ -80,7 +86,7 @@ export class WebSocketServer extends Server {
   }
 
   @closeSocketOnError
-  async handleConnection(documentId: string, socket: WebSocketWithHeartbeat) {
+  async handleConnection(documentId: string, socket: WebSocketSession) {
     await this.syncLock.acquire(["connection", documentId], async () => {
       await this.socketService.addEditorToDocument(documentId, socket);
 
@@ -110,7 +116,7 @@ export class WebSocketServer extends Server {
     });
   }
 
-  async broadcastJoin(documentId: string, socket: WebSocketWithHeartbeat) {
+  async broadcastJoin(documentId: string, socket: WebSocketSession) {
     try {
       const joinMessage = { event: SOCKET_EVENT.EDITOR_JOIN, payload: { note: { id: documentId } } };
       this.socketService.broadcast(documentId, joinMessage, socket);
@@ -234,7 +240,7 @@ export class WebSocketServer extends Server {
   }
 
   @closeSocketOnError
-  handleMessage(documentId: string, message: WebSocket.RawData, socket: WebSocketWithHeartbeat) {
+  handleMessage(documentId: string, message: WebSocket.RawData, socket: WebSocketSession) {
     try {
       const data = this.socketService.parse(message);
 
