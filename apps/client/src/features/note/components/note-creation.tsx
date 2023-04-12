@@ -20,7 +20,9 @@ type NoteCreationButtonProps = {
   moduleId: string;
 };
 
-export const NoteCreationButton: FC<NoteCreationButtonProps> = ({ moduleId }) => {
+export const NoteCreationButton: FC<NoteCreationButtonProps> = ({
+  moduleId,
+}) => {
   const createNodeMutation = useCreateNote();
 
   const onSubmit = useCallback(
@@ -58,7 +60,10 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({ moduleId }) =>
         >
           {({ formState, register }) => (
             <>
-              <div className="inline-flex text-left w-full mt-5" style={{ marginBottom: -5 }}>
+              <div
+                className="inline-flex text-left w-full mt-5"
+                style={{ marginBottom: -5 }}
+              >
                 <InputField
                   type="text"
                   label="Document title"
@@ -66,7 +71,10 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({ moduleId }) =>
                   registration={register('title')}
                 />
               </div>
-              <div className="inline-flex text-left w-full mt-5" style={{ marginBottom: -5 }}>
+              <div
+                className="inline-flex text-left w-full mt-5"
+                style={{ marginBottom: -5 }}
+              >
                 <InputField
                   type="text"
                   label="Description (optional)"
@@ -84,7 +92,9 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({ moduleId }) =>
                 >
                   <div className="flex flex-row items-center gap-2">
                     <input type="checkbox" {...register('is_public')} />
-                    <p className="text-black">Make document publicly viewable.</p>
+                    <p className="text-black">
+                      Allow anyone to edit and view this document.
+                    </p>
                   </div>
                 </div>
                 <Button
