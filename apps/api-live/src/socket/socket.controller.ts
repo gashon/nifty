@@ -4,7 +4,7 @@ import logger from "@/lib/logger";
 import { SocketService, closeSocketOnError } from "@/socket";
 import { SOCKET_EVENT } from "@/types";
 import { RedisClientType } from "@/lib/redis";
-import { UserDocument } from "@nifty/server-lib/models/user";
+import { CollaboratorDocument } from "@nifty/server-lib/models/collaborator";
 
 const SAVE_TO_DISK_INTERVAL = 15000; // 15 seconds
 const HEARTBEAT_INTERVAL = 30000; // 30 seconds
@@ -12,7 +12,7 @@ const LOCK_TIMEOUT = 10000; // 10 seconds
 
 interface WebSocketSession extends WebSocket {
   isAlive?: boolean;
-  user?: UserDocument;
+  collaborator?: CollaboratorDocument;
 }
 
 // todo attach permissions to the note editing socket
@@ -42,13 +42,12 @@ export class WebSocketServer extends Server {
       }
 
       try {
-        const [hasAccess, user] = await this.socketService.validateAccess(accessToken as string, documentId);
+        const [hasAccess, collaborator] = await this.socketService.validateAccess(accessToken as string, documentId);
         if (!hasAccess)
           throw new Error("You do not have access to this document");
 
         // attach user permissions to the socket
-        socket["user"] = user;
-        console.log("attached", user)
+        socket["collaborator"] = collaborator;
       } catch (err) {
         // @ts-ignore
         logger.error(err.message)
