@@ -93,7 +93,8 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({
                   <div className="flex flex-row items-center gap-2">
                     <input type="checkbox" {...register('is_public')} />
                     <p className="text-black">
-                      Allow anyone to edit and view this document.
+                      Allow anyone to edit and view this document. (you can
+                      share the link with friends!)
                     </p>
                   </div>
                 </div>
