@@ -32,7 +32,7 @@ function Module({ notes, user, id }) {
                   Module: {moduleName}
                 </h3>
                 <NoteCreationButton moduleId={id as string} />
-                <NotebookListSSR notes={notes} moduleId={id as string} />
+                <NotebookList notes={notes} moduleId={id as string} />
               </main>
             </DashboardLayout>
           </ThemeLayout>

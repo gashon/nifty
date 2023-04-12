@@ -159,10 +159,11 @@ export class NoteController implements INoteController {
       throw new CustomException('Note not found', status.NOT_FOUND);
 
     const collaborator = await this.collaboratorService.findCollaboratorByForeignKey(note.id, "note", userId);
-    console.log("GOT COLLABORATOR", collaborator, note.id, "note", userId)
     // validate user has access to note
     if (!collaborator)
       throw new CustomException('You do not have access to this note', status.FORBIDDEN);
+
+    // todo handle permissions
 
     // delete note
     await this.noteService.deleteNoteById(id);

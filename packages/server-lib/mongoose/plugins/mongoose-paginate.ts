@@ -35,6 +35,7 @@ export default function mongoosePaginate(schema: mongoose.Schema) {
     if (options.expand) result.populate(options.expand);
 
     const docsPromise = result
+      .where('deleted_at').equals(null)
       .select(options.select)
       .skip(skip)
       .limit(limit)
