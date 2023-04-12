@@ -1,7 +1,7 @@
 import WebSocket, { WebSocketServer as Server, ServerOptions } from "ws";
 import AsyncLock from "async-lock";
 import logger from "@/lib/logger";
-import { checkPermissions } from "@nifty/api/util"
+import { checkPermissions } from "@nifty/api/util/check-permissions"
 import { SocketService, closeSocketOnError } from "@/socket";
 import { SOCKET_EVENT } from "@/types";
 import { RedisClientType } from "@/lib/redis";
