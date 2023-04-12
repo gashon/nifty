@@ -1,10 +1,11 @@
 import WebSocket, { WebSocketServer as Server, ServerOptions } from "ws";
 import AsyncLock from "async-lock";
 import logger from "@/lib/logger";
+import { checkPermissions } from "@nifty/api/util"
 import { SocketService, closeSocketOnError } from "@/socket";
 import { SOCKET_EVENT } from "@/types";
 import { RedisClientType } from "@/lib/redis";
-import { CollaboratorDocument } from "@nifty/server-lib/models/collaborator";
+import { CollaboratorDocument, PermissionsType } from "@nifty/server-lib/models/collaborator";
 
 const SAVE_TO_DISK_INTERVAL = 15000; // 15 seconds
 const HEARTBEAT_INTERVAL = 30000; // 30 seconds
@@ -47,6 +48,7 @@ export class WebSocketServer extends Server {
           throw new Error("You do not have access to this document");
 
         // attach user permissions to the socket
+        // this will be null if the document is public
         socket["collaborator"] = collaborator;
       } catch (err) {
         // @ts-ignore
@@ -238,6 +240,21 @@ export class WebSocketServer extends Server {
     }
   }
 
+  validatePermissions(socket: WebSocketSession, requiredPermissions: PermissionsType[]): boolean {
+    // document public
+    // todo implement public preventions (i.e. read-only public)
+    if (!socket.collaborator)
+      return true;
+
+    const hasPermission = checkPermissions(socket.collaborator.permissions, requiredPermissions);
+    if (!hasPermission) {
+      socket.send(JSON.stringify({ event: SOCKET_EVENT.PERMISSION_ERROR, message: "You do not have permission to perform this action" }));
+      return false;
+    }
+
+    return true;
+  }
+
   @closeSocketOnError
   handleMessage(documentId: string, message: WebSocket.RawData, socket: WebSocketSession) {
     try {
@@ -250,7 +267,9 @@ export class WebSocketServer extends Server {
 
       switch (data.event) {
         case SOCKET_EVENT.DOCUMENT_UPDATE:
-          this.handleDocumentUpdate(documentId, socket, data);
+          if (this.validatePermissions(socket, ['w'])) {
+            this.handleDocumentUpdate(documentId, socket, data);
+          }
           break;
         case SOCKET_EVENT.EDITOR_LEAVE:
           this.handleEditorLeave(socket, documentId);

@@ -9,11 +9,16 @@
     "outDir": "dist",
     "rootDir": "src",
     "target": "es6",
-    "typeRoots": ["node_modules/@types", "src/types", "../../packages/common/types"],
+    "typeRoots": [
+      "node_modules/@types",
+      "src/types",
+      "../../packages/common/types"
+    ],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@nifty/server-lib/*": ["../../packages/server-lib/src/*"]
+      "@nifty/server-lib/*": ["../../packages/server-lib/src/*"],
+      "@nifty/api/*": ["../api/src/*"]
     }
   },
   "include": ["src/**/*"],

@@ -8,5 +8,6 @@ export enum SOCKET_EVENT {
   DOCUMENT_GET = 'document:get',
   DOCUMENT_SAVE = 'document:save',
   DOCUMENT_LOAD = 'document:load',
-  ERROR = 'error'
+  PERMISSION_ERROR = 'error:permission',
+  ERROR = 'error:general',
 }
