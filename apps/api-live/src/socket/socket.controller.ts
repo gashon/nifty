@@ -30,6 +30,24 @@ export class WebSocketServer extends Server {
       const documentId = request.url?.split("/").pop();
       if (!documentId) return;
 
+      const accessToken = request.headers["cookie"]?.split(";").find((cookie) => cookie.includes("access_token"))?.split("=")[1];
+      if (!accessToken) {
+        logger.error("No access token found");
+        socket.close();
+        return;
+      }
+
+      try {
+        const hasAccess = await this.socketService.validateAccess(accessToken as string, documentId);
+        if (!hasAccess)
+          throw new Error("You do not have access to this document");
+      } catch (err) {
+        // @ts-ignore
+        logger.error(err.message)
+        socket.close();
+        return;
+      }
+
       logger.info(`New connection to document: ${documentId}`)
       this.handleConnection(documentId, socket);
     });

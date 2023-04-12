@@ -1,14 +1,23 @@
 import WebSocket, { RawData, OPEN } from "ws";
+import { Model } from "mongoose"
 import { RedisClientType } from "@/lib/redis";
 import { SocketRepository } from "./socket.repository";
-import { NoteDocument } from "@nifty/server-lib/models/note";
+import Note, { NoteDocument } from "@nifty/server-lib/models/note";
+import AccessToken, { TokenDocument } from "@nifty/server-lib/models/token";
+import Collaborator, { CollaboratorDocument } from "@nifty/server-lib/models/collaborator";
 import { SOCKET_EVENT } from "@/types";
 
 export class SocketService {
   private socketRepository: SocketRepository;
+  private noteModel: Model<NoteDocument>;
+  private accessTokenModel: Model<TokenDocument>;
+  private collaboratorModel: Model<CollaboratorDocument>;
 
   constructor(redisClient: RedisClientType) {
     this.socketRepository = new SocketRepository(redisClient);
+    this.collaboratorModel = Collaborator;
+    this.accessTokenModel = AccessToken;
+    this.noteModel = Note;
   }
 
   // call with a socket to broadcast to all other sockets
@@ -26,6 +35,23 @@ export class SocketService {
 
   clearRedis() {
     return this.socketRepository.clearRedis();
+  }
+
+  async validateAccess(accessToken: string, documentId: string): Promise<boolean> {
+    const note = await this.noteModel.findById(documentId);
+    if (!note) throw new Error("Document not found");
+    // token is in req headers
+    const token = await this.accessTokenModel.findById(accessToken);
+    if (!token || !token.user) throw new Error("Access token not found");
+
+    const collaborator = await this.collaboratorModel.findOne({
+      type: "note",
+      foreign_key: documentId,
+      user: token.user
+    });
+    if (!collaborator) throw new Error("You don't have access to this document");
+
+    return note.is_public || !!collaborator;
   }
 
   async getEditorSockets(documentId: string): Promise<WebSocket[]> {

@@ -18,8 +18,6 @@ function Module({ notes, user, id }) {
 
   const { name: moduleName } = router.query;
 
-  // if (typeof window !== 'undefined') return null;
-
   return (
     <>
       <NextSeo title={`Module: ${moduleName}`} noindex />

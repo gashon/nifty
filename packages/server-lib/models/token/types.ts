@@ -8,4 +8,4 @@ export interface IToken extends Resource {
   expires_at?: Date;
 }
 
-export type TokenDocument = mongoose.Document<string, object, IToken>;
+export type TokenDocument = mongoose.Document<string, object, IToken> & IToken;
