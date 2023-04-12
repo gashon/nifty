@@ -49,9 +49,9 @@ export class SocketService {
       foreign_key: documentId,
       user: token.user
     });
-    if (!collaborator) throw new Error("You don't have access to this document");
+    if (!collaborator && !note.is_public) throw new Error("You don't have access to this document");
 
-    return note.is_public || !!collaborator;
+    return true;
   }
 
   async getEditorSockets(documentId: string): Promise<WebSocket[]> {

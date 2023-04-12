@@ -35,7 +35,7 @@ export class NoteController implements INoteController {
     if (!note)
       throw new CustomException('Note not found', status.NOT_FOUND);
 
-    if (!note.collaborators.includes(userId))
+    if (!note.is_public && !note.collaborators.includes(userId))
       throw new CustomException('You do not have access to this note', status.FORBIDDEN);
 
     res.status(status.OK).json({ data: note });
@@ -53,8 +53,12 @@ export class NoteController implements INoteController {
     if (!limit || limit % 2 !== 0 || limit < 0)
       throw new CustomException('Limit must be an even number', status.BAD_REQUEST);
 
+    const note = await this.noteService.findNoteById(noteId);
+    if (!note)
+      throw new CustomException('Note not found', status.NOT_FOUND);
+
     const collaborator = await this.collaboratorService.findCollaboratorByNoteIdAndUserId(noteId, userId);
-    if (!collaborator)
+    if (!note.is_public && !collaborator)
       throw new CustomException('You do not have access to this note', status.FORBIDDEN);
 
     const directory = await this.directoryService.findDirectoryByNoteId(noteId);

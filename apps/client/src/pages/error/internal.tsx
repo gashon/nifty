@@ -14,8 +14,15 @@ const InternalError: FC<InternalErrorProps> = () => {
 
   return (
     <main className="bg-primary flex h-screen flex-col items-center justify-center gap-6">
-      <Image src="/auth-denied.svg" alt="Sad illustration" width={150 * 2} height={130.58 * 2} />
-      <h1 className="text-primary text-5xl font-extrabold">Something went wrong.</h1>
+      <Image
+        src="/auth-denied.svg"
+        alt="Sad illustration"
+        width={150 * 2}
+        height={130.58 * 2}
+      />
+      <h1 className="text-primary text-5xl font-extrabold">
+        Something went wrong.
+      </h1>
       <p className="flex items-center gap-3 text-red-500">
         <FiAlertTriangle /> {message}
       </p>
@@ -34,8 +41,9 @@ const InternalError: FC<InternalErrorProps> = () => {
         <Button
           onClick={() => {
             location.replace(
-              '/auth/login?redirect=' +
-                (redirect || encodeURIComponent(location.pathname + location.search))
+              '/auth?redirect=' +
+                (redirect ||
+                  encodeURIComponent(location.pathname + location.search))
             );
           }}
           variant="secondary"

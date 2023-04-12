@@ -12,6 +12,8 @@ const LOCK_TIMEOUT = 10000; // 10 seconds
 interface WebSocketWithHeartbeat extends WebSocket {
   isAlive?: boolean;
 }
+
+// todo attach permissions to the note editing socket
 export class WebSocketServer extends Server {
   private socketService: SocketService;
   private autoSaveClocks: Record<string, NodeJS.Timeout> = {};
