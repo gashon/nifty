@@ -5,7 +5,7 @@ import { checkPermissions } from "@nifty/api/util/check-permissions"
 import { SocketService, closeSocketOnError } from "@/socket";
 import { SOCKET_EVENT } from "@/types";
 import { RedisClientType } from "@/lib/redis";
-import { CollaboratorDocument, PermissionsType } from "@nifty/server-lib/models/collaborator";
+import { CollaboratorDocument, PermissionStrings } from "@nifty/server-lib/models/collaborator";
 
 const SAVE_TO_DISK_INTERVAL = 15000; // 15 seconds
 const HEARTBEAT_INTERVAL = 30000; // 30 seconds
@@ -240,7 +240,7 @@ export class WebSocketServer extends Server {
     }
   }
 
-  validatePermissions(socket: WebSocketSession, requiredPermissions: PermissionsType[]): boolean {
+  validatePermissions(socket: WebSocketSession, requiredPermissions: PermissionStrings): boolean {
     // document public
     // todo implement public preventions (i.e. read-only public)
     if (!socket.collaborator)
@@ -259,7 +259,6 @@ export class WebSocketServer extends Server {
   handleMessage(documentId: string, message: WebSocket.RawData, socket: WebSocketSession) {
     try {
       const data = this.socketService.parse(message);
-
       if (!data) {
         socket.send(JSON.stringify({ event: SOCKET_EVENT.ERROR, message: "Invalid message format" }));
         return;
@@ -267,7 +266,7 @@ export class WebSocketServer extends Server {
 
       switch (data.event) {
         case SOCKET_EVENT.DOCUMENT_UPDATE:
-          if (this.validatePermissions(socket, ['w'])) {
+          if (this.validatePermissions(socket, 'rw')) {
             this.handleDocumentUpdate(documentId, socket, data);
           }
           break;

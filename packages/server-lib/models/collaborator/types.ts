@@ -2,13 +2,14 @@ import mongoose from "../../mongoose";
 import Resource from '../../utils/types/resource';
 import { ListResponse } from '../../utils/types/tsoa/list-response';
 
-export type PermissionsType = 'r' | 'w' | 'd'; // read, write, delete
+// unix permissions 
+export type PermissionsType = number; // 0-7
 export type CollaboratorType = 'directory' | 'note' | 'quiz';
 export interface ICollaborator extends Resource {
   created_by: string;
   user: string;
   type: CollaboratorType;
-  permissions: PermissionsType[];
+  permissions: PermissionsType;
   foreign_key?: string; // updated after foreign creation
 }
 

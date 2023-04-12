@@ -26,11 +26,10 @@ const collaboratorSchema = new mongoose.Schema<ICollaborator>({
     type: String,
   },
   permissions: {
-    type: [String],
-    default: [],
+    type: Number,
+    default: 0,
     immutable: false,
     required: true,
-    enum: ['r', 'w', 'd'],
   },
   deleted_at: {
     type: Date,

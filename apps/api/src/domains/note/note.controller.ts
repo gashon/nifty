@@ -18,6 +18,7 @@ import { IDirectoryService } from '../directory';
 import { NOTE_TYPES, NoteCreateResponse } from '@/domains/note/types';
 import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
 import { DIRECTORY_TYPES } from '@/domains/directory/types';
+import { setPermissions } from '@/util';
 
 @controller('/v1/notes')
 export class NoteController implements INoteController {
@@ -115,7 +116,7 @@ export class NoteController implements INoteController {
     if (!collaborator)
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
-    const noteCollaborator = await this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "note", permissions: ['r', 'w', 'd'] });
+    const noteCollaborator = await this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "note", permissions: setPermissions("rwd") });
     const note = await this.noteService.createNote(createdBy, { ...req.body, collaborators: [noteCollaborator.id] } as NoteCreateRequest);
 
     // add the note to the directory
