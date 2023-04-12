@@ -4,7 +4,7 @@ import { NoteListResponse } from '@nifty/server-lib/models/note';
 import { PaginationParams } from '@nifty/api/types';
 import { axios } from '@/lib/axios';
 
-export const getNotes = async (directoryId: string | undefined, { sort, limit, page, expand }: PaginationParams, headers?: { [key: string]: string }): Promise<NoteListResponse> => {
+export const getNotes = async (directoryId: string | undefined, { sort, limit, page, expand }: PaginationParams, headers?: { [key: string]: string }): Promise<{ data: NoteListResponse }> => {
   const { data } = await axios.get(`/api/v1/notes`, {
     params: {
       directory_id: directoryId,
@@ -28,7 +28,7 @@ export const useInfiniteNotes = ({ page, directoryId, ...pagination }: UseNotesO
     queryFn: ({ pageParam = (page || 1) }) => {
       return new Promise((resolve, reject) => {
         getNotes(directoryId, { ...pagination, page: pageParam })
-          .then((data) => {
+          .then(({ data }) => {
             resolve(data);
           })
           .catch((error) => {
