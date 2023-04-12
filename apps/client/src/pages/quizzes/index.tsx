@@ -39,6 +39,21 @@ function Module({ user }) {
 
 export async function getServerSideProps({ req }) {
   const { data: user } = await getUser(req.headers);
+
+  if (!user) {
+    return {
+      redirect: {
+        // destination: `/error/external?message=${encodeURIComponent("You are not logged in!")}&redirect=%2Fnotes%2F${context.params.id}`,
+        destination: `/error/external?message=${encodeURIComponent(
+          'You are not logged in!'
+        )}&${new URLSearchParams({
+          redirect: `/quizzes`,
+        })}`,
+        permanent: false,
+      },
+    };
+  }
+
   return {
     props: { user },
   };

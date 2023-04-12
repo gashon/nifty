@@ -48,6 +48,20 @@ function Document({ user }) {
 export async function getServerSideProps(context) {
   const { data: user } = await getUser(context.req.headers);
 
+  if (!user) {
+    return {
+      redirect: {
+        // destination: `/error/external?message=${encodeURIComponent("You are not logged in!")}&redirect=%2Fnotes%2F${context.params.id}`,
+        destination: `/error/external?message=${encodeURIComponent(
+          'You are not logged in!'
+        )}&${new URLSearchParams({
+          redirect: `/quizzes/${context.params.id}`,
+        })}`,
+        permanent: false,
+      },
+    };
+  }
+
   return {
     props: {
       user,
