@@ -11,7 +11,7 @@ interface IQuizController {
 }
 
 interface IQuizService {
-  findQuizById(id: string): Promise<QuizDocument | null>;
+  findQuizById(id: string, hideAnswers?: boolean): Promise<QuizDocument | null>;
   createQuiz(createdBy: string, data: Partial<IQuiz>): Promise<QuizDocument>;
   findQuizzesByIds(ids: string[]): Promise<Query<(QuizDocument & Required<{ _id: string; }>)[], QuizDocument & Required<{ _id: string; }>, {}, QuizDocument>>
   deleteQuizById(id: string): Promise<Query<any, QuizDocument & Required<{ _id: string; }>, {}, QuizDocument>>;

@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 
 import { Button } from '@nifty/ui/atoms';
 import {
+  IQuiz,
   // QuizSubmitRequest,
   IQuizQuestion,
 } from '@nifty/server-lib/models/quiz';
@@ -73,9 +74,11 @@ const QuizQuestion: FC<{
 
 const MemoizedQuizQuestion = memo(QuizQuestion);
 
-export const QuizForm: FC<{ id: string }> = ({ id }) => {
+export const QuizForm: FC<{ quizQuestions: QuizQuestion[] }> = ({
+  quizQuestions,
+}) => {
   // const submitQuizMutation = useSubmitQuiz();
-  const [questions, setQuestions] = useState<QuizQuestion[]>(MOCK_QUESTIONS);
+  const [questions, setQuestions] = useState<QuizQuestion[]>(quizQuestions);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const { handleSubmit, formState } = useForm();
 

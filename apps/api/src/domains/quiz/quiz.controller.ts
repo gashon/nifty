@@ -36,14 +36,15 @@ export class QuizController implements IQuizController {
   @httpGet('/:id', auth())
   async getQuiz(req: Request, res: Response): Promise<void> {
     const userId = res.locals.user._id;
-    const quiz = await this.quizService.findQuizById(req.params.id);
 
+    let quiz = await this.quizService.findQuizById(req.params.id, true);
     if (!quiz)
       throw new CustomException('Quiz not found', status.NOT_FOUND);
 
+    console.log("GOT", quiz)
     // validate permissions
-    const collaborators = await quiz.populate('collaborators').execPopulate();
-    const collaborator = collaborators.collaborators.find((collaborator: any) => collaborator.user_id === userId);
+    quiz = await quiz.populate('collaborators');
+    const collaborator = quiz.collaborators.find((collaborator: any) => collaborator.user === userId);
     if (!collaborator)
       throw new CustomException('You do not have access to this quiz', status.FORBIDDEN);
 
