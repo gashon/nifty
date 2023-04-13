@@ -88,9 +88,11 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
       time_taken: getTotalTime(),
     };
     console.log('payload', payload);
-    await submitQuizMutation.mutateAsync(payload);
+    const { data } = await submitQuizMutation.mutateAsync(payload);
     // clean up localStorage
     deleteSessions();
+    // redirect to submissions page
+    window.location.replace(`/quizzes/submissions/${data.id}`);
   }, [answers]);
 
   return (

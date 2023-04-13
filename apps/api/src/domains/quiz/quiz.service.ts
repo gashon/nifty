@@ -57,4 +57,17 @@ export class QuizService implements IQuizService {
       created_by: createdBy,
     });
   }
+
+  async findSubmissionById(id: string): Promise<SubmissionDocument | null> {
+    return this.submissionModel.findById(id);
+  }
+
+  async findQuestionsByIds(ids: string[]): Promise<Query<(QuizDocument & Required<{ _id: string; }>)[], QuizDocument & Required<{ _id: string; }>, {}, QuizDocument>> {
+    return this.quizModel.find({
+      _id: {
+        $in: ids
+      },
+      deleted_at: null
+    }).sort({ created_at: -1 });
+  }
 }

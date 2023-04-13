@@ -11,6 +11,12 @@ const submissionSchema = new mongoose.Schema<ISubmission>({
     required: true,
     immutable: true,
   },
+  quiz: {
+    type: String,
+    ref: "Quiz",
+    required: true,
+    immutable: true,
+  },
   answers: {
     type: [
       {

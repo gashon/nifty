@@ -147,7 +147,6 @@ export class QuizController implements IQuizController {
     if (!quiz)
       throw new CustomException('Quiz not found', status.NOT_FOUND);
 
-    console.log("GOT", userId, quiz)
     // validate user has access to quiz
     if (userId !== quiz.created_by)
       throw new CustomException('You do not have access to this quiz', status.FORBIDDEN);
@@ -186,6 +185,7 @@ export class QuizController implements IQuizController {
 
     const score = (stats.total_correct / quiz.questions.length) * 100;
     const submission = await this.quizService.submitQuiz(userId, {
+      quiz: quiz.id,
       time_taken: req.body.time_taken,
       answers: submissionAnswers,
       total_questions: quiz.questions.length,
@@ -201,8 +201,20 @@ export class QuizController implements IQuizController {
 
   }
 
-  @httpGet('/:id/submissions/:submissionId', auth())
+  @httpGet('/submissions/:submissionId', auth())
   async getSubmission(req: Request, res: Response): Promise<void> {
+    const userId = res.locals.user._id;
+    const submissionId = req.params.submissionId;
 
+    let submission = await this.quizService.findSubmissionById(submissionId);
+    if (!submission)
+      throw new CustomException('Submission not found', status.NOT_FOUND);
+
+    // validate user has access to submission
+    if (userId !== submission.created_by)
+      throw new CustomException('You do not have access to this submission', status.FORBIDDEN);
+
+    submission = await submission.populate('quiz');
+    res.status(status.OK).json({ data: submission });
   }
 }

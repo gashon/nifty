@@ -18,6 +18,7 @@ export type IQuizSubmissionAnswer = Pick<
 
 export interface ISubmission extends Resource {
   created_by: string;
+  quiz: string;
   answers: ISubmissionAnswer[],
   total_questions: number,
   total_correct: number,
