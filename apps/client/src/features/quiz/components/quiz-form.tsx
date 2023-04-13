@@ -23,10 +23,10 @@ const QuizQuestion: FC<{
 
   return (
     <div className="w-full flex justify-center flex-col mt-5">
-      <p>{question.question}</p>
+      <p className="text-xl underline mb-1">{question.question}</p>
       {question.answers &&
         question.answers.map((answer, index) => (
-          <label key={index}>
+          <label key={index} className="cursor-pointer text-lg">
             <input
               className="mr-2"
               type="radio"
@@ -103,11 +103,13 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
       >
         <>
           {questions.map((question) => (
-            <MemoizedQuizQuestion
-              key={question.id}
-              question={question}
-              onAnswerChange={onAnswerChange}
-            />
+            <div className="mb-5">
+              <MemoizedQuizQuestion
+                key={question.id}
+                question={question}
+                onAnswerChange={onAnswerChange}
+              />
+            </div>
           ))}
           <div className="mt-5 w-full flex justify-end">
             <Button
