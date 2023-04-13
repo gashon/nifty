@@ -8,6 +8,7 @@ interface TimeSession {
 
 export const useQuizSession = (quizId: string) => {
   const [sessions, setSessions] = useState<TimeSession[]>([]);
+  const hasMounted = useRef(false);
   const storageKey = `quiz_sessions:${quizId}`;
 
   // Load the sessions from local storage
@@ -22,10 +23,18 @@ export const useQuizSession = (quizId: string) => {
       if (!session.end_time) return total;
       return total + (session.end_time - session.start_time);
     }, 0);
+
+    const currentSession = storage.get<TimeSession>(`${storageKey}:current`);
+    if (currentSession)
+      return totalTime + (Date.now() - currentSession.start_time);
+
     return totalTime;
   }
 
   const startSession = () => {
+    if (hasMounted.current) return;
+    hasMounted.current = true;
+
     const session: TimeSession = {
       start_time: Date.now(),
       end_time: undefined,
