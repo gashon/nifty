@@ -2,7 +2,7 @@ import { memo, FC, useCallback, useState } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
 import { useForm } from 'react-hook-form';
 
-// import { useSubmitQuiz } from '@/features/quiz';
+import { useQuizTimer } from '@/features/quiz';
 
 import { Button } from '@nifty/ui/atoms';
 import {
@@ -56,6 +56,7 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
   quizId,
 }) => {
   // const submitQuizMutation = useSubmitQuiz();
+  const timeTaken = useQuizTimer();
   const [answers, setAnswers] = useState<QuizAnswer[]>(
     questions.map((question) => ({
       question_id: question.id,
@@ -87,9 +88,10 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
     const payload = {
       answers,
       quiz_id: quizId,
+      time_taken: timeTaken,
     };
-    console.log(payload);
-  }, [answers]);
+    console.log('payload', payload);
+  }, [answers, timeTaken]);
 
   return (
     <>

@@ -180,13 +180,12 @@ export class QuizController implements IQuizController {
           is_correct: isCorrect,
         });
       }
-
     }
     stats.total_unanswered = quiz.questions.length - (stats.total_correct + stats.total_incorrect);
 
     const score = (stats.total_correct / quiz.questions.length) * 100;
     const submission = await this.quizService.submitQuiz(userId, {
-      time_taken: -1,
+      time_taken: req.body.time_taken,
       answers: submissionAnswers,
       total_questions: quiz.questions.length,
       ...stats,
@@ -198,7 +197,7 @@ export class QuizController implements IQuizController {
 
   @httpGet('/:id/submissions', auth())
   async getSubmissions(req: Request, res: Response): Promise<void> {
-    
+
   }
 
   @httpGet('/:id/submissions/:submissionId', auth())

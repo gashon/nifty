@@ -15,7 +15,6 @@ export const QuizPage: FC<{
 }> = ({ user, quiz }) => {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
-
   const { id, title } = router.query;
 
   useEffect(() => {

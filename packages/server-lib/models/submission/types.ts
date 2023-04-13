@@ -24,7 +24,7 @@ export interface ISubmission extends Resource {
 
 export type SubmissionDocument = mongoose.Document<string, object, ISubmission> & ISubmission;
 
-export type SubmissionCreateRequest = Partial<Expand<Pick<ISubmission, 'answers'>> & "quiz_id">
+export type SubmissionCreateRequest = Partial<Expand<Pick<ISubmission, 'time_taken' | 'answers'>> & "quiz_id">
 export type SubmissionUpdateRequest = Partial<Expand<Omit<ISubmission, 'created_by'>>>
 
 export type SubmissionListResponse = ListResponse<SubmissionDocument>
