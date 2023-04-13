@@ -52,7 +52,7 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
   quizId,
 }) => {
   // const submitQuizMutation = useSubmitQuiz();
-  const { getTotalTime, startSession } = useQuizSession(quizId);
+  const { getTotalTime, startSession, deleteSessions } = useQuizSession(quizId);
   const [answers, setAnswers] = useState<QuizAnswer[]>(
     questions.map((question) => ({
       question_id: question.id,
@@ -91,6 +91,10 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
       time_taken: getTotalTime(),
     };
     console.log('payload', payload);
+
+    // clean up localStorage
+    // todo move to submission hook (once response is received)
+    deleteSessions();
   }, [answers]);
 
   return (

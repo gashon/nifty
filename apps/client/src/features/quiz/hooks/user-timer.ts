@@ -59,6 +59,12 @@ export const useQuizSession = (quizId: string) => {
     endSessionRef.current = endSession;
   }, [endSession]);
 
+  const deleteSessions = () => {
+    storage.remove(storageKey);
+    storage.remove(`${storageKey}:current`);
+    setSessions([]);
+  }
+
   // End the session when the user closes the tab
   useEffect(() => {
     const handleBeforeUnload = (event) => {
@@ -75,6 +81,7 @@ export const useQuizSession = (quizId: string) => {
     getTotalTime,
     startSession,
     endSession: endSessionRef.current,
+    deleteSessions
   };
 
 }
