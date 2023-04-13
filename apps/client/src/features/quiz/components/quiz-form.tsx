@@ -49,9 +49,11 @@ const QuizQuestion: FC<{
 
 const MemoizedQuizQuestion = memo(QuizQuestion);
 
-export const QuizForm: FC<{ questions: QuizQuestion[] }> = ({ questions }) => {
+export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
+  questions,
+  quizId,
+}) => {
   // const submitQuizMutation = useSubmitQuiz();
-  console.log('GOT', questions);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const { handleSubmit, formState } = useForm();
 
@@ -68,7 +70,11 @@ export const QuizForm: FC<{ questions: QuizQuestion[] }> = ({ questions }) => {
   }, []);
 
   const onSubmit = useCallback(async () => {
-    console.log(answers);
+    const payload = {
+      answers,
+      quiz_id: quizId,
+    };
+    console.log(payload);
   }, [answers]);
 
   return (

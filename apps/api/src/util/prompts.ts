@@ -3,7 +3,7 @@
 export const createQuizGenerationPrompt = (noteContent: string): string => {
   return `
     Generate a quiz from the following note content. 
-    The quiz should have 6-15 questions with 4 possible answers for each.
+    The quiz should have 2-15 questions with 4 possible answers for each.
     The first answer should be the correct answer.
     Return the quiz as a JSON object in the following format:
     {
@@ -23,5 +23,6 @@ export const createQuizGenerationPrompt = (noteContent: string): string => {
     Do not include anything else in your response besides the quiz JSON object.
     ---
     ${noteContent}
+    ---
   `
 }

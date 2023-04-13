@@ -41,7 +41,6 @@ export class QuizController implements IQuizController {
     if (!quiz)
       throw new CustomException('Quiz not found', status.NOT_FOUND);
 
-    console.log("GOT", quiz)
     // validate permissions
     quiz = await quiz.populate('collaborators');
     const collaborator = quiz.collaborators.find((collaborator: any) => collaborator.user === userId);

@@ -9,10 +9,11 @@ export const generateQuizFromNote = async (noteContent: string) => {
     // rough estimate of number of tokens
     // todo tokenize prompt instead of splitting on spaces
     const numTokens = prompt.split(" ").length
+    console.log("POMRPT", prompt)
     const response = await openai.createCompletion({
       prompt,
       model: "text-davinci-003",
-      max_tokens: 4000 - numTokens,
+      max_tokens: 3750 - numTokens,
       temperature: 0.7,
       top_p: 1,
       frequency_penalty: 0.5,
