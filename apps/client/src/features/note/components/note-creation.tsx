@@ -87,33 +87,20 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({
               </div>
 
               <div
-                className="inline-flex text-left text-black bg-[#d6d6d6] w-min p-2 rounded-lg mt-5"
-                style={{ marginBottom: -5 }}
-              >
-                <FieldWrapper label="Public Permissions">
-                  <NotePermissionDropdown
-                    setPermissions={(value: Permission) =>
-                      setValue('public_permissions', value)
-                    }
-                  />
-                </FieldWrapper>
-              </div>
-              <div></div>
-              <div
-                className="inline-flex float-right text-left w-full mt-5"
+                className="inline-flex justify-between text-left w-full mt-5"
                 style={{ marginBottom: -5 }}
               >
                 <div
-                  className="flex items-center justify-between gap-2 inline-flex text-left w-full "
+                  className="bg-[#d6d6d6] w-min p-2 flex items-center justify-center rounded-lg "
                   style={{ marginBottom: -5 }}
                 >
-                  <div className="flex flex-row items-center gap-2">
-                    <input type="checkbox" {...register('is_public')} />
-                    <p className="text-black">
-                      Allow anyone to edit and view this document. (you can
-                      share the link with friends!)
-                    </p>
-                  </div>
+                  <FieldWrapper label="Public Permissions">
+                    <NotePermissionDropdown
+                      setPermissions={(value: Permission) =>
+                        setValue('public_permissions', value)
+                      }
+                    />
+                  </FieldWrapper>
                 </div>
                 <Button
                   type="submit"

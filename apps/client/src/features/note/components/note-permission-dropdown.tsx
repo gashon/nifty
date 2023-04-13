@@ -7,7 +7,7 @@ export const NotePermissionDropdown: FC<{
   setPermissions: (value: Permission) => void;
 }> = ({ setPermissions }) => {
   const [selection, setSelection] =
-    useState<'Not Public' | 'Read' | 'Read-Write'>('Not Public');
+    useState<'Not Public' | 'Public Read' | 'Public Read-Write'>('Not Public');
 
   const handleChange = (permission: Permission) => {
     setPermissions(permission);
@@ -16,10 +16,10 @@ export const NotePermissionDropdown: FC<{
         setSelection('Not Public');
         break;
       case Permission.Read:
-        setSelection('Read');
+        setSelection('Public Read');
         break;
       case Permission.ReadWrite:
-        setSelection('Read-Write');
+        setSelection('Public Read-Write');
         break;
       default:
         setSelection('Not Public');
