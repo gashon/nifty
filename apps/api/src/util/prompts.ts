@@ -19,8 +19,8 @@ export const createQuizGenerationPrompt = (noteContent: string): string => {
       ]
     }
 
-    You're output should be stringified JSON - such that it can be parsed into a JavaScript object. Do not include any newline chars.
-    Do not include anything else in your response besides the quiz JSON object.
+    You're output should be stringified JSON - such that it can be parsed into a JavaScript object. Do not include any newline chars (your response should all be on one line).
+    Do not include anything else in your response besides the one-line JSON object.
     ---
     ${noteContent}
     ---
