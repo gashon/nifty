@@ -16,9 +16,12 @@ export class QuizService implements IQuizService {
   }
 
   async findQuizById(id: string, hideAnswers: boolean = false): Promise<QuizDocument | null> {
-    return this.quizModel.findById(id, {
-      'questions.correct_index': hideAnswers ? 0 : 1,
-    });
+    if (hideAnswers) {
+      return this.quizModel.findById(id, {
+        'questions.correct_index': 0,
+      });
+    }
+    return this.quizModel.findById(id);
   }
 
   async findQuizzesByIds(ids: string[]): Promise<Query<(QuizDocument & Required<{ _id: string; }>)[], QuizDocument & Required<{ _id: string; }>, {}, QuizDocument>> {

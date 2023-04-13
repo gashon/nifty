@@ -4,14 +4,11 @@ import { useForm } from 'react-hook-form';
 
 import { Button } from '@nifty/ui/atoms';
 import { IQuizQuestion } from '@nifty/server-lib/models/quiz';
-import { ISubmissionAnswer } from '@nifty/server-lib/models/submission';
-import { useQuizSession } from '@/features/quiz';
+import { IQuizSubmissionAnswer } from '@nifty/server-lib/models/submission';
+import { useQuizSession, useCreateSubmission } from '@/features/quiz';
 
 type QuizQuestion = Omit<IQuizQuestion, 'correct_index'>;
-type QuizAnswer = Pick<
-  ISubmissionAnswer,
-  'question_id' | 'type' | 'answer_index'
->;
+
 // todo: turn into switch for different types of questions
 const QuizQuestion: FC<{
   question: QuizQuestion;
@@ -51,9 +48,9 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
   questions,
   quizId,
 }) => {
-  // const submitQuizMutation = useSubmitQuiz();
+  const submitQuizMutation = useCreateSubmission(quizId);
   const { getTotalTime, startSession, deleteSessions } = useQuizSession(quizId);
-  const [answers, setAnswers] = useState<QuizAnswer[]>(
+  const [answers, setAnswers] = useState<IQuizSubmissionAnswer[]>(
     questions.map((question) => ({
       question_id: question.id,
       answer_index: -1,
@@ -68,7 +65,7 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
 
   const onAnswerChange = useCallback(
     (questionId: string, answerIndex: number) => {
-      setAnswers((prevAnswers): QuizAnswer[] => {
+      setAnswers((prevAnswers): IQuizSubmissionAnswer[] => {
         const answer = prevAnswers.find((a) => a.question_id === questionId);
         if (answer) {
           // update answer index
@@ -91,9 +88,8 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
       time_taken: getTotalTime(),
     };
     console.log('payload', payload);
-
+    await submitQuizMutation.mutateAsync(payload);
     // clean up localStorage
-    // todo move to submission hook (once response is received)
     deleteSessions();
   }, [answers]);
 

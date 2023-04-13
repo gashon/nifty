@@ -11,6 +11,11 @@ export interface ISubmissionAnswer {
   is_correct: boolean;
 }
 
+export type IQuizSubmissionAnswer = Pick<
+  ISubmissionAnswer,
+  'question_id' | 'type' | 'answer_index'
+>;
+
 export interface ISubmission extends Resource {
   created_by: string;
   answers: ISubmissionAnswer[],
@@ -24,7 +29,7 @@ export interface ISubmission extends Resource {
 
 export type SubmissionDocument = mongoose.Document<string, object, ISubmission> & ISubmission;
 
-export type SubmissionCreateRequest = Partial<Expand<Pick<ISubmission, 'time_taken' | 'answers'>> & "quiz_id">
+export type SubmissionCreateRequest = Pick<ISubmission, "time_taken"> & { answers: IQuizSubmissionAnswer[] } & { "quiz_id": string }
 export type SubmissionUpdateRequest = Partial<Expand<Omit<ISubmission, 'created_by'>>>
 
 export type SubmissionListResponse = ListResponse<SubmissionDocument>

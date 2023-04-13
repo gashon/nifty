@@ -147,6 +147,7 @@ export class QuizController implements IQuizController {
     if (!quiz)
       throw new CustomException('Quiz not found', status.NOT_FOUND);
 
+    console.log("GOT", userId, quiz)
     // validate user has access to quiz
     if (userId !== quiz.created_by)
       throw new CustomException('You do not have access to this quiz', status.FORBIDDEN);
