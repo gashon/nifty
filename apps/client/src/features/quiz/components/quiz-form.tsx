@@ -1,4 +1,4 @@
-import { memo, FC, useCallback, useState, useEffect } from 'react';
+import { memo, FC, useRef, useCallback, useState, useEffect } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
 import { useForm } from 'react-hook-form';
 
@@ -52,7 +52,7 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
   quizId,
 }) => {
   // const submitQuizMutation = useSubmitQuiz();
-  const { getTotalTime, startSession, endSession } = useQuizSession(quizId);
+  const { getTotalTime, startSession } = useQuizSession(quizId);
   const [answers, setAnswers] = useState<QuizAnswer[]>(
     questions.map((question) => ({
       question_id: question.id,
@@ -64,10 +64,7 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
 
   useEffect(() => {
     startSession();
-    return () => {
-      endSession();
-    };
-  }, []);
+  }, [startSession]);
 
   const onAnswerChange = useCallback(
     (questionId: string, answerIndex: number) => {

@@ -1,41 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import storage from "@/lib/storage";
 
 interface TimeSession {
   start_time: number;
-  end_time: number;
-  quiz_id: string;
+  end_time: number | undefined;
 }
 
 export const useQuizSession = (quizId: string) => {
   const [sessions, setSessions] = useState<TimeSession[]>([]);
-  const [currentSession, setCurrentSession] = useState<TimeSession | null>(null);
   const storageKey = `quiz_sessions:${quizId}`;
 
+  // Load the sessions from local storage
   useEffect(() => {
-    // load all sessions from local storage
-    const sessions = storage.get<TimeSession[]>(storageKey) ?? [];
+    const sessions = storage.get<TimeSession[]>(storageKey) || [];
     setSessions(sessions);
-  }, []);
+  }, [storageKey]);
 
-  useEffect(() => {
-    // save all sessions to local storage
-    storage.set(storageKey, sessions);
-  }, [sessions]);
-
-  useEffect(() => {
-    // load the current session from local storage
-    const session = storage.get<TimeSession>(storageKey) ?? null;
-    setCurrentSession(session);
-  }, []);
-
-  useEffect(() => {
-    // save the current session to local storage
-    storage.set(storageKey, currentSession);
-  }, [currentSession]);
-
+  // Calculate the total time spent on the quiz
   const getTotalTime = () => {
     const totalTime = sessions.reduce((total, session) => {
+      if (!session.end_time) return total;
       return total + (session.end_time - session.start_time);
     }, 0);
     return totalTime;
@@ -44,26 +28,44 @@ export const useQuizSession = (quizId: string) => {
   const startSession = () => {
     const session: TimeSession = {
       start_time: Date.now(),
-      end_time: Date.now(),
-      quiz_id: quizId
+      end_time: undefined,
     };
-    setCurrentSession(session);
+    storage.set<TimeSession>(`${storageKey}:current`, session); // Save the current session directly to local storage
   }
 
   const endSession = () => {
+    const currentSession = storage.get<TimeSession>(`${storageKey}:current`);
     if (!currentSession) return;
+
     const session = {
       ...currentSession,
       end_time: Date.now(),
     };
-    setSessions([...sessions, session]);
-    setCurrentSession(null);
+    storage.set<TimeSession[]>(storageKey, [...sessions, session]); // Save the updated sessions directly to local storage
+    storage.remove(`${storageKey}:current`); // Remove the current session from local storage
   }
+
+  const endSessionRef = useRef(endSession);
+  useEffect(() => {
+    endSessionRef.current = endSession;
+  }, [endSession]);
+
+  // End the session when the user closes the tab
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      endSessionRef.current();
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   return {
     getTotalTime,
     startSession,
-    endSession,
+    endSession: endSessionRef.current,
   };
 
 }
