@@ -1,11 +1,11 @@
 import {
-  ComponentType,
   FC,
   useCallback,
   useMemo,
-  useEffect,
+  useRef,
   useState,
   ReactElement,
+  useReducer,
 } from 'react';
 import {
   createEditor,
@@ -19,7 +19,7 @@ import {
 } from 'slate';
 import { withHistory } from 'slate-history';
 import { Editable, ReactEditor, Slate, withReact } from 'slate-react';
-import { useNoteSocket } from '@/features/socket/hooks/use-note-socket';
+import { useNoteSocket, useSocketMessageHandler } from '@/features/socket/';
 import { BulletedListElement } from '../types';
 import { SOCKET_EVENT } from '@nifty/api-live/types';
 
@@ -50,42 +50,48 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
     () => withShortcuts(withReact(withHistory(createEditor()))),
     []
   );
+  //useReducer forceRerender
+  const [_, forceRerender] = useReducer((s) => s + 1, 0);
   const { socket, connectionFailed } = useNoteSocket(documentId);
-  const [initValue, setInitValue] = useState<Descendant[] | undefined>(
-    undefined
-  );
+  const [initValue, setInitValue] =
+    useState<Descendant[] | undefined>(undefined);
+  const remoteUpdateRef = useRef(false);
+  const onDocumentLoad = useCallback((note) => {
+    setInitValue(
+      note.content
+        ? JSON.parse(note.content)
+        : [
+            {
+              type: 'paragraph',
+              children: [{ text: '' }],
+            },
+          ]
+    );
+  }, []);
+  const updateEditorContent = (newContent: Descendant[]) => {
+    // Replace the entire editor content with new content
+    editor.children = newContent;
+    // Re-render the editor
+    Editor.normalize(editor, { force: true });
+    // Focus the editor to ensure updates are displayed immediately
+    ReactEditor.focus(editor);
+    forceRerender();
+  };
 
-  useEffect(() => {
-    if (socket) {
-      socket.onmessage = (e) => {
-        const data = JSON.parse(e.data);
-        if (data.event === SOCKET_EVENT.DOCUMENT_LOAD) {
-          const { note } = data.payload;
-          if (note.id === documentId) {
-            setInitValue(
-              note.content
-                ? JSON.parse(note.content)
-                : [
-                    {
-                      type: 'paragraph',
-                      children: [{ text: '' }],
-                    },
-                  ]
-            );
-          }
-        }
-        // todo implement collaboration
-        return;
-        if (data.event === SOCKET_EVENT.DOCUMENT_UPDATE) {
-          const { note } = data.payload;
-          if (note.id === documentId) {
-            Transforms.select(editor, Editor.end(editor, []));
-            ReactEditor.insertData(editor, JSON.parse(note.content));
-          }
-        }
-      };
-    }
-  }, [socket]);
+  const onDocumentUpdate = useCallback(
+    (note: any) => {
+      // todo handle collaboration
+      remoteUpdateRef.current = true;
+      updateEditorContent(JSON.parse(note.content));
+    },
+    [editor]
+  );
+  useSocketMessageHandler({
+    socket,
+    documentId,
+    onDocumentLoad,
+    onDocumentUpdate,
+  });
 
   const handleDOMBeforeInput = useCallback(
     (e: InputEvent) => {
@@ -133,6 +139,10 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
         editor={editor}
         value={initValue}
         onChange={(value) => {
+          if (remoteUpdateRef.current) {
+            remoteUpdateRef.current = false;
+            return;
+          }
           // @ts-ignore
           // todo send cursor updates
           if (value[0]?.children[0].text === '') return;

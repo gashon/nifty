@@ -18,8 +18,6 @@ function Module({ notes, user, id }) {
 
   const { name: moduleName } = router.query;
 
-  // if (typeof window !== 'undefined') return null;
-
   return (
     <>
       <NextSeo title={`Module: ${moduleName}`} noindex />
@@ -32,7 +30,7 @@ function Module({ notes, user, id }) {
                   Module: {moduleName}
                 </h3>
                 <NoteCreationButton moduleId={id as string} />
-                <NotebookListSSR notes={notes} moduleId={id as string} />
+                <NotebookList notes={notes} moduleId={id as string} />
               </main>
             </DashboardLayout>
           </ThemeLayout>
@@ -49,6 +47,20 @@ export async function getServerSideProps(context) {
     getNotes(id, { limit: 5 }, context.req.headers),
     getUser(context.req.headers),
   ]);
+
+  if (!user) {
+    return {
+      redirect: {
+        // destination: `/error/external?message=${encodeURIComponent("You are not logged in!")}&redirect=%2Fnotes%2F${context.params.id}`,
+        destination: `/error/external?message=${encodeURIComponent(
+          'You are not logged in!'
+        )}&${new URLSearchParams({
+          redirect: `/modules/${context.params.id}`,
+        })}`,
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {

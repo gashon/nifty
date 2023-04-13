@@ -31,7 +31,9 @@ function Document({ user }) {
           </header>
           <div className="flex items-center justify-center w-screen">
             <div className="flex flex-col order-1 p-16 w-full lg:w-2/3">
-              <h1 className="underline mb-12 text-5xl text-primary dark:text-zinc-400 ">{title}</h1>
+              <h1 className="underline mb-12 text-5xl text-primary dark:text-zinc-400 ">
+                {title}
+              </h1>
               <main className="h-screen">
                 <DocumentSection />
               </main>
@@ -45,6 +47,20 @@ function Document({ user }) {
 
 export async function getServerSideProps(context) {
   const { data: user } = await getUser(context.req.headers);
+
+  if (!user) {
+    return {
+      redirect: {
+        // destination: `/error/external?message=${encodeURIComponent("You are not logged in!")}&redirect=%2Fnotes%2F${context.params.id}`,
+        destination: `/error/external?message=${encodeURIComponent(
+          'You are not logged in!'
+        )}&${new URLSearchParams({
+          redirect: `/notes/${context.params.id}`,
+        })}`,
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {

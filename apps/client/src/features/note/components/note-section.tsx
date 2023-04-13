@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
+import { ErrorBoundary } from 'react-error-boundary';
 import { useState, useEffect, FC } from 'react';
 
 const LongPollDocumentEditor = dynamic(
@@ -33,10 +34,15 @@ export const DocumentSection: FC = () => {
   return (
     <>
       <section className="h-screen">
-        <SocketDocumentEditor
-          documentId={id as string}
-          fallBackEditor={<LongPollDocumentEditor documentId={id as string} />}
-        />
+        <ErrorBoundary fallback={<p>Failed to connect</p>}>
+          <SocketDocumentEditor
+            documentId={id as string}
+            fallBackEditor={
+              // todo: only use long poll if note has not collaborators (offline)
+              <LongPollDocumentEditor documentId={id as string} />
+            }
+          />
+        </ErrorBoundary>
       </section>
       <section className="w-full flex justify-between">
         <PageNavigation id={id as string} />

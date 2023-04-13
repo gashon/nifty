@@ -6,7 +6,6 @@ import { FieldError } from 'react-hook-form';
 
 import { useCreateModule } from '@/features/module';
 
-import ModuleCard from '@nifty/ui/molecules/module-card';
 import { Button } from '@nifty/ui/atoms';
 import { FormDrawer, Form, InputField } from '@nifty/ui/form';
 import { DirectoryCreateRequest } from '@nifty/server-lib/models/directory';

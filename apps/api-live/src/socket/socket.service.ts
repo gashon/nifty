@@ -1,14 +1,24 @@
 import WebSocket, { RawData, OPEN } from "ws";
+import { Model } from "mongoose"
 import { RedisClientType } from "@/lib/redis";
 import { SocketRepository } from "./socket.repository";
-import { NoteDocument } from "@nifty/server-lib/models/note";
-
+import Note, { NoteDocument } from "@nifty/server-lib/models/note";
+import AccessToken, { TokenDocument } from "@nifty/server-lib/models/token";
+import Collaborator, { CollaboratorDocument } from "@nifty/server-lib/models/collaborator";
+import { SOCKET_EVENT } from "@/types";
+import { Permission, checkPermissions } from "@nifty/api/util/handle-permissions";
 
 export class SocketService {
   private socketRepository: SocketRepository;
+  private noteModel: Model<NoteDocument>;
+  private accessTokenModel: Model<TokenDocument>;
+  private collaboratorModel: Model<CollaboratorDocument>;
 
   constructor(redisClient: RedisClientType) {
     this.socketRepository = new SocketRepository(redisClient);
+    this.collaboratorModel = Collaborator;
+    this.accessTokenModel = AccessToken;
+    this.noteModel = Note;
   }
 
   // call with a socket to broadcast to all other sockets
@@ -26,6 +36,36 @@ export class SocketService {
 
   clearRedis() {
     return this.socketRepository.clearRedis();
+  }
+
+  async getNotePermissions(documentId: string): Promise<Permission> {
+    const note = await this.noteModel.findById(documentId);
+    if (!note) throw new Error("Document not found");
+    return note.public_permissions;
+  }
+
+  async validateAccess(accessToken: string, documentId: string): Promise<[boolean, CollaboratorDocument | null]> {
+    const note = await this.noteModel.findById(documentId);
+    if (!note) throw new Error("Document not found");
+    // token is in req headers
+    const token = await this.accessTokenModel.findById(accessToken);
+    if (!token || !token.user) throw new Error("Access token not found");
+
+    const hasPublicPermissions = checkPermissions(note.public_permissions, Permission.Read);
+    if (hasPublicPermissions) return [true, null];
+
+    const collaborator = await this.collaboratorModel.findOne({
+      type: "note",
+      foreign_key: documentId,
+      user: token.user
+    });
+    if (!collaborator) throw new Error("You don't have access to this document");
+
+    return [true, collaborator as CollaboratorDocument];
+  }
+
+  async getEditorSockets(documentId: string): Promise<WebSocket[]> {
+    return this.socketRepository.getEditorSockets(documentId);
   }
 
   async getEditors(documentId: string): Promise<string[]> {
@@ -57,6 +97,27 @@ export class SocketService {
 
   async removeDocumentFromMemory(documentId: string) {
     return this.socketRepository.removeDocumentFromMemory(documentId);
+  }
+
+  // send a request to the socket to see if it's still alive
+  // if it's not, throw an error
+  async pingSocket(socket: WebSocket) {
+    return new Promise((resolve, reject) => {
+      const pingMessage = { event: SOCKET_EVENT.EDITOR_PING };
+      socket.send(JSON.stringify(pingMessage));
+      const timeout = setTimeout(() => {
+        reject(new Error("Socket timed out"));
+      }, 1000);
+      socket.once("message", (data) => {
+        clearTimeout(timeout);
+        const message = JSON.parse(data.toString());
+        if (message.event === SOCKET_EVENT.EDITOR_PONG) {
+          resolve(true);
+        } else {
+          reject(new Error("Socket did not respond with PONG"));
+        }
+      });
+    });
   }
 
   // pass editor to require permissions

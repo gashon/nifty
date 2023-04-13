@@ -9,7 +9,10 @@ type NotebookListProps = {
 };
 
 export const NotebookList: FC<NotebookListProps> = ({ moduleId }) => {
-  const { data, isFetched } = useInfiniteNotes({ directoryId: moduleId, limit: 1000 });
+  const { data, isFetched } = useInfiniteNotes({
+    directoryId: moduleId,
+    limit: 1000,
+  });
   const { mutate: deleteNote } = useDeleteNote();
 
   return (
@@ -30,12 +33,12 @@ export const NotebookList: FC<NotebookListProps> = ({ moduleId }) => {
         )}
         {data && isFetched && (
           <>
-            {data.pages.map(({ data: { data } }: any) => {
-              return data.map(note => (
+            {data.pages.map(({ data }: any) => {
+              return data.map((note) => (
                 <div key={note.id}>
                   <NotebookItem
                     onDelete={() => deleteNote(note.id)}
-                    href={`/notes/${note.id}?name=${note.title}`}
+                    href={`/notes/${note.id}?title=${note.title}`}
                     {...note}
                   />
                 </div>

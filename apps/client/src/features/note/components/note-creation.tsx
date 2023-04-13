@@ -1,26 +1,28 @@
 import * as z from 'zod';
 import { FC, useCallback } from 'react';
-import { AiOutlinePlus } from 'react-icons/ai';
 import { FiArrowRight } from 'react-icons/fi';
 import { FieldError } from 'react-hook-form';
 
-import { useCreateNote } from '@/features/note';
-
+import { useCreateNote, NotePermissionDropdown } from '@/features/note';
 import { Button } from '@nifty/ui/atoms';
-import { FormDrawer, Form, InputField } from '@nifty/ui/form';
+import { FormDrawer, Form, InputField, FieldWrapper } from '@nifty/ui/form';
 import { NoteCreateRequest } from '@nifty/server-lib/models/note';
+import { Permission } from '@nifty/api/util/handle-permissions';
 
+const PermissionSchema = z.nativeEnum(Permission);
 const schema = z.object({
   title: z.string().min(1).max(50),
   description: z.string().min(0).max(50).optional(),
-  is_public: z.boolean(),
+  public_permissions: PermissionSchema.optional(),
 });
 
 type NoteCreationButtonProps = {
   moduleId: string;
 };
 
-export const NoteCreationButton: FC<NoteCreationButtonProps> = ({ moduleId }) => {
+export const NoteCreationButton: FC<NoteCreationButtonProps> = ({
+  moduleId,
+}) => {
   const createNodeMutation = useCreateNote();
 
   const onSubmit = useCallback(
@@ -56,9 +58,12 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({ moduleId }) =>
           onSubmit={onSubmit}
           className="w-full flex flex-col align-center justify-center"
         >
-          {({ formState, register }) => (
+          {({ formState, register, setValue, getValues }) => (
             <>
-              <div className="inline-flex text-left w-full mt-5" style={{ marginBottom: -5 }}>
+              <div
+                className="inline-flex text-left w-full mt-5"
+                style={{ marginBottom: -5 }}
+              >
                 <InputField
                   type="text"
                   label="Document title"
@@ -66,7 +71,10 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({ moduleId }) =>
                   registration={register('title')}
                 />
               </div>
-              <div className="inline-flex text-left w-full mt-5" style={{ marginBottom: -5 }}>
+              <div
+                className="inline-flex text-left w-full mt-5"
+                style={{ marginBottom: -5 }}
+              >
                 <InputField
                   type="text"
                   label="Description (optional)"
@@ -74,19 +82,27 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({ moduleId }) =>
                   registration={register('description')}
                 />
               </div>
+
               <div
-                className="inline-flex float-right text-left w-full mt-5"
+                className="inline-flex justify-between text-left w-full mt-5"
                 style={{ marginBottom: -5 }}
               >
-                <div
-                  className="flex items-center justify-between gap-2 inline-flex text-left w-full "
-                  style={{ marginBottom: -5 }}
+                <FieldWrapper
+                  label="Public Permissions"
+                  error={formState.errors['public_permissions'] as FieldError}
                 >
-                  <div className="flex flex-row items-center gap-2">
-                    <input type="checkbox" {...register('is_public')} />
-                    <p className="text-black">Make document publicly viewable.</p>
+                  <div
+                    className="bg-[#d6d6d6] w-min p-2 flex items-center justify-center rounded-lg "
+                    style={{ marginBottom: -5 }}
+                  >
+                    <NotePermissionDropdown
+                      setPermissions={(value: Permission) =>
+                        setValue('public_permissions', value)
+                      }
+                    />
                   </div>
-                </div>
+                </FieldWrapper>
+
                 <Button
                   type="submit"
                   disabled={formState.isSubmitting}

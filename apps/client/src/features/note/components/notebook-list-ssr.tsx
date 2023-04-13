@@ -1,7 +1,8 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 import NotebookItem from '@nifty/ui/molecules/notebook-item';
 import { useInfiniteNotes, useDeleteNote } from '@/features/note';
+import { useQueryClient } from 'react-query';
 
 type NotebookListProps = {
   moduleId: string;
@@ -19,28 +20,42 @@ export const NotebookListSSR: FC<NotebookListProps> = ({ moduleId, notes }) => {
     { pages: [notes], pageParams: [] }
   );
   const { mutate: deleteNote } = useDeleteNote();
+  const queryClient = useQueryClient();
+
+  const [allNotes, setAllNotes] = useState(notes.data);
+
+  useEffect(() => {
+    // Subscribe to cache updates
+    const unsubscribe = queryClient.getQueryCache().subscribe(() => {
+      const cacheData = queryClient.getQueryData(['notes']);
+      if (cacheData) {
+        setAllNotes(cacheData.pages.flatMap(({ data }) => data));
+      }
+    });
+
+    return () => {
+      // Unsubscribe from cache updates
+      unsubscribe();
+    };
+  }, [queryClient]);
 
   return (
     <>
       <div className="flex flex-col gap-3">
-        {data && data.pages[0]?.data?.length === 0 && (
+        {isFetched && allNotes.length === 0 && (
           <div className="text-gray-500">No notes found</div>
         )}
-        {data && (
+        {allNotes && allNotes.length > 0 && (
           <>
-            {data.pages.map(({ data: page }: any) =>
-              page.map((note) => {
-                return (
-                  <div key={note.id}>
-                    <NotebookItem
-                      onDelete={() => deleteNote(note.id)}
-                      href={`/notes/${note.id}?title=${note.title}`}
-                      {...note}
-                    />
-                  </div>
-                );
-              })
-            )}
+            {allNotes.map((note: any) => (
+              <div key={note.id}>
+                <NotebookItem
+                  onDelete={() => deleteNote(note.id)}
+                  href={`/notes/${note.id}?title=${note.title}`}
+                  {...note}
+                />
+              </div>
+            ))}
           </>
         )}
       </div>

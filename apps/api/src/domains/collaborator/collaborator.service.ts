@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
-import { FilterQuery } from 'mongoose';
-import Collaborator, { CollaboratorDocument, CollaboratorListResponse } from "@nifty/server-lib/models/collaborator";
+import UpdateResult, { FilterQuery, } from 'mongoose';
+import Collaborator, { CollaboratorType, CollaboratorDocument, CollaboratorListResponse, CollaboratorCreateRequest } from "@nifty/server-lib/models/collaborator";
 import Directory, { DirectoryDocument } from "@nifty/server-lib/models/directory";
 import Note, { NoteDocument } from "@nifty/server-lib/models/note";
 import { IBaseRepositoryFactory, IBaseRepository } from "../../lib/repository-base";
@@ -105,12 +105,27 @@ export class CollaboratorService implements ICollaboratorService {
     });
   }
 
-  async createCollaborator(createdBy: string, data: Partial<ICollaborator>): Promise<CollaboratorDocument> {
+  async createCollaborator(createdBy: string, data: CollaboratorCreateRequest): Promise<CollaboratorDocument> {
     const doc = {
       ...data,
       created_by: createdBy,
     }
-    const collaborator = await this.collaboratorModel.create(doc);
-    return collaborator;
+    return this.collaboratorModel.create(doc);
+  }
+
+  async findCollaboratorByForeignKeyAndUserId(foreignKey: string, userId: string): Promise<CollaboratorDocument | null> {
+    return this.collaboratorModel.findOne({
+      user: userId,
+      foreign_key: foreignKey
+    })
+  }
+
+  async findCollaboratorByForeignKey(foreignKey: string, type: CollaboratorType, userId?: string): Promise<CollaboratorDocument | null> {
+    return this.collaboratorModel.findOne({
+      foreign_key: foreignKey,
+      type,
+      ...(userId && { user: userId })
+    });
+
   }
 }

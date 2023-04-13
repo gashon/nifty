@@ -18,6 +18,7 @@ import { IDirectoryService } from '../directory';
 import { NOTE_TYPES, NoteCreateResponse } from '@/domains/note/types';
 import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
 import { DIRECTORY_TYPES } from '@/domains/directory/types';
+import { setPermissions, Permission, checkPermissions } from '@/util';
 
 @controller('/v1/notes')
 export class NoteController implements INoteController {
@@ -35,7 +36,7 @@ export class NoteController implements INoteController {
     if (!note)
       throw new CustomException('Note not found', status.NOT_FOUND);
 
-    if (!note.collaborators.includes(userId))
+    if (!checkPermissions(note.public_permissions, Permission.Read) && !note.collaborators.includes(userId))
       throw new CustomException('You do not have access to this note', status.FORBIDDEN);
 
     res.status(status.OK).json({ data: note });
@@ -53,8 +54,12 @@ export class NoteController implements INoteController {
     if (!limit || limit % 2 !== 0 || limit < 0)
       throw new CustomException('Limit must be an even number', status.BAD_REQUEST);
 
+    const note = await this.noteService.findNoteById(noteId);
+    if (!note)
+      throw new CustomException('Note not found', status.NOT_FOUND);
+
     const collaborator = await this.collaboratorService.findCollaboratorByNoteIdAndUserId(noteId, userId);
-    if (!collaborator)
+    if (!checkPermissions(note.public_permissions, Permission.Read) && !collaborator)
       throw new CustomException('You do not have access to this note', status.FORBIDDEN);
 
     const directory = await this.directoryService.findDirectoryByNoteId(noteId);
@@ -68,21 +73,31 @@ export class NoteController implements INoteController {
   @httpGet('/', auth())
   async getNotes(req: Request, res: Response): Promise<void> {
     const userId = res.locals.user._id;
-    const directoryId = req.query.directory_id as string;
+    const directoryId = req.query.directory_id as string | undefined;
+    let notes;
 
-    // validate directory exists
-    const directory = await this.directoryService.findDirectoryById(directoryId);
-    if (!directory)
-      throw new CustomException('Directory not found', status.NOT_FOUND);
+    if (directoryId) {
+      // validate directory exists
+      const directory = await this.directoryService.findDirectoryById(directoryId);
+      if (!directory)
+        throw new CustomException('Directory not found', status.NOT_FOUND);
 
-    // validate user has access to directory
-    const collaborator = await this.collaboratorService.findCollaboratorByDirectoryIdAndUserId(directory.id, userId);
-    if (!collaborator)
-      throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
+      // validate user has access to directory
+      const collaborator = await this.collaboratorService.findCollaboratorByDirectoryIdAndUserId(directory.id, userId);
+      if (!collaborator)
+        throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
-    const query = { ...req.query, directory_id: undefined } as PaginationParams;
-    const notes = await this.noteService.paginateNotesByDirectoryId(directoryId, query);
-    
+      const query = { ...req.query, directory_id: undefined } as PaginationParams;
+      notes = await this.noteService.paginateNotesByDirectoryId(directoryId, query);
+    } else {
+      notes = await this.noteService.paginateNotes({
+        filter: {
+          "collaborators.user": userId
+        }
+      }, req.query as PaginationParams);
+    }
+
+
     res.status(status.OK).json({ data: notes });
   }
 
@@ -101,12 +116,22 @@ export class NoteController implements INoteController {
     if (!collaborator)
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
-    const { id: noteCollaboratorId } = await this.collaboratorService.createCollaborator(createdBy, { user: createdBy });
-    const note = await this.noteService.createNote(createdBy, { ...req.body, collaborators: [noteCollaboratorId] } as NoteCreateRequest);
+    const noteCollaborator = await this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "note", permissions: setPermissions(Permission.ReadWriteDelete) });
+    const { public_permissions, ...noteBody } = req.body;
+    const note = await this.noteService.createNote(createdBy, {
+      public_permissions: setPermissions((public_permissions ?? Permission.None) as Permission),
+      collaborators: [noteCollaborator.id],
+      ...noteBody,
+    } as NoteCreateRequest);
 
     // add the note to the directory
     directory.set({ notes: [...directory.notes, note.id], collaborators: [...directory.collaborators] });
-    await directory.save();
+    noteCollaborator.set({ foreign_key: note.id });
+
+    await Promise.all([
+      directory.save(),
+      noteCollaborator.save()
+    ])
 
     return res.status(status.CREATED).json({ data: note });
   }
@@ -124,7 +149,7 @@ export class NoteController implements INoteController {
 
     const collaborator = await this.collaboratorService.findCollaboratorByNoteIdAndUserId(note.id, userId);
     // validate user has access to note
-    if (!collaborator || !note.collaborators.includes(collaborator.id))
+    if (!checkPermissions(note.public_permissions, Permission.ReadWrite) && !collaborator)
       throw new CustomException('You do not have access to this note', status.FORBIDDEN);
 
     // update note
@@ -143,10 +168,12 @@ export class NoteController implements INoteController {
     if (!note)
       throw new CustomException('Note not found', status.NOT_FOUND);
 
-    const collaborator = await this.collaboratorService.findCollaboratorById(userId);
+    const collaborator = await this.collaboratorService.findCollaboratorByForeignKey(note.id, "note", userId);
     // validate user has access to note
-    if (!collaborator || !note.collaborators.includes(collaborator.id))
+    if (!checkPermissions(note.public_permissions, Permission.ReadWriteDelete) && !collaborator)
       throw new CustomException('You do not have access to this note', status.FORBIDDEN);
+
+    // todo handle permissions
 
     // delete note
     await this.noteService.deleteNoteById(id);

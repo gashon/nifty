@@ -19,7 +19,9 @@ function Module({ user }) {
           <ThemeLayout>
             <DashboardLayout>
               <main className="flex flex-col order-1 pt-9">
-                <h3 className="pb-6 text-3xl text-primary dark:text-zinc-400 ">Notebook Name</h3>
+                <h3 className="pb-6 text-3xl text-primary dark:text-zinc-400 ">
+                  Notebook Name
+                </h3>
                 <div className="flex flex-col">
                   <div className="mb-3">
                     <ModuleCreationButton />
@@ -37,6 +39,21 @@ function Module({ user }) {
 
 export async function getServerSideProps({ req }) {
   const { data: user } = await getUser(req.headers);
+
+  if (!user) {
+    return {
+      redirect: {
+        // destination: `/error/external?message=${encodeURIComponent("You are not logged in!")}&redirect=%2Fnotes%2F${context.params.id}`,
+        destination: `/error/external?message=${encodeURIComponent(
+          'You are not logged in!'
+        )}&${new URLSearchParams({
+          redirect: `/modules`,
+        })}`,
+        permanent: false,
+      },
+    };
+  }
+
   return {
     props: { user },
   };

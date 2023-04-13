@@ -32,6 +32,8 @@ export const useCreateNote = ({ config }: UseCreateModuleOptions = {}) => {
     onSuccess: (noteCreateResponse) => {
       const createdNote = noteCreateResponse.data.data;
       queryClient.setQueryData<InfiniteQueryData>('notes', (previousModules) => {
+        console.log("prev", previousModules)
+        console.log("cur", createdNote)
         if (previousModules?.pages?.length > 0) {
           return {
             ...previousModules,
@@ -54,6 +56,6 @@ export const useCreateNote = ({ config }: UseCreateModuleOptions = {}) => {
 
     },
     ...config,
-    mutationFn: createNote,
+    mutationFn: createNote
   });
 };

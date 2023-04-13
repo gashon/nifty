@@ -16,7 +16,7 @@ import {
 } from "@/domains/collaborator"
 import { DIRECTORY_TYPES, DirectoryCreateResponse } from '@/domains/directory/types';
 import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
-import collaborator from '@nifty/server-lib/models/collaborator';
+import { setPermissions, Permission } from '@/util';
 @controller('/v1/directories')
 export class DirectoryController implements IDirectoryController {
   constructor(
@@ -53,12 +53,15 @@ export class DirectoryController implements IDirectoryController {
         throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
     }
 
-    const rootCollaborator = await this.collaboratorService.createCollaborator(createdBy, { user: createdBy });
+    const rootCollaborator = await this.collaboratorService.createCollaborator(createdBy, { permissions: setPermissions(Permission.ReadWriteDelete), user: createdBy, type: "directory" });
     const doc = {
       ...(req.body as DirectoryCreateRequest),
       collaborators: [rootCollaborator.id],
     };
     const directory = await this.directoryService.createDirectory(createdBy, doc);
+
+    rootCollaborator.set({ foreign_key: directory.id });
+    rootCollaborator.save();
 
     return res.status(status.CREATED).json({ data: directory });
   }

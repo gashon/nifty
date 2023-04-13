@@ -1,9 +1,7 @@
 import { WebSocket } from "ws";
 import { v4 as uuidv4 } from "uuid";
 import { Model } from "mongoose"
-import logger from "@/lib/logger";
 import { RedisClientType } from "@/lib/redis";
-import { Document, Store } from "@/types/document";
 import Note, { NoteDocument } from "@nifty/server-lib/models/note";
 
 export class SocketRepository {

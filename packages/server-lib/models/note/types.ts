@@ -12,11 +12,12 @@ export interface INote extends Resource {
   img_url: string;
   tags: string[];
   is_public: boolean;
+  public_permissions: number; // unix permissions
 }
 
 export type NoteDocument = mongoose.Document<string, object, INote> & INote;
 
-export type NoteCreateRequest = Partial<Expand<Pick<INote, 'title' | 'description' | 'is_public'>>>
+export type NoteCreateRequest = Partial<Expand<Pick<INote, 'public_permissions' | 'title' | 'description' | 'is_public'>>>
 export type NoteUpdateRequest = Partial<Expand<Omit<INote, 'created_by'>>>
 
 export type NoteListResponse = ListResponse<NoteDocument>

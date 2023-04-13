@@ -1,5 +1,4 @@
 
-
 type Paginator<T> = (
   filter: object
 ) => Promise<{ data: T[]; total: number; page: number }>;
@@ -14,5 +13,6 @@ declare module 'mongoose' {
 
   interface Models {
     // todo
+    
   }
 }
