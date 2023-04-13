@@ -44,7 +44,7 @@ export class SocketService {
     return note.public_permissions;
   }
 
-  async validateAccess(accessToken: string, documentId: string): Promise<[boolean, CollaboratorDocument]> {
+  async validateAccess(accessToken: string, documentId: string): Promise<[boolean, CollaboratorDocument | null]> {
     const note = await this.noteModel.findById(documentId);
     if (!note) throw new Error("Document not found");
     // token is in req headers
@@ -52,14 +52,15 @@ export class SocketService {
     if (!token || !token.user) throw new Error("Access token not found");
 
     const hasPublicPermissions = checkPermissions(note.public_permissions, Permission.Read);
+    if (hasPublicPermissions) return [true, null];
+
     const collaborator = await this.collaboratorModel.findOne({
       type: "note",
       foreign_key: documentId,
       user: token.user
     });
-    if (!hasPublicPermissions && !collaborator) throw new Error("You don't have access to this document");
+    if (!collaborator) throw new Error("You don't have access to this document");
 
-    // todo remove userModel and just populate user
     return [true, collaborator as CollaboratorDocument];
   }
 
