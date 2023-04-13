@@ -6,6 +6,7 @@ import Note, { NoteDocument } from "@nifty/server-lib/models/note";
 import AccessToken, { TokenDocument } from "@nifty/server-lib/models/token";
 import Collaborator, { CollaboratorDocument } from "@nifty/server-lib/models/collaborator";
 import { SOCKET_EVENT } from "@/types";
+import { Permission, checkPermissions } from "@nifty/api/util/handle-permissions";
 
 export class SocketService {
   private socketRepository: SocketRepository;
@@ -37,6 +38,12 @@ export class SocketService {
     return this.socketRepository.clearRedis();
   }
 
+  async getNotePermissions(documentId: string): Promise<Permission> {
+    const note = await this.noteModel.findById(documentId);
+    if (!note) throw new Error("Document not found");
+    return note.public_permissions;
+  }
+
   async validateAccess(accessToken: string, documentId: string): Promise<[boolean, CollaboratorDocument]> {
     const note = await this.noteModel.findById(documentId);
     if (!note) throw new Error("Document not found");
@@ -44,12 +51,13 @@ export class SocketService {
     const token = await this.accessTokenModel.findById(accessToken);
     if (!token || !token.user) throw new Error("Access token not found");
 
+    const hasPublicPermissions = checkPermissions(note.public_permissions, Permission.Read);
     const collaborator = await this.collaboratorModel.findOne({
       type: "note",
       foreign_key: documentId,
       user: token.user
     });
-    if (!collaborator && !note.is_public) throw new Error("You don't have access to this document");
+    if (!hasPublicPermissions && !collaborator) throw new Error("You don't have access to this document");
 
     // todo remove userModel and just populate user
     return [true, collaborator as CollaboratorDocument];

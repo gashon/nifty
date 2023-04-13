@@ -1,11 +1,12 @@
 import WebSocket, { WebSocketServer as Server, ServerOptions } from "ws";
 import AsyncLock from "async-lock";
 import logger from "@/lib/logger";
-import { checkPermissions } from "@nifty/api/util/check-permissions"
+import { checkPermissions, Permission } from "@nifty/api/util/handle-permissions"
 import { SocketService, closeSocketOnError } from "@/socket";
 import { SOCKET_EVENT } from "@/types";
 import { RedisClientType } from "@/lib/redis";
-import { CollaboratorDocument, Permission } from "@nifty/server-lib/models/collaborator";
+import { CollaboratorDocument } from "@nifty/server-lib/models/collaborator";
+import { NoteDocument } from "@nifty/server-lib/models/note";
 
 const SAVE_TO_DISK_INTERVAL = 15000; // 15 seconds
 const HEARTBEAT_INTERVAL = 30000; // 30 seconds
@@ -14,6 +15,7 @@ const LOCK_TIMEOUT = 10000; // 10 seconds
 interface WebSocketSession extends WebSocket {
   isAlive?: boolean;
   collaborator?: CollaboratorDocument;
+  notePermissions?: Permission
 }
 
 // todo attach permissions to the note editing socket
@@ -35,6 +37,7 @@ export class WebSocketServer extends Server {
       const documentId = request.url?.split("/").pop();
       if (!documentId) return;
 
+      // get access token from cookie
       const accessToken = request.headers["cookie"]?.split(";").find((cookie) => cookie.includes("access_token"))?.split("=")[1];
       if (!accessToken) {
         logger.error("No access token found");
@@ -43,13 +46,19 @@ export class WebSocketServer extends Server {
       }
 
       try {
-        const [hasAccess, collaborator] = await this.socketService.validateAccess(accessToken as string, documentId);
+        // get note permissions and validate access
+        const [notePermissions, [hasAccess, collaborator]] = await Promise.all([
+          this.socketService.getNotePermissions(documentId),
+          this.socketService.validateAccess(accessToken as string, documentId)
+        ]);
+
         if (!hasAccess)
           throw new Error("You do not have access to this document");
 
         // attach user permissions to the socket
-        // this will be null if the document is public
+        // todo store in redis
         socket["collaborator"] = collaborator;
+        socket["notePermissions"] = notePermissions;
       } catch (err) {
         // @ts-ignore
         logger.error(err.message)
@@ -241,13 +250,16 @@ export class WebSocketServer extends Server {
   }
 
   validatePermissions(socket: WebSocketSession, requiredPermissions: Permission): boolean {
-    // document public
-    // todo implement public preventions (i.e. read-only public)
-    if (!socket.collaborator)
-      return true;
+    const hasPublicPermission = checkPermissions(socket.notePermissions!, requiredPermissions);
+    if (hasPublicPermission) return true;
 
-    const hasPermission = checkPermissions(socket.collaborator.permissions, requiredPermissions);
-    if (!hasPermission) {
+    if (!socket.collaborator) {
+      socket.send(JSON.stringify({ event: SOCKET_EVENT.PERMISSION_ERROR, message: "You do not have permission to perform this action" }));
+      return false;
+    }
+
+    const hasCollaboratorPermission = checkPermissions(socket.collaborator.permissions, requiredPermissions);
+    if (!hasCollaboratorPermission) {
       socket.send(JSON.stringify({ event: SOCKET_EVENT.PERMISSION_ERROR, message: "You do not have permission to perform this action" }));
       return false;
     }

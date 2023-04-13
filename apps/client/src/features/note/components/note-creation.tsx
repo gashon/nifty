@@ -4,19 +4,16 @@ import { FiArrowRight } from 'react-icons/fi';
 import { FieldError } from 'react-hook-form';
 
 import { useCreateNote, NotePermissionDropdown } from '@/features/note';
-
 import { Button } from '@nifty/ui/atoms';
 import { FormDrawer, Form, InputField, FieldWrapper } from '@nifty/ui/form';
 import { NoteCreateRequest } from '@nifty/server-lib/models/note';
 import { Permission } from '@nifty/api/util/handle-permissions';
-import { DropdownMenu } from '@nifty/ui/atoms';
 
 const PermissionSchema = z.nativeEnum(Permission);
 const schema = z.object({
   title: z.string().min(1).max(50),
   description: z.string().min(0).max(50).optional(),
-  is_public: z.boolean(),
-  public_permissions: z.array(PermissionSchema).optional(),
+  public_permissions: PermissionSchema.optional(),
 });
 
 type NoteCreationButtonProps = {
@@ -90,18 +87,22 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({
                 className="inline-flex justify-between text-left w-full mt-5"
                 style={{ marginBottom: -5 }}
               >
-                <div
-                  className="bg-[#d6d6d6] w-min p-2 flex items-center justify-center rounded-lg "
-                  style={{ marginBottom: -5 }}
+                <FieldWrapper
+                  label="Public Permissions"
+                  error={formState.errors['public_permissions'] as FieldError}
                 >
-                  <FieldWrapper label="Public Permissions">
+                  <div
+                    className="bg-[#d6d6d6] w-min p-2 flex items-center justify-center rounded-lg "
+                    style={{ marginBottom: -5 }}
+                  >
                     <NotePermissionDropdown
                       setPermissions={(value: Permission) =>
                         setValue('public_permissions', value)
                       }
                     />
-                  </FieldWrapper>
-                </div>
+                  </div>
+                </FieldWrapper>
+
                 <Button
                   type="submit"
                   disabled={formState.isSubmitting}

@@ -18,7 +18,7 @@ import { IDirectoryService } from '../directory';
 import { NOTE_TYPES, NoteCreateResponse } from '@/domains/note/types';
 import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
 import { DIRECTORY_TYPES } from '@/domains/directory/types';
-import { setPermissions, Permission } from '@/util';
+import { setPermissions, Permission, checkPermissions } from '@/util';
 
 @controller('/v1/notes')
 export class NoteController implements INoteController {
@@ -36,7 +36,7 @@ export class NoteController implements INoteController {
     if (!note)
       throw new CustomException('Note not found', status.NOT_FOUND);
 
-    if (!note.is_public && !note.collaborators.includes(userId))
+    if (!checkPermissions(note.public_permissions, Permission.Read) && !note.collaborators.includes(userId))
       throw new CustomException('You do not have access to this note', status.FORBIDDEN);
 
     res.status(status.OK).json({ data: note });
@@ -59,7 +59,7 @@ export class NoteController implements INoteController {
       throw new CustomException('Note not found', status.NOT_FOUND);
 
     const collaborator = await this.collaboratorService.findCollaboratorByNoteIdAndUserId(noteId, userId);
-    if (!note.is_public && !collaborator)
+    if (!checkPermissions(note.public_permissions, Permission.Read) && !collaborator)
       throw new CustomException('You do not have access to this note', status.FORBIDDEN);
 
     const directory = await this.directoryService.findDirectoryByNoteId(noteId);
@@ -149,7 +149,7 @@ export class NoteController implements INoteController {
 
     const collaborator = await this.collaboratorService.findCollaboratorByNoteIdAndUserId(note.id, userId);
     // validate user has access to note
-    if (!collaborator || !note.collaborators.includes(collaborator.id))
+    if (!checkPermissions(note.public_permissions, Permission.ReadWrite) && !collaborator)
       throw new CustomException('You do not have access to this note', status.FORBIDDEN);
 
     // update note
@@ -170,7 +170,7 @@ export class NoteController implements INoteController {
 
     const collaborator = await this.collaboratorService.findCollaboratorByForeignKey(note.id, "note", userId);
     // validate user has access to note
-    if (!collaborator)
+    if (!checkPermissions(note.public_permissions, Permission.ReadWriteDelete) && !collaborator)
       throw new CustomException('You do not have access to this note', status.FORBIDDEN);
 
     // todo handle permissions
