@@ -1,15 +1,11 @@
-import { memo, FC, useCallback, useState } from 'react';
+import { memo, FC, useCallback, useState, useEffect } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
 import { useForm } from 'react-hook-form';
 
-import { useQuizTimer } from '@/features/quiz';
-
 import { Button } from '@nifty/ui/atoms';
-import {
-  // QuizSubmitRequest,
-  IQuizQuestion,
-} from '@nifty/server-lib/models/quiz';
+import { IQuizQuestion } from '@nifty/server-lib/models/quiz';
 import { ISubmissionAnswer } from '@nifty/server-lib/models/submission';
+import { useQuizSession } from '@/features/quiz';
 
 type QuizQuestion = Omit<IQuizQuestion, 'correct_index'>;
 type QuizAnswer = Pick<
@@ -56,7 +52,7 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
   quizId,
 }) => {
   // const submitQuizMutation = useSubmitQuiz();
-  const timeTaken = useQuizTimer();
+  const { getTotalTime, startSession, endSession } = useQuizSession(quizId);
   const [answers, setAnswers] = useState<QuizAnswer[]>(
     questions.map((question) => ({
       question_id: question.id,
@@ -65,6 +61,13 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
     }))
   );
   const { handleSubmit, formState } = useForm();
+
+  useEffect(() => {
+    startSession();
+    return () => {
+      endSession();
+    };
+  }, []);
 
   const onAnswerChange = useCallback(
     (questionId: string, answerIndex: number) => {
@@ -88,10 +91,10 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
     const payload = {
       answers,
       quiz_id: quizId,
-      time_taken: timeTaken,
+      time_taken: getTotalTime(),
     };
     console.log('payload', payload);
-  }, [answers, timeTaken]);
+  }, [answers]);
 
   return (
     <>
