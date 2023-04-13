@@ -3,7 +3,8 @@ import { IQuizQuestion } from '@nifty/server-lib/models/quiz';
 
 export function shuffleQuiz(questions: IQuizQuestion[]) {
   return questions.map((question: any) => {
-    const answers = question.answers;
+    // shallow copy
+    const answers = [...question.answers];
     // initially, 0 index is correct
     let correctIndex = 0;
     // shuffle the answers

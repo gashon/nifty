@@ -8,7 +8,7 @@ const menuContentStyles = cva(
     'left-0',
     'flex',
     'flex-col',
-    'w-56',
+    'w-full',
     'gap-1',
     'p-2',
     'text-black',

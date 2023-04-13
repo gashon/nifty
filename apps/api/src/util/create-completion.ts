@@ -6,11 +6,13 @@ import { CustomException } from "@/exceptions";
 export const generateQuizFromNote = async (noteContent: string) => {
   const prompt = createQuizGenerationPrompt(noteContent);
   try {
-    // todo validate prompt token count
-    // don't stream the response, just return the data
+    // rough estimate of number of tokens
+    // todo tokenize prompt instead of splitting on spaces
+    const numTokens = prompt.split(" ").length
     const response = await openai.createCompletion({
       prompt,
       model: "text-davinci-003",
+      max_tokens: 4000 - numTokens,
       temperature: 0.7,
       top_p: 1,
       frequency_penalty: 0.5,
@@ -25,7 +27,7 @@ export const generateQuizFromNote = async (noteContent: string) => {
     return choice.text
   } catch (err) {
     // @ts-ignore
-    const message = err.response.data.error.message;
+    const message = err.response?.data?.error?.message || err?.message;
     throw new CustomException(message, status.BAD_REQUEST)
   }
 }

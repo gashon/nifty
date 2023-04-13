@@ -12,7 +12,7 @@ export const NoteDropdown: FC<{
 
   const notes = (data?.pages || [])
     // @ts-ignore
-    .flatMap(({ data }) => data?.data || [])
+    .flatMap(({ data }) => data || [])
     .map((note) => ({
       label: note.title,
       icon: (

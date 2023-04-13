@@ -105,7 +105,7 @@ export class QuizController implements IQuizController {
       throw new CustomException('Quiz could not be generated from note', status.BAD_REQUEST);
     }
 
-    const quiz = await this.quizService.createQuiz(createdBy, { questions: randomizedQuiz, note: noteId, collaborators: [quizCollaborator.id] } as QuizCreateRequest);
+    const quiz = await this.quizService.createQuiz(createdBy, { title: req.body.title, questions: randomizedQuiz, note: noteId, collaborators: [quizCollaborator.id] } as QuizCreateRequest);
 
     quizCollaborator.set({ foreign_key: quiz.id });
     quizCollaborator.save();

@@ -2,7 +2,7 @@ import { Model } from "mongoose";
 
 import mongoose from "../../mongoose";
 import mongooseObjectId from "../../mongoose/plugins/mongoose-object-id";
-import { IQuiz, QuizDocument, IQuestion } from "./types";
+import { IQuiz, QuizDocument } from "./types";
 
 const quizSchema = new mongoose.Schema<IQuiz>({
   created_by: {
