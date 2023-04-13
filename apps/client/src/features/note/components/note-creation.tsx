@@ -1,15 +1,15 @@
 import * as z from 'zod';
 import { FC, useCallback } from 'react';
-import { AiOutlinePlus } from 'react-icons/ai';
 import { FiArrowRight } from 'react-icons/fi';
 import { FieldError } from 'react-hook-form';
 
-import { useCreateNote } from '@/features/note';
+import { useCreateNote, NotePermissionDropdown } from '@/features/note';
 
 import { Button } from '@nifty/ui/atoms';
-import { FormDrawer, Form, InputField } from '@nifty/ui/form';
+import { FormDrawer, Form, InputField, FieldWrapper } from '@nifty/ui/form';
 import { NoteCreateRequest } from '@nifty/server-lib/models/note';
 import { Permission } from '@nifty/api/util/handle-permissions';
+import { DropdownMenu } from '@nifty/ui/atoms';
 
 const PermissionSchema = z.nativeEnum(Permission);
 const schema = z.object({
@@ -61,7 +61,7 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({
           onSubmit={onSubmit}
           className="w-full flex flex-col align-center justify-center"
         >
-          {({ formState, register }) => (
+          {({ formState, register, setValue, getValues }) => (
             <>
               <div
                 className="inline-flex text-left w-full mt-5"
@@ -85,6 +85,20 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({
                   registration={register('description')}
                 />
               </div>
+
+              <div
+                className="inline-flex text-left text-black bg-[#d6d6d6] w-min p-2 rounded-lg mt-5"
+                style={{ marginBottom: -5 }}
+              >
+                <FieldWrapper label="Public Permissions">
+                  <NotePermissionDropdown
+                    setPermissions={(value: Permission) =>
+                      setValue('public_permissions', value)
+                    }
+                  />
+                </FieldWrapper>
+              </div>
+              <div></div>
               <div
                 className="inline-flex float-right text-left w-full mt-5"
                 style={{ marginBottom: -5 }}

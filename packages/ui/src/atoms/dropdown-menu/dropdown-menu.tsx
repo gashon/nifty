@@ -50,7 +50,7 @@ export const DropdownMenu: FC<PropsWithChildren<DropdownMenuProps>> = ({
   menuClassName,
 }) => {
   return (
-    <Menu as="div" className="relative inline-block text-left">
+    <Menu as="div" className="relative inline-block text-left w-max">
       <Menu.Button as={buttonAs}>{children}</Menu.Button>
       <Menu.Items
         as="ul"
