@@ -40,7 +40,7 @@ export const QuizPage: FC<{
                 {title}
               </h1>
               <main className="h-screen">
-                <QuizForm quizQuestions={quiz.questions} />
+                <QuizForm questions={quiz.questions} />
               </main>
             </div>
           </div>

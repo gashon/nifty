@@ -6,34 +6,9 @@ import { useForm } from 'react-hook-form';
 
 import { Button } from '@nifty/ui/atoms';
 import {
-  IQuiz,
   // QuizSubmitRequest,
   IQuizQuestion,
 } from '@nifty/server-lib/models/quiz';
-
-const MOCK_QUESTIONS: QuizQuestion[] = [
-  {
-    id: '1',
-    question: 'What is the capital of France?',
-    answers: ['Paris', 'London', 'Berlin', 'Madrid'],
-    type: 'multiple-choice',
-    // correct_index: 0,
-  },
-  {
-    id: '2',
-    question: 'What is the capital of Spain?',
-    answers: ['Paris', 'London', 'Berlin', 'Madrid'],
-    type: 'multiple-choice',
-    // correct_index: 3,
-  },
-  {
-    id: '3',
-    question: 'What is the capital of Germany?',
-    answers: ['Paris', 'London', 'Berlin', 'Madrid'],
-    type: 'multiple-choice',
-    // correct_index: 2,
-  },
-];
 
 type QuizQuestion = Omit<IQuizQuestion, 'correct_index'>;
 type QuizAnswer = Pick<IQuizQuestion, 'id'> & {
@@ -74,11 +49,9 @@ const QuizQuestion: FC<{
 
 const MemoizedQuizQuestion = memo(QuizQuestion);
 
-export const QuizForm: FC<{ quizQuestions: QuizQuestion[] }> = ({
-  quizQuestions,
-}) => {
+export const QuizForm: FC<{ questions: QuizQuestion[] }> = ({ questions }) => {
   // const submitQuizMutation = useSubmitQuiz();
-  const [questions, setQuestions] = useState<QuizQuestion[]>(quizQuestions);
+  console.log('GOT', questions);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const { handleSubmit, formState } = useForm();
 
