@@ -18,20 +18,21 @@ export const UserCard: FC<UserCardProps> = ({ name, avatar, signOut }) => {
       pos="top"
       itemClassName="text-primary"
       list={[
-        {
-          label: 'Profile',
-          href: '/dashboard/profile',
-          icon: <FiUser />,
-        },
+        // todo implement these apges
+        // {
+        //   label: 'Profile',
+        //   href: '/dashboard/profile',
+        //   icon: <FiUser />,
+        // },
+        // {
+        //   label: 'Settings',
+        //   href: '/dashboard/settings',
+        //   icon: <FiSettings />,
+        // },
         {
           label: 'Sign out',
           onClick: () => (signOut ? signOut() : console.log('signing out')),
           icon: <FiLogOut />,
-        },
-        {
-          label: 'Settings',
-          href: '/dashboard/settings',
-          icon: <FiSettings />,
         },
       ]}
     >
