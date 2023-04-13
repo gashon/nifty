@@ -1,5 +1,6 @@
 import status from "http-status";
 import openai from "@/lib/openai";
+import logger from "@/lib/logger";
 import { createQuizGenerationPrompt } from "@/util"
 import { CustomException } from "@/exceptions";
 
@@ -24,8 +25,10 @@ export const generateQuizFromNote = async (noteContent: string) => {
     if (choice.finish_reason == "length")
       throw new Error("Too many tokens in prompt :(")
 
+    logger.info(`Generated quiz: ${JSON.stringify(choice)}`);
     return choice.text
   } catch (err) {
+    logger.error(`Error generating quiz: ${JSON.stringify(err)}}`);
     // @ts-ignore
     const message = err.response?.data?.error?.message || err?.message;
     throw new CustomException(message, status.BAD_REQUEST)
