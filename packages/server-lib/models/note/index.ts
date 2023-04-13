@@ -47,6 +47,12 @@ const noteSchema = new mongoose.Schema<INote>({
     type: Boolean,
     default: false,
   },
+  public_permissions: {
+    type: Number,
+    default: 0,
+    immutable: false,
+    required: true,
+  },
   deleted_at: {
     type: Number,
     default: null,

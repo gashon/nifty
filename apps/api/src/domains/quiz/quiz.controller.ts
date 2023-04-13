@@ -23,7 +23,7 @@ import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
 import { DIRECTORY_TYPES } from '@/domains/directory/types';
 import { INoteService } from '../note';
 import { CollaboratorDocument } from '@nifty/server-lib/models/collaborator';
-import { setPermissions } from '@/util';
+import { setPermissions, Permission } from '@/util';
 @controller('/v1/quizzes')
 export class QuizController implements IQuizController {
   constructor(
@@ -91,7 +91,7 @@ export class QuizController implements IQuizController {
 
     const noteContent = format(note.content);
     const [quizCollaborator, requestResult] = await Promise.all([
-      this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: setPermissions("rwd") }),
+      this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: setPermissions(Permission.ReadWriteDelete) }),
       sendRequest(noteContent)
     ]);
 

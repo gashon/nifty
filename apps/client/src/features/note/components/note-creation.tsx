@@ -9,11 +9,14 @@ import { useCreateNote } from '@/features/note';
 import { Button } from '@nifty/ui/atoms';
 import { FormDrawer, Form, InputField } from '@nifty/ui/form';
 import { NoteCreateRequest } from '@nifty/server-lib/models/note';
+import { Permission } from '@nifty/api/util/handle-permissions';
 
+const PermissionSchema = z.nativeEnum(Permission);
 const schema = z.object({
   title: z.string().min(1).max(50),
   description: z.string().min(0).max(50).optional(),
   is_public: z.boolean(),
+  public_permissions: z.array(PermissionSchema).optional(),
 });
 
 type NoteCreationButtonProps = {

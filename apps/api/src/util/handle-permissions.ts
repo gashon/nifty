@@ -1,28 +1,16 @@
 import { PermissionsType } from "@nifty/server-lib/models/collaborator";
 
-export type PermissionStrings = 'r' | 'rw' | 'rwd';
-
-const getPermissionsMap = () => {
-  const requiredPermissionMap = {
-    r: 1,
-    rw: 3,
-    rwd: 7,
-  };
-
-  return {
-    requiredPermissionMap,
-  }
+export enum Permission {
+  Read = 1,
+  ReadWrite = 3,
+  ReadWriteDelete = 7,
+  None = 0,
 }
 
-export const checkPermissions = (permissions: PermissionsType, requiredPermissions: PermissionStrings): boolean => {
-  const { requiredPermissionMap } = getPermissionsMap();
-
-  const requiredPermission = requiredPermissionMap[requiredPermissions];
-  return (permissions & requiredPermission) === requiredPermission;
+export const checkPermissions = (permissions: PermissionsType, requiredPermissions: Permission): boolean => {
+  return (permissions & requiredPermissions) === requiredPermissions;
 }
 
-export const setPermissions = (requiredPermissions: PermissionStrings): number => {
-  const { requiredPermissionMap } = getPermissionsMap();
-
-  return requiredPermissionMap[requiredPermissions];
+export const setPermissions = (requiredPermissions: Permission): number => {
+  return requiredPermissions;
 }
