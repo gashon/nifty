@@ -45,13 +45,15 @@ export const QuizPage: FC<{
           </header>
           <div className="flex items-center justify-center w-screen">
             <div className="flex flex-col order-1 p-16 w-full lg:w-2/3">
-              <h1 className="underline mb-12 text-5xl text-primary dark:text-zinc-400 ">
-                Results
-              </h1>
-              {/* Round to two decimals */}
-              <h4 className="opacity-75">
-                Score: {Math.round(submission.score * 100) / 100}%
-              </h4>
+              <div className="flex flex-row justify-between items-end">
+                <h1 className="underline text-5xl text-primary dark:text-zinc-400 ">
+                  Results
+                </h1>
+                {/* Round to two decimals */}
+                <h4 className="opacity-75">
+                  Score: {Math.round(submission.score * 100) / 100}%
+                </h4>
+              </div>
               <main className="h-auto mt-10">
                 {submission.answers.map((answer, index) => {
                   const quizQuestion = getQuizQuestions(answer.question_id);
