@@ -5,7 +5,7 @@ import storage from '@/lib/storage';
 import { DropdownMenu } from '@nifty/ui/atoms';
 
 const AVAILABLE_THEMES = ['dark', 'light', 'pink', 'teal', 'brown'] as const;
-type ThemeType = (typeof AVAILABLE_THEMES)[number];
+type ThemeType = typeof AVAILABLE_THEMES[number];
 
 // https://www.blobmaker.app/
 const IconSwitcher = ({ theme }: { theme: ThemeType }) => {
@@ -50,7 +50,8 @@ const IconSwitcher = ({ theme }: { theme: ThemeType }) => {
           />
         </svg>
       );
-    default: // dark
+    default:
+      // dark
       return (
         <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -95,10 +96,10 @@ const ThemeSelection: FC = ({}) => {
     <Suspense fallback={<></>}>
       <div className={`bg-transparent text-primary z-20 w-auto`}>
         <DropdownMenu
-          menuClassName="w-auto flex flex-col items-center justify-center"
+          menuClassName="w-max flex flex-col justify-center"
           buttonAs="button"
           pos="top"
-          list={AVAILABLE_THEMES.map(t => ({
+          list={AVAILABLE_THEMES.map((t) => ({
             icon: <Icon theme={t} />,
             label: t.charAt(0).toUpperCase() + t.slice(1),
             onClick: () => updateTheme(t),

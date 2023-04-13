@@ -16,6 +16,7 @@ export const UserCard: FC<UserCardProps> = ({ name, avatar, signOut }) => {
     <DropdownMenu
       buttonAs="div"
       pos="top"
+      itemClassName="text-primary"
       list={[
         {
           label: 'Profile',

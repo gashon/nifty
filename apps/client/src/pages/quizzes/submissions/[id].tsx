@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { NextSeo } from 'next-seo';
 import { useRouter } from 'next/router';
 import { useState, useEffect, FC } from 'react';
@@ -66,6 +67,9 @@ export const QuizPage: FC<{
                           ? 'bg-green-100 dark:bg-green-900'
                           : 'bg-red-100 dark:bg-red-900'
                       }`}
+                      style={{
+                        opacity: 0.95,
+                      }}
                     >
                       <h3 className="mb-2 text-xl font-bold">
                         {quizQuestion.question}
@@ -87,6 +91,11 @@ export const QuizPage: FC<{
                   );
                 })}
               </main>
+              <div className="w-full flex justify-end">
+                <Link href={`/quizzes/${submission.quiz.id}`}>
+                  <span className="underline opacity-75">Try again</span>
+                </Link>
+              </div>
             </div>
           </div>
         </AuthProtection>

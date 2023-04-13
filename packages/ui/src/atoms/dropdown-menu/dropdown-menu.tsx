@@ -10,12 +10,9 @@ const menuContentStyles = cva(
     'flex-col',
     'w-full',
     'gap-1',
-    'p-2',
     'text-black',
     'origin-top-right',
     'dark:text-white',
-    'dark:bg-zinc-800',
-    'bg-zinc-200',
     'rounded-xl',
     'focus:outline-none',
   ],
@@ -39,6 +36,7 @@ type ListItem =
 type DropdownMenuProps = VariantProps<typeof menuContentStyles> & {
   buttonAs?: 'button' | 'div';
   menuClassName?: string;
+  itemClassName?: string;
   list: ListItem[];
 };
 
@@ -48,6 +46,7 @@ export const DropdownMenu: FC<PropsWithChildren<DropdownMenuProps>> = ({
   pos,
   buttonAs,
   menuClassName,
+  itemClassName,
 }) => {
   return (
     <Menu as="div" className="relative inline-block text-left w-max">
@@ -60,7 +59,9 @@ export const DropdownMenu: FC<PropsWithChildren<DropdownMenuProps>> = ({
           <Menu.Item
             key={item.label}
             as="li"
-            className="rounded-xl transition-colors hover:bg-zinc-300 ui-active:bg-zinc-300 dark:hover:bg-zinc-700/50 dark:ui-active:bg-zinc-700/50"
+            className={`border border-b-none hover:border-primary ${
+              itemClassName ?? ''
+            }`}
           >
             {item.href ? (
               <a

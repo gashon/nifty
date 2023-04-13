@@ -91,16 +91,11 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({
                   label="Public Permissions"
                   error={formState.errors['public_permissions'] as FieldError}
                 >
-                  <div
-                    className="bg-[#d6d6d6] w-min p-2 flex items-center justify-center rounded-lg "
-                    style={{ marginBottom: -5 }}
-                  >
-                    <NotePermissionDropdown
-                      setPermissions={(value: Permission) =>
-                        setValue('public_permissions', value)
-                      }
-                    />
-                  </div>
+                  <NotePermissionDropdown
+                    setPermissions={(value: Permission) =>
+                      setValue('public_permissions', value)
+                    }
+                  />
                 </FieldWrapper>
 
                 <Button
