@@ -16,7 +16,6 @@ export interface IQuiz extends Resource {
   collaborators: string[];
   note: string;
   title: string;
-  is_public: boolean;
   questions: IQuizQuestion[];
 }
 

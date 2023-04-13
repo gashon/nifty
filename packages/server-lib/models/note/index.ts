@@ -43,10 +43,6 @@ const noteSchema = new mongoose.Schema<INote>({
     type: [String],
     default: [],
   },
-  is_public: {
-    type: Boolean,
-    default: false,
-  },
   public_permissions: {
     type: Number,
     default: 0,

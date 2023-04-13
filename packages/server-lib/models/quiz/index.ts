@@ -58,10 +58,6 @@ const quizSchema = new mongoose.Schema<IQuiz>({
     trim: true,
     required: true,
   },
-  is_public: {
-    type: Boolean,
-    default: false,
-  },
   deleted_at: {
     type: Number,
     default: null,

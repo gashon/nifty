@@ -14,7 +14,6 @@ const schema = z.object({
   name: z.string().min(1).max(50),
   alias: z.string().min(0).max(50).optional(),
   credits: z.string().min(0).max(100).optional(),
-  is_public: z.boolean(),
 });
 
 export const ModuleCreationButton: FC = () => {
@@ -79,15 +78,6 @@ export const ModuleCreationButton: FC = () => {
                 className="inline-flex float-right text-left w-full mt-5"
                 style={{ marginBottom: -5 }}
               >
-                <div
-                  className="flex items-center justify-between gap-2 inline-flex text-left w-full "
-                  style={{ marginBottom: -5 }}
-                >
-                  <div className="flex flex-row items-center gap-2">
-                    <input type="checkbox" {...register('is_public')} />
-                    <p className="text-black">Make module publicly viewable.</p>
-                  </div>
-                </div>
                 <Button
                   type="submit"
                   disabled={formState.isSubmitting}
