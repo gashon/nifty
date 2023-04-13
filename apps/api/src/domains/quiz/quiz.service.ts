@@ -2,14 +2,17 @@ import { injectable } from 'inversify';
 import { Model, Query } from 'mongoose';
 
 import Quiz, { QuizDocument } from "@nifty/server-lib/models/quiz";
+import Submission, { SubmissionDocument, ISubmissionAnswer, ISubmission } from "@nifty/server-lib/models/submission";
 import { IQuizService, IQuiz } from './interfaces';
-
+import Resource from "@nifty/server-lib/utils/types/resource";
 @injectable()
 export class QuizService implements IQuizService {
   private quizModel: Model<QuizDocument>;
+  private submissionModel: Model<SubmissionDocument>;
 
   constructor() {
     this.quizModel = Quiz;
+    this.submissionModel = Submission;
   }
 
   async findQuizById(id: string, hideAnswers: boolean = false): Promise<QuizDocument | null> {
@@ -43,5 +46,12 @@ export class QuizService implements IQuizService {
       { $set: { deleted_at: new Date() } },
       { new: true }
     )
+  }
+
+  async submitQuiz(createdBy: string, submissionAttributes: Omit<ISubmission, keyof Resource | "created_by">): Promise<SubmissionDocument> {
+    return this.submissionModel.create({
+      ...submissionAttributes,
+      created_by: createdBy,
+    });
   }
 }

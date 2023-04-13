@@ -9,11 +9,13 @@ import {
   // QuizSubmitRequest,
   IQuizQuestion,
 } from '@nifty/server-lib/models/quiz';
+import { ISubmissionAnswer } from '@nifty/server-lib/models/submission';
 
 type QuizQuestion = Omit<IQuizQuestion, 'correct_index'>;
-type QuizAnswer = Pick<IQuizQuestion, 'id'> & {
-  answer_index: number;
-};
+type QuizAnswer = Pick<
+  ISubmissionAnswer,
+  'question_id' | 'type' | 'answer_index'
+>;
 // todo: turn into switch for different types of questions
 const QuizQuestion: FC<{
   question: QuizQuestion;
@@ -54,20 +56,32 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
   quizId,
 }) => {
   // const submitQuizMutation = useSubmitQuiz();
-  const [answers, setAnswers] = useState<QuizAnswer[]>([]);
+  const [answers, setAnswers] = useState<QuizAnswer[]>(
+    questions.map((question) => ({
+      question_id: question.id,
+      answer_index: -1,
+      type: question.type,
+    }))
+  );
   const { handleSubmit, formState } = useForm();
 
-  const onAnswerChange = useCallback((id: string, answerIndex: number) => {
-    setAnswers((prevAnswers) => {
-      const answer = prevAnswers.find((a) => a.id === id);
-      if (answer) {
-        return prevAnswers.map((a) =>
-          a.id === id ? { ...a, answer_index: answerIndex } : a
-        );
-      }
-      return [...prevAnswers, { id, answer_index: answerIndex }];
-    });
-  }, []);
+  const onAnswerChange = useCallback(
+    (questionId: string, answerIndex: number) => {
+      setAnswers((prevAnswers): QuizAnswer[] => {
+        const answer = prevAnswers.find((a) => a.question_id === questionId);
+        if (answer) {
+          // update answer index
+          return prevAnswers.map((a) =>
+            a.question_id === questionId
+              ? { ...a, answer_index: answerIndex }
+              : a
+          );
+        }
+        return prevAnswers;
+      });
+    },
+    []
+  );
 
   const onSubmit = useCallback(async () => {
     const payload = {

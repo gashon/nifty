@@ -24,6 +24,7 @@ import { DIRECTORY_TYPES } from '@/domains/directory/types';
 import { INoteService } from '../note';
 import { CollaboratorDocument } from '@nifty/server-lib/models/collaborator';
 import { setPermissions, Permission } from '@/util';
+import { SubmissionCreateRequest, ISubmissionAnswer } from '@nifty/server-lib/models/submission';
 @controller('/v1/quizzes')
 export class QuizController implements IQuizController {
   constructor(
@@ -135,4 +136,73 @@ export class QuizController implements IQuizController {
   }
 
 
+  @httpPost('/:id/submissions', auth())
+  async submitQuiz(req: Request, res: Response): Promise<void> {
+    const userId = res.locals.user._id;
+    const quizId = req.params.id;
+    const submissionAttributes: SubmissionCreateRequest = req.body;
+
+    // validate quiz exists
+    const quiz = await this.quizService.findQuizById(quizId);
+    if (!quiz)
+      throw new CustomException('Quiz not found', status.NOT_FOUND);
+
+    // validate user has access to quiz
+    if (userId !== quiz.created_by)
+      throw new CustomException('You do not have access to this quiz', status.FORBIDDEN);
+
+    // grading logic
+    // todo move-me to util or service
+    let stats = {
+      total_correct: 0,
+      total_incorrect: 0,
+      total_unanswered: 0,
+    }
+    const submissionAnswers: ISubmissionAnswer[] = [];
+    for (const answer of (submissionAttributes.answers ?? [])) {
+      // find question
+      const question = quiz.questions.find(question => question.id === answer.question_id);
+      if (!question)
+        throw new CustomException('Invalid question id', status.BAD_REQUEST);
+
+      const isCorrect = answer.answer_index === question.correct_index;
+      if (question.type === "multiple-choice") {
+        if (isCorrect)
+          stats.total_correct++;
+        else
+          stats.total_incorrect++;
+
+        submissionAnswers.push({
+          question_id: answer.question_id,
+          type: question.type,
+          answer_index: answer.answer_index,
+          correct_index: question.correct_index!,
+          is_correct: isCorrect,
+        });
+      }
+
+    }
+    stats.total_unanswered = quiz.questions.length - (stats.total_correct + stats.total_incorrect);
+
+    const score = (stats.total_correct / quiz.questions.length) * 100;
+    const submission = await this.quizService.submitQuiz(userId, {
+      time_taken: -1,
+      answers: submissionAnswers,
+      total_questions: quiz.questions.length,
+      ...stats,
+      score
+    });
+
+    res.status(status.CREATED).json({ data: submission });
+  }
+
+  @httpGet('/:id/submissions', auth())
+  async getSubmissions(req: Request, res: Response): Promise<void> {
+    
+  }
+
+  @httpGet('/:id/submissions/:submissionId', auth())
+  async getSubmission(req: Request, res: Response): Promise<void> {
+
+  }
 }

@@ -62,6 +62,10 @@ const submissionSchema = new mongoose.Schema<ISubmission>({
     type: Number,
     required: true,
   },
+  deleted_at: {
+    type: Date,
+    default: null,
+  }
 }, { timestamps: { updatedAt: "updated_at", createdAt: "created_at" } });
 
 submissionSchema.plugin(mongooseObjectId("sub", "sub"));

@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
 import { FilterQuery, Query } from 'mongoose';
 
-import { IQuiz, QuizDocument, QuizListResponse } from "@nifty/server-lib/models/quiz";
+import { ISubmission, SubmissionDocument } from "@nifty/server-lib/models/submission";
+import { IQuiz, QuizDocument, } from "@nifty/server-lib/models/quiz";
 import { QuizCreateResponse } from "@/domains/quiz/types";
+import Resource from "@nifty/server-lib/utils/types/resource";
 
 interface IQuizController {
   getQuiz(req: Request, res: Response): Promise<void>;
@@ -15,6 +17,7 @@ interface IQuizService {
   createQuiz(createdBy: string, data: Partial<IQuiz>): Promise<QuizDocument>;
   findQuizzesByIds(ids: string[]): Promise<Query<(QuizDocument & Required<{ _id: string; }>)[], QuizDocument & Required<{ _id: string; }>, {}, QuizDocument>>
   deleteQuizById(id: string): Promise<Query<any, QuizDocument & Required<{ _id: string; }>, {}, QuizDocument>>;
+  submitQuiz(createdBy: string, submissionAttributes: Omit<ISubmission, keyof Resource | "created_by">): Promise<SubmissionDocument>;
 }
 
 export { IQuiz, IQuizController, IQuizService }; 
