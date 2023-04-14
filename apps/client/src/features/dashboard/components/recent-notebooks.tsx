@@ -1,13 +1,14 @@
 import { FC } from 'react';
-import { getRecentlyEditedNotes } from '@/features/note';
+import { useRecentNotes, useDeleteNote } from '@/features/note';
+import { useAuth } from '@/features/auth';
 
 import NotebookItem from '@nifty/ui/molecules/notebook-item';
 
 export const RecentNotebooks: FC<{}> = ({}) => {
-  const notes = getRecentlyEditedNotes();
-  console.log('NOTSE', notes);
+  const { user } = useAuth();
+  const { data: notes, isFetched } = useRecentNotes(user.id);
+  const { mutate: deleteNote } = useDeleteNote();
 
-  const isLoading = false;
   const data = [
     {
       icon: '📚',
@@ -63,7 +64,7 @@ export const RecentNotebooks: FC<{}> = ({}) => {
   return (
     <>
       <div className="flex flex-col gap-3">
-        {isLoading && (
+        {!isFetched && (
           <>
             <NotebookItem variant="loading" />
             <NotebookItem variant="loading" />
@@ -72,10 +73,17 @@ export const RecentNotebooks: FC<{}> = ({}) => {
             <NotebookItem variant="loading" />
           </>
         )}
-        {!isLoading &&
+        {isFetched &&
           data &&
-          data.map((notebook) => (
-            <NotebookItem key={notebook.href} {...notebook} />
+          notes.data.map((note) => (
+            <div key={note.id}>
+              {/* @ts-ignore */}
+              <NotebookItem
+                onDelete={() => deleteNote(note.id)}
+                href={`/notes/${note.id}?title=${note.title}`}
+                {...note}
+              />{' '}
+            </div>
           ))}
       </div>
     </>

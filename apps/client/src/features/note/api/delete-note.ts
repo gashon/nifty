@@ -34,6 +34,7 @@ export const useDeleteNote = ({ config }: UseCreateModuleOptions = {}) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries('notes');
+      queryClient.invalidateQueries('recent-notes');
     },
     ...config,
     mutationFn: (noteId) => deleteNote(noteId),

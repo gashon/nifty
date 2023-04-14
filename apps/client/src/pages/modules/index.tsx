@@ -43,7 +43,6 @@ export async function getServerSideProps({ req }) {
   if (!user) {
     return {
       redirect: {
-        // destination: `/error/external?message=${encodeURIComponent("You are not logged in!")}&redirect=%2Fnotes%2F${context.params.id}`,
         destination: `/error/external?message=${encodeURIComponent(
           'You are not logged in!'
         )}&${new URLSearchParams({
