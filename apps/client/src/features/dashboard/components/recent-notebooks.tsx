@@ -1,8 +1,12 @@
 import { FC } from 'react';
+import { getRecentlyEditedNotes } from '@/features/note';
 
 import NotebookItem from '@nifty/ui/molecules/notebook-item';
 
 export const RecentNotebooks: FC<{}> = ({}) => {
+  const notes = getRecentlyEditedNotes();
+  console.log('NOTSE', notes);
+
   const isLoading = false;
   const data = [
     {
@@ -70,7 +74,9 @@ export const RecentNotebooks: FC<{}> = ({}) => {
         )}
         {!isLoading &&
           data &&
-          data.map(notebook => <NotebookItem key={notebook.href} {...notebook} />)}
+          data.map((notebook) => (
+            <NotebookItem key={notebook.href} {...notebook} />
+          ))}
       </div>
     </>
   );

@@ -18,6 +18,13 @@ export const getNotes = async (directoryId: string | undefined, { sort, limit, p
   return data;
 };
 
+export const getRecentlyEditedNotes = async (headers?: { [key: string]: string }): Promise<{ data: NoteListResponse }> => {
+  const { data } = await axios.get(`/api/v1/notes/recent`, {
+    headers
+  });
+  return data;
+};
+
 type UseNotesOptions = PaginationParams & {
   directoryId?: string;
 };
