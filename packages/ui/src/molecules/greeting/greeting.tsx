@@ -1,13 +1,13 @@
 import { FC, memo } from 'react';
 
 export type GreetingProps = {
-  greeting?: string;
-  quote?: string;
-  isLoading: boolean;
+  greeting: string;
+  quote: string;
 };
 
-export const Greeting: FC<GreetingProps> = ({ greeting, quote, isLoading }) => {
-  if (isLoading) {
+export const Greeting: FC<GreetingProps> = ({ greeting, quote }) => {
+  // isLoading
+  if (false) {
     return (
       <div role="status" className="h-[88px] w-[70ch]">
         <div className="flex h-full animate-pulse flex-col gap-[8px]">
@@ -18,18 +18,16 @@ export const Greeting: FC<GreetingProps> = ({ greeting, quote, isLoading }) => {
     );
   }
 
-  if (greeting && quote) {
-    return (
-      <div>
-        <h1 className="text-primary pb-1 text-2xl font-semibold lg:text-3xl">{greeting}</h1>
-        <h3 className="text-primary max-w-[70ch] text-sm dark:text-zinc-400 lg:text-base">
-          {quote}
-        </h3>
-      </div>
-    );
-  }
-
-  return null;
+  return (
+    <div>
+      <h1 className="text-primary pb-1 text-2xl font-semibold lg:text-3xl">
+        {greeting}
+      </h1>
+      <h3 className="text-primary max-w-[70ch] text-sm dark:text-zinc-400 lg:text-base">
+        {quote}
+      </h3>
+    </div>
+  );
 };
 
 export default memo(Greeting);

@@ -34,6 +34,8 @@ export const useDeleteModule = ({ config }: UseCreateModuleOptions = {}) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries('directories');
+      queryClient.invalidateQueries('recent-directories');
+
     },
     ...config,
     mutationFn: (directoryId) => deleteDirectory(directoryId),

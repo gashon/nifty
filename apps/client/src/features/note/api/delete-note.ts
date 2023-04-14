@@ -1,6 +1,6 @@
-import { NoteListResponse } from '@nifty/server-lib/models/note';
 import { useMutation } from 'react-query';
 import { axios } from '@/lib/axios';
+import { NoteListResponse } from '@nifty/server-lib/models/note';
 import { MutationConfig, queryClient } from '@/lib/react-query';
 
 export const deleteNote = (noteId: string) => {

@@ -33,7 +33,7 @@ export class NoteController implements INoteController {
   async getRecentNotes(req: Request, res: Response): Promise<void> {
     const userId = res.locals.user._id;
     const k = (req.query.k as number | undefined) ?? 5;
-    console.log("GOT", k)
+
     if (k < 0 || k > 100)
       throw new CustomException('k must be between 0 and 100', status.BAD_REQUEST);
 
