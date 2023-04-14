@@ -33,7 +33,7 @@ export const DocumentSection: FC = () => {
 
   return (
     <>
-      <section className="h-screen">
+      <section className="min-h-screen">
         <ErrorBoundary fallback={<p>Failed to connect</p>}>
           <SocketDocumentEditor
             documentId={id as string}
@@ -44,7 +44,7 @@ export const DocumentSection: FC = () => {
           />
         </ErrorBoundary>
       </section>
-      <section className="w-full flex justify-between">
+      <section className="w-full flex justify-between py-10 underline">
         <PageNavigation id={id as string} />
       </section>
     </>
