@@ -20,7 +20,7 @@ function Module({ user }) {
             <DashboardLayout>
               <main className="flex flex-col order-1 pt-9">
                 <h3 className="pb-6 text-3xl text-primary dark:text-zinc-400 ">
-                  Notebook Name
+                  Your Classes
                 </h3>
                 <div className="flex flex-col">
                   <div className="mb-3">

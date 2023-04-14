@@ -28,7 +28,7 @@ export default function Dashboard() {
               <div className="flex flex-col">
                 <section className="order-2 pt-9 lg:order-1">
                   <h3 className="text-primary pb-3 text-xs dark:text-zinc-400 lg:text-base">
-                    Modules
+                    Classes
                   </h3>
                   <RecentModules />
                 </section>
