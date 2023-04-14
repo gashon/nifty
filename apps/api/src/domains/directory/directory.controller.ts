@@ -86,7 +86,7 @@ export class DirectoryController implements IDirectoryController {
       throw new CustomException('Directory not found', status.NOT_FOUND);
 
     const collaborator = await this.collaboratorService.findCollaboratorByDirectoryIdAndUserId(directory.id, userId);
-    if (!collaborator || !directory.collaborators.includes(collaborator.id))
+    if (!collaborator || !directory.collaborators.includes(collaborator._id))
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
     await this.directoryService.deleteDirectoryById(directory.id);

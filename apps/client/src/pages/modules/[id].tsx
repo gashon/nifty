@@ -27,7 +27,7 @@ function Module({ notes, user, id }) {
             <DashboardLayout>
               <main className="flex flex-col order-1 pt-9 w-auto relative">
                 <h3 className="pb-6 text-3xl text-primary dark:text-zinc-400 ">
-                  Module: {moduleName}
+                  {moduleName}
                 </h3>
                 <NoteCreationButton moduleId={id as string} />
                 <NotebookList notes={notes} moduleId={id as string} />

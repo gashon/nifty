@@ -42,8 +42,14 @@ export const RecentModules: FC<{}> = ({}) => {
       {isFetched && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {modules.data.map((module) => (
-            <div key={module.name}>
-              <ModuleCard onClick={() => deleteModule(module.id)} {...module} />
+            <div key={module.id}>
+              <ModuleCard
+                href={`/modules/${module.id}?${new URLSearchParams({
+                  name: module.name,
+                }).toString()}`}
+                onDelete={() => deleteModule(module.id)}
+                {...module}
+              />
             </div>
           ))}
         </div>
