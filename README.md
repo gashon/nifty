@@ -5,24 +5,29 @@ Nifty is a powerful and easy-to-use note taking web application, designed to hel
 ## Getting Started
 
 Clone the repository:
+
 ```bash
 git clone https://github.com/gashon/note-hive.git nifty
 cd nifty
 ```
 
 Install dependencies:
+
 ```
 yarn
 ```
 
 Setup env (contact an engineer for access)
+
 ```
 sudo chmod +x ./tools/scripts/setup_doppler.sh
 ./tools/scripts/setup_doppler.sh
 ```
 
 Run dev environment
+
 ```
+git checkout [main|staging]
 yarn dev
 ```
 
