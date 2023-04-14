@@ -61,6 +61,11 @@ export class SocketService {
     });
     if (!collaborator) throw new Error("You don't have access to this document");
 
+    // update last viewed at
+    collaborator.set({
+      last_viewed_at: new Date()
+    });
+    collaborator.save();
     return [true, collaborator as CollaboratorDocument];
   }
 

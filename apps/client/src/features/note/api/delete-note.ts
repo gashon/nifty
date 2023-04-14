@@ -1,6 +1,6 @@
-import { NoteListResponse } from '@nifty/server-lib/models/note';
 import { useMutation } from 'react-query';
 import { axios } from '@/lib/axios';
+import { NoteListResponse } from '@nifty/server-lib/models/note';
 import { MutationConfig, queryClient } from '@/lib/react-query';
 
 export const deleteNote = (noteId: string) => {
@@ -34,6 +34,7 @@ export const useDeleteNote = ({ config }: UseCreateModuleOptions = {}) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries('notes');
+      queryClient.invalidateQueries('recent-notes');
     },
     ...config,
     mutationFn: (noteId) => deleteNote(noteId),

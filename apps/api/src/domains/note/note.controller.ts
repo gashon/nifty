@@ -19,6 +19,7 @@ import { NOTE_TYPES, NoteCreateResponse } from '@/domains/note/types';
 import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
 import { DIRECTORY_TYPES } from '@/domains/directory/types';
 import { setPermissions, Permission, checkPermissions } from '@/util';
+import { CollaboratorDocument } from '@nifty/server-lib/models/collaborator';
 
 @controller('/v1/notes')
 export class NoteController implements INoteController {
@@ -26,6 +27,18 @@ export class NoteController implements INoteController {
     @inject(NOTE_TYPES.SERVICE) private noteService: INoteService,
     @inject(DIRECTORY_TYPES.SERVICE) private directoryService: IDirectoryService,
     @inject(COLLABORATOR_TYPES.SERVICE) private collaboratorService: ICollaboratorService) {
+  }
+
+  @httpGet('/recent', auth())
+  async getRecentNotes(req: Request, res: Response): Promise<void> {
+    const userId = res.locals.user._id;
+    const k = (req.query.k as number | undefined) ?? 5;
+
+    if (k < 0 || k > 100)
+      throw new CustomException('k must be between 0 and 100', status.BAD_REQUEST);
+
+    const notes = await this.noteService.getKMostRecentNotes(userId, k);
+    res.status(status.OK).json({ data: notes });
   }
 
   @httpGet('/:id', auth())
@@ -38,6 +51,16 @@ export class NoteController implements INoteController {
 
     if (!checkPermissions(note.public_permissions, Permission.Read) && !note.collaborators.includes(userId))
       throw new CustomException('You do not have access to this note', status.FORBIDDEN);
+
+    // update last viewed at
+    const { collaborators } = await note.populate('collaborators');
+    const collaborator = collaborators.find((collaborator: any) => collaborator.user === userId) as CollaboratorDocument | undefined;
+    if (collaborator) {
+      collaborator.set({
+        last_viewed_at: new Date()
+      })
+      collaborator.save();
+    }
 
     res.status(status.OK).json({ data: note });
   }

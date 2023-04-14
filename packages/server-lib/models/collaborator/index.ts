@@ -31,6 +31,10 @@ const collaboratorSchema = new mongoose.Schema<ICollaborator>({
     immutable: false,
     required: true,
   },
+  last_viewed_at: {
+    type: Date,
+    required: false,
+  },
   deleted_at: {
     type: Date,
     default: null,

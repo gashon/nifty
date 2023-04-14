@@ -2,7 +2,7 @@ import { Model } from "mongoose";
 
 import mongoose from "../../mongoose";
 import mongooseObjectId from "../../mongoose/plugins/mongoose-object-id";
-import { IQuiz, QuizDocument, IQuestion } from "./types";
+import { IQuiz, QuizDocument } from "./types";
 
 const quizSchema = new mongoose.Schema<IQuiz>({
   created_by: {
@@ -57,10 +57,6 @@ const quizSchema = new mongoose.Schema<IQuiz>({
     type: String,
     trim: true,
     required: true,
-  },
-  is_public: {
-    type: Boolean,
-    default: false,
   },
   deleted_at: {
     type: Number,

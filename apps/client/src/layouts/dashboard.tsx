@@ -17,7 +17,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
             icon: <FiHome />,
           },
           {
-            label: 'Modules',
+            label: 'Classes',
             href: '/modules',
             icon: <FiGrid />,
           },

@@ -1,32 +1,15 @@
-import { useInfiniteQuery, UseInfiniteQueryResult } from 'react-query';
-
-import { QuizListResponse } from '@nifty/server-lib/models/quiz';
-import { PaginationParams } from '@nifty/api/types';
 import { axios } from '@/lib/axios';
 
-export const getQuizzes = async ({ sort, limit, page, expand }: PaginationParams): Promise<QuizListResponse> => {
-  const { data } = await axios.get(`/api/v1/quizzes`, {
-    params: {
-      sort,
-      limit,
-      page,
-      expand
-    },
+export const getQuiz = async (id: string, headers?: { [key: string]: string }) => {
+  const { data } = await axios.get(`/api/v1/quizzes/${id}`, {
+    headers,
   });
   return data;
-};
+}
 
-type UseQuizzesOptions = PaginationParams;
-
-export const useInfiniteQuizzes = ({ ...pagination }: UseQuizzesOptions): UseInfiniteQueryResult<PaginationParams> => {
-  return useInfiniteQuery({
-    queryKey: ['quizzes'],
-    queryFn: ({ pageParam = 1 }) => getQuizzes({ ...pagination, page: pageParam }),
-    getNextPageParam: (lastPage, _pages) => {
-      if (lastPage.has_more) {
-        return lastPage.page + 1;
-      }
-    },
+export const getQuizSubmission = async (submissionId: string, headers?: { [key: string]: string }) => {
+  const { data } = await axios.get(`/api/v1/quizzes/submissions/${submissionId}`, {
+    headers,
   });
-};
-
+  return data;
+}

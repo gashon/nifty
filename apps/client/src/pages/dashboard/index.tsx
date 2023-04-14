@@ -24,15 +24,15 @@ export default function Dashboard() {
         <AuthProtection loadingComponent={<LoadingPage />}>
           <ThemeLayout>
             <DashboardLayout>
-              <GreetingHeader greeting={`Hello`} quote="You're doing great" />
+              <GreetingHeader greeting={`Hello`} quote="" />
               <div className="flex flex-col">
                 <section className="order-2 pt-9 lg:order-1">
-                  <h3 className="text-primary pb-3 text-xs dark:text-zinc-400 lg:text-base">
-                    Modules
+                  <h3 className="pb-3 text-xs text-zinc-600 dark:text-zinc-400 lg:text-base">
+                    Classes
                   </h3>
                   <RecentModules />
                 </section>
-                <section className="order-1 pt-9">
+                <section className="order-1 pt-9 mt-5">
                   <h3 className="pb-3 text-xs text-zinc-600 dark:text-zinc-400 lg:text-base">
                     Recently edited notebooks
                   </h3>

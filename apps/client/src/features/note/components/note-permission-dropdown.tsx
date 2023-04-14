@@ -1,6 +1,7 @@
 import { FC, useState } from 'react';
 import { DropdownMenu } from '@nifty/ui/atoms';
-import { AiOutlinePlus } from 'react-icons/ai';
+import { AiOutlinePlus, AiOutlineRead, AiOutlineEdit } from 'react-icons/ai';
+import { ImCancelCircle } from 'react-icons/im';
 import { Permission } from '@nifty/api/util/handle-permissions';
 
 export const NotePermissionDropdown: FC<{
@@ -29,26 +30,27 @@ export const NotePermissionDropdown: FC<{
 
   return (
     <DropdownMenu
+      menuClassName="w-max flex flex-col justify-center"
       buttonAs="button"
       list={[
         {
           label: 'Not Public',
-          icon: <AiOutlinePlus />,
+          icon: <ImCancelCircle />,
           onClick: () => handleChange(Permission.None),
         },
         {
           label: 'Read',
-          icon: <AiOutlinePlus />,
+          icon: <AiOutlineRead />,
           onClick: () => handleChange(Permission.Read),
         },
         {
           label: 'Read-Write',
-          icon: <AiOutlinePlus />,
+          icon: <AiOutlineEdit />,
           onClick: () => handleChange(Permission.ReadWrite),
         },
       ]}
     >
-      <div className="flex flex-row items-center gap-2">
+      <div className="border border-opacity-4 border-black w-max p-2 flex items-center justify-center rounded">
         <p className="text-black">{selection}</p>
       </div>
     </DropdownMenu>

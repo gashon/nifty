@@ -1,43 +1,14 @@
-import { memo, FC, useCallback, useState } from 'react';
+import { memo, FC, useRef, useCallback, useState, useEffect } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
 import { useForm } from 'react-hook-form';
 
-// import { useSubmitQuiz } from '@/features/quiz';
-
 import { Button } from '@nifty/ui/atoms';
-import {
-  // QuizSubmitRequest,
-  IQuizQuestion,
-} from '@nifty/server-lib/models/quiz';
-
-const MOCK_QUESTIONS: QuizQuestion[] = [
-  {
-    id: '1',
-    question: 'What is the capital of France?',
-    answers: ['Paris', 'London', 'Berlin', 'Madrid'],
-    type: 'multiple-choice',
-    // correct_index: 0,
-  },
-  {
-    id: '2',
-    question: 'What is the capital of Spain?',
-    answers: ['Paris', 'London', 'Berlin', 'Madrid'],
-    type: 'multiple-choice',
-    // correct_index: 3,
-  },
-  {
-    id: '3',
-    question: 'What is the capital of Germany?',
-    answers: ['Paris', 'London', 'Berlin', 'Madrid'],
-    type: 'multiple-choice',
-    // correct_index: 2,
-  },
-];
+import { IQuizQuestion } from '@nifty/server-lib/models/quiz';
+import { IQuizSubmissionAnswer } from '@nifty/server-lib/models/submission';
+import { useQuizSession, useCreateSubmission } from '@/features/quiz';
 
 type QuizQuestion = Omit<IQuizQuestion, 'correct_index'>;
-type QuizAnswer = Pick<IQuizQuestion, 'id'> & {
-  answer_index: number;
-};
+
 // todo: turn into switch for different types of questions
 const QuizQuestion: FC<{
   question: QuizQuestion;
@@ -52,10 +23,10 @@ const QuizQuestion: FC<{
 
   return (
     <div className="w-full flex justify-center flex-col mt-5">
-      <p>{question.question}</p>
+      <p className="text-xl underline mb-1">{question.question}</p>
       {question.answers &&
         question.answers.map((answer, index) => (
-          <label key={index}>
+          <label key={index} className="cursor-pointer text-lg">
             <input
               className="mr-2"
               type="radio"
@@ -73,26 +44,55 @@ const QuizQuestion: FC<{
 
 const MemoizedQuizQuestion = memo(QuizQuestion);
 
-export const QuizForm: FC<{ id: string }> = ({ id }) => {
-  // const submitQuizMutation = useSubmitQuiz();
-  const [questions, setQuestions] = useState<QuizQuestion[]>(MOCK_QUESTIONS);
-  const [answers, setAnswers] = useState<QuizAnswer[]>([]);
+export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
+  questions,
+  quizId,
+}) => {
+  const submitQuizMutation = useCreateSubmission(quizId);
+  const { getTotalTime, startSession, deleteSessions } = useQuizSession(quizId);
+  const [answers, setAnswers] = useState<IQuizSubmissionAnswer[]>(
+    questions.map((question) => ({
+      question_id: question.id,
+      answer_index: -1,
+      type: question.type,
+    }))
+  );
   const { handleSubmit, formState } = useForm();
 
-  const onAnswerChange = useCallback((id: string, answerIndex: number) => {
-    setAnswers((prevAnswers) => {
-      const answer = prevAnswers.find((a) => a.id === id);
-      if (answer) {
-        return prevAnswers.map((a) =>
-          a.id === id ? { ...a, answer_index: answerIndex } : a
-        );
-      }
-      return [...prevAnswers, { id, answer_index: answerIndex }];
-    });
-  }, []);
+  useEffect(() => {
+    startSession();
+  }, [startSession]);
+
+  const onAnswerChange = useCallback(
+    (questionId: string, answerIndex: number) => {
+      setAnswers((prevAnswers): IQuizSubmissionAnswer[] => {
+        const answer = prevAnswers.find((a) => a.question_id === questionId);
+        if (answer) {
+          // update answer index
+          return prevAnswers.map((a) =>
+            a.question_id === questionId
+              ? { ...a, answer_index: answerIndex }
+              : a
+          );
+        }
+        return prevAnswers;
+      });
+    },
+    []
+  );
 
   const onSubmit = useCallback(async () => {
-    console.log(answers);
+    const payload = {
+      answers,
+      quiz_id: quizId,
+      time_taken: getTotalTime(),
+    };
+    console.log('payload', payload);
+    const { data } = await submitQuizMutation.mutateAsync(payload);
+    // clean up localStorage
+    deleteSessions();
+    // redirect to submissions page
+    window.location.replace(`/quizzes/submissions/${data.id}`);
   }, [answers]);
 
   return (
@@ -103,11 +103,13 @@ export const QuizForm: FC<{ id: string }> = ({ id }) => {
       >
         <>
           {questions.map((question) => (
-            <MemoizedQuizQuestion
-              key={question.id}
-              question={question}
-              onAnswerChange={onAnswerChange}
-            />
+            <div className="mb-5">
+              <MemoizedQuizQuestion
+                key={question.id}
+                question={question}
+                onAnswerChange={onAnswerChange}
+              />
+            </div>
           ))}
           <div className="mt-5 w-full flex justify-end">
             <Button

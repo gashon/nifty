@@ -14,7 +14,6 @@ const schema = z.object({
   name: z.string().min(1).max(50),
   alias: z.string().min(0).max(50).optional(),
   credits: z.string().min(0).max(100).optional(),
-  is_public: z.boolean(),
 });
 
 export const ModuleCreationButton: FC = () => {
@@ -32,8 +31,8 @@ export const ModuleCreationButton: FC = () => {
     <>
       <FormDrawer
         isDone={createModuleMutation.isSuccess}
-        title={'Create a module'}
-        triggerButton={<Button> Create Module</Button>}
+        title={'Create a folder'}
+        triggerButton={<Button> Create Class</Button>}
         submitButton={
           <Button
             type="submit"
@@ -51,7 +50,10 @@ export const ModuleCreationButton: FC = () => {
         >
           {({ formState, register }) => (
             <>
-              <div className="inline-flex text-left w-full mt-5" style={{ marginBottom: -5 }}>
+              <div
+                className="inline-flex text-left w-full mt-5"
+                style={{ marginBottom: -5 }}
+              >
                 <InputField
                   type="text"
                   label="Class Name"
@@ -59,7 +61,10 @@ export const ModuleCreationButton: FC = () => {
                   registration={register('name')}
                 />
               </div>
-              <div className="inline-flex text-left w-full mt-5" style={{ marginBottom: -5 }}>
+              <div
+                className="inline-flex text-left w-full mt-5"
+                style={{ marginBottom: -5 }}
+              >
                 <InputField
                   type="text"
                   label="Alias (optional): e.g. CS 101"
@@ -67,7 +72,10 @@ export const ModuleCreationButton: FC = () => {
                   registration={register('alias')}
                 />
               </div>
-              <div className="inline-flex text-left w-full mt-5" style={{ marginBottom: -5 }}>
+              <div
+                className="inline-flex text-left w-full mt-5"
+                style={{ marginBottom: -5 }}
+              >
                 <InputField
                   type="text"
                   label="Number of Credits (optional)"
@@ -79,15 +87,6 @@ export const ModuleCreationButton: FC = () => {
                 className="inline-flex float-right text-left w-full mt-5"
                 style={{ marginBottom: -5 }}
               >
-                <div
-                  className="flex items-center justify-between gap-2 inline-flex text-left w-full "
-                  style={{ marginBottom: -5 }}
-                >
-                  <div className="flex flex-row items-center gap-2">
-                    <input type="checkbox" {...register('is_public')} />
-                    <p className="text-black">Make module publicly viewable.</p>
-                  </div>
-                </div>
                 <Button
                   type="submit"
                   disabled={formState.isSubmitting}

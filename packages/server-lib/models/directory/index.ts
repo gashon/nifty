@@ -43,10 +43,6 @@ const directorySchema = new mongoose.Schema<IDirectory>({
     required: true,
     ref: "Collaborator",
   },
-  is_public: {
-    type: Boolean,
-    default: false,
-  },
   deleted_at: {
     type: Number,
     default: null,

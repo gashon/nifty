@@ -12,7 +12,7 @@ export const NoteDropdown: FC<{
 
   const notes = (data?.pages || [])
     // @ts-ignore
-    .flatMap(({ data }) => data?.data || [])
+    .flatMap(({ data }) => data || [])
     .map((note) => ({
       label: note.title,
       icon: (
@@ -33,11 +33,11 @@ export const NoteDropdown: FC<{
   return (
     <div className="text-black bg-transparent z-20 w-full">
       <DropdownMenu
-        menuClassName="w-full flex flex-col items-center justify-center"
+        menuClassName="w-max flex flex-col justify-center"
         buttonAs="button"
         list={notes}
       >
-        <p className="underline">{selection || 'Select Note'}</p>
+        <p className="underline w-full">{selection || 'Select Note'}</p>
       </DropdownMenu>
     </div>
   );

@@ -93,7 +93,6 @@ export class NoteService implements INoteService {
   }
 
   async findNoteNeighbors(noteId: string, directoryId: string, sortBy: keyof NoteDocument, limit: number): Promise<{ before: NoteDocument[], after: NoteDocument[] }> {
-
     const note = await this.findNoteById(noteId);
     if (!note) return { before: [], after: [] };
 
@@ -118,5 +117,23 @@ export class NoteService implements INoteService {
       before,
       after
     }
+  }
+
+  async getKMostRecentNotes(userId: string, k: number): Promise<NoteDocument[]> {
+    return this.noteModel.find({
+      deleted_at: null,
+      filter: {
+        "collaborators.user": userId,
+      }
+    }, {
+      _id: 1,
+      title: 1,
+      created_at: 1,
+      updated_at: 1,
+      collaborators: 1,
+      public_permissions: 1,
+    })
+      .sort({ updated_at: -1 })
+      .limit(k);
   }
 }

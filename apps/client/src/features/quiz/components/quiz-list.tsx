@@ -28,8 +28,9 @@ export const QuizList: FC = () => {
               <div key={quiz.id}>
                 <ModuleCard
                   onDelete={() => deleteQuiz(quiz.id)}
+                  name={quiz.title}
                   {...quiz}
-                  href={`/quizzes/${quiz.id}?name=${quiz.name}`}
+                  href={`/quizzes/${quiz.id}?title=${quiz.title}`}
                 />
               </div>
             ))

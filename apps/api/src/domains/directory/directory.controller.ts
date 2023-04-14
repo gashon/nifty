@@ -24,6 +24,18 @@ export class DirectoryController implements IDirectoryController {
     @inject(COLLABORATOR_TYPES.SERVICE) private collaboratorService: ICollaboratorService) {
   }
 
+  @httpGet('/recent', auth())
+  async getRecentNotes(req: Request, res: Response): Promise<void> {
+    const userId = res.locals.user._id;
+    const k = (req.query.k as number | undefined) ?? 5;
+
+    if (k < 0 || k > 100)
+      throw new CustomException('k must be between 0 and 100', status.BAD_REQUEST);
+
+    const notes = await this.directoryService.getKMostRecentNotes(userId, k);
+    res.status(status.OK).json({ data: notes });
+  }
+
   @httpGet('/:id')
   async getDirectory(req: Request, res: Response): Promise<void> {
     const directory = await this.directoryService.findDirectoryById(req.params.id);
@@ -74,7 +86,7 @@ export class DirectoryController implements IDirectoryController {
       throw new CustomException('Directory not found', status.NOT_FOUND);
 
     const collaborator = await this.collaboratorService.findCollaboratorByDirectoryIdAndUserId(directory.id, userId);
-    if (!collaborator || !directory.collaborators.includes(collaborator.id))
+    if (!collaborator || !directory.collaborators.includes(collaborator._id))
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
     await this.directoryService.deleteDirectoryById(directory.id);

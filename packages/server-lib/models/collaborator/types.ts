@@ -5,13 +5,19 @@ import { ListResponse } from '../../utils/types/tsoa/list-response';
 // unix permissions 
 export type PermissionsType = number; // 0-7
 export type CollaboratorType = 'directory' | 'note' | 'quiz';
-export interface ICollaborator extends Resource {
+
+type CollaboratorBase = {
   created_by: string;
   user: string;
-  type: CollaboratorType;
   permissions: PermissionsType;
   foreign_key?: string; // updated after foreign creation
-}
+} & Resource;
+export type ICollaborator = ({
+  type: Omit<CollaboratorType, "note">;
+} & CollaboratorBase) | ({
+  type: "note"
+  last_viewed_at?: Date;
+} & CollaboratorBase)
 
 export type CollaboratorCreateRequest = Partial<Pick<ICollaborator, 'user' | 'type' | 'permissions' | 'foreign_key'>>;
 

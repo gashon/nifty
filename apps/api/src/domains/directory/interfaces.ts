@@ -17,6 +17,7 @@ interface IDirectoryService {
   findDirectoriesByCollaboratorIds(ids: string[]): Promise<DirectoryDocument[]>;
   deleteDirectoryById(id: string): Promise<DirectoryDocument>;
   findDirectoryByNoteId(id: string): Promise<DirectoryDocument | null>
+  getKMostRecentNotes(userId: string, k: number): Promise<DirectoryDocument[]>
 }
 
 export { IDirectory, IDirectoryController, IDirectoryService }; 

@@ -1,16 +1,20 @@
 import { NextSeo } from 'next-seo';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FC } from 'react';
 import { BsArrowBarLeft } from 'react-icons/bs';
 
 import { AuthProtection, AuthProvider, getUser } from '@/features/auth';
-import { QuizForm } from '@/features/quiz';
+import { QuizForm, getQuiz } from '@/features/quiz';
 import { LoadingPage } from '@nifty/ui/pages/loading';
+import { IUser } from '@nifty/server-lib/models/user';
+import { IQuiz } from '@nifty/server-lib/models/quiz';
 
-function Document({ user }) {
+export const QuizPage: FC<{
+  user: IUser;
+  quiz: IQuiz;
+}> = ({ user, quiz }) => {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
-
   const { id, title } = router.query;
 
   useEffect(() => {
@@ -35,7 +39,7 @@ function Document({ user }) {
                 {title}
               </h1>
               <main className="h-screen">
-                <QuizForm id={id as string} />
+                <QuizForm quizId={id as string} questions={quiz.questions} />
               </main>
             </div>
           </div>
@@ -43,17 +47,20 @@ function Document({ user }) {
       </AuthProvider>
     </>
   );
-}
+};
 
 export async function getServerSideProps(context) {
-  const { data: user } = await getUser(context.req.headers);
+  const [{ data: user }, { data: quiz }] = await Promise.all([
+    getUser(context.req.headers),
+    getQuiz(context.params.id, context.req.headers),
+  ]);
 
-  if (!user) {
+  if (!user || !quiz) {
     return {
       redirect: {
         // destination: `/error/external?message=${encodeURIComponent("You are not logged in!")}&redirect=%2Fnotes%2F${context.params.id}`,
         destination: `/error/external?message=${encodeURIComponent(
-          'You are not logged in!'
+          !user ? 'You are not logged in!' : "This quiz doesn't exist!"
         )}&${new URLSearchParams({
           redirect: `/quizzes/${context.params.id}`,
         })}`,
@@ -65,8 +72,9 @@ export async function getServerSideProps(context) {
   return {
     props: {
       user,
+      quiz,
     },
   };
 }
 
-export default Document;
+export default QuizPage;
