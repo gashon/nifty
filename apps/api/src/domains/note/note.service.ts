@@ -132,6 +132,8 @@ export class NoteService implements INoteService {
       updated_at: 1,
       collaborators: 1,
       public_permissions: 1,
-    }).sort({ updated_at: -1 }).limit(k);
+    })
+      .sort({ updated_at: -1 })
+      .limit(k);
   }
 }

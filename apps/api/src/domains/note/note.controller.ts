@@ -19,6 +19,7 @@ import { NOTE_TYPES, NoteCreateResponse } from '@/domains/note/types';
 import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
 import { DIRECTORY_TYPES } from '@/domains/directory/types';
 import { setPermissions, Permission, checkPermissions } from '@/util';
+import { CollaboratorDocument } from '@nifty/server-lib/models/collaborator';
 
 @controller('/v1/notes')
 export class NoteController implements INoteController {
@@ -50,6 +51,16 @@ export class NoteController implements INoteController {
 
     if (!checkPermissions(note.public_permissions, Permission.Read) && !note.collaborators.includes(userId))
       throw new CustomException('You do not have access to this note', status.FORBIDDEN);
+
+    // update last viewed at
+    const { collaborators } = await note.populate('collaborators');
+    const collaborator = collaborators.find((collaborator: any) => collaborator.user === userId) as CollaboratorDocument | undefined;
+    if (collaborator) {
+      collaborator.set({
+        last_viewed_at: new Date()
+      })
+      collaborator.save();
+    }
 
     res.status(status.OK).json({ data: note });
   }
