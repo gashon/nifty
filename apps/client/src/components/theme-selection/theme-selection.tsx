@@ -97,6 +97,7 @@ const ThemeSelection: FC = ({}) => {
       <div className={`bg-transparent text-primary z-20 w-auto`}>
         <DropdownMenu
           menuClassName="w-max flex flex-col justify-center"
+          itemClassName="text-primary"
           buttonAs="button"
           pos="top"
           list={AVAILABLE_THEMES.map((t) => ({
