@@ -38,7 +38,7 @@ export const QuizPage: FC<{
               <h1 className="underline mb-12 text-5xl text-primary dark:text-zinc-400 ">
                 {title}
               </h1>
-              <main className="h-screen">
+              <main className="h-min-screen">
                 <QuizForm quizId={id as string} questions={quiz.questions} />
               </main>
             </div>

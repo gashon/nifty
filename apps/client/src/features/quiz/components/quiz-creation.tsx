@@ -11,7 +11,7 @@ import { FormDrawer, Form, InputField, FieldWrapper } from '@nifty/ui/form';
 import { QuizCreateRequest } from '@nifty/server-lib/models/quiz';
 
 const schema = z.object({
-  title: z.string().min(1).max(50),
+  title: z.string().max(50).optional(),
   note: z.string().min(1).max(100), // note id
   multiple_choice: z.boolean().default(false),
   free_response: z.boolean().default(false),
@@ -64,7 +64,7 @@ export const QuizCreationButton: FC = () => {
               >
                 <InputField
                   type="text"
-                  label="Quiz title"
+                  label="Quiz title (optional)"
                   error={formState.errors['title'] as FieldError}
                   registration={register('title')}
                 />

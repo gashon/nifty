@@ -21,8 +21,7 @@ const MultipleChoice: FC<{
   const [selectedAnswer, setSelectedAnswer] = useState<number>(-1);
 
   return (
-    <div className="w-full flex justify-center flex-col mt-5">
-      <p className="text-xl underline mb-1">{question.question}</p>
+    <>
       {question.answers &&
         question.answers.map((answer, index) => (
           <label key={index} className="cursor-pointer text-lg">
@@ -40,7 +39,7 @@ const MultipleChoice: FC<{
             {answer}
           </label>
         ))}
-    </div>
+    </>
   );
 };
 
@@ -49,15 +48,14 @@ const FreeResponse: FC<{
   onAnswerChange: (id: string, userAnswer: string) => void;
 }> = ({ question, onAnswerChange }) => {
   return (
-    <div className="w-full flex justify-center flex-col mt-5">
-      <p className="text-xl underline mb-1">{question.question}</p>
+    <>
       <textarea
-        className="w-full h-32 p-2 text-black"
+        className="w-full h-28 p-2 text-black opacity-75 rounded"
         onChange={(e) => {
           onAnswerChange(question.id, e.target.value);
         }}
       />
-    </div>
+    </>
   );
 };
 
@@ -147,8 +145,13 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
         className="w-full flex flex-col align-center justify-center"
       >
         <>
-          {questions.map((question) => (
-            <div className="mb-5" key={question.id}>
+          {questions.map((question, index) => (
+            <div className="mb-5 flex flex-col" key={question.id}>
+              <div className="flex flex-row mb-2 text-xl">
+                <p className="opacity-75 mr-1">{index + 1}. </p>
+                <p> {question.question}</p>
+              </div>
+
               <MemoizedQuizQuestion
                 key={question.id}
                 question={question}

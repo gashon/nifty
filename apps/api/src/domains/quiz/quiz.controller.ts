@@ -94,7 +94,7 @@ export class QuizController implements IQuizController {
       throw new CustomException('Quiz must have at least one question type', status.BAD_REQUEST);
 
     // generate quiz
-    const [quizCollaborator, multipleChoiceResult, freeResponseResult] = await Promise.all([
+    const [quizCollaborator, multipleChoiceResult, freeResponseResult, directory] = await Promise.all([
       this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: setPermissions(Permission.ReadWriteDelete) }),
       body.question_type.multiple_choice && openaiRequest({
         payload: note.content,
@@ -105,12 +105,18 @@ export class QuizController implements IQuizController {
         payload: note.content,
         generator: openaiRequestHandler.freeResponseQuizGenerator,
         errorMessage: "Quiz could not be generated from note"
-      })
+      }),
+      !req.body.title && this.directoryService.findDirectoryByNoteId(note.id),
     ]);
+
+    let title = req.body.title;
+    if (!title && directory) {
+      title = `${directory.name}: ${note.title}`;
+    }
 
     // create quiz 
     const quizQuestions = [...(multipleChoiceResult || []), ...(freeResponseResult || [])];
-    const quiz = await this.quizService.createQuiz(createdBy, { title: req.body.title, questions: quizQuestions, note: noteId, collaborators: [quizCollaborator.id] });
+    const quiz = await this.quizService.createQuiz(createdBy, { title, questions: quizQuestions, note: noteId, collaborators: [quizCollaborator.id] });
 
     quizCollaborator.set({ foreign_key: quiz.id });
     quizCollaborator.save();
@@ -171,8 +177,6 @@ export class QuizController implements IQuizController {
       freeResponseStats,
       freeResponseGrades,
     } = await gradeQuestions(questionsAndAnswers);
-
-    console.log("GOT", freeResponseGrades, freeResponseStats)
 
     const stats = {
       total_correct: multipleChoiceStats.total_correct + freeResponseStats.total_correct,
