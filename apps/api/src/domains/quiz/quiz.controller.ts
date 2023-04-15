@@ -24,7 +24,7 @@ import { DIRECTORY_TYPES } from '@/domains/directory/types';
 import { INoteService } from '../note';
 import { CollaboratorDocument } from '@nifty/server-lib/models/collaborator';
 import { setPermissions, Permission } from '@/util';
-import { SubmissionCreateRequest, ISubmissionAnswer } from '@nifty/server-lib/models/submission';
+import { SubmissionCreateRequest, ISubmissionAnswer, IQuizMultipleChoiceAnswer, IQuizFreeResponseAnswer } from '@nifty/server-lib/models/submission';
 @controller('/v1/quizzes')
 export class QuizController implements IQuizController {
   constructor(
@@ -162,27 +162,30 @@ export class QuizController implements IQuizController {
       total_unanswered: 0,
     }
     const submissionAnswers: ISubmissionAnswer[] = [];
-    for (const answer of (submissionAttributes.answers ?? [])) {
+
+    const multipleChoiceAnswers = submissionAttributes.answers?.filter(answer => answer.type === "multiple-choice") as unknown as IQuizMultipleChoiceAnswer[];
+    const freeResponseAnswers = submissionAttributes.answers?.filter(answer => answer.type === "free-response") as unknown as IQuizFreeResponseAnswer[];
+    for (const answer of (multipleChoiceAnswers ?? [])) {
       // find question
       const question = quiz.questions.find(question => question.id === answer.question_id);
       if (!question)
         throw new CustomException('Invalid question id', status.BAD_REQUEST);
+      if (question.type !== "multiple-choice")
+        throw new CustomException('Invalid question type', status.BAD_REQUEST);
 
-      const isCorrect = answer.answer_index === question.correct_index;
-      if (question.type === "multiple-choice") {
-        if (isCorrect)
-          stats.total_correct++;
-        else
-          stats.total_incorrect++;
+        const isCorrect = answer.answer_index === question.correct_index;
+      if (isCorrect)
+        stats.total_correct++;
+      else
+        stats.total_incorrect++;
 
-        submissionAnswers.push({
-          question_id: answer.question_id,
-          type: question.type,
-          answer_index: answer.answer_index,
-          correct_index: question.correct_index!,
-          is_correct: isCorrect,
-        });
-      }
+      submissionAnswers.push({
+        question_id: answer.question_id,
+        type: question.type,
+        answer_index: answer.answer_index,
+        correct_index: question.correct_index,
+        is_correct: isCorrect,
+      });
     }
     stats.total_unanswered = quiz.questions.length - (stats.total_correct + stats.total_incorrect);
 

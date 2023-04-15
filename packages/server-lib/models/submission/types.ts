@@ -6,9 +6,9 @@ import { ListResponse } from '../../utils/types/tsoa/list-response';
 export type ISubmissionAnswer = ({
   question_id: string;
   type: "multiple-choice";
-  correct_index: number;
   answer_index: number;
   is_correct: boolean;
+  correct_index: number;
 }) |
   ({
     question_id: string;
@@ -21,13 +21,16 @@ export type ISubmissionAnswer = ({
 export type IFreeResponseSubmissionAnswer = Extract<ISubmissionAnswer, { type: "free-response" }>
 export type IMultipleChoiceSubmissionAnswer = Extract<ISubmissionAnswer, { type: "multiple-choice" }>
 
-export type IQuizSubmissionAnswer = (Pick<
+
+export type IQuizMultipleChoiceAnswer = Pick<
   IMultipleChoiceSubmissionAnswer,
   'question_id' | 'answer_index' | "type"
->) | (Pick<
+>
+export type IQuizFreeResponseAnswer = Pick<
   IFreeResponseSubmissionAnswer,
   'question_id' | 'answer_text' | "type"
->);
+>
+export type IQuizSubmissionAnswer = IQuizMultipleChoiceAnswer | IQuizFreeResponseAnswer
 
 export interface ISubmission extends Resource {
   created_by: string;

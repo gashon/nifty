@@ -3,17 +3,20 @@ import Resource from '../../utils/types/resource';
 import { Expand } from '../../utils/types/tsoa/expand';
 import { ListResponse } from '../../utils/types/tsoa/list-response';
 
-export type IQuizQuestion = {
+
+export type IQuizMultipleChoiceQuestion = {
   id: string;
   question: string;
   type: "multiple-choice"
   answers: string[];
   correct_index: number;
-} | {
+}
+export type IQuizFreeResponseQuestion = {
   id: string;
   question: string;
   type: "free-response"
 }
+export type IQuizQuestion = IQuizMultipleChoiceQuestion | IQuizFreeResponseQuestion
 
 export type IMultipleChoiceQuizQuestion = Extract<IQuizQuestion, { type: "multiple-choice" }>
 export type IFreeResponseQuizQuestion = Extract<IQuizQuestion, { type: "free-response" }>
