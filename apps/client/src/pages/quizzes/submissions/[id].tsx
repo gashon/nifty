@@ -60,6 +60,38 @@ const MultipleChoice: FC<{
   );
 };
 
+const FreeResponse: FC<{
+  answer: IFreeResponseSubmissionAnswer;
+  quizQuestion: IQuizFreeResponseQuestion;
+}> = ({ answer, quizQuestion }) => {
+  return (
+    <>
+      <div
+        key={answer.question_id}
+        className={`text-black flex flex-col p-4 mb-4 rounded-md shadow-md ${
+          answer.is_correct
+            ? 'bg-green-100 dark:bg-green-900'
+            : 'bg-red-100 dark:bg-red-900'
+        }`}
+        style={{
+          opacity: 0.95,
+        }}
+      >
+        <h3 className="mb-2 text-xl font-bold">{quizQuestion.question}</h3>
+
+        <p className="mb-2">
+          <span className="font-bold">Feedback:</span> {answer.feedback_text}
+        </p>
+
+        <p className="mb-2">
+          <span className="font-bold">Your answer:</span>{' '}
+          {answer.answer_text ?? 'None'}
+        </p>
+      </div>
+    </>
+  );
+};
+
 const SubmissionResults: FC<{
   submission: SubmissionResponse;
 }> = ({ submission }) => {
@@ -71,7 +103,7 @@ const SubmissionResults: FC<{
 
   return (
     <>
-      {submission.grades.map((answer, index) => {
+      {submission.grades.map((answer) => {
         const quizQuestion = getQuizQuestions(answer.question_id);
 
         if (!quizQuestion) return null;
@@ -80,9 +112,11 @@ const SubmissionResults: FC<{
           answer.type === 'multiple-choice'
         )
           return <MultipleChoice answer={answer} quizQuestion={quizQuestion} />;
-
-        // todo implement free response
-        return null;
+        else if (
+          quizQuestion.type === 'free-response' &&
+          answer.type === 'free-response'
+        )
+          return <FreeResponse answer={answer} quizQuestion={quizQuestion} />;
       })}
     </>
   );

@@ -56,7 +56,7 @@ export const openaiRequestHandler: {
     }
   },
   freeResponseQuestionGradingGenerator: {
-    format: (questionsAndAnswers: FreeResponseQA[]) => {
+    format: (questionsAndAnswers: any[]) => {
       return JSON.stringify({
         questions: questionsAndAnswers.map(({ question, answer }) => ({
           question_id: question.id,

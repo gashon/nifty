@@ -51,20 +51,21 @@ export const createFreeResponseQuizGenerationPrompt = (noteContent: string): str
 export const createFreeResponseGradingPrompt = (freeResponseQuestionsAndAnswers: string): string => {
   return `
     You are responsible for grading the following free response questions.
-    Return the questions as a JSON object in the following format:
+    You should provide feedback and identify whether or not the answer is correct.
+    Return the grading as a JSON object in the following format:
     {
       "grades": [
        {
         question_id: <question_id>,
         feedback_text: <string>,
         is_correct: <boolean>
-       }
+       },
         ...
       ]
     }
 
     You're output should be stringified JSON - such that it can be parsed into a JavaScript object. Do not include any newline chars (your response should all be on one line).
-    Do not include anything else in your response besides the one-line JSON object.
+    Do not include anything else in your response besides the one-line JSON object in this exact format.
     ---
     ${freeResponseQuestionsAndAnswers}
     ---

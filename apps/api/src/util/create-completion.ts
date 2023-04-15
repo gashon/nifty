@@ -11,7 +11,7 @@ const getOpenAIResponse = async (prompt: string) => {
   const response = await openai.createCompletion({
     prompt,
     model: "text-davinci-003",
-    max_tokens: 3750 - numTokens,
+    max_tokens: 3500 - numTokens,
     temperature: 0.7,
     top_p: 1,
     frequency_penalty: 0.5,
@@ -23,14 +23,13 @@ const getOpenAIResponse = async (prompt: string) => {
   if (choice.finish_reason == "length")
     throw new Error("Too many tokens in prompt :(")
 
-  logger.info(`Generated quiz: ${JSON.stringify(choice)}`);
+  logger.info(`Generated: ${JSON.stringify(choice)}`);
   return choice.text
 }
 
 
 export const generateMultipleChoiceQuizFromNote = async (noteContent: string) => {
   const prompt = createMultipleChoiceQuizGenerationPrompt(noteContent);
-  logger.info(`Generating multiple choice from note: ${prompt}`)
   try {
     return getOpenAIResponse(prompt)
   } catch (err) {
@@ -44,7 +43,6 @@ export const generateMultipleChoiceQuizFromNote = async (noteContent: string) =>
 
 export const generateFreeResponseGrading = async (freeResponseQuestionsAndAnswers: string) => {
   const prompt = createFreeResponseGradingPrompt(freeResponseQuestionsAndAnswers);
-  logger.info(`Grading free response: ${prompt}`)
 
   try {
     return getOpenAIResponse(prompt)
@@ -59,7 +57,6 @@ export const generateFreeResponseGrading = async (freeResponseQuestionsAndAnswer
 
 export const generateFreeResponseQuizFromNote = async (noteContent: string) => {
   const prompt = createFreeResponseQuizGenerationPrompt(noteContent);
-  logger.info(`Generating free response from note: ${prompt}`)
   try {
     return getOpenAIResponse(prompt)
   } catch (err) {

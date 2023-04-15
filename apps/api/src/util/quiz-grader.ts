@@ -51,7 +51,7 @@ function gradeMultipleChoiceQuestions(multipleChoiceQuestionsAndAnswers: Multipl
       multipleChoiceStats.total_correct++;
     }
     else {
-      multipleChoiceStats.total_incorrect++;
+    multipleChoiceStats.total_incorrect++;
     }
     return grading;
   }
@@ -66,8 +66,8 @@ function gradeMultipleChoiceQuestions(multipleChoiceQuestionsAndAnswers: Multipl
 async function gradeFreeResponseQuestions(freeResponseQuestionsAndAnswers: FreeResponseQA[]) {
   const freeResponseGrading = await openaiRequest<FreeResponseQA[], IFreeResponseSubmissionGradingResponse[]>({
     payload: freeResponseQuestionsAndAnswers,
-    generator: openaiRequestHandler.multipleChoiceQuizGenerator,
-    errorMessage: "Quiz could not be generated from note"
+    generator: openaiRequestHandler.freeResponseQuestionGradingGenerator,
+    errorMessage: "Free responses could not be graded"
   });
 
   return {
