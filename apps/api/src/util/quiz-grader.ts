@@ -51,7 +51,7 @@ function gradeMultipleChoiceQuestions(multipleChoiceQuestionsAndAnswers: Multipl
       multipleChoiceStats.total_correct++;
     }
     else {
-    multipleChoiceStats.total_incorrect++;
+      multipleChoiceStats.total_incorrect++;
     }
     return grading;
   }
@@ -106,6 +106,13 @@ export async function gradeQuestions(questionsAndAnswers:
   }
 
   const { multipleChoiceStats, multipleChoiceGrades } = gradeMultipleChoiceQuestions(multipleChoiceQuestionsAndAnswers);
+  if (freeResponseQuestionsAndAnswers.length === 0) return {
+    multipleChoiceStats,
+    multipleChoiceGrades,
+    freeResponseStats: { total_correct: 0, total_incorrect: 0 },
+    freeResponseGrades: []
+  }
+
   const { freeResponseStats, freeResponseGrades } = await gradeFreeResponseQuestions(freeResponseQuestionsAndAnswers);
   return {
     multipleChoiceStats,
