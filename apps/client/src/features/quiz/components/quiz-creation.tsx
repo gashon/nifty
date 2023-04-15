@@ -21,8 +21,16 @@ export const QuizCreationButton: FC = () => {
   const createQuizMutation = useCreateQuiz();
 
   const onSubmit = useCallback(
-    async (values: QuizCreateRequest) => {
-      await createQuizMutation.mutateAsync(values);
+    async (values: z.infer<typeof schema>) => {
+      const payload: QuizCreateRequest = {
+        title: values.title,
+        note: values.note,
+        question_type: {
+          multiple_choice: values.multiple_choice,
+          free_response: values.free_response,
+        },
+      };
+      await createQuizMutation.mutateAsync(payload);
     },
     [createQuizMutation]
   );

@@ -76,7 +76,8 @@ export class QuizController implements IQuizController {
   @httpPost("/", auth())
   async createQuiz(req: Request, res: Response): Promise<Response<QuizCreateResponse>> {
     const createdBy = res.locals.user._id;
-    const noteId = req.body.note;
+    const body: QuizCreateRequest = req.body;
+    const noteId = body.note;
 
     // validate note exists
     const note = await this.noteService.findNoteById(noteId);
@@ -88,24 +89,26 @@ export class QuizController implements IQuizController {
     if (!collaborator)
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
+    if (!body.question_type.multiple_choice && !body.question_type.free_response)
+      throw new CustomException('Quiz must have at least one question type', status.BAD_REQUEST);
+
+    // generate quiz
     const [quizCollaborator, multipleChoiceResult, freeResponseResult] = await Promise.all([
       this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: setPermissions(Permission.ReadWriteDelete) }),
-      req.body.multiple_choice && openaiRequest<string, IMultipleChoiceQuizQuestion[]>({
+      body.question_type.multiple_choice && openaiRequest<string, IMultipleChoiceQuizQuestion[]>({
         payload: note.content,
         generator: openaiRequestHandler.multipleChoiceQuizGenerator,
         errorMessage: "Quiz could not be generated from note"
       }),
-      req.body.free_response && openaiRequest<string, IFreeResponseQuizQuestion[]>({
+      body.question_type.free_response && openaiRequest<string, IFreeResponseQuizQuestion[]>({
         payload: note.content,
         generator: openaiRequestHandler.freeResponseQuizGenerator,
         errorMessage: "Quiz could not be generated from note"
       })
     ]);
 
-    if (!multipleChoiceResult && !freeResponseResult)
-      throw new CustomException('Quiz could not be generated from note', status.BAD_REQUEST);
-
-    const quizQuestions = [...multipleChoiceResult, ...(freeResponseResult || [])];
+    // create quiz 
+    const quizQuestions = [...(multipleChoiceResult || []), ...(freeResponseResult || [])];
     const quiz = await this.quizService.createQuiz(createdBy, { title: req.body.title, questions: quizQuestions, note: noteId, collaborators: [quizCollaborator.id] });
 
     quizCollaborator.set({ foreign_key: quiz.id });
