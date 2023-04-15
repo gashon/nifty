@@ -14,7 +14,7 @@ const schema = z.object({
   title: z.string().min(1).max(50),
   note: z.string().min(1).max(100), // note id
   multiple_choice: z.boolean().default(true),
-  free_response: z.boolean().default(true),
+  free_response: z.boolean().default(false),
 });
 
 export const QuizCreationButton: FC = () => {
@@ -51,12 +51,12 @@ export const QuizCreationButton: FC = () => {
           </Button>
         }
       >
-        <Form<QuizCreateRequest, typeof schema>
+        <Form<z.infer<typeof schema>, typeof schema>
           schema={schema}
           onSubmit={onSubmit}
           className="w-full flex flex-col align-center justify-center"
         >
-          {({ formState, setValue, register }) => (
+          {({ formState, setValue, register, getValues }) => (
             <>
               <div
                 className="inline-flex text-left w-full mt-5"
@@ -68,6 +68,39 @@ export const QuizCreationButton: FC = () => {
                   error={formState.errors['title'] as FieldError}
                   registration={register('title')}
                 />
+              </div>
+              <div>
+                {/* Quiz type */}
+                <div className="flex flex-row items-center gap-2">
+                  <FieldWrapper
+                    label="Quiz type"
+                    error={formState.errors['quiz_type'] as FieldError}
+                  >
+                    <div className="flex flex-row items-center gap-2">
+                      <div className="flex flex-row items-center gap-2">
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4"
+                          checked={getValues('multiple_choice')}
+                          onChange={(e) => {
+                            setValue('multiple_choice', e.target.checked);
+                          }}
+                        />
+                        <label className="text-black">Multiple choice</label>
+
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4"
+                          checked={getValues('free_response')}
+                          onChange={(e) => {
+                            setValue('free_response', !e.target.checked);
+                          }}
+                        />
+                        <label className="text-black">Free response</label>
+                      </div>
+                    </div>
+                  </FieldWrapper>
+                </div>
               </div>
               <div
                 className="inline-flex float-right text-left w-full mt-5"
