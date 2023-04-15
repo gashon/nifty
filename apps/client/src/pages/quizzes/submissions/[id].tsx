@@ -3,6 +3,7 @@ import { NextSeo } from 'next-seo';
 import { useRouter } from 'next/router';
 import { useState, useEffect, FC } from 'react';
 import { BsArrowBarLeft } from 'react-icons/bs';
+import dayjs from 'dayjs';
 
 import { AuthProtection, AuthProvider, getUser } from '@/features/auth';
 import { getQuizSubmission } from '@/features/quiz';
@@ -30,14 +31,12 @@ const MultipleChoice: FC<{
 }> = ({ answer, quizQuestion }) => {
   return (
     <>
-      <h3 className="mb-2 text-xl font-bold">{quizQuestion.question}</h3>
-
-      <p className="mb-2">
-        <span className="font-bold">Correct Answer:</span>{' '}
+      <p className="">
+        <span className="">Correct Answer:</span>{' '}
         {quizQuestion.answers[answer.correct_index]}
       </p>
 
-      <p className="mb-2">
+      <p className="">
         {answer.is_correct
           ? 'Correct!'
           : `Your answer: ${
@@ -54,12 +53,12 @@ const FreeResponse: FC<{
 }> = ({ answer, quizQuestion }) => {
   return (
     <>
-      <p className="mb-2">
-        <span className="">Feedback:</span> {answer.feedback_text}
-      </p>
-
-      <p className="mb-2 opacity-75">
+      <p className="opacity-75">
         <span className="">Your answer:</span> {answer.answer_text ?? 'None'}
+      </p>
+      
+      <p className="">
+        <span className="">Feedback:</span> {answer.feedback_text}
       </p>
     </>
   );
@@ -100,13 +99,11 @@ const SubmissionResults: FC<{
               opacity: 0.95,
             }}
           >
-            <div className="flex flex-row justify-between">
-              <h3 className="mb-2 text-xl font-bold">
-                {quizQuestion.question}
-              </h3>
+            <div className="flex flex-row justify-between mb-4">
+              <h3 className=" text-xl">{quizQuestion.question}</h3>
 
               <p
-                className={`mb-2 ${
+                className={` ${
                   answer.is_correct
                     ? 'text-green-400 text:bg-green-100'
                     : 'text-red-400 text:bg-red-100'
@@ -159,9 +156,14 @@ export const SubmissionPage: FC<{
                     Score: {Math.round(submission.score * 100) / 100}%
                   </p>
                   <p className="opacity-75">
-                    Time Taken:{' '}
-                    {Math.round((submission.time_taken / 1000) * 100) / 100}{' '}
-                    seconds
+                    Time Taken: {/* Use Dayjs */}
+                    {dayjs
+                      .duration(
+                        Math.round((submission.time_taken / 1000) * 100) / 100,
+                        'seconds'
+                      )
+                      .format('mm:ss')}{' '}
+                    min
                   </p>
                 </section>
               </div>
