@@ -79,11 +79,11 @@ async function gradeFreeResponseQuestions(freeResponseQuestionsAndAnswers: FreeR
       const { question_id, is_correct, feedback_text } = grade;
       return {
         type: "free-response",
-        answer_text: freeResponseQuestionsAndAnswers.find(({ question }) => question.id === question_id)?.answer.answer_text,
+        answer_text: freeResponseQuestionsAndAnswers.find(({ question }) => question.id === question_id)?.answer.answer_text || "No Answer",
         question_id,
         is_correct,
         feedback_text,
-      }
+      } as IFreeResponseSubmissionAnswer
     })
   }
 }
