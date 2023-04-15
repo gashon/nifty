@@ -1,12 +1,13 @@
 import { IQuizQuestion, IFreeResponseQuizQuestion, IQuizMultipleChoiceQuestion, IQuizFreeResponseQuestion } from '@nifty/server-lib/models/quiz';
-import { IQuizSubmissionAnswer, IQuizMultipleChoiceAnswer, IQuizFreeResponseAnswer, IMultipleChoiceSubmissionAnswer, IFreeResponseSubmissionAnswer, } from '@nifty/server-lib/models/submission';
+import { IQuizSubmissionAnswer, IFreeResponseSubmissionGradingResponse, IQuizMultipleChoiceAnswer, IQuizFreeResponseAnswer, IMultipleChoiceSubmissionAnswer, IFreeResponseSubmissionAnswer, } from '@nifty/server-lib/models/submission';
+import { openaiRequest, openaiRequestHandler } from "@/lib/openai-request";
 
 type MultipleChoiceQA = {
   question: IQuizMultipleChoiceQuestion;
   answer: IQuizMultipleChoiceAnswer;
 }
 
-type FreeResponseQA = {
+export type FreeResponseQA = {
   question: IQuizFreeResponseQuestion;
   answer: IQuizFreeResponseAnswer;
 }
@@ -62,27 +63,32 @@ function gradeMultipleChoiceQuestions(multipleChoiceQuestionsAndAnswers: Multipl
   }
 }
 
-function gradeFreeResponseQuestions(freeResponseQuestionsAndAnswers: FreeResponseQA[]) {
-  const freeResponseStats = { total_correct: 0, total_incorrect: 0 };
-  const freeResponseGrades = freeResponseQuestionsAndAnswers.map(({ question, answer }) => {
-    const grading = handleFreeResponse(question, answer);
-    if (grading.is_correct) {
-      freeResponseStats.total_correct++;
-    }
-    else {
-      freeResponseStats.total_incorrect++;
-    }
-    return grading;
-  }
-  );
+async function gradeFreeResponseQuestions(freeResponseQuestionsAndAnswers: FreeResponseQA[]) {
+  const freeResponseGrading = await openaiRequest<FreeResponseQA[], IFreeResponseSubmissionGradingResponse[]>({
+    payload: freeResponseQuestionsAndAnswers,
+    generator: openaiRequestHandler.multipleChoiceQuizGenerator,
+    errorMessage: "Quiz could not be generated from note"
+  });
 
   return {
-    freeResponseStats,
-    freeResponseGrades
+    freeResponseStats: {
+      total_correct: freeResponseGrading.filter(({ is_correct }) => is_correct).length,
+      total_incorrect: freeResponseGrading.filter(({ is_correct }) => !is_correct).length,
+    },
+    freeResponseGrades: freeResponseGrading.map((grade) => {
+      const { question_id, is_correct, feedback_text } = grade;
+      return {
+        type: "free-response",
+        answer_text: freeResponseQuestionsAndAnswers.find(({ question }) => question.id === question_id)?.answer.answer_text,
+        question_id,
+        is_correct,
+        feedback_text,
+      }
+    })
   }
 }
 
-export function gradeQuestions(questionsAndAnswers:
+export async function gradeQuestions(questionsAndAnswers:
   {
     question: IQuizQuestion,
     answer: IQuizSubmissionAnswer
@@ -100,7 +106,7 @@ export function gradeQuestions(questionsAndAnswers:
   }
 
   const { multipleChoiceStats, multipleChoiceGrades } = gradeMultipleChoiceQuestions(multipleChoiceQuestionsAndAnswers);
-  const { freeResponseStats, freeResponseGrades } = gradeFreeResponseQuestions(freeResponseQuestionsAndAnswers);
+  const { freeResponseStats, freeResponseGrades } = await gradeFreeResponseQuestions(freeResponseQuestionsAndAnswers);
   return {
     multipleChoiceStats,
     multipleChoiceGrades,

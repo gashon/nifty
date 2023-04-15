@@ -169,7 +169,7 @@ export class QuizController implements IQuizController {
       multipleChoiceGrades,
       freeResponseStats,
       freeResponseGrades,
-    } = gradeQuestions(questionsAndAnswers);
+    } = await gradeQuestions(questionsAndAnswers);
 
     const stats = {
       total_correct: multipleChoiceStats.total_correct + freeResponseStats.total_correct,

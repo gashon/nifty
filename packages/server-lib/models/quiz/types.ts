@@ -3,7 +3,6 @@ import Resource from '../../utils/types/resource';
 import { Expand } from '../../utils/types/tsoa/expand';
 import { ListResponse } from '../../utils/types/tsoa/list-response';
 
-
 export type IQuizMultipleChoiceQuestion = {
   id: string;
   question: string;
@@ -20,7 +19,6 @@ export type IQuizQuestion = IQuizMultipleChoiceQuestion | IQuizFreeResponseQuest
 
 export type IMultipleChoiceQuizQuestion = Extract<IQuizQuestion, { type: "multiple-choice" }>
 export type IFreeResponseQuizQuestion = Extract<IQuizQuestion, { type: "free-response" }>
-
 export interface IQuiz extends Resource {
   created_by: string;
   collaborators: string[];

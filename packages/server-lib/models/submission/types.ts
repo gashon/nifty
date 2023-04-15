@@ -20,7 +20,7 @@ export type ISubmissionAnswer = ({
 
 export type IFreeResponseSubmissionAnswer = Extract<ISubmissionAnswer, { type: "free-response" }>
 export type IMultipleChoiceSubmissionAnswer = Extract<ISubmissionAnswer, { type: "multiple-choice" }>
-
+export type IFreeResponseSubmissionGradingResponse = Omit<IFreeResponseSubmissionAnswer, "answer_text" | "type">
 
 export type IQuizMultipleChoiceAnswer = Pick<
   IMultipleChoiceSubmissionAnswer,

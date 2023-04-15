@@ -1,9 +1,16 @@
 import status from "http-status";
 import { v4 as uuid } from 'uuid';
 import logger from "@/lib/logger"
-import { generateMultipleChoiceQuizFromNote, generateFreeResponseQuizFromNote, shuffleQuiz } from "@/util"
+import {
+  generateMultipleChoiceQuizFromNote,
+  generateFreeResponseQuizFromNote,
+  generateFreeResponseGrading,
+  shuffleQuiz
+} from "@/util"
 import { CustomException } from "@/exceptions";
 import { IFreeResponseQuizQuestion } from "@nifty/server-lib/models/quiz";
+import { IFreeResponseSubmissionGradingResponse } from "@nifty/server-lib/models/submission";
+import { FreeResponseQA } from "@/util/quiz-grader";
 
 type FormatFn = (data: any) => string;
 type SendRequestFn = (data: any) => Promise<any>;
@@ -49,11 +56,19 @@ export const openaiRequestHandler: {
     }
   },
   freeResponseQuestionGradingGenerator: {
-    format: (question) => {
+    format: (questionsAndAnswers: FreeResponseQA[]) => {
       return JSON.stringify({
-        question: data.question,
-        answer: data.answer,
+        questions: questionsAndAnswers.map(({ question, answer }) => ({
+          question_id: question.id,
+          question: question.question,
+          answer_text: answer.answer_text,
+        }))
       })
+    },
+    sendRequest: generateFreeResponseGrading,
+    reformat: (stringifiedGrades: string): IFreeResponseSubmissionGradingResponse[] => {
+      const { grades } = JSON.parse(stringifiedGrades);
+      return grades;
     }
   },
 }
