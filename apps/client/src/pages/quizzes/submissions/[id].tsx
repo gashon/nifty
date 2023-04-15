@@ -30,32 +30,20 @@ const MultipleChoice: FC<{
 }> = ({ answer, quizQuestion }) => {
   return (
     <>
-      <div
-        key={answer.question_id}
-        className={`text-black flex flex-col p-4 mb-4 rounded-md shadow-md ${
-          answer.is_correct
-            ? 'bg-green-100 dark:bg-green-900'
-            : 'bg-red-100 dark:bg-red-900'
-        }`}
-        style={{
-          opacity: 0.95,
-        }}
-      >
-        <h3 className="mb-2 text-xl font-bold">{quizQuestion.question}</h3>
+      <h3 className="mb-2 text-xl font-bold">{quizQuestion.question}</h3>
 
-        <p className="mb-2">
-          <span className="font-bold">Correct Answer:</span>{' '}
-          {quizQuestion.answers[answer.correct_index]}
-        </p>
+      <p className="mb-2">
+        <span className="font-bold">Correct Answer:</span>{' '}
+        {quizQuestion.answers[answer.correct_index]}
+      </p>
 
-        <p className="mb-2">
-          {answer.is_correct
-            ? 'Correct!'
-            : `Your answer: ${
-                quizQuestion.answers[answer.answer_index] ?? 'None'
-              }`}
-        </p>
-      </div>
+      <p className="mb-2">
+        {answer.is_correct
+          ? 'Correct!'
+          : `Your answer: ${
+              quizQuestion.answers[answer.answer_index] ?? 'None'
+            }`}
+      </p>
     </>
   );
 };
@@ -66,28 +54,13 @@ const FreeResponse: FC<{
 }> = ({ answer, quizQuestion }) => {
   return (
     <>
-      <div
-        key={answer.question_id}
-        className={`text-black flex flex-col p-4 mb-4 rounded-md shadow-md ${
-          answer.is_correct
-            ? 'bg-green-100 dark:bg-green-900'
-            : 'bg-red-100 dark:bg-red-900'
-        }`}
-        style={{
-          opacity: 0.95,
-        }}
-      >
-        <h3 className="mb-2 text-xl font-bold">{quizQuestion.question}</h3>
+      <p className="mb-2">
+        <span className="">Feedback:</span> {answer.feedback_text}
+      </p>
 
-        <p className="mb-2">
-          <span className="font-bold">Feedback:</span> {answer.feedback_text}
-        </p>
-
-        <p className="mb-2">
-          <span className="font-bold">Your answer:</span>{' '}
-          {answer.answer_text ?? 'None'}
-        </p>
-      </div>
+      <p className="mb-2 opacity-75">
+        <span className="">Your answer:</span> {answer.answer_text ?? 'None'}
+      </p>
     </>
   );
 };
@@ -106,17 +79,46 @@ const SubmissionResults: FC<{
       {submission.grades.map((answer) => {
         const quizQuestion = getQuizQuestions(answer.question_id);
 
+        let QuestionComponent = null;
         if (!quizQuestion) return null;
         else if (
           quizQuestion.type === 'multiple-choice' &&
           answer.type === 'multiple-choice'
         )
-          return <MultipleChoice answer={answer} quizQuestion={quizQuestion} />;
+          QuestionComponent = MultipleChoice;
         else if (
           quizQuestion.type === 'free-response' &&
           answer.type === 'free-response'
         )
-          return <FreeResponse answer={answer} quizQuestion={quizQuestion} />;
+          QuestionComponent = FreeResponse;
+
+        return (
+          <div
+            key={answer.question_id}
+            className={`text-primary flex flex-col p-4 mb-4 rounded-md`}
+            style={{
+              opacity: 0.95,
+            }}
+          >
+            <div className="flex flex-row justify-between">
+              <h3 className="mb-2 text-xl font-bold">
+                {quizQuestion.question}
+              </h3>
+
+              <p
+                className={`mb-2 ${
+                  answer.is_correct
+                    ? 'text-green-400 text:bg-green-100'
+                    : 'text-red-400 text:bg-red-100'
+                }`}
+              >
+                {answer.is_correct ? 'Correct!' : 'Incorrect'}
+              </p>
+            </div>
+
+            <QuestionComponent answer={answer} quizQuestion={quizQuestion} />
+          </div>
+        );
       })}
     </>
   );
@@ -152,7 +154,7 @@ export const SubmissionPage: FC<{
                   Results
                 </h1>
                 {/* Round to two decimals */}
-                <div className="h-full flex flex-col justify-end">
+                <section className="h-full flex flex-col justify-end">
                   <p className="opacity-75">
                     Score: {Math.round(submission.score * 100) / 100}%
                   </p>
@@ -161,7 +163,7 @@ export const SubmissionPage: FC<{
                     {Math.round((submission.time_taken / 1000) * 100) / 100}{' '}
                     seconds
                   </p>
-                </div>
+                </section>
               </div>
               <main className="h-auto mt-10">
                 <SubmissionResults submission={submission} />

@@ -13,7 +13,7 @@ import { QuizCreateRequest } from '@nifty/server-lib/models/quiz';
 const schema = z.object({
   title: z.string().min(1).max(50),
   note: z.string().min(1).max(100), // note id
-  multiple_choice: z.boolean().default(true),
+  multiple_choice: z.boolean().default(false),
   free_response: z.boolean().default(false),
 });
 
@@ -93,7 +93,7 @@ export const QuizCreationButton: FC = () => {
                           className="w-4 h-4"
                           checked={getValues('free_response')}
                           onChange={(e) => {
-                            setValue('free_response', !e.target.checked);
+                            setValue('free_response', e.target.checked);
                           }}
                         />
                         <label className="text-black">Free response</label>

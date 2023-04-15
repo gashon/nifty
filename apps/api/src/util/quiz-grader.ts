@@ -27,22 +27,6 @@ export function handleMultipleChoice(
   };
 }
 
-function handleFreeResponse(
-  question: IQuizFreeResponseQuestion,
-  answer: IQuizFreeResponseAnswer,
-) {
-  // todo replace w openai grading
-  const isCorrect = true;
-
-  return {
-    question_id: answer.question_id,
-    type: question.type,
-    answer_text: answer.answer_text,
-    is_correct: isCorrect,
-    feedback_text: "todo",
-  };
-}
-
 function gradeMultipleChoiceQuestions(multipleChoiceQuestionsAndAnswers: MultipleChoiceQA[]) {
   const multipleChoiceStats = { total_correct: 0, total_incorrect: 0 };
   const multipleChoiceGrades = multipleChoiceQuestionsAndAnswers.map(({ question, answer }) => {
@@ -64,7 +48,7 @@ function gradeMultipleChoiceQuestions(multipleChoiceQuestionsAndAnswers: Multipl
 }
 
 async function gradeFreeResponseQuestions(freeResponseQuestionsAndAnswers: FreeResponseQA[]) {
-  const freeResponseGrading = await openaiRequest<FreeResponseQA[], IFreeResponseSubmissionGradingResponse[]>({
+  const freeResponseGrading = await openaiRequest({
     payload: freeResponseQuestionsAndAnswers,
     generator: openaiRequestHandler.freeResponseQuestionGradingGenerator,
     errorMessage: "Free responses could not be graded"
@@ -106,13 +90,6 @@ export async function gradeQuestions(questionsAndAnswers:
   }
 
   const { multipleChoiceStats, multipleChoiceGrades } = gradeMultipleChoiceQuestions(multipleChoiceQuestionsAndAnswers);
-  if (freeResponseQuestionsAndAnswers.length === 0) return {
-    multipleChoiceStats,
-    multipleChoiceGrades,
-    freeResponseStats: { total_correct: 0, total_incorrect: 0 },
-    freeResponseGrades: []
-  }
-
   const { freeResponseStats, freeResponseGrades } = await gradeFreeResponseQuestions(freeResponseQuestionsAndAnswers);
   return {
     multipleChoiceStats,

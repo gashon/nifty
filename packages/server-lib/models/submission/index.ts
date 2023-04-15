@@ -26,15 +26,24 @@ const submissionSchema = new mongoose.Schema<ISubmission>({
         },
         type: {
           type: String,
+          enum: ["multiple-choice", "free-response"],
           required: true,
         },
         correct_index: {
           type: Number,
-          required: true,
+          required: false,
         },
         answer_index: {
           type: Number,
-          required: true,
+          required: false,
+        },
+        answer_text: {
+          type: String,
+          required: false,
+        },
+        feedback_text: {
+          type: String,
+          required: false,
         },
         is_correct: {
           type: Boolean,

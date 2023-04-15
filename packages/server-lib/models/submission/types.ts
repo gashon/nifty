@@ -3,20 +3,20 @@ import Resource from '../../utils/types/resource';
 import { Expand } from '../../utils/types/tsoa/expand';
 import { ListResponse } from '../../utils/types/tsoa/list-response';
 
-export type ISubmissionAnswer = ({
+export type ISubmissionAnswer = {
   question_id: string;
   type: "multiple-choice";
   answer_index: number;
   is_correct: boolean;
   correct_index: number;
-}) |
-  ({
-    question_id: string;
-    type: "free-response";
-    answer_text: string;
-    feedback_text: string;
-    is_correct: boolean;
-  })
+} |
+{
+  question_id: string;
+  type: "free-response";
+  answer_text: string;
+  feedback_text: string;
+  is_correct: boolean;
+}
 
 export type IFreeResponseSubmissionAnswer = Extract<ISubmissionAnswer, { type: "free-response" }>
 export type IMultipleChoiceSubmissionAnswer = Extract<ISubmissionAnswer, { type: "multiple-choice" }>

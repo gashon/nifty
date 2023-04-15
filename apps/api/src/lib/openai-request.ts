@@ -79,13 +79,13 @@ export async function openaiRequest<T>(generatorItem: {
   payload: any;
   errorMessage?: string;
 }): Promise<T> {
-  const { generator, payload, errorMessage } = generatorItem;
-  try {
-    const formattedPayload = generator.format(payload);
-    const result = await generator.sendRequest(formattedPayload);
+  const { generator: { format, sendRequest, reformat }, payload, errorMessage } = generatorItem;
 
-    const { reformat } = generator;
-    const formattedResult: ReturnType<typeof reformat> = generator.reformat(result);
+  try {
+    const formattedPayload = format(payload);
+    const result = await sendRequest(formattedPayload);
+
+    const formattedResult: ReturnType<typeof reformat> = reformat(result);
     return formattedResult;
   } catch (err) {
     logger.error(`Error generating req: ${JSON.stringify(err)}}`);
