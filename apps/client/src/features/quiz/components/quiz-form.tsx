@@ -50,7 +50,8 @@ const FreeResponse: FC<{
   return (
     <>
       <textarea
-        className="w-full h-28 p-2 text-black opacity-75 rounded"
+        className="w-full h-28 p-2 text-primary opacity-75 rounded bg-transparent border-none"
+        placeholder="Answer..."
         onChange={(e) => {
           onAnswerChange(question.id, e.target.value);
         }}
