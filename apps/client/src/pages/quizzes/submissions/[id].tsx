@@ -8,14 +8,87 @@ import { AuthProtection, AuthProvider, getUser } from '@/features/auth';
 import { getQuizSubmission } from '@/features/quiz';
 import { LoadingPage } from '@nifty/ui/pages/loading';
 import { IUser } from '@nifty/server-lib/models/user';
-import { ISubmission } from '@nifty/server-lib/models/submission';
-import { IQuiz } from '@nifty/server-lib/models/quiz';
+import {
+  ISubmission,
+  ISubmissionAnswer,
+  IFreeResponseSubmissionAnswer,
+  IMultipleChoiceSubmissionAnswer,
+} from '@nifty/server-lib/models/submission';
+import {
+  IQuiz,
+  IQuizMultipleChoiceQuestion,
+  IQuizFreeResponseQuestion,
+} from '@nifty/server-lib/models/quiz';
 
 interface SubmissionResponse extends Omit<ISubmission, 'quiz'> {
   quiz: IQuiz; // quiz is populated
 }
 
-export const QuizPage: FC<{
+const MultipleChoice: FC<{
+  answer: IMultipleChoiceSubmissionAnswer;
+  quizQuestion: IQuizMultipleChoiceQuestion;
+}> = ({ answer, quizQuestion }) => {
+  return (
+    <>
+      <div
+        key={answer.question_id}
+        className={`text-black flex flex-col p-4 mb-4 rounded-md shadow-md ${
+          answer.is_correct
+            ? 'bg-green-100 dark:bg-green-900'
+            : 'bg-red-100 dark:bg-red-900'
+        }`}
+        style={{
+          opacity: 0.95,
+        }}
+      >
+        <h3 className="mb-2 text-xl font-bold">{quizQuestion.question}</h3>
+
+        <p className="mb-2">
+          <span className="font-bold">Correct Answer:</span>{' '}
+          {quizQuestion.answers[answer.correct_index]}
+        </p>
+
+        <p className="mb-2">
+          {answer.is_correct
+            ? 'Correct!'
+            : `Your answer: ${
+                quizQuestion.answers[answer.answer_index] ?? 'None'
+              }`}
+        </p>
+      </div>
+    </>
+  );
+};
+
+const SubmissionResults: FC<{
+  submission: SubmissionResponse;
+}> = ({ submission }) => {
+  const getQuizQuestions = (questionId: string) => {
+    return submission.quiz.questions.find(
+      (question) => question.id === questionId
+    );
+  };
+
+  return (
+    <>
+      {submission.grades.map((answer, index) => {
+        const quizQuestion = getQuizQuestions(answer.question_id);
+
+        if (!quizQuestion) return null;
+        else if (
+          quizQuestion.type === 'multiple-choice' &&
+          answer.type === 'multiple-choice'
+        )
+          return <MultipleChoice answer={answer} quizQuestion={quizQuestion} />;
+
+        // todo implement free response
+        return null;
+      })}
+    </>
+  );
+};
+
+export const SubmissionPage: FC<{
   user: IUser;
   submission: SubmissionResponse;
 }> = ({ user, submission }) => {
@@ -27,12 +100,6 @@ export const QuizPage: FC<{
   }, []);
 
   if (!isMounted || typeof window === 'undefined') return null;
-
-  const getQuizQuestions = (questionId: string) => {
-    return submission.quiz.questions.find(
-      (question) => question.id === questionId
-    );
-  };
 
   return (
     <>
@@ -63,41 +130,7 @@ export const QuizPage: FC<{
                 </div>
               </div>
               <main className="h-auto mt-10">
-                {submission.grades.map((answer, index) => {
-                  const quizQuestion = getQuizQuestions(answer.question_id);
-
-                  return (
-                    <div
-                      key={index}
-                      className={`text-black flex flex-col p-4 mb-4 rounded-md shadow-md ${
-                        answer.is_correct
-                          ? 'bg-green-100 dark:bg-green-900'
-                          : 'bg-red-100 dark:bg-red-900'
-                      }`}
-                      style={{
-                        opacity: 0.95,
-                      }}
-                    >
-                      <h3 className="mb-2 text-xl font-bold">
-                        {quizQuestion.question}
-                      </h3>
-
-                      <p className="mb-2">
-                        <span className="font-bold">Correct Answer:</span>{' '}
-                        {quizQuestion.grades[answer.correct_index]}
-                      </p>
-
-                      <p className="mb-2">
-                        {answer.is_correct
-                          ? 'Correct!'
-                          : `Your answer: ${
-                              quizQuestion.grades[answer.answer_index] ??
-                              'None'
-                            }`}
-                      </p>
-                    </div>
-                  );
-                })}
+                <SubmissionResults submission={submission} />
               </main>
               <div className="w-full flex justify-end">
                 <Link href={`/quizzes/${submission.quiz.id}`}>
@@ -140,4 +173,4 @@ export async function getServerSideProps(context) {
   };
 }
 
-export default QuizPage;
+export default SubmissionPage;

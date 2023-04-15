@@ -26,6 +26,7 @@ import { setPermissions, Permission, gradeQuestions } from '@/util';
 import { SubmissionCreateRequest, ISubmissionAnswer, IQuizMultipleChoiceAnswer, IQuizFreeResponseAnswer, IMultipleChoiceSubmissionAnswer, IFreeResponseSubmissionAnswer, } from '@nifty/server-lib/models/submission';
 import { QuizCreateRequest, IFreeResponseQuizQuestion, IMultipleChoiceQuizQuestion, IQuizMultipleChoiceQuestion, IQuizFreeResponseQuestion } from '@nifty/server-lib/models/quiz';
 
+@controller('/v1/quizzes')
 export class QuizController implements IQuizController {
   constructor(
     @inject(QUIZ_TYPES.SERVICE) private quizService: IQuizService,
@@ -190,11 +191,6 @@ export class QuizController implements IQuizController {
     res.status(status.CREATED).json({ data: submission });
   }
 
-  @httpGet('/:id/submissions', auth())
-  async getSubmissions(req: Request, res: Response): Promise<void> {
-
-  }
-
   @httpGet('/submissions/:submissionId', auth())
   async getSubmission(req: Request, res: Response): Promise<void> {
     const userId = res.locals.user._id;
@@ -211,4 +207,11 @@ export class QuizController implements IQuizController {
     submission = await submission.populate('quiz');
     res.status(status.OK).json({ data: submission });
   }
+
+  @httpGet('/:id/submissions', auth())
+  async getSubmissions(req: Request, res: Response): Promise<void> {
+
+  }
+
+
 }
