@@ -56,7 +56,7 @@ const FreeResponse: FC<{
       <p className="opacity-75">
         <span className="">Your answer:</span> {answer.answer_text ?? 'None'}
       </p>
-      
+
       <p className="">
         <span className="">Feedback:</span> {answer.feedback_text}
       </p>
@@ -184,10 +184,17 @@ export const SubmissionPage: FC<{
 };
 
 export async function getServerSideProps(context) {
-  const [{ data: user }, { data: submission }] = await Promise.all([
+  const [userSettle, submissionSettle] = await Promise.allSettled([
     getUser(context.req.headers),
     getQuizSubmission(context.params.id, context.req.headers),
   ]);
+
+  const user =
+    userSettle.status === 'fulfilled' ? userSettle.value?.data : null;
+  const submission =
+    submissionSettle.status === 'fulfilled'
+      ? submissionSettle.value?.data
+      : null;
 
   if (!user || !submission) {
     return {

@@ -50,10 +50,15 @@ export const QuizPage: FC<{
 };
 
 export async function getServerSideProps(context) {
-  const [{ data: user }, { data: quiz }] = await Promise.all([
+  const [userSettle, quizSettle] = await Promise.allSettled([
     getUser(context.req.headers),
     getQuiz(context.params.id, context.req.headers),
   ]);
+
+  const user =
+    userSettle.status === 'fulfilled' ? userSettle.value?.data : null;
+  const quiz =
+    quizSettle.status === 'fulfilled' ? quizSettle.value?.data : null;
 
   if (!user || !quiz) {
     return {
