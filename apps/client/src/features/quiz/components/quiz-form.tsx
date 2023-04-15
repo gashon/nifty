@@ -14,50 +14,62 @@ type QuizQuestion =
   | Omit<IMultipleChoiceQuizQuestion, 'correct_index'>
   | IFreeResponseQuizQuestion;
 
-// todo: turn into switch for different types of questions
-const QuizQuestion: FC<{
-  question: QuizQuestion;
-  onAnswerChange: (id: string, answerIndex: number) => void;
+const MultipleChoice: FC<{
+  question: Extract<QuizQuestion, { type: 'multiple-choice' }>;
+  onAnswerChange: (id: string, userAnswer: number) => void;
 }> = ({ question, onAnswerChange }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number>(-1);
 
-  const handleAnswerChange = (answerIndex: number) => {
-    setSelectedAnswer(answerIndex);
-    onAnswerChange(question.id, answerIndex);
-  };
+  return (
+    <div className="w-full flex justify-center flex-col mt-5">
+      <p className="text-xl underline mb-1">{question.question}</p>
+      {question.answers &&
+        question.answers.map((answer, index) => (
+          <label key={index} className="cursor-pointer text-lg">
+            <input
+              className="mr-2"
+              type="radio"
+              name={`answer-${question.id}`}
+              value={index}
+              checked={selectedAnswer === index}
+              onChange={() => {
+                setSelectedAnswer(index);
+                onAnswerChange(question.id, index);
+              }}
+            />
+            {answer}
+          </label>
+        ))}
+    </div>
+  );
+};
 
-  if (question.type === 'multiple-choice')
-    return (
-      <div className="w-full flex justify-center flex-col mt-5">
-        <p className="text-xl underline mb-1">{question.question}</p>
-        {question.answers &&
-          question.answers.map((answer, index) => (
-            <label key={index} className="cursor-pointer text-lg">
-              <input
-                className="mr-2"
-                type="radio"
-                name={`answer-${question.id}`}
-                value={index}
-                checked={selectedAnswer === index}
-                onChange={() => handleAnswerChange(index)}
-              />
-              {answer}
-            </label>
-          ))}
-      </div>
-    );
-  else if (question.type === 'free-response')
-    return (
-      <div className="w-full flex justify-center flex-col mt-5">
-        <p className="text-xl underline mb-1">{question.question}</p>
-        <textarea
-          className="w-full h-32 p-2 text-black"
-          onChange={(e) => handleAnswerChange(e.target.value.length)}
-        />
-      </div>
-    );
+const FreeResponse: FC<{
+  question: Extract<QuizQuestion, { type: 'free-response' }>;
+  onAnswerChange: (id: string, userAnswer: string) => void;
+}> = ({ question, onAnswerChange }) => {
+  return (
+    <div className="w-full flex justify-center flex-col mt-5">
+      <p className="text-xl underline mb-1">{question.question}</p>
+      <textarea
+        className="w-full h-32 p-2 text-black"
+        onChange={(e) => {
+          onAnswerChange(question.id, e.target.value);
+        }}
+      />
+    </div>
+  );
+};
 
-  return null;
+// todo: turn into switch for different types of questions
+const QuizQuestion: FC<{
+  question: QuizQuestion;
+  onAnswerChange: (id: string, userAnswer: number | string) => void;
+}> = ({ question, onAnswerChange }) => {
+  if (question.type === 'free-response')
+    return <FreeResponse question={question} onAnswerChange={onAnswerChange} />;
+
+  return <MultipleChoice question={question} onAnswerChange={onAnswerChange} />;
 };
 
 const MemoizedQuizQuestion = memo(QuizQuestion);
@@ -91,14 +103,21 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
   }, [startSession]);
 
   const onAnswerChange = useCallback(
-    (questionId: string, answerIndex: number) => {
+    (questionId: string, userAnswer: string | number) => {
       setAnswers((prevAnswers): IQuizSubmissionAnswer[] => {
         const answer = prevAnswers.find((a) => a.question_id === questionId);
         if (answer) {
+          if (answer.type === 'free-response') {
+            return prevAnswers.map((a) =>
+              a.question_id === questionId
+                ? { ...a, answer_text: userAnswer as string }
+                : a
+            );
+          }
           // update answer index
           return prevAnswers.map((a) =>
             a.question_id === questionId
-              ? { ...a, answer_index: answerIndex }
+              ? { ...a, answer_index: userAnswer as number }
               : a
           );
         }
