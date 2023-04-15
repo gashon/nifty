@@ -10,7 +10,6 @@ import {
 import { CustomException } from "@/exceptions";
 import { IFreeResponseQuizQuestion } from "@nifty/server-lib/models/quiz";
 import { IFreeResponseSubmissionGradingResponse } from "@nifty/server-lib/models/submission";
-import { FreeResponseQA } from "@/util/quiz-grader";
 
 type FormatFn = (data: any) => string;
 type SendRequestFn = (data: any) => Promise<any>;
