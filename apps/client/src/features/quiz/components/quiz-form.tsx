@@ -3,11 +3,16 @@ import { FiArrowRight } from 'react-icons/fi';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@nifty/ui/atoms';
-import { IMultipleChoiceQuizQuestion } from '@nifty/server-lib/models/quiz';
+import {
+  IMultipleChoiceQuizQuestion,
+  IFreeResponseQuizQuestion,
+} from '@nifty/server-lib/models/quiz';
 import { IQuizSubmissionAnswer } from '@nifty/server-lib/models/submission';
 import { useQuizSession, useCreateSubmission } from '@/features/quiz';
 
-type QuizQuestion = Omit<IMultipleChoiceQuizQuestion, 'correct_index'>;
+type QuizQuestion =
+  | Omit<IMultipleChoiceQuizQuestion, 'correct_index'>
+  | IFreeResponseQuizQuestion;
 
 // todo: turn into switch for different types of questions
 const QuizQuestion: FC<{
@@ -21,29 +26,43 @@ const QuizQuestion: FC<{
     onAnswerChange(question.id, answerIndex);
   };
 
-  return (
-    <div className="w-full flex justify-center flex-col mt-5">
-      <p className="text-xl underline mb-1">{question.question}</p>
-      {question.answers &&
-        question.answers.map((answer, index) => (
-          <label key={index} className="cursor-pointer text-lg">
-            <input
-              className="mr-2"
-              type="radio"
-              name={`answer-${question.id}`}
-              value={index}
-              checked={selectedAnswer === index}
-              onChange={() => handleAnswerChange(index)}
-            />
-            {answer}
-          </label>
-        ))}
-    </div>
-  );
+  if (question.type === 'multiple-choice')
+    return (
+      <div className="w-full flex justify-center flex-col mt-5">
+        <p className="text-xl underline mb-1">{question.question}</p>
+        {question.answers &&
+          question.answers.map((answer, index) => (
+            <label key={index} className="cursor-pointer text-lg">
+              <input
+                className="mr-2"
+                type="radio"
+                name={`answer-${question.id}`}
+                value={index}
+                checked={selectedAnswer === index}
+                onChange={() => handleAnswerChange(index)}
+              />
+              {answer}
+            </label>
+          ))}
+      </div>
+    );
+  else if (question.type === 'free-response')
+    return (
+      <div className="w-full flex justify-center flex-col mt-5">
+        <p className="text-xl underline mb-1">{question.question}</p>
+        <textarea
+          className="w-full h-32 p-2 text-black"
+          onChange={(e) => handleAnswerChange(e.target.value.length)}
+        />
+      </div>
+    );
+
+  return null;
 };
 
 const MemoizedQuizQuestion = memo(QuizQuestion);
 
+// todo migrate to formik
 export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
   questions,
   quizId,
@@ -51,11 +70,19 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
   const submitQuizMutation = useCreateSubmission(quizId);
   const { getTotalTime, startSession, deleteSessions } = useQuizSession(quizId);
   const [answers, setAnswers] = useState<IQuizSubmissionAnswer[]>(
-    questions.map((question) => ({
-      question_id: question.id,
-      answer_index: -1,
-      type: question.type,
-    }))
+    questions.map((question) => {
+      return question.type === 'multiple-choice'
+        ? {
+            question_id: question.id,
+            answer_index: -1,
+            type: question.type,
+          }
+        : {
+            question_id: question.id,
+            answer_text: '',
+            type: question.type,
+          };
+    })
   );
   const { handleSubmit, formState } = useForm();
 
@@ -87,7 +114,6 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
       quiz_id: quizId,
       time_taken: getTotalTime(),
     };
-    console.log('payload', payload);
     const { data } = await submitQuizMutation.mutateAsync(payload);
     // clean up localStorage
     deleteSessions();

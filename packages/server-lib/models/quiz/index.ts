@@ -44,10 +44,12 @@ const quizSchema = new mongoose.Schema<IQuiz>({
         answers: {
           type: [String],
           required: false,
+          default: null,
         },
         correct_index: {
           type: Number,
           required: false,
+          default: null,
         },
       },
     ],

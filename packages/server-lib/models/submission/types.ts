@@ -3,18 +3,31 @@ import Resource from '../../utils/types/resource';
 import { Expand } from '../../utils/types/tsoa/expand';
 import { ListResponse } from '../../utils/types/tsoa/list-response';
 
-export interface ISubmissionAnswer {
+export type ISubmissionAnswer = ({
   question_id: string;
   type: "multiple-choice";
   correct_index: number;
   answer_index: number;
   is_correct: boolean;
-}
+}) |
+  ({
+    question_id: string;
+    type: "free-response";
+    answer_text: string;
+    feedback_text: string;
+    is_correct: boolean;
+  })
 
-export type IQuizSubmissionAnswer = Pick<
-  ISubmissionAnswer,
-  'question_id' | 'type' | 'answer_index'
->;
+export type IFreeResponseSubmissionAnswer = Extract<ISubmissionAnswer, { type: "free-response" }>
+export type IMultipleChoiceSubmissionAnswer = Extract<ISubmissionAnswer, { type: "multiple-choice" }>
+
+export type IQuizSubmissionAnswer = (Pick<
+  IMultipleChoiceSubmissionAnswer,
+  'question_id' | 'answer_index' | "type"
+>) | (Pick<
+  IFreeResponseSubmissionAnswer,
+  'question_id' | 'answer_text' | "type"
+>);
 
 export interface ISubmission extends Resource {
   created_by: string;
