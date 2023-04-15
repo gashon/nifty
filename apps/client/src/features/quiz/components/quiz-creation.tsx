@@ -13,6 +13,8 @@ import { QuizCreateRequest } from '@nifty/server-lib/models/quiz';
 const schema = z.object({
   title: z.string().min(1).max(50),
   note: z.string().min(1).max(100), // note id
+  multiple_choice: z.boolean().default(true),
+  free_response: z.boolean().default(false),
 });
 
 export const QuizCreationButton: FC = () => {

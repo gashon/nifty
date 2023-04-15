@@ -1,6 +1,6 @@
 
 
-export const createQuizGenerationPrompt = (noteContent: string): string => {
+export const createMultipleChoiceQuizGenerationPrompt = (noteContent: string): string => {
   return `
     Generate a quiz from the following note content. 
     The quiz should have 5-10 questions with 4 possible answers for each.
@@ -16,6 +16,27 @@ export const createQuizGenerationPrompt = (noteContent: string): string => {
           ]
         },
         ... 
+      ]
+    }
+
+    You're output should be stringified JSON - such that it can be parsed into a JavaScript object. Do not include any newline chars (your response should all be on one line).
+    Do not include anything else in your response besides the one-line JSON object.
+    ---
+    ${noteContent}
+    ---
+  `
+}
+
+export const createFreeResponseQuizGenerationPrompt = (noteContent: string): string => {
+  return `
+    Generate a quiz from the following note content. 
+    The quiz should have 5-10 questions. Each question should be a free response question.
+    Each question should be able to be answered in 1-2 sentences.
+    Return the quiz as a JSON object in the following format:
+    {
+      "questions": [
+        <Question 1>,
+        ...
       ]
     }
 

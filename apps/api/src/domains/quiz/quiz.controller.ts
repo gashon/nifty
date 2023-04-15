@@ -1,13 +1,13 @@
 import status from 'http-status';
-import { controller, httpGet, httpPost, httpPatch, httpDelete } from 'inversify-express-utils';
+import { controller, httpGet, httpPost, httpDelete } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { Request, Response } from 'express';
 import { FilterQuery } from 'mongoose';
 
 import auth from '@/middlewares/auth';
-import { openaiRequestHandler } from "@/lib/openai-request"
+import { openaiRequestHandler, openaiRequest } from "@/lib/openai-request"
 import { CustomException } from '@/exceptions';
-import { QuizCreateRequest } from '@nifty/server-lib/models/quiz';
+import { QuizCreateRequest, IFreeResponseQuizQuestion, IMultipleChoiceQuizQuestion } from '@nifty/server-lib/models/quiz';
 import { PaginationParams } from '@/types';
 import {
   IQuizService,
@@ -88,28 +88,25 @@ export class QuizController implements IQuizController {
     if (!collaborator)
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
-    const { format, sendRequest, reformat } = openaiRequestHandler.quizGenerator;
-
-    console.log("FORMATING", note)
-    const noteContent = format(note.content);
-    console.log("CREATING", req.body)
-
-    const [quizCollaborator, requestResult] = await Promise.all([
+    const [quizCollaborator, multipleChoiceResult, freeResponseResult] = await Promise.all([
       this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: setPermissions(Permission.ReadWriteDelete) }),
-      sendRequest(noteContent)
+      req.body.multiple_choice && openaiRequest<string, IMultipleChoiceQuizQuestion[]>({
+        payload: note.content,
+        generator: openaiRequestHandler.multipleChoiceQuizGenerator,
+        errorMessage: "Quiz could not be generated from note"
+      }),
+      req.body.free_response && openaiRequest<string, IFreeResponseQuizQuestion[]>({
+        payload: note.content,
+        generator: openaiRequestHandler.freeResponseQuizGenerator,
+        errorMessage: "Quiz could not be generated from note"
+      })
     ]);
 
-    if (!requestResult)
+    if (!multipleChoiceResult && !freeResponseResult)
       throw new CustomException('Quiz could not be generated from note', status.BAD_REQUEST);
 
-    let randomizedQuiz
-    try {
-      randomizedQuiz = reformat(requestResult);
-    } catch (err) {
-      throw new CustomException('Quiz could not be generated from note', status.BAD_REQUEST);
-    }
-
-    const quiz = await this.quizService.createQuiz(createdBy, { title: req.body.title, questions: randomizedQuiz, note: noteId, collaborators: [quizCollaborator.id] } as QuizCreateRequest);
+    const quizQuestions = [...multipleChoiceResult, ...(freeResponseResult || [])];
+    const quiz = await this.quizService.createQuiz(createdBy, { title: req.body.title, questions: quizQuestions, note: noteId, collaborators: [quizCollaborator.id] });
 
     quizCollaborator.set({ foreign_key: quiz.id });
     quizCollaborator.save();

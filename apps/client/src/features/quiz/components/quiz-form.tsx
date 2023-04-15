@@ -3,11 +3,11 @@ import { FiArrowRight } from 'react-icons/fi';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@nifty/ui/atoms';
-import { IQuizQuestion } from '@nifty/server-lib/models/quiz';
+import { IMultipleChoiceQuizQuestion } from '@nifty/server-lib/models/quiz';
 import { IQuizSubmissionAnswer } from '@nifty/server-lib/models/submission';
 import { useQuizSession, useCreateSubmission } from '@/features/quiz';
 
-type QuizQuestion = Omit<IQuizQuestion, 'correct_index'>;
+type QuizQuestion = Omit<IMultipleChoiceQuizQuestion, 'correct_index'>;
 
 // todo: turn into switch for different types of questions
 const QuizQuestion: FC<{
