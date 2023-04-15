@@ -148,7 +148,7 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
       >
         <>
           {questions.map((question) => (
-            <div className="mb-5">
+            <div className="mb-5" key={question.id}>
               <MemoizedQuizQuestion
                 key={question.id}
                 question={question}

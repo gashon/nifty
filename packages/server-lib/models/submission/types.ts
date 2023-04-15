@@ -35,7 +35,7 @@ export type IQuizSubmissionAnswer = IQuizMultipleChoiceAnswer | IQuizFreeRespons
 export interface ISubmission extends Resource {
   created_by: string;
   quiz: string;
-  answers: ISubmissionAnswer[],
+  grades: ISubmissionAnswer[],
   total_questions: number,
   total_correct: number,
   total_incorrect: number,

@@ -47,7 +47,15 @@ export const openaiRequestHandler: {
         question: question,
       }))
     }
-  }
+  },
+  freeResponseQuestionGradingGenerator: {
+    format: (question) => {
+      return JSON.stringify({
+        question: data.question,
+        answer: data.answer,
+      })
+    }
+  },
 }
 
 export async function openaiRequest<T, U>(

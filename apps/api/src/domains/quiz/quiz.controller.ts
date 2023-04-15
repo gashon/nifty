@@ -7,7 +7,6 @@ import { FilterQuery } from 'mongoose';
 import auth from '@/middlewares/auth';
 import { openaiRequestHandler, openaiRequest } from "@/lib/openai-request"
 import { CustomException } from '@/exceptions';
-import { QuizCreateRequest, IFreeResponseQuizQuestion, IMultipleChoiceQuizQuestion } from '@nifty/server-lib/models/quiz';
 import { PaginationParams } from '@/types';
 import {
   IQuizService,
@@ -23,9 +22,10 @@ import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
 import { DIRECTORY_TYPES } from '@/domains/directory/types';
 import { INoteService } from '../note';
 import { CollaboratorDocument } from '@nifty/server-lib/models/collaborator';
-import { setPermissions, Permission } from '@/util';
-import { SubmissionCreateRequest, ISubmissionAnswer, IQuizMultipleChoiceAnswer, IQuizFreeResponseAnswer } from '@nifty/server-lib/models/submission';
-@controller('/v1/quizzes')
+import { setPermissions, Permission, gradeQuestions } from '@/util';
+import { SubmissionCreateRequest, ISubmissionAnswer, IQuizMultipleChoiceAnswer, IQuizFreeResponseAnswer, IMultipleChoiceSubmissionAnswer, IFreeResponseSubmissionAnswer, } from '@nifty/server-lib/models/submission';
+import { QuizCreateRequest, IFreeResponseQuizQuestion, IMultipleChoiceQuizQuestion, IQuizMultipleChoiceQuestion, IQuizFreeResponseQuestion } from '@nifty/server-lib/models/quiz';
+
 export class QuizController implements IQuizController {
   constructor(
     @inject(QUIZ_TYPES.SERVICE) private quizService: IQuizService,
@@ -155,48 +155,36 @@ export class QuizController implements IQuizController {
       throw new CustomException('You do not have access to this quiz', status.FORBIDDEN);
 
     // grading logic
-    // todo move-me to util or service
-    let stats = {
-      total_correct: 0,
-      total_incorrect: 0,
-      total_unanswered: 0,
-    }
     const submissionAnswers: ISubmissionAnswer[] = [];
-
-    const multipleChoiceAnswers = submissionAttributes.answers?.filter(answer => answer.type === "multiple-choice") as unknown as IQuizMultipleChoiceAnswer[];
-    const freeResponseAnswers = submissionAttributes.answers?.filter(answer => answer.type === "free-response") as unknown as IQuizFreeResponseAnswer[];
-    for (const answer of (multipleChoiceAnswers ?? [])) {
-      // find question
-      const question = quiz.questions.find(question => question.id === answer.question_id);
-      if (!question)
+    const questionsAndAnswers = quiz.questions.map((question) => {
+      const answer = submissionAttributes.answers?.find(answer => answer.question_id === question.id);
+      if (!answer)
         throw new CustomException('Invalid question id', status.BAD_REQUEST);
-      if (question.type !== "multiple-choice")
-        throw new CustomException('Invalid question type', status.BAD_REQUEST);
 
-        const isCorrect = answer.answer_index === question.correct_index;
-      if (isCorrect)
-        stats.total_correct++;
-      else
-        stats.total_incorrect++;
+      return { question, answer }
+    })
 
-      submissionAnswers.push({
-        question_id: answer.question_id,
-        type: question.type,
-        answer_index: answer.answer_index,
-        correct_index: question.correct_index,
-        is_correct: isCorrect,
-      });
-    }
-    stats.total_unanswered = quiz.questions.length - (stats.total_correct + stats.total_incorrect);
+    const {
+      multipleChoiceStats,
+      multipleChoiceGrades,
+      freeResponseStats,
+      freeResponseGrades,
+    } = gradeQuestions(questionsAndAnswers);
 
+    const stats = {
+      total_correct: multipleChoiceStats.total_correct + freeResponseStats.total_correct,
+      total_incorrect: multipleChoiceStats.total_incorrect + freeResponseStats.total_incorrect,
+    };
     const score = (stats.total_correct / quiz.questions.length) * 100;
+
     const submission = await this.quizService.submitQuiz(userId, {
       quiz: quiz.id,
       time_taken: req.body.time_taken,
-      answers: submissionAnswers,
+      grades: [...multipleChoiceGrades, ...freeResponseGrades],
       total_questions: quiz.questions.length,
+      total_unanswered: quiz.questions.length - submissionAnswers.length,
+      score,
       ...stats,
-      score
     });
 
     res.status(status.CREATED).json({ data: submission });

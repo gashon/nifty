@@ -63,7 +63,7 @@ export const QuizPage: FC<{
                 </div>
               </div>
               <main className="h-auto mt-10">
-                {submission.answers.map((answer, index) => {
+                {submission.grades.map((answer, index) => {
                   const quizQuestion = getQuizQuestions(answer.question_id);
 
                   return (
@@ -84,14 +84,15 @@ export const QuizPage: FC<{
 
                       <p className="mb-2">
                         <span className="font-bold">Correct Answer:</span>{' '}
-                        {quizQuestion.answers[answer.correct_index]}
+                        {quizQuestion.grades[answer.correct_index]}
                       </p>
 
                       <p className="mb-2">
                         {answer.is_correct
                           ? 'Correct!'
                           : `Your answer: ${
-                              quizQuestion.answers[answer.answer_index]
+                              quizQuestion.grades[answer.answer_index] ??
+                              'None'
                             }`}
                       </p>
                     </div>

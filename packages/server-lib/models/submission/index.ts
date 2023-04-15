@@ -17,7 +17,7 @@ const submissionSchema = new mongoose.Schema<ISubmission>({
     required: true,
     immutable: true,
   },
-  answers: {
+  grades: {
     type: [
       {
         question_id: {
