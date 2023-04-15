@@ -1,8 +1,14 @@
 import { FC } from 'react';
+import Link from 'next/link';
 import { IoMdCreate } from 'react-icons/io';
 import { useAuth } from '@/features/auth';
-import { useRecentModules, useDeleteModule } from '@/features/module';
+import {
+  useRecentModules,
+  useDeleteModule,
+  ModuleCreationButton,
+} from '@/features/module';
 
+import { Button } from '@nifty/ui/atoms';
 import ModuleCard from '@nifty/ui/molecules/module-card';
 
 export const RecentModules: FC<{}> = ({}) => {
@@ -11,10 +17,13 @@ export const RecentModules: FC<{}> = ({}) => {
   const { mutate: deleteModule } = useDeleteModule();
 
   // todo fetch data
-  const noModules = !isFetched && (modules?.data || []).length === 0;
+  const noModules = isFetched && (modules?.data || []).length === 0;
 
   return (
     <>
+      <h3 className="pb-3 text-xs text-zinc-600 dark:text-zinc-400 lg:text-base">
+        Classes
+      </h3>
       {!isFetched && (
         <div className="grid grid-cols-[repeat(auto-fill,_minmax(288px,_1fr))] gap-6">
           <ModuleCard variant="loading" />
@@ -24,20 +33,10 @@ export const RecentModules: FC<{}> = ({}) => {
           <ModuleCard variant="loading" />
         </div>
       )}
-      {isFetched && noModules && (
-        <div className="grid grid-cols-2 gap-6">
-          <div className="flex flex-col items-center justify-center h-[288px]">
-            <p className="text-sm text-zinc-600 dark:text-zinc-400 lg:text-base">
-              <ModuleCard
-                href={'/d'}
-                icon={<IoMdCreate />}
-                color={'white'}
-                name={'Create your first module'}
-                code={"It's easy!"}
-              />
-            </p>
-          </div>
-        </div>
+      {noModules && (
+        <Link href={'/modules'}>
+          <Button>Create your first class</Button>
+        </Link>
       )}
       {isFetched && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
