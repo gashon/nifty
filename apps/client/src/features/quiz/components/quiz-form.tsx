@@ -60,7 +60,6 @@ const FreeResponse: FC<{
   );
 };
 
-// todo: turn into switch for different types of questions
 const QuizQuestion: FC<{
   question: QuizQuestion;
   onAnswerChange: (id: string, userAnswer: number | string) => void;

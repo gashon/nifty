@@ -19,6 +19,7 @@ interface IQuizService {
   deleteQuizById(id: string): Promise<Query<any, QuizDocument & Required<{ _id: string; }>, {}, QuizDocument>>;
   submitQuiz(createdBy: string, submissionAttributes: Omit<ISubmission, keyof Resource | "created_by">): Promise<SubmissionDocument>;
   findSubmissionById(id: string): Promise<SubmissionDocument | null>;
+  findQuizByNoteId(id: string, hideAnswers?: boolean): Promise<QuizDocument | null>
 }
 
 export { IQuiz, IQuizController, IQuizService }; 
