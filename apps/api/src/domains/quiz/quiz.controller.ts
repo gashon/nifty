@@ -90,7 +90,10 @@ export class QuizController implements IQuizController {
 
     const { format, sendRequest, reformat } = openaiRequestHandler.quizGenerator;
 
+    console.log("FORMATING", note)
     const noteContent = format(note.content);
+    console.log("CREATING", req.body)
+
     const [quizCollaborator, requestResult] = await Promise.all([
       this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: setPermissions(Permission.ReadWriteDelete) }),
       sendRequest(noteContent)

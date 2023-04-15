@@ -6,6 +6,7 @@ import { CustomException } from "@/exceptions";
 
 export const generateQuizFromNote = async (noteContent: string) => {
   const prompt = createQuizGenerationPrompt(noteContent);
+  logger.info(`Generating quiz from note: ${prompt}`)
   try {
     // rough estimate of number of tokens
     // todo tokenize prompt instead of splitting on spaces

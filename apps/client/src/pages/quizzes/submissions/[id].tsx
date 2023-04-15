@@ -51,9 +51,16 @@ export const QuizPage: FC<{
                   Results
                 </h1>
                 {/* Round to two decimals */}
-                <h4 className="opacity-75">
-                  Score: {Math.round(submission.score * 100) / 100}%
-                </h4>
+                <div className="h-full flex flex-col justify-end">
+                  <p className="opacity-75">
+                    Score: {Math.round(submission.score * 100) / 100}%
+                  </p>
+                  <p className="opacity-75">
+                    Time Taken:{' '}
+                    {Math.round((submission.time_taken / 1000) * 100) / 100}{' '}
+                    seconds
+                  </p>
+                </div>
               </div>
               <main className="h-auto mt-10">
                 {submission.answers.map((answer, index) => {
