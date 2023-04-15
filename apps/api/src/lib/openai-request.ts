@@ -8,7 +8,7 @@ import {
   shuffleQuiz
 } from "@/util"
 import { CustomException } from "@/exceptions";
-import { IFreeResponseQuizQuestion } from "@nifty/server-lib/models/quiz";
+import { IFreeResponseQuizQuestion, IMultipleChoiceQuizQuestion } from "@nifty/server-lib/models/quiz";
 import { IFreeResponseSubmissionGradingResponse } from "@nifty/server-lib/models/submission";
 
 type FormatFn = (data: any) => string;
@@ -30,12 +30,14 @@ function formatNoteContent(noteContent: string): string {
 }
 
 export const openaiRequestHandler: {
-  [key: string]: RequestItem<any>;
+  multipleChoiceQuizGenerator: RequestItem<IMultipleChoiceQuizQuestion[]>;
+  freeResponseQuizGenerator: RequestItem<IFreeResponseQuizQuestion[]>;
+  freeResponseQuestionGradingGenerator: RequestItem<IFreeResponseSubmissionGradingResponse[]>;
 } = {
   multipleChoiceQuizGenerator: {
     format: formatNoteContent,
     sendRequest: generateMultipleChoiceQuizFromNote,
-    reformat: (stringifiedQuiz: string) => {
+    reformat: (stringifiedQuiz: string): IMultipleChoiceQuizQuestion[] => {
       // randomize the order of the questions and mark the correct_index
       const quizContent = JSON.parse(stringifiedQuiz).questions
       const randomizedQuiz = shuffleQuiz(quizContent);
@@ -45,7 +47,7 @@ export const openaiRequestHandler: {
   freeResponseQuizGenerator: {
     format: formatNoteContent,
     sendRequest: generateFreeResponseQuizFromNote,
-    reformat: (stringifiedQuiz: string): IFreeResponseQuizQuestion => {
+    reformat: (stringifiedQuiz: string): IFreeResponseQuizQuestion[] => {
       const questions = JSON.parse(stringifiedQuiz).questions
       return questions.map((question: string) => ({
         id: uuid(),
@@ -72,14 +74,18 @@ export const openaiRequestHandler: {
   },
 }
 
-export async function openaiRequest<T, U>(
-  { generator, payload, errorMessage }:
-    { generator: RequestItem<U>, payload: T, errorMessage?: string }
-): Promise<U> {
+export async function openaiRequest<T>(generatorItem: {
+  generator: RequestItem<T>;
+  payload: any;
+  errorMessage?: string;
+}): Promise<T> {
+  const { generator, payload, errorMessage } = generatorItem;
   try {
     const formattedPayload = generator.format(payload);
     const result = await generator.sendRequest(formattedPayload);
-    const formattedResult = generator.reformat(result);
+
+    const { reformat } = generator;
+    const formattedResult: ReturnType<typeof reformat> = generator.reformat(result);
     return formattedResult;
   } catch (err) {
     logger.error(`Error generating req: ${JSON.stringify(err)}}`);

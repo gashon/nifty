@@ -96,12 +96,12 @@ export class QuizController implements IQuizController {
     // generate quiz
     const [quizCollaborator, multipleChoiceResult, freeResponseResult] = await Promise.all([
       this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: setPermissions(Permission.ReadWriteDelete) }),
-      body.question_type.multiple_choice && openaiRequest<string, IMultipleChoiceQuizQuestion[]>({
+      body.question_type.multiple_choice && openaiRequest({
         payload: note.content,
         generator: openaiRequestHandler.multipleChoiceQuizGenerator,
         errorMessage: "Quiz could not be generated from note"
       }),
-      body.question_type.free_response && openaiRequest<string, IFreeResponseQuizQuestion[]>({
+      body.question_type.free_response && openaiRequest({
         payload: note.content,
         generator: openaiRequestHandler.freeResponseQuizGenerator,
         errorMessage: "Quiz could not be generated from note"
