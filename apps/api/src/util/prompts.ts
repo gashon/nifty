@@ -79,7 +79,8 @@ export const createFreeResponseGradingPrompt = (freeResponseQuestionsAndAnswers:
 export const createAsciiDiagramPrompt = (noteContent: string): string => {
   return `
     Generate an ascii diagram from the following note content. 
-    Return the diagram as a string.
+    The diagram should be a conceptual overview of the note content.
+    You may create a table, graph, diagram, or any other ascii art that you think is appropriate.
     ---
     ${noteContent}
     ---
