@@ -24,20 +24,24 @@ const MultipleChoice: FC<{
     <>
       {question.answers &&
         question.answers.map((answer, index) => (
-          <label key={index} className="cursor-pointer text-lg">
-            <input
-              className="mr-2"
-              type="radio"
-              name={`answer-${question.id}`}
-              value={index}
-              checked={selectedAnswer === index}
-              onChange={() => {
-                setSelectedAnswer(index);
-                onAnswerChange(question.id, index);
-              }}
-            />
-            {answer}
-          </label>
+          <div
+            key={index}
+            className={`cursor-pointer text-lg border-green 
+            ${selectedAnswer === index ? '' : 'opacity-75'}
+          `}
+            onClick={() => {
+              setSelectedAnswer(index);
+              onAnswerChange(question.id, index);
+            }}
+          >
+            <span className="opacity-50 mr-2">
+              {String.fromCharCode(index + 97)}.
+            </span>
+
+            <span className={`${index === selectedAnswer ? 'border-b-2' : ''}`}>
+              {answer}
+            </span>
+          </div>
         ))}
     </>
   );

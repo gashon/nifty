@@ -13,8 +13,8 @@ export const createMultipleChoiceQuizGenerationPrompt = (noteContent: string): s
         {
           "question": "Question 1",
           "answers": [
-            "Answer 1"<correct>,
-            "Answer 2"<incorrect>,
+            "Answer 1",
+            "Answer 2",
             ...
           ]
         },

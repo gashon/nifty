@@ -24,22 +24,6 @@ export const useCreateQuiz = ({ config }: UseCreateQuizOptions = {}) => {
       await queryClient.cancelQueries('quizzes');
 
       const previousQuizzes: InfiniteQueryData = queryClient.getQueryData('quizzes');
-      
-      // queryClient.setQueryData(['quizzes'], () => (
-      //   {
-      //     ...previousQuizzes,
-      //     pages: [
-      //       {
-      //         ...previousQuizzes.pages[0],
-      //         data: [
-      //           newQuiz,
-      //           ...previousQuizzes.pages[0].data,
-      //         ],
-      //       },
-      //       ...previousQuizzes.pages.slice(1),
-      //     ],
-      //   }
-      // ));
       return { previousQuizzes };
     },
     onError: (_, __, context: any) => {
