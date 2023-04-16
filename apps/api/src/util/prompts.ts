@@ -78,9 +78,8 @@ export const createFreeResponseGradingPrompt = (freeResponseQuestionsAndAnswers:
 
 export const createAsciiDiagramPrompt = (noteContent: string): string => {
   return `
-    Generate an ascii diagram from the following note content. 
-    The diagram should be a conceptual overview of the note content.
-    You may create a table, graph, diagram, or any other ascii art that you think is appropriate.
+    Generate an ASCII diagram that visually represents the relationships between the key concepts in the following note. 
+    The diagram should be a flowchart or a mind map that clearly shows how the concepts are interconnected. 
     Return the diagram as a string with newline characters.
     Do not include anything else in your response besides the diagram.
     You should be able to plug your response into a react component and render it.
