@@ -79,33 +79,43 @@ export const QuizCreationButton: FC = () => {
                   <div className="flex flex-row items-center gap-2">
                     <FieldWrapper
                       label="Quiz type"
-                      error={formState.errors['quiz_type'] as FieldError}
+                      error={formState.errors['question_type'] as FieldError}
                     >
                       <div className="flex flex-row items-center gap-2">
-                        <div className="flex flex-row items-center gap-2">
+                        <div
+                          className="flex flex-row items-center gap-2 "
+                          onClick={(e) => {
+                            setValue('question_type', 'multiple_choice');
+                          }}
+                        >
                           <input
                             type="radio"
                             name="question_type"
                             className="w-4 h-4"
                             value="multiple_choice"
                             checked={questionType === 'multiple_choice'}
-                            onChange={(e) => {
-                              setValue('question_type', 'multiple_choice');
-                            }}
                           />
-                          <label className="text-black">Multiple choice</label>
+                          <label className="text-black cursor-pointer">
+                            Multiple choice
+                          </label>
+                        </div>
 
+                        <div
+                          className="flex flex-row items-center gap-2"
+                          onClick={(e) => {
+                            setValue('question_type', 'free_response');
+                          }}
+                        >
                           <input
                             type="radio"
                             name="question_type"
                             className="w-4 h-4"
                             value="free_response"
                             checked={questionType === 'free_response'}
-                            onChange={(e) => {
-                              setValue('question_type', 'free_response');
-                            }}
                           />
-                          <label className="text-black">Free response</label>
+                          <label className="text-black cursor-pointer">
+                            Free response
+                          </label>
                         </div>
                       </div>
                     </FieldWrapper>

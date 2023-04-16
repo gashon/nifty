@@ -4,14 +4,17 @@ export const createMultipleChoiceQuizGenerationPrompt = (noteContent: string): s
   return `
     Generate a quiz from the following note content. 
     The quiz should have 5-10 questions with 4 possible answers for each.
-    The first answer should be the correct answer.
+    There should only be one objectively correct answer. 
+    The first answer in the array should be the correct answer. 
+    Your incorrect answers should be plausible, but incorrect.
     Return the quiz as a JSON object in the following format:
     {
       "questions": [
         {
           "question": "Question 1",
           "answers": [
-            "Answer 1",
+            "Answer 1"<correct>,
+            "Answer 2"<incorrect>,
             ...
           ]
         },
