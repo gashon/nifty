@@ -8,10 +8,18 @@ export const NoteDiagramDisplay: FC<{ documentId: string | undefined }> = ({
 
   if (!noteDiagram) return null;
 
-  const diagramWithNewLines = noteDiagram.data.content.replace(
-    /\\n/g,
-    String.fromCharCode(10)
-  );
+  const reactDiagramWithNewlines = noteDiagram.data.content
+    .split('\n')
+    .map((line) => {
+      return (
+        <span>
+          {line}
+          <br></br>
+        </span>
+      );
+    });
 
-  return <>{diagramWithNewLines}</>;
+  console.log(reactDiagramWithNewlines);
+
+  return <>{reactDiagramWithNewlines}</>;
 };
