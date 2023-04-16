@@ -49,6 +49,11 @@ const noteSchema = new mongoose.Schema<INote>({
     immutable: false,
     required: true,
   },
+  diagram: {
+    type: String,
+    ref: "NoteDiagram",
+    required: false,
+  },
   deleted_at: {
     type: Number,
     default: null,

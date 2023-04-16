@@ -3,6 +3,7 @@ import { FilterQuery, Model, Query } from 'mongoose';
 
 import Note, { NoteDocument, NoteListResponse } from "@nifty/server-lib/models/note";
 import Directory, { DirectoryDocument } from "@nifty/server-lib/models/directory";
+import NoteDiagram, { NoteDiagramDocument, INoteDiagram } from "@nifty/server-lib/models/note-diagram";
 import { INoteService, INote } from './interfaces';
 import { PaginationParams } from '@/types';
 
@@ -10,10 +11,12 @@ import { PaginationParams } from '@/types';
 export class NoteService implements INoteService {
   private noteModel: Model<NoteDocument>;
   private directoryModel: Model<DirectoryDocument>;
+  private noteDiagramModel: Model<NoteDiagramDocument>;
 
   constructor() {
     this.noteModel = Note;
     this.directoryModel = Directory;
+    this.noteDiagramModel = NoteDiagram;
   }
 
   async findNoteById(id: string): Promise<NoteDocument | null> {
@@ -135,5 +138,14 @@ export class NoteService implements INoteService {
     })
       .sort({ updated_at: -1 })
       .limit(k);
+  }
+
+  async createNoteDiagram(createdBy: string, data: Pick<INoteDiagram, "type" | "content">): Promise<NoteDiagramDocument> {
+    const doc = {
+      ...data,
+      created_by: createdBy,
+    }
+    const noteDiagram = await this.noteDiagramModel.create(doc);
+    return noteDiagram;
   }
 }

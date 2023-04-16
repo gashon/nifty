@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { FilterQuery, Query } from 'mongoose';
 
 import { INote, NoteDocument, NoteListResponse } from "@nifty/server-lib/models/note";
+import { INoteDiagram, NoteDiagramDocument } from "@nifty/server-lib/models/note-diagram";
 import { NoteCreateResponse } from "@/domains/note/types";
 import { PaginationParams } from "@/types";
 
@@ -22,6 +23,7 @@ interface INoteService {
   findNoteNeighbors(noteId: string, directoryId: string, sortBy: string, limit: number): Promise<{ before: NoteDocument[], after: NoteDocument[] }>
   paginateNotesByDirectoryId(directoryId: string, query: PaginationParams): Promise<Partial<NoteListResponse>>
   getKMostRecentNotes(userId: string, k: number): Promise<NoteDocument[]>
+  createNoteDiagram(createdBy: string, data: Pick<INoteDiagram, "type" | "content">): Promise<NoteDiagramDocument>
 }
 
 export { INote, INoteController, INoteService }; 

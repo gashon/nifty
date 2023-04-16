@@ -75,3 +75,13 @@ export const createFreeResponseGradingPrompt = (freeResponseQuestionsAndAnswers:
     ---
   `
 }
+
+export const createAsciiDiagramPrompt = (noteContent: string): string => {
+  return `
+    Generate an ascii diagram from the following note content. 
+    Return the diagram as a string.
+    ---
+    ${noteContent}
+    ---
+  `
+}

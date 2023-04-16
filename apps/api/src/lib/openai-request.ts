@@ -5,6 +5,7 @@ import {
   generateMultipleChoiceQuizFromNote,
   generateFreeResponseQuizFromNote,
   generateFreeResponseGrading,
+  generateAsciiDiagram,
   shuffleQuiz
 } from "@/util"
 import { CustomException } from "@/exceptions";
@@ -33,6 +34,7 @@ export const openaiRequestHandler: {
   multipleChoiceQuizGenerator: RequestItem<IMultipleChoiceQuizQuestion[]>;
   freeResponseQuizGenerator: RequestItem<IFreeResponseQuizQuestion[]>;
   freeResponseQuestionGradingGenerator: RequestItem<IFreeResponseSubmissionGradingResponse[]>;
+  asciiNoteDiagramGenerator: RequestItem<string>;
 } = {
   multipleChoiceQuizGenerator: {
     format: formatNoteContent,
@@ -72,6 +74,11 @@ export const openaiRequestHandler: {
       return grades;
     }
   },
+  asciiNoteDiagramGenerator: {
+    format: formatNoteContent,
+    sendRequest: generateAsciiDiagram,
+    reformat: (asciiDiagram: string) => asciiDiagram
+  }
 }
 
 export async function openaiRequest<T>(generatorItem: {

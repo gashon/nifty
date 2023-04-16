@@ -8,4 +8,3 @@ export interface INoteDiagram extends Resource {
 }
 
 export type NoteDiagramDocument = mongoose.Document<string, object, INoteDiagram> & INoteDiagram;
-

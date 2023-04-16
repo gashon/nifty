@@ -20,6 +20,7 @@ import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
 import { DIRECTORY_TYPES } from '@/domains/directory/types';
 import { setPermissions, Permission, checkPermissions } from '@/util';
 import { CollaboratorDocument } from '@nifty/server-lib/models/collaborator';
+import { openaiRequest, openaiRequestHandler } from '@/lib/openai-request';
 
 @controller('/v1/notes')
 export class NoteController implements INoteController {
@@ -202,6 +203,38 @@ export class NoteController implements INoteController {
     await this.noteService.deleteNoteById(id);
 
     res.status(status.NO_CONTENT).json();
+  }
+
+  @httpPost("/:id/diagram", auth())
+  async createDiagram(req: Request, res: Response): Promise<void> {
+    const userId = res.locals.user._id;
+    const noteId = req.params.id;
+
+    // validate note exists
+    const note = await this.noteService.findNoteById(noteId);
+    if (!note)
+      throw new CustomException('Note not found', status.NOT_FOUND);
+
+    // validate user has access to note
+    const collaborator = await this.collaboratorService.findCollaboratorByNoteIdAndUserId(note.id, userId);
+    if (!checkPermissions(note.public_permissions, Permission.ReadWrite) && !collaborator)
+      throw new CustomException('You do not have access to this note', status.FORBIDDEN);
+
+    const asciiDiagram = await openaiRequest({
+      generator: openaiRequestHandler.asciiNoteDiagramGenerator,
+      payload: note.content,
+      errorMessage: "Failed to generate diagram"
+    })
+
+    const diagram = await this.noteService.createNoteDiagram(userId, {
+      type: "ascii",
+      content: asciiDiagram,
+    });
+
+    note.set({ diagram: diagram.id });
+    await note.save();
+
+    res.status(status.CREATED).json({ data: diagram });
   }
 
 
