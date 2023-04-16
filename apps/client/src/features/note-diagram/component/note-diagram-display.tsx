@@ -19,7 +19,9 @@ export const NoteDiagramDisplay: FC<{ documentId: string | undefined }> = ({
       );
     });
 
-  console.log(reactDiagramWithNewlines);
-
-  return <>{reactDiagramWithNewlines}</>;
+  return (
+    <>
+      <section className="text-xl">{reactDiagramWithNewlines}</section>
+    </>
+  );
 };

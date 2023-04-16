@@ -149,10 +149,7 @@ export class NoteService implements INoteService {
     return noteDiagram;
   }
 
-  async findNoteDiagramByNoteId(noteId: string): Promise<NoteDiagramDocument | null> {
-    return this.noteDiagramModel.findOne({
-      note: noteId
-    });
+  async findNoteDiagramById(id: string): Promise<NoteDiagramDocument | null> {
+    return this.noteDiagramModel.findById(id);
   }
-
 }

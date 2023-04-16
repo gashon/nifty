@@ -35,6 +35,7 @@ const getOpenAIResponse = async (prompt: string) => {
 
 export const generateMultipleChoiceQuizFromNote = async (noteContent: string) => {
   const prompt = createMultipleChoiceQuizGenerationPrompt(noteContent);
+
   try {
     return getOpenAIResponse(prompt)
   } catch (err) {
@@ -62,6 +63,7 @@ export const generateFreeResponseGrading = async (freeResponseQuestionsAndAnswer
 
 export const generateFreeResponseQuizFromNote = async (noteContent: string) => {
   const prompt = createFreeResponseQuizGenerationPrompt(noteContent);
+
   try {
     return getOpenAIResponse(prompt)
   } catch (err) {
@@ -74,6 +76,7 @@ export const generateFreeResponseQuizFromNote = async (noteContent: string) => {
 
 export const generateAsciiDiagram = async (noteContent: string) => {
   const prompt = createAsciiDiagramPrompt(noteContent);
+
   try {
     return getOpenAIResponse(prompt)
   } catch (err) {

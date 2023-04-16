@@ -252,7 +252,12 @@ export class NoteController implements INoteController {
     if (!checkPermissions(note.public_permissions, Permission.Read) && !collaborator)
       throw new CustomException('You do not have access to this note', status.FORBIDDEN);
 
-    const diagram = await this.noteService.findNoteDiagramByNoteId(noteId);
+    if (!note.diagram) {
+      res.status(status.OK).json({ data: null });
+      return
+    }
+
+    const diagram = await this.noteService.findNoteDiagramById(note.diagram);
     if (!diagram)
       throw new CustomException('Diagram not found', status.NOT_FOUND);
 
