@@ -148,4 +148,11 @@ export class NoteService implements INoteService {
     const noteDiagram = await this.noteDiagramModel.create(doc);
     return noteDiagram;
   }
+
+  async findNoteDiagramByNoteId(noteId: string): Promise<NoteDiagramDocument | null> {
+    return this.noteDiagramModel.findOne({
+      note: noteId
+    });
+  }
+
 }

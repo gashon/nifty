@@ -27,9 +27,11 @@ const noteDiagramSchema = new mongoose.Schema<INoteDiagram>({
   }
 }, { timestamps: { updatedAt: "updated_at", createdAt: "created_at" } });
 
-noteDiagramSchema.plugin(mongooseObjectId("sub", "sub"));
+noteDiagramSchema.plugin(mongooseObjectId("diag", "diag"));
 
 noteDiagramSchema.index({ created_by: 1 }, {});
+noteDiagramSchema.index({ deleted_at: 1 }, {});
+
 
 export * from "./types";
 export default mongoose.models.NoteDiagram as Model<NoteDiagramDocument> ||

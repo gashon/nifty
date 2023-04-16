@@ -24,6 +24,7 @@ interface INoteService {
   paginateNotesByDirectoryId(directoryId: string, query: PaginationParams): Promise<Partial<NoteListResponse>>
   getKMostRecentNotes(userId: string, k: number): Promise<NoteDocument[]>
   createNoteDiagram(createdBy: string, data: Pick<INoteDiagram, "type" | "content">): Promise<NoteDiagramDocument>
+  findNoteDiagramByNoteId(noteId: string): Promise<NoteDiagramDocument | null>
 }
 
 export { INote, INoteController, INoteService }; 

@@ -81,6 +81,9 @@ export const createAsciiDiagramPrompt = (noteContent: string): string => {
     Generate an ascii diagram from the following note content. 
     The diagram should be a conceptual overview of the note content.
     You may create a table, graph, diagram, or any other ascii art that you think is appropriate.
+    Return the diagram as a string with newline characters.
+    Do not include anything else in your response besides the diagram.
+    You should be able to plug your response into a react component and render it.
     ---
     ${noteContent}
     ---

@@ -237,5 +237,26 @@ export class NoteController implements INoteController {
     res.status(status.CREATED).json({ data: diagram });
   }
 
+  @httpGet("/:id/diagram", auth())
+  async getDiagram(req: Request, res: Response): Promise<void> {
+    const userId = res.locals.user._id;
+    const noteId = req.params.id;
+
+    // validate note exists
+    const note = await this.noteService.findNoteById(noteId);
+    if (!note)
+      throw new CustomException('Note not found', status.NOT_FOUND);
+
+    // validate user has access to note
+    const collaborator = await this.collaboratorService.findCollaboratorByNoteIdAndUserId(note.id, userId);
+    if (!checkPermissions(note.public_permissions, Permission.Read) && !collaborator)
+      throw new CustomException('You do not have access to this note', status.FORBIDDEN);
+
+    const diagram = await this.noteService.findNoteDiagramByNoteId(noteId);
+    if (!diagram)
+      throw new CustomException('Diagram not found', status.NOT_FOUND);
+
+    res.status(status.OK).json({ data: diagram });
+  }
 
 }

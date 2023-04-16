@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useState, useEffect, FC } from 'react';
+import { CreateNoteDiagram, NoteDiagramDisplay } from '@/features/note-diagram';
 
 const LongPollDocumentEditor = dynamic(
   () => import('@/features/note/components/editor'),
@@ -44,6 +45,8 @@ export const DocumentSection: FC = () => {
           />
         </ErrorBoundary>
       </section>
+      <CreateNoteDiagram documentId={id as string} />
+      <NoteDiagramDisplay documentId={id as string} />
       <section className="w-full flex justify-between py-10 underline">
         <PageNavigation id={id as string} />
       </section>
