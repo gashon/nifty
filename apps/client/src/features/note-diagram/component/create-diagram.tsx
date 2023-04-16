@@ -1,19 +1,22 @@
 import { FC } from 'react';
 import { Button } from '@nifty/ui/atoms';
-import { axios } from '@/lib/axios';
-import { createNoteDiagram } from '@/features/note-diagram';
+import {
+  createNoteDiagram,
+  useCreateNoteDiagram,
+} from '@/features/note-diagram';
 
 export const CreateNoteDiagram: FC<{ documentId: string }> = ({
   documentId,
 }) => {
-  const handleClick = async () => {
-    const { data } = await createNoteDiagram(documentId);
-    console.log(data);
-  };
+  // Todo force websocket disk flush on create
+  const { mutateAsync: createNoteDiagramMutation } =
+    useCreateNoteDiagram(documentId);
 
   return (
     <>
-      <Button onClick={handleClick}>Create Note Diagram</Button>
+      <Button onClick={() => createNoteDiagramMutation(documentId)}>
+        Create Note Diagram
+      </Button>
     </>
   );
 };
