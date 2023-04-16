@@ -28,11 +28,12 @@ export class QuizService implements IQuizService {
     if (hideAnswers) {
       return this.quizModel.findOne({
         note: id,
+        deleted_at: null
       }, {
         'questions.correct_index': 0,
       });
     }
-    return this.quizModel.findOne({ note: id });
+    return this.quizModel.findOne({ note: id, deleted_at: null });
   }
 
   async findQuizzesByIds(ids: string[]): Promise<Query<(QuizDocument & Required<{ _id: string; }>)[], QuizDocument & Required<{ _id: string; }>, {}, QuizDocument>> {

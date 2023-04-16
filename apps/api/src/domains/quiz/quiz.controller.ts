@@ -80,11 +80,16 @@ export class QuizController implements IQuizController {
     const body: QuizCreateRequest = req.body;
     const noteId = body.note;
 
+    if (!body.question_type.multiple_choice && !body.question_type.free_response)
+      throw new CustomException('Quiz must have at least one question type', status.BAD_REQUEST);
+
+    if (body.question_type.multiple_choice && body.question_type.free_response)
+      throw new CustomException('Quiz cannot have both multiple choice and free response questions', status.BAD_REQUEST);
+
     // validate note exists
     const note = await this.noteService.findNoteById(noteId);
     if (!note)
       throw new CustomException('Note not found', status.NOT_FOUND);
-
 
     // validate user has access to directory and note doesn't already have a quiz
     const [collaborator, prevQuiz] = await Promise.all([
@@ -92,16 +97,11 @@ export class QuizController implements IQuizController {
       this.quizService.findQuizByNoteId(note.id),
     ]);
 
-    console.log("PREV", prevQuiz, note.id)
-
     if (!collaborator)
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
     if (prevQuiz)
       throw new CustomException(`This note already has a quiz titled "${prevQuiz.title}"`, status.BAD_REQUEST);
-
-    if (!body.question_type.multiple_choice && !body.question_type.free_response)
-      throw new CustomException('Quiz must have at least one question type', status.BAD_REQUEST);
 
     // generate quiz
     const [quizCollaborator, multipleChoiceResult, freeResponseResult, directory] = await Promise.all([
