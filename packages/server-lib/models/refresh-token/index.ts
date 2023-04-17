@@ -8,7 +8,7 @@ import { IRefreshToken, RefreshTokenDocument } from './types';
 
 const refreshTokenSchema = new mongoose.Schema<IRefreshToken>({
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'User',
     required: true,
     immutable: true,

@@ -1,9 +1,8 @@
-import { ObjectId } from "mongodb";
 import mongoose from '../../mongoose';
 import Resource from '../../utils/types/resource';
 
 export interface IRefreshToken extends Resource {
-  user: ObjectId;
+  user: string;
   expires_at: Date;
   created_by_ip: string;
 }

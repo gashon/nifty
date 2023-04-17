@@ -7,7 +7,7 @@ import { IToken, TokenDocument } from './types';
 
 const tokenSchema = new mongoose.Schema<IToken>({
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'User',
     required: true,
     immutable: true,

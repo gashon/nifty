@@ -1,4 +1,3 @@
-import { ObjectId } from "mongodb";
 import mongoose from "../../mongoose";
 import Resource from '../../utils/types/resource';
 import { Expand } from '../../utils/types/tsoa/expand';
@@ -34,8 +33,8 @@ export type IQuizFreeResponseAnswer = Pick<
 export type IQuizSubmissionAnswer = IQuizMultipleChoiceAnswer | IQuizFreeResponseAnswer
 
 export interface ISubmission extends Resource {
-  created_by: ObjectId;
-  quiz: ObjectId;
+  created_by: string;
+  quiz: string;
   grades: ISubmissionAnswer[],
   total_questions: number,
   total_correct: number,

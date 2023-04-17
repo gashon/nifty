@@ -6,13 +6,13 @@ import { ISubmission, SubmissionDocument } from "./types";
 
 const submissionSchema = new mongoose.Schema<ISubmission>({
   created_by: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: "User",
     required: true,
     immutable: true,
   },
   quiz: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: "Quiz",
     required: true,
     immutable: true,

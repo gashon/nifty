@@ -1,16 +1,14 @@
-import { ObjectId } from "mongodb";
-
 import mongoose from "../../mongoose";
 import Resource from '../../utils/types/resource';
 import { Expand } from '../../utils/types/tsoa/expand';
 import { ListResponse } from '../../utils/types/tsoa/list-response';
 
 export interface INote extends Resource {
-  created_by: ObjectId;
+  created_by: string;
   title: string;
   content: string;
   description: string;
-  collaborators: ObjectId[] | never[];
+  collaborators: string[];
   img_url: string;
   tags: string[];
   public_permissions: number; // unix permissions

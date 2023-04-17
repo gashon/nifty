@@ -6,7 +6,7 @@ import { INote, NoteDocument } from "./types";
 
 const noteSchema = new mongoose.Schema<INote>({
   created_by: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: "User",
     required: true,
     immutable: true,
@@ -28,7 +28,7 @@ const noteSchema = new mongoose.Schema<INote>({
     default: "",
   },
   collaborators: {
-    type: [mongoose.Schema.Types.ObjectId],
+    type: [String],
     default: [],
     immutable: false,
     required: true,
