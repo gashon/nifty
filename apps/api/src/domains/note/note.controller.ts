@@ -40,7 +40,6 @@ export class NoteController implements INoteController {
     const collaborators = await this.collaboratorService.findCollaboratorsByType(userId, "note");
     const noteIds = collaborators.map(c => c.foreign_key).filter(id => !!id);
 
-    console.log("HERE", noteIds)
     const notes = await this.noteService.getKMostRecentNotes(noteIds as string[], k);
     res.status(status.OK).json({ data: notes });
   }

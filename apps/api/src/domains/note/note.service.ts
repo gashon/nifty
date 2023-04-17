@@ -124,6 +124,7 @@ export class NoteService implements INoteService {
       _id: {
         $in: ids
       },
+      deleted_at: null
     }, {
       _id: 1,
       title: 1,
