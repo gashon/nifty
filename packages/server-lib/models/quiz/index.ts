@@ -6,20 +6,20 @@ import { IQuiz, QuizDocument } from "./types";
 
 const quizSchema = new mongoose.Schema<IQuiz>({
   created_by: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
     immutable: true,
   },
   collaborators: {
-    type: [String],
+    type: [mongoose.Schema.Types.ObjectId],
     default: [],
     immutable: false,
     required: true,
     ref: "Collaborator",
   },
   note: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     trim: true,
     required: true,
     ref: "Note",

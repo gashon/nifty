@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import mongoose from "../../mongoose";
 import Resource from '../../utils/types/resource';
 import { Expand } from '../../utils/types/tsoa/expand';
@@ -20,9 +21,9 @@ export type IQuizQuestion = IQuizMultipleChoiceQuestion | IQuizFreeResponseQuest
 export type IMultipleChoiceQuizQuestion = Extract<IQuizQuestion, { type: "multiple-choice" }>
 export type IFreeResponseQuizQuestion = Extract<IQuizQuestion, { type: "free-response" }>
 export interface IQuiz extends Resource {
-  created_by: string;
-  collaborators: string[];
-  note: string;
+  created_by: ObjectId;
+  collaborators: ObjectId[] | never[];
+  note: ObjectId;
   title: string;
   questions: IQuizQuestion[];
 }
