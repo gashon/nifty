@@ -32,7 +32,11 @@ export class DirectoryController implements IDirectoryController {
     if (k < 0 || k > 100)
       throw new CustomException('k must be between 0 and 100', status.BAD_REQUEST);
 
-    const notes = await this.directoryService.getKMostRecentNotes(userId, k);
+    const collaborators = await this.collaboratorService.findCollaboratorsByType(userId, "directory");
+    const directoryIds = collaborators.map(c => c.foreign_key).filter(id => !!id);
+
+    const notes = await this.directoryService.getKMostRecentDirectories(directoryIds as string[], k);
+
     res.status(status.OK).json({ data: notes });
   }
 

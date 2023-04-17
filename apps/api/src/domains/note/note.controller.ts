@@ -37,7 +37,11 @@ export class NoteController implements INoteController {
     if (k < 0 || k > 100)
       throw new CustomException('k must be between 0 and 100', status.BAD_REQUEST);
 
-    const notes = await this.noteService.getKMostRecentNotes(userId, k);
+    const collaborators = await this.collaboratorService.findCollaboratorsByType(userId, "note");
+    const noteIds = collaborators.map(c => c.foreign_key).filter(id => !!id);
+
+    console.log("HERE", noteIds)
+    const notes = await this.noteService.getKMostRecentNotes(noteIds as string[], k);
     res.status(status.OK).json({ data: notes });
   }
 
