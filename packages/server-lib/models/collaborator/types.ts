@@ -1,5 +1,3 @@
-import { ObjectId } from "mongodb";
-
 import mongoose from "../../mongoose";
 import Resource from '../../utils/types/resource';
 import { ListResponse } from '../../utils/types/tsoa/list-response';
@@ -9,10 +7,10 @@ export type PermissionsType = number; // 0-7
 export type CollaboratorType = 'directory' | 'note' | 'quiz';
 
 type CollaboratorBase = {
-  created_by: ObjectId;
-  user: ObjectId;
+  created_by: string;
+  user: string;
   permissions: PermissionsType;
-  foreign_key?: ObjectId; // updated after foreign creation
+  foreign_key?: string; // updated after foreign creation
 } & Resource;
 export type ICollaborator = ({
   type: Omit<CollaboratorType, "note">;

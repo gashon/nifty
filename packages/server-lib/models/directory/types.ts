@@ -1,16 +1,14 @@
-import { ObjectId } from "mongodb";
-
 import mongoose from "../../mongoose";
 import Resource from '../../utils/types/resource';
 import { Expand } from '../../utils/types/tsoa/expand';
 import { ListResponse } from '../../utils/types/tsoa/list-response';
 
 export interface IDirectory extends Resource {
-  created_by: ObjectId;
-  notes: ObjectId[] | never[];
+  created_by: string;
+  notes: string[];
   name: string;
-  parent: ObjectId;
-  collaborators: ObjectId[] | never[];
+  parent: string;
+  collaborators: string[];
   alias?: string;
   credits?: number;
 }

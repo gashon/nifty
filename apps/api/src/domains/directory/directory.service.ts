@@ -95,8 +95,9 @@ export class DirectoryService implements IDirectoryService {
       deleted_at: null,
       collaborators: {
         $elemMatch: {
-          user: userId
-        }
+          user: userId,
+          deleted_at: null,
+        },
       }
     }, {
       _id: 1,
