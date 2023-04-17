@@ -93,8 +93,11 @@ export class DirectoryService implements IDirectoryService {
   async getKMostRecentNotes(userId: string, k: number): Promise<DirectoryDocument[]> {
     return this.directoryModel.find({
       deleted_at: null,
-      filter: {
-        "collaborators.user": userId,
+      collaborators: {
+        $elemMatch: {
+          user: userId,
+          deleted_at: null,
+        },
       }
     }, {
       _id: 1,
