@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
-import { IQuizQuestion } from '@nifty/server-lib/models/quiz';
+import { IMultipleChoiceQuizQuestion } from '@nifty/server-lib/models/quiz';
 
-export function shuffleQuiz(questions: IQuizQuestion[]) {
+export function shuffleQuiz(questions: IMultipleChoiceQuizQuestion[]): IMultipleChoiceQuizQuestion[] {
   return questions.map((question: any) => {
     // shallow copy
     const answers = [...question.answers];

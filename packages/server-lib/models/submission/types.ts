@@ -3,23 +3,39 @@ import Resource from '../../utils/types/resource';
 import { Expand } from '../../utils/types/tsoa/expand';
 import { ListResponse } from '../../utils/types/tsoa/list-response';
 
-export interface ISubmissionAnswer {
+export type ISubmissionAnswer = {
   question_id: string;
   type: "multiple-choice";
-  correct_index: number;
   answer_index: number;
+  is_correct: boolean;
+  correct_index: number;
+} |
+{
+  question_id: string;
+  type: "free-response";
+  answer_text: string;
+  feedback_text: string;
   is_correct: boolean;
 }
 
-export type IQuizSubmissionAnswer = Pick<
-  ISubmissionAnswer,
-  'question_id' | 'type' | 'answer_index'
->;
+export type IFreeResponseSubmissionAnswer = Extract<ISubmissionAnswer, { type: "free-response" }>
+export type IMultipleChoiceSubmissionAnswer = Extract<ISubmissionAnswer, { type: "multiple-choice" }>
+export type IFreeResponseSubmissionGradingResponse = Omit<IFreeResponseSubmissionAnswer, "answer_text" | "type">
+
+export type IQuizMultipleChoiceAnswer = Pick<
+  IMultipleChoiceSubmissionAnswer,
+  'question_id' | 'answer_index' | "type"
+>
+export type IQuizFreeResponseAnswer = Pick<
+  IFreeResponseSubmissionAnswer,
+  'question_id' | 'answer_text' | "type"
+>
+export type IQuizSubmissionAnswer = IQuizMultipleChoiceAnswer | IQuizFreeResponseAnswer
 
 export interface ISubmission extends Resource {
   created_by: string;
   quiz: string;
-  answers: ISubmissionAnswer[],
+  grades: ISubmissionAnswer[],
   total_questions: number,
   total_correct: number,
   total_incorrect: number,

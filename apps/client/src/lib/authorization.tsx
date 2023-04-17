@@ -15,7 +15,7 @@ type checkAccessArgs =
 
 export const POLICIES = {
   'theme:mutate': {
-    allowedPermissions: [USER_PERMISSIONS.GENERAL],
+    allowedPermissions: [USER_PERMISSIONS.BETA_TESTER],
   },
 };
 
@@ -38,7 +38,9 @@ export const useAuthorization = () => {
 
       if (
         allowedPermissions &&
-        !allowedPermissions.some(permission => (user?.permissions || []).includes(permission))
+        !allowedPermissions.some((permission) =>
+          (user?.permissions || []).includes(permission)
+        )
       ) {
         return false;
       }
@@ -56,7 +58,11 @@ type AuthorizationProps = {
   children: ReactNode;
 } & (
   | (checkAccessArgs & { checkPolicy?: never })
-  | { checkPolicy: keyof typeof POLICIES; allowedRoles?: never; allowedPermissions?: never }
+  | {
+      checkPolicy: keyof typeof POLICIES;
+      allowedRoles?: never;
+      allowedPermissions?: never;
+    }
 );
 
 export const Authorization = ({
@@ -69,7 +75,11 @@ export const Authorization = ({
   const { checkAccess } = useAuthorization();
 
   const policy = POLICIES[checkPolicy] || {};
-  const canAccess = checkAccess({ allowedRoles, allowedPermissions, ...policy });
+  const canAccess = checkAccess({
+    allowedRoles,
+    allowedPermissions,
+    ...policy,
+  });
 
   return <>{canAccess ? children : forbiddenFallback}</>;
 };

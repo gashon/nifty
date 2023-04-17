@@ -43,10 +43,15 @@ function Module({ notes, user, id }) {
 export async function getServerSideProps(context) {
   const { id } = context.params;
 
-  const [{ data: notes }, { data: user }] = await Promise.all([
+  const [notesSettle, userSettle] = await Promise.allSettled([
     getNotes(id, { limit: 5 }, context.req.headers),
     getUser(context.req.headers),
   ]);
+
+  const notes =
+    notesSettle.status === 'fulfilled' ? notesSettle.value?.data : null;
+  const user =
+    userSettle.status === 'fulfilled' ? userSettle.value?.data : null;
 
   if (!user) {
     return {

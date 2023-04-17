@@ -34,7 +34,7 @@ const quizSchema = new mongoose.Schema<IQuiz>({
         type: {
           type: String,
           required: true,
-          enum: ["multiple-choice"],
+          enum: ["multiple-choice", "free-response"],
         },
         question: {
           type: String,
@@ -43,9 +43,13 @@ const quizSchema = new mongoose.Schema<IQuiz>({
         },
         answers: {
           type: [String],
+          required: false,
+          default: null,
         },
         correct_index: {
           type: Number,
+          required: false,
+          default: null,
         },
       },
     ],

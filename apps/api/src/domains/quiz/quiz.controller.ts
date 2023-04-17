@@ -1,13 +1,12 @@
 import status from 'http-status';
-import { controller, httpGet, httpPost, httpPatch, httpDelete } from 'inversify-express-utils';
+import { controller, httpGet, httpPost, httpDelete } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { Request, Response } from 'express';
 import { FilterQuery } from 'mongoose';
 
 import auth from '@/middlewares/auth';
-import { openaiRequestHandler } from "@/lib/openai-request"
+import { openaiRequestHandler, openaiRequest } from "@/lib/openai-request"
 import { CustomException } from '@/exceptions';
-import { QuizCreateRequest } from '@nifty/server-lib/models/quiz';
 import { PaginationParams } from '@/types';
 import {
   IQuizService,
@@ -23,8 +22,10 @@ import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
 import { DIRECTORY_TYPES } from '@/domains/directory/types';
 import { INoteService } from '../note';
 import { CollaboratorDocument } from '@nifty/server-lib/models/collaborator';
-import { setPermissions, Permission } from '@/util';
-import { SubmissionCreateRequest, ISubmissionAnswer } from '@nifty/server-lib/models/submission';
+import { setPermissions, Permission, gradeQuestions } from '@/util';
+import { SubmissionCreateRequest, ISubmissionAnswer, IQuizMultipleChoiceAnswer, IQuizFreeResponseAnswer, IMultipleChoiceSubmissionAnswer, IFreeResponseSubmissionAnswer, } from '@nifty/server-lib/models/submission';
+import { QuizCreateRequest, IFreeResponseQuizQuestion, IMultipleChoiceQuizQuestion, IQuizMultipleChoiceQuestion, IQuizFreeResponseQuestion } from '@nifty/server-lib/models/quiz';
+
 @controller('/v1/quizzes')
 export class QuizController implements IQuizController {
   constructor(
@@ -76,37 +77,56 @@ export class QuizController implements IQuizController {
   @httpPost("/", auth())
   async createQuiz(req: Request, res: Response): Promise<Response<QuizCreateResponse>> {
     const createdBy = res.locals.user._id;
-    const noteId = req.body.note;
+    const body: QuizCreateRequest = req.body;
+    const noteId = body.note;
+
+    if (!body.question_type.multiple_choice && !body.question_type.free_response)
+      throw new CustomException('Quiz must have at least one question type', status.BAD_REQUEST);
+
+    if (body.question_type.multiple_choice && body.question_type.free_response)
+      throw new CustomException('Quiz cannot have both multiple choice and free response questions', status.BAD_REQUEST);
 
     // validate note exists
     const note = await this.noteService.findNoteById(noteId);
     if (!note)
       throw new CustomException('Note not found', status.NOT_FOUND);
 
-    // validate user has access to directory
-    const collaborator = await this.collaboratorService.findCollaboratorByNoteIdAndUserId(note.id, createdBy);
+    // validate user has access to directory and note doesn't already have a quiz
+    const [collaborator, prevQuiz] = await Promise.all([
+      this.collaboratorService.findCollaboratorByNoteIdAndUserId(note.id, createdBy),
+      this.quizService.findQuizByNoteId(note.id),
+    ]);
+
     if (!collaborator)
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
-    const { format, sendRequest, reformat } = openaiRequestHandler.quizGenerator;
+    if (prevQuiz)
+      throw new CustomException(`This note already has a quiz titled "${prevQuiz.title}"`, status.BAD_REQUEST);
 
-    const noteContent = format(note.content);
-    const [quizCollaborator, requestResult] = await Promise.all([
+    // generate quiz
+    const [quizCollaborator, multipleChoiceResult, freeResponseResult, directory] = await Promise.all([
       this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: setPermissions(Permission.ReadWriteDelete) }),
-      sendRequest(noteContent)
+      body.question_type.multiple_choice && openaiRequest({
+        payload: note.content,
+        generator: openaiRequestHandler.multipleChoiceQuizGenerator,
+        errorMessage: "Quiz could not be generated from note"
+      }),
+      body.question_type.free_response && openaiRequest({
+        payload: note.content,
+        generator: openaiRequestHandler.freeResponseQuizGenerator,
+        errorMessage: "Quiz could not be generated from note"
+      }),
+      !req.body.title && this.directoryService.findDirectoryByNoteId(note.id),
     ]);
 
-    if (!requestResult)
-      throw new CustomException('Quiz could not be generated from note', status.BAD_REQUEST);
-
-    let randomizedQuiz
-    try {
-      randomizedQuiz = reformat(requestResult);
-    } catch (err) {
-      throw new CustomException('Quiz could not be generated from note', status.BAD_REQUEST);
+    let title = req.body.title;
+    if (!title && directory) {
+      title = `${directory.name}: ${note.title}`;
     }
 
-    const quiz = await this.quizService.createQuiz(createdBy, { title: req.body.title, questions: randomizedQuiz, note: noteId, collaborators: [quizCollaborator.id] } as QuizCreateRequest);
+    // create quiz 
+    const quizQuestions = [...(multipleChoiceResult || []), ...(freeResponseResult || [])];
+    const quiz = await this.quizService.createQuiz(createdBy, { title, questions: quizQuestions, note: noteId, collaborators: [quizCollaborator.id] });
 
     quizCollaborator.set({ foreign_key: quiz.id });
     quizCollaborator.save();
@@ -152,53 +172,39 @@ export class QuizController implements IQuizController {
       throw new CustomException('You do not have access to this quiz', status.FORBIDDEN);
 
     // grading logic
-    // todo move-me to util or service
-    let stats = {
-      total_correct: 0,
-      total_incorrect: 0,
-      total_unanswered: 0,
-    }
     const submissionAnswers: ISubmissionAnswer[] = [];
-    for (const answer of (submissionAttributes.answers ?? [])) {
-      // find question
-      const question = quiz.questions.find(question => question.id === answer.question_id);
-      if (!question)
+    const questionsAndAnswers = quiz.questions.map((question) => {
+      const answer = submissionAttributes.answers?.find(answer => answer.question_id === question.id);
+      if (!answer)
         throw new CustomException('Invalid question id', status.BAD_REQUEST);
 
-      const isCorrect = answer.answer_index === question.correct_index;
-      if (question.type === "multiple-choice") {
-        if (isCorrect)
-          stats.total_correct++;
-        else
-          stats.total_incorrect++;
+      return { question, answer }
+    })
 
-        submissionAnswers.push({
-          question_id: answer.question_id,
-          type: question.type,
-          answer_index: answer.answer_index,
-          correct_index: question.correct_index!,
-          is_correct: isCorrect,
-        });
-      }
-    }
-    stats.total_unanswered = quiz.questions.length - (stats.total_correct + stats.total_incorrect);
+    const {
+      multipleChoiceStats,
+      multipleChoiceGrades,
+      freeResponseStats,
+      freeResponseGrades,
+    } = await gradeQuestions(questionsAndAnswers);
 
+    const stats = {
+      total_correct: multipleChoiceStats.total_correct + freeResponseStats.total_correct,
+      total_incorrect: multipleChoiceStats.total_incorrect + freeResponseStats.total_incorrect,
+    };
     const score = (stats.total_correct / quiz.questions.length) * 100;
+
     const submission = await this.quizService.submitQuiz(userId, {
       quiz: quiz.id,
       time_taken: req.body.time_taken,
-      answers: submissionAnswers,
+      grades: [...multipleChoiceGrades, ...freeResponseGrades],
       total_questions: quiz.questions.length,
+      total_unanswered: quiz.questions.length - submissionAnswers.length,
+      score,
       ...stats,
-      score
     });
 
     res.status(status.CREATED).json({ data: submission });
-  }
-
-  @httpGet('/:id/submissions', auth())
-  async getSubmissions(req: Request, res: Response): Promise<void> {
-
   }
 
   @httpGet('/submissions/:submissionId', auth())
@@ -217,4 +223,11 @@ export class QuizController implements IQuizController {
     submission = await submission.populate('quiz');
     res.status(status.OK).json({ data: submission });
   }
+
+  @httpGet('/:id/submissions', auth())
+  async getSubmissions(req: Request, res: Response): Promise<void> {
+
+  }
+
+
 }

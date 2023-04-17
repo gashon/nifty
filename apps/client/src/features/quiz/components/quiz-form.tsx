@@ -3,47 +3,80 @@ import { FiArrowRight } from 'react-icons/fi';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@nifty/ui/atoms';
-import { IQuizQuestion } from '@nifty/server-lib/models/quiz';
+import {
+  IMultipleChoiceQuizQuestion,
+  IFreeResponseQuizQuestion,
+} from '@nifty/server-lib/models/quiz';
 import { IQuizSubmissionAnswer } from '@nifty/server-lib/models/submission';
 import { useQuizSession, useCreateSubmission } from '@/features/quiz';
 
-type QuizQuestion = Omit<IQuizQuestion, 'correct_index'>;
+type QuizQuestion =
+  | Omit<IMultipleChoiceQuizQuestion, 'correct_index'>
+  | IFreeResponseQuizQuestion;
 
-// todo: turn into switch for different types of questions
-const QuizQuestion: FC<{
-  question: QuizQuestion;
-  onAnswerChange: (id: string, answerIndex: number) => void;
+const MultipleChoice: FC<{
+  question: Extract<QuizQuestion, { type: 'multiple-choice' }>;
+  onAnswerChange: (id: string, userAnswer: number) => void;
 }> = ({ question, onAnswerChange }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number>(-1);
 
-  const handleAnswerChange = (answerIndex: number) => {
-    setSelectedAnswer(answerIndex);
-    onAnswerChange(question.id, answerIndex);
-  };
-
   return (
-    <div className="w-full flex justify-center flex-col mt-5">
-      <p className="text-xl underline mb-1">{question.question}</p>
+    <>
       {question.answers &&
         question.answers.map((answer, index) => (
-          <label key={index} className="cursor-pointer text-lg">
-            <input
-              className="mr-2"
-              type="radio"
-              name={`answer-${question.id}`}
-              value={index}
-              checked={selectedAnswer === index}
-              onChange={() => handleAnswerChange(index)}
-            />
-            {answer}
-          </label>
+          <div
+            key={index}
+            className={`cursor-pointer text-lg border-green 
+            ${selectedAnswer === index ? '' : 'opacity-75'}
+          `}
+            onClick={() => {
+              setSelectedAnswer(index);
+              onAnswerChange(question.id, index);
+            }}
+          >
+            <span className="opacity-50 mr-2">
+              {String.fromCharCode(index + 97)}.
+            </span>
+
+            <span className={`${index === selectedAnswer ? 'border-b-2' : ''}`}>
+              {answer}
+            </span>
+          </div>
         ))}
-    </div>
+    </>
   );
+};
+
+const FreeResponse: FC<{
+  question: Extract<QuizQuestion, { type: 'free-response' }>;
+  onAnswerChange: (id: string, userAnswer: string) => void;
+}> = ({ question, onAnswerChange }) => {
+  return (
+    <>
+      <textarea
+        className="w-full h-28 p-2 text-primary opacity-75 rounded bg-transparent border-none"
+        placeholder="Answer..."
+        onChange={(e) => {
+          onAnswerChange(question.id, e.target.value);
+        }}
+      />
+    </>
+  );
+};
+
+const QuizQuestion: FC<{
+  question: QuizQuestion;
+  onAnswerChange: (id: string, userAnswer: number | string) => void;
+}> = ({ question, onAnswerChange }) => {
+  if (question.type === 'free-response')
+    return <FreeResponse question={question} onAnswerChange={onAnswerChange} />;
+
+  return <MultipleChoice question={question} onAnswerChange={onAnswerChange} />;
 };
 
 const MemoizedQuizQuestion = memo(QuizQuestion);
 
+// todo migrate to formik
 export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
   questions,
   quizId,
@@ -51,11 +84,19 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
   const submitQuizMutation = useCreateSubmission(quizId);
   const { getTotalTime, startSession, deleteSessions } = useQuizSession(quizId);
   const [answers, setAnswers] = useState<IQuizSubmissionAnswer[]>(
-    questions.map((question) => ({
-      question_id: question.id,
-      answer_index: -1,
-      type: question.type,
-    }))
+    questions.map((question) => {
+      return question.type === 'multiple-choice'
+        ? {
+            question_id: question.id,
+            answer_index: -1,
+            type: question.type,
+          }
+        : {
+            question_id: question.id,
+            answer_text: '',
+            type: question.type,
+          };
+    })
   );
   const { handleSubmit, formState } = useForm();
 
@@ -64,14 +105,21 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
   }, [startSession]);
 
   const onAnswerChange = useCallback(
-    (questionId: string, answerIndex: number) => {
+    (questionId: string, userAnswer: string | number) => {
       setAnswers((prevAnswers): IQuizSubmissionAnswer[] => {
         const answer = prevAnswers.find((a) => a.question_id === questionId);
         if (answer) {
+          if (answer.type === 'free-response') {
+            return prevAnswers.map((a) =>
+              a.question_id === questionId
+                ? { ...a, answer_text: userAnswer as string }
+                : a
+            );
+          }
           // update answer index
           return prevAnswers.map((a) =>
             a.question_id === questionId
-              ? { ...a, answer_index: answerIndex }
+              ? { ...a, answer_index: userAnswer as number }
               : a
           );
         }
@@ -87,7 +135,6 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
       quiz_id: quizId,
       time_taken: getTotalTime(),
     };
-    console.log('payload', payload);
     const { data } = await submitQuizMutation.mutateAsync(payload);
     // clean up localStorage
     deleteSessions();
@@ -102,8 +149,13 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
         className="w-full flex flex-col align-center justify-center"
       >
         <>
-          {questions.map((question) => (
-            <div className="mb-5">
+          {questions.map((question, index) => (
+            <div className="mb-5 flex flex-col" key={question.id}>
+              <div className="flex flex-row mb-2 text-xl">
+                <p className="opacity-75 mr-1">{index + 1}. </p>
+                <p> {question.question}</p>
+              </div>
+
               <MemoizedQuizQuestion
                 key={question.id}
                 question={question}

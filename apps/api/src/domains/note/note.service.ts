@@ -122,8 +122,11 @@ export class NoteService implements INoteService {
   async getKMostRecentNotes(userId: string, k: number): Promise<NoteDocument[]> {
     return this.noteModel.find({
       deleted_at: null,
-      filter: {
-        "collaborators.user": userId,
+      collaborators: {
+        $elemMatch: {
+          user: userId,
+          deleted_at: null,
+        },
       }
     }, {
       _id: 1,
