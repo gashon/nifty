@@ -6,13 +6,13 @@ import { ICollaborator, CollaboratorDocument, PermissionsType } from './types';
 
 const collaboratorSchema = new mongoose.Schema<ICollaborator>({
   created_by: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
     immutable: true,
   },
   user: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
     immutable: true,
@@ -23,7 +23,7 @@ const collaboratorSchema = new mongoose.Schema<ICollaborator>({
     immutable: true,
   },
   foreign_key: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
   },
   permissions: {
     type: Number,

@@ -6,13 +6,13 @@ import { IDirectory, DirectoryDocument } from './types';
 
 const directorySchema = new mongoose.Schema<IDirectory>({
   created_by: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
     immutable: true,
   },
   notes: {
-    type: [String],
+    type: [mongoose.Schema.Types.ObjectId],
     default: [],
     immutable: false,
     required: true,
@@ -31,13 +31,13 @@ const directorySchema = new mongoose.Schema<IDirectory>({
     type: Number,
   },
   parent: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Directory",
     required: false,
     immutable: false,
   },
   collaborators: {
-    type: [String],
+    type: [mongoose.Schema.Types.ObjectId],
     default: [],
     immutable: false,
     required: true,
