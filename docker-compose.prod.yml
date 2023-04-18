@@ -11,7 +11,8 @@ services:
     expose:
       - 8080
       - 7000
-      - 3000
+    ports:
+      - '${APP_PORT:-3000}:3000'
     environment:
       - NODE_ENV=production
       - DOPPLER_API_TOKEN=dp.st.dev.SknzmNVAiH0IgIgNy0x29dAgVLfikZ3rdan7ix6TS6N
@@ -21,7 +22,7 @@ services:
       - redis
 
   nginx:
-    image: nginx:latest 
+    image: nginx:latest
     restart: always
     ports:
       - '${NGINX_PORT:-3001}:80'
