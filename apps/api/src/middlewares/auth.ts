@@ -16,7 +16,6 @@ export default function auth() {
       if (accessToken && accessToken.expires_at > new Date() && !accessToken.deleted_at) {
         // Set locals
         res.locals.user = accessToken.user;
-        console.log("Attaching", accessToken)
         return next();
       }
 
