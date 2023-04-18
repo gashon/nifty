@@ -35,7 +35,7 @@ export const Navbar = () => {
         <div className="hidden h-8 w-[1px] bg-zinc-200 dark:bg-zinc-700 md:inline-block" />
         <ul className="flex items-center gap-6">
           <li>
-            <NavLink href="https://github.com/gashon/note-hive" external>
+            <NavLink href="https://github.com/gashon/nifty" external>
               <FiGithub title="Github" size={22} />
             </NavLink>
           </li>
