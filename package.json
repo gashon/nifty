@@ -1,9 +1,9 @@
 {
-  "name": "note-hive",
+  "name": "nifty",
   "version": "1.0.0",
   "private": true,
   "packageManager": "npm@9.2.0",
-  "repository": "https://github.com/gashon/note-hive",
+  "repository": "https://github.com/gashon/nifty",
   "license": "MIT",
   "npmScope": "@nifty",
   "workspaces": {

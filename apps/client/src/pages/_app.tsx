@@ -69,14 +69,10 @@ export default function App({ Component, pageProps }: AppProps) {
             <ThemeProvider>
               <ToastContainer />
               <Component {...pageProps} />
-              {process.env.NEXT_PUBLIC_FEEDER_PROJECT_ID && (
-                <UserFeedback
-                  // @ts-ignore
-                  projectId={
-                    process.env.NEXT_PUBLIC_FEEDER_PROJECT_ID as string
-                  }
-                />
-              )}
+              {/* todo hide feedback in dev mode */}
+              <UserFeedback
+                projectId={process.env.NEXT_PUBLIC_FEEDER_PROJECT_ID}
+              />
             </ThemeProvider>
             {process.env.NODE_ENV !== 'test' && (
               <ReactQueryDevtools position={'bottom-right'} />

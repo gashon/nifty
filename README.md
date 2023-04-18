@@ -7,7 +7,7 @@ Nifty is a powerful and easy-to-use note taking web application, designed to hel
 Clone the repository:
 
 ```bash
-git clone https://github.com/gashon/note-hive.git nifty
+git clone https://github.com/gashon/nifty.git nifty
 cd nifty
 ```
 

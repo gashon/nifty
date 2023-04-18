@@ -36,12 +36,12 @@ export const Navbar: FC = () => {
             <NavLink href="/">Home</NavLink>
           </li>
           <li>
-            <NavLink href="https://github.com/gashon/note-hive" external>
+            <NavLink href="https://github.com/gashon/nifty" external>
               Contributing
             </NavLink>
           </li>
           <li>
-            <NavLink href="https://github.com/gashon/note-hive" external>
+            <NavLink href="https://github.com/gashon/nifty" external>
               Design System
             </NavLink>
           </li>
@@ -49,17 +49,17 @@ export const Navbar: FC = () => {
         <div className="hidden h-8 w-[1px] bg-zinc-200 dark:bg-zinc-700 md:inline-block" />
         <ul className="flex items-center gap-6">
           <li>
-            <NavLink href="https://github.com/gashon/note-hive" external>
+            <NavLink href="https://github.com/gashon/nifty" external>
               <FiGithub title="Github" size={22} />
             </NavLink>
           </li>
           <li>
-            <NavLink href="https://github.com/gashon/note-hive" external>
+            <NavLink href="https://github.com/gashon/nifty" external>
               <FiTwitter title="Twitter" size={22} />
             </NavLink>
           </li>
           <li>
-            <NavLink href="https://github.com/gashon/note-hive" external>
+            <NavLink href="https://github.com/gashon/nifty" external>
               <FaDiscord title="Discord" size={22} />
             </NavLink>
           </li>
