@@ -1,6 +1,35 @@
 version: '3.9'
 
 services:
+  app:
+    build:
+      context: ./
+      target: app
+      args:
+        - DOPPLER_CLIENT_TOKEN=dp.st.dev.SknzmNVAiH0IgIgNy0x29dAgVLfikZ3rdan7ix6TS6N
+    restart: always
+    expose:
+      - 8080
+      - 7000
+      - 3000
+    environment:
+      - NODE_ENV=production
+      - DOPPLER_API_TOKEN=dp.st.dev.SknzmNVAiH0IgIgNy0x29dAgVLfikZ3rdan7ix6TS6N
+      - DOPPLER_CLIENT_TOKEN=dp.st.dev.x5U1kckTzi0R2NqMo2Eku8shU6r7FsG7PH6EwzolYuP
+    depends_on:
+      - mongo
+      - redis
+
+  nginx:
+    image: nginx:latest 
+    restart: always
+    ports:
+      - '${NGINX_PORT:-3001}:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - app
+
   mongo:
     image: mongo:4.4
     restart: always
@@ -8,7 +37,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: nifty
     ports:
-      - "${MONGO_PORT:-27017}:27017"
+      - '${MONGO_PORT:-27017}:27017'
     volumes:
       - mongo_data:/data/db
     command: mongod --bind_ip_all --auth
@@ -17,7 +46,7 @@ services:
     image: redis:latest
     restart: always
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - '${REDIS_PORT:-6379}:6379'
     volumes:
       - redis_data:/data
 
