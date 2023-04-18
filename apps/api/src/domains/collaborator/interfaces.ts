@@ -16,6 +16,7 @@ interface ICollaboratorService {
   createCollaborator(createdBy: string, data: CollaboratorCreateRequest): Promise<CollaboratorDocument>;
   findCollaboratorsByIds(ids: string[]): Promise<CollaboratorDocument[]>
   findCollaboratorByForeignKeyAndUserId(foreignKey: string, userId: string): Promise<CollaboratorDocument | null>;
+  findCollaboratorsByType(userId: string, type: CollaboratorType): Promise<CollaboratorDocument[]>
 }
 
 export { ICollaborator, ICollaboratorController, ICollaboratorService };

@@ -90,23 +90,12 @@ export class DirectoryService implements IDirectoryService {
     })
   }
 
-  async getKMostRecentNotes(userId: string, k: number): Promise<DirectoryDocument[]> {
+  async getKMostRecentDirectories(ids: string[], k: number): Promise<DirectoryDocument[]> {
     return this.directoryModel.find({
-      deleted_at: null,
-      collaborators: {
-        $elemMatch: {
-          user: userId,
-          deleted_at: null,
-        },
-      }
-    }, {
-      _id: 1,
-      name: 1,
-      created_at: 1,
-      updated_at: 1,
-      collaborators: 1,
-    })
-      .sort({ updated_at: -1 })
-      .limit(k);
+      _id: {
+        $in: ids
+      },
+      deleted_at: null
+    }).sort({ created_at: -1 }).limit(k);
   }
 }

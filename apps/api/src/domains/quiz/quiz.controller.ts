@@ -22,9 +22,9 @@ import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
 import { DIRECTORY_TYPES } from '@/domains/directory/types';
 import { INoteService } from '../note';
 import { CollaboratorDocument } from '@nifty/server-lib/models/collaborator';
-import { setPermissions, Permission, gradeQuestions } from '@/util';
-import { SubmissionCreateRequest, ISubmissionAnswer, IQuizMultipleChoiceAnswer, IQuizFreeResponseAnswer, IMultipleChoiceSubmissionAnswer, IFreeResponseSubmissionAnswer, } from '@nifty/server-lib/models/submission';
-import { QuizCreateRequest, IFreeResponseQuizQuestion, IMultipleChoiceQuizQuestion, IQuizMultipleChoiceQuestion, IQuizFreeResponseQuestion } from '@nifty/server-lib/models/quiz';
+import { setPermissions, Permission, gradeQuestions, countTokens } from '@/util';
+import { SubmissionCreateRequest, ISubmissionAnswer, } from '@nifty/server-lib/models/submission';
+import { QuizCreateRequest, } from '@nifty/server-lib/models/quiz';
 
 @controller('/v1/quizzes')
 export class QuizController implements IQuizController {
@@ -90,6 +90,13 @@ export class QuizController implements IQuizController {
     const note = await this.noteService.findNoteById(noteId);
     if (!note)
       throw new CustomException('Note not found', status.NOT_FOUND);
+
+    const numTokens = countTokens(note.content);
+    if (numTokens > 2500)
+      throw new CustomException('Note must be less than 2500 words', status.BAD_REQUEST);
+
+    if (numTokens < 25)
+      throw new CustomException('Note must be at least 25 words', status.BAD_REQUEST);
 
     // validate user has access to directory and note doesn't already have a quiz
     const [collaborator, prevQuiz] = await Promise.all([

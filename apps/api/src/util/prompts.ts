@@ -7,6 +7,7 @@ export const createMultipleChoiceQuizGenerationPrompt = (noteContent: string): s
     There should only be one objectively correct answer. 
     The first answer in the array should be the correct answer. 
     Your incorrect answers should be plausible, but incorrect.
+    You may include some True/False questions with 2 possible answers instead of 4.
     Return the quiz as a JSON object in the following format:
     {
       "questions": [

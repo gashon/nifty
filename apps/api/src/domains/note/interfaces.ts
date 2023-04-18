@@ -21,7 +21,7 @@ interface INoteService {
   paginateNotesByCollaboratorId(collaboratorId: string, query: PaginationParams): Promise<Partial<NoteListResponse>>
   findNoteNeighbors(noteId: string, directoryId: string, sortBy: string, limit: number): Promise<{ before: NoteDocument[], after: NoteDocument[] }>
   paginateNotesByDirectoryId(directoryId: string, query: PaginationParams): Promise<Partial<NoteListResponse>>
-  getKMostRecentNotes(userId: string, k: number): Promise<NoteDocument[]>
+  getKMostRecentNotes(ids: string[], k: number): Promise<NoteDocument[]>
 }
 
 export { INote, INoteController, INoteService }; 

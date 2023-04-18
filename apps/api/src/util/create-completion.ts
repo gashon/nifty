@@ -1,17 +1,21 @@
 import status from "http-status";
 import openai from "@/lib/openai";
 import logger from "@/lib/logger";
-import { createMultipleChoiceQuizGenerationPrompt, createFreeResponseQuizGenerationPrompt, createFreeResponseGradingPrompt } from "@/util"
+import {
+  countTokens,
+  createMultipleChoiceQuizGenerationPrompt,
+  createFreeResponseQuizGenerationPrompt,
+  createFreeResponseGradingPrompt
+} from "@/util"
 import { CustomException } from "@/exceptions";
 
 const getOpenAIResponse = async (prompt: string) => {
   // rough estimate of number of tokens
-  // todo tokenize prompt instead of splitting on spaces
-  const numTokens = prompt.split(" ").length
+  const numTokens = countTokens(prompt);
   const response = await openai.createCompletion({
     prompt,
     model: "text-davinci-003",
-    max_tokens: 3700 - numTokens,
+    max_tokens: 3700 - numTokens, //~
     temperature: 0.7,
     top_p: 1,
     frequency_penalty: 0.5,

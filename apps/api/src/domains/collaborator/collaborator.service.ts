@@ -126,6 +126,12 @@ export class CollaboratorService implements ICollaboratorService {
       type,
       ...(userId && { user: userId })
     });
+  }
 
+  async findCollaboratorsByType(userId: string, type: CollaboratorType): Promise<CollaboratorDocument[]> {
+    return this.collaboratorModel.find({
+      user: userId,
+      type
+    })
   }
 }
