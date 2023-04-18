@@ -12,7 +12,7 @@ import storage from '@/lib/storage';
 import { getUser, emailLogin, LoginFormSchema, signOut } from '@/features/auth';
 import { IUser } from '@nifty/server-lib/models/user';
 
-type AuthUserDTO = IUser | null;
+export type AuthUserDTO = IUser | null;
 
 type AuthContextType = {
   user: AuthUserDTO | undefined;
