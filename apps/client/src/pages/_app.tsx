@@ -13,12 +13,14 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { ToastContainer } from 'react-toastify';
 import { Button } from '@nifty/ui/atoms';
 import { queryClient } from '@/lib/react-query';
+const UserFeedback = dynamic(() => import('@/components/feedback'), {
+  ssr: false,
+});
 
 // Import styles
 import '../styles/globals.css';
 import 'react-toastify/dist/ReactToastify.css';
 import 'feeder-react-feedback/dist/feeder-react-feedback.css';
-import { UserFeedback } from '@/components/feedback';
 
 // Extend Day.js
 dayjs.extend(localizedFormat);
