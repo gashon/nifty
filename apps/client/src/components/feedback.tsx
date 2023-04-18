@@ -7,7 +7,7 @@ export const UserFeedback: FC<{ projectId: string }> = ({ projectId }) => {
     <div className="text-black">
       <Feedback
         // @ts-ignore
-        projectId={process.env.NEXT_PUBLIC_FEEDER_PROJECT_ID}
+        projectId={projectId}
       />
     </div>
   );
