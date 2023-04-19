@@ -9,4 +9,4 @@ DOCKER_COMPOSE_PATH="${4:-/home/ec2-user/app/docker-compose.yml}"
 
 DOPPLER_CLIENT_TOKEN=$(aws ssm get-parameters --region $REGION --names $DOPPLER_CLIENT_PARAM --with-decryption --query "Parameters[0].Value" --output text) \
 DOPPLER_API_TOKEN=$(aws ssm get-parameters --region $REGION --names $DOPPLER_API_PARAM --with-decryption --query "Parameters[0].Value" --output text) \
-docker-compose -f $DOCKER_COMPOSE_PATH up -d
+docker-compose -f $DOCKER_COMPOSE_PATH up -d --build
