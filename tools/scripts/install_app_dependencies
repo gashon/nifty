@@ -27,4 +27,6 @@ docker rmi -f app-app
 echo "Deleting note-hive_app container if it exists..."
 docker rm -f app-app-1
 
+docker system prune -a --force
+
 echo "Dependencies completed."
