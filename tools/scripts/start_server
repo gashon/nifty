@@ -5,9 +5,8 @@ set -euo pipefail
 REGION="${1:-us-west-1}"
 DOPPLER_API_PARAM="${2:-DOPPLER_API_STAGING}"
 DOPPLER_CLIENT_PARAM="${3:-DOPPLER_CLIENT_STAGING}"
-docker_compose_path="${4:-/home/ec2-user/app/docker-compose.yml}"
+DOCKER_COMPOSE_PATH="${4:-/home/ec2-user/app/docker-compose.yml}"
 
-export DOPPLER_CLIENT_TOKEN=$(aws ssm get-parameters --region $REGION --names $DOPPLER_API_PARAM --with-decryption --query "Parameters[0].Value" --output text) 
-export DOPPLER_API_TOKEN=$(aws ssm get-parameters --region $REGION --names $DOPPLER_CLIENT_PARAM --with-decryption --query "Parameters[0].Value" --output text) 
-
-docker-compose -f $docker_compose_path up -d
+DOPPLER_CLIENT_TOKEN=$(aws ssm get-parameters --region $REGION --names $DOPPLER_CLIENT_PARAM --with-decryption --query "Parameters[0].Value" --output text) \
+DOPPLER_API_TOKEN=$(aws ssm get-parameters --region $REGION --names $DOPPLER_API_PARAM --with-decryption --query "Parameters[0].Value" --output text) \
+docker-compose -f $DOCKER_COMPOSE_PATH up -d

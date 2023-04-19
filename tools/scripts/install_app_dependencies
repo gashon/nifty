@@ -20,4 +20,7 @@ sudo chmod -v +x /usr/local/bin/docker-compose
 # start docker
 sudo service docker start
 
+# delete all docker containers
+docker system prune -a --volumes
+
 echo "Dependencies completed."
