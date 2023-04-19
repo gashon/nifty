@@ -3,4 +3,7 @@
 set -e
 
 docker_compose_path="/home/ec2-user/app/docker-compose.yml"
+
+DOPPLER_CLIENT_TOKEN=$(aws ssm get-parameters --region us-west-1 --names DOPPLER_API_STAGING --with-decryption --query "Parameters[0].Value" --output text) \
+DOPPLER_API_TOKEN=$(aws ssm get-parameters --region us-west-1 --names DOPPLER_CLIENT_STAGING --with-decryption --query "Parameters[0].Value" --output text) \
 docker-compose -f $docker_compose_path up -d

@@ -25,7 +25,7 @@ services:
     image: nginx:latest
     restart: always
     ports:
-      - '${NGINX_PORT:-3001}:80'
+      - '80:80'
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
