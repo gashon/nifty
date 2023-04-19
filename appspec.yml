@@ -7,7 +7,7 @@ hooks:
   BeforeInstall:
     - location: tools/scripts/delete_ecosystem_config
       timeout: 60
-      runas: ec2-user
+      runas: root
   AfterInstall:
    - location: tools/scripts/install_app_dependencies
      timeout: 300

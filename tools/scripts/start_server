@@ -1,9 +1,13 @@
-#!/bin/bash
-# Exit the script if any command fails
-set -e
+#!/usr/bin/env bash
 
-docker_compose_path="/home/ec2-user/app/docker-compose.yml"
+set -euo pipefail
 
-DOPPLER_CLIENT_TOKEN=$(aws ssm get-parameters --region us-west-1 --names DOPPLER_API_STAGING --with-decryption --query "Parameters[0].Value" --output text) \
-DOPPLER_API_TOKEN=$(aws ssm get-parameters --region us-west-1 --names DOPPLER_CLIENT_STAGING --with-decryption --query "Parameters[0].Value" --output text) \
+REGION="${1:-us-west-1}"
+DOPPLER_API_PARAM="${2:-DOPPLER_API_STAGING}"
+DOPPLER_CLIENT_PARAM="${3:-DOPPLER_CLIENT_STAGING}"
+docker_compose_path="${4:-/home/ec2-user/app/docker-compose.yml}"
+
+export DOPPLER_CLIENT_TOKEN=$(aws ssm get-parameters --region $REGION --names $DOPPLER_API_PARAM --with-decryption --query "Parameters[0].Value" --output text) 
+export DOPPLER_API_TOKEN=$(aws ssm get-parameters --region $REGION --names $DOPPLER_CLIENT_PARAM --with-decryption --query "Parameters[0].Value" --output text) 
+
 docker-compose -f $docker_compose_path up -d
