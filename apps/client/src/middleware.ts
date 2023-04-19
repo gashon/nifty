@@ -40,7 +40,7 @@ const middleware: NextMiddleware = async function middleware(req) {
 };
 
 export const config = {
-  matcher: ['/auth/login', '/'],
+  matcher: ['/auth/login', '/auth', '/'],
 };
 
 export default middleware;
