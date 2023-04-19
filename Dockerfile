@@ -6,6 +6,7 @@ COPY package.json package-lock.json turbo.json yarn.lock tailwind.config.js ./
 
 # ---- Dependencies ----
 FROM base AS dependencies
+ARG DOPPLER_CLIENT_TOKEN
 RUN apk add --no-cache --virtual .build-deps alpine-sdk
 # install python
 RUN apk add --no-cache python3 
@@ -27,52 +28,10 @@ RUN yarn apps:build
 
 # ---- App Build --- 
 FROM builder as app
+ENV DOPPLER_CLIENT_TOKEN=$DOPPLER_CLIENT_TOKEN
+ENV DOPPLER_API_TOKEN=$DOPPLER_API_TOKEN
 WORKDIR /usr/src/app
 EXPOSE 3000
 EXPOSE 7000
 EXPOSE 8080
 CMD ["yarn", "apps:start"]
-
-# ---- App BUild --- 
-FROM builder as app-dev
-WORKDIR /usr/src/app
-EXPOSE 3000
-EXPOSE 7000
-EXPOSE 8080
-CMD ["yarn", "apps:dev"]
-
-# ---- Api Build ----
-FROM builder AS api
-WORKDIR /usr/src/app/apps/api
-EXPOSE 7000
-CMD doppler run -t $DOPPLER_TOKEN -- yarn start
-
-# ---- Api-live Build ----
-FROM builder AS api-live
-WORKDIR /usr/src/app/apps/api-live
-EXPOSE 8080
-CMD doppler run -t $DOPPLER_TOKEN -- yarn start
-
-# ---- Client Build ----
-FROM builder AS client
-WORKDIR /usr/src/app/apps/client
-EXPOSE 3000
-CMD doppler run -t $DOPPLER_TOKEN -- ./node_modules/.bin/next build && doppler run -t $DOPPLER_TOKEN -- ./node_modules/.bin/next start
-
-# ---- Client dev ----
-FROM builder AS client-dev
-WORKDIR /usr/src/app/apps/client
-EXPOSE 3000
-CMD doppler run -t $DOPPLER_TOKEN -- ./node_modules/.bin/next dev
-
-# ---- Api dev ----
-FROM builder AS api-dev
-WORKDIR /usr/src/app/apps/client
-EXPOSE 7000
-CMD doppler run -t $DOPPLER_TOKEN -- yarn dev
-
-# ---- Api-live dev ----
-FROM builder AS api-live-dev
-WORKDIR /usr/src/app/apps/api-live
-EXPOSE 8080
-CMD doppler run -t $DOPPLER_TOKEN -- yarn dev
