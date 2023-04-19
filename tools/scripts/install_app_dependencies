@@ -20,13 +20,6 @@ sudo chmod -v +x /usr/local/bin/docker-compose
 # start docker
 sudo service docker start
 
-# delete note-hive_app image if it exists
-echo "Deleting note-hive_app image if it exists..."
-docker rmi -f app-app
-# delete note-hive_app container if it exists
-echo "Deleting note-hive_app container if it exists..."
-docker rm -f app-app-1
-
-docker system prune -a --force
+docker container prune --filter "label!=com.docker.compose.volume" --force
 
 echo "Dependencies completed."

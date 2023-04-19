@@ -5,12 +5,6 @@ REGION="${1:-us-west-1}"
 DOPPLER_API_PARAM="${2:-DOPPLER_API_STAGING}"
 DOPPLER_CLIENT_PARAM="${3:-DOPPLER_CLIENT_STAGING}"
 DOCKER_COMPOSE_PATH="${4:-/home/ec2-user/app/docker-compose.yml}"
-DOCKER_IMAGE_URL="ghussein/nifty-staging-monorepo:latest"
-
-# Update the docker-compose.yml file to use the pulled image
-sed -i "s|image:.*|image: $DOCKER_IMAGE_URL|" $DOCKER_COMPOSE_PATH
-
-docker-compose -f $DOCKER_COMPOSE_PATH pull --parallel
 
 DOPPLER_CLIENT_TOKEN=$(aws ssm get-parameters --region $REGION --names $DOPPLER_CLIENT_PARAM --with-decryption --query "Parameters[0].Value" --output text) \
 DOPPLER_API_TOKEN=$(aws ssm get-parameters --region $REGION --names $DOPPLER_API_PARAM --with-decryption --query "Parameters[0].Value" --output text) \

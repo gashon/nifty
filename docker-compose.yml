@@ -2,7 +2,11 @@ version: '3.9'
 
 services:
   app:
-    image: REPLACE_THIS_WITH_DOCKER_IMAGE_URL
+    build:
+      context: ./
+      target: app
+      args:
+        - DOPPLER_CLIENT_TOKEN=${DOPPLER_CLIENT_TOKEN}
     restart: always
     expose:
       - 8080
