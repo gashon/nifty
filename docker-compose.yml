@@ -11,8 +11,7 @@ services:
     expose:
       - 8080
       - 7000
-    ports:
-      - '${APP_PORT:-3000}:3000'
+      - 3000
     environment:
       - NODE_ENV=production
       - DOPPLER_API_TOKEN=${DOPPLER_API_TOKEN}
@@ -25,7 +24,7 @@ services:
     image: nginx:latest
     restart: always
     ports:
-      - '80:80'
+      - '${NGINX_PORT:-80}:80'
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:

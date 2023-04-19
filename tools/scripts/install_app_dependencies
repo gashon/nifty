@@ -21,6 +21,6 @@ sudo chmod -v +x /usr/local/bin/docker-compose
 sudo service docker start
 
 # delete all docker containers
-docker system prune -a --volumes
+docker system prune -a --volumes --force
 
 echo "Dependencies completed."
