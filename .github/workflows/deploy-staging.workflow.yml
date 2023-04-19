@@ -1,8 +1,7 @@
-
 name: CI/CD Pipeline
 on:
   push:
-    branches: [ staging ]
+    branches: [staging]
 
 jobs:
   continuous-integration:
@@ -35,6 +34,10 @@ jobs:
           context: ./
           push: true
           tags: ghussein/nifty-staging-monorepo:latest
+          build-args: DOPPLER_CLIENT_TOKEN=${{ secrets.DOPPLER_CLIENT_STAGING_TOKEN }}
+        env:
+          DOPPLER_CLIENT_TOKEN: ${{ secrets.DOPPLER_CLIENT_STAGING_TOKEN }}
+          DOPPLER_API_TOKEN: ${{ secrets.DOPPLER_API_STAGING_TOKEN }}
 
   continuous-deployment:
     runs-on: ubuntu-latest
