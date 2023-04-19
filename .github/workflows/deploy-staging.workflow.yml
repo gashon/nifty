@@ -15,6 +15,26 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-1
 
+build-and-push-docker-image:
+    runs-on: ubuntu-latest
+    needs: [continuous-integration]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          push: true
+          tags: ghussein/nifty-staging-monorepo:latest
+
   continuous-deployment:
     runs-on: ubuntu-latest
     needs: [continuous-integration]
