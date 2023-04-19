@@ -2,9 +2,21 @@
 set -euo pipefail
 
 REGION="${1:-us-west-1}"
-DOPPLER_API_PARAM="${2:-DOPPLER_API_STAGING}"
-DOPPLER_CLIENT_PARAM="${3:-DOPPLER_CLIENT_STAGING}"
 DOCKER_COMPOSE_PATH="${4:-/home/ec2-user/app/docker-compose.yml}"
+
+INSTANCE_ID=$(aws sts get-caller-identity --query UserId --output text | cut -d : -f 2)
+ENVIRONMENT_TAG_VALUE=$(aws ec2 describe-tags --region $REGION --filters "Name=resource-id,Values=$INSTANCE_ID" "Name=key,Values=Environment" --query "Tags[0].Value" --output text)
+
+if [[ $ENVIRONMENT_TAG_VALUE == "production" ]]; then
+  DOPPLER_API_PARAM="${2:-DOPPLER_API_STAGING}"
+  DOPPLER_CLIENT_PARAM="${3:-DOPPLER_CLIENT_STAGING}"
+else
+  DOPPLER_API_PARAM="${2:-DOPPLER_API_STAGING}"
+  DOPPLER_CLIENT_PARAM="${3:-DOPPLER_CLIENT_STAGING}"
+fi
+
+docker-compose -f $DOCKER_COMPOSE_PATH down
+docker-compose -f $DOCKER_COMPOSE_PATH pull --parallel
 
 DOPPLER_CLIENT_TOKEN=$(aws ssm get-parameters --region $REGION --names $DOPPLER_CLIENT_PARAM --with-decryption --query "Parameters[0].Value" --output text) \
 DOPPLER_API_TOKEN=$(aws ssm get-parameters --region $REGION --names $DOPPLER_API_PARAM --with-decryption --query "Parameters[0].Value" --output text) \
