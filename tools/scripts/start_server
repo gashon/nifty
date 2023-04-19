@@ -8,11 +8,11 @@ INSTANCE_ID=$(aws sts get-caller-identity --query UserId --output text | cut -d 
 ENVIRONMENT_TAG_VALUE=$(aws ec2 describe-tags --region $REGION --filters "Name=resource-id,Values=$INSTANCE_ID" "Name=key,Values=Environment" --query "Tags[0].Value" --output text)
 
 if [[ $ENVIRONMENT_TAG_VALUE == "production" ]]; then
-  DOPPLER_API_PARAM="${2:-DOPPLER_API_STAGING}"
-  DOPPLER_CLIENT_PARAM="${3:-DOPPLER_CLIENT_STAGING}"
+  DOPPLER_API_PARAM="DOPPLER_API_PRODUCTION"
+  DOPPLER_CLIENT_PARAM="DOPPLER_CLIENT_PRODUCTION"
 else
-  DOPPLER_API_PARAM="${2:-DOPPLER_API_STAGING}"
-  DOPPLER_CLIENT_PARAM="${3:-DOPPLER_CLIENT_STAGING}"
+  DOPPLER_API_PARAM="DOPPLER_API_STAGING"
+  DOPPLER_CLIENT_PARAM="DOPPLER_CLIENT_STAGING"
 fi
 
 docker-compose -f $DOCKER_COMPOSE_PATH down

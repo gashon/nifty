@@ -22,10 +22,11 @@ COPY ./packages ./packages
 FROM dependencies AS builder
 ARG DOPPLER_CLIENT_TOKEN
 # install deps
-RUN yarn install --no-interactive
+RUN yarn install --non-interactive --prefer-offline --no-progress --skip-integrity-check
 # build client
 RUN yarn apps:build
 RUN yarn global add pm2
+RUN yarn cache clean
 
 # ---- App Build --- 
 FROM builder as app
