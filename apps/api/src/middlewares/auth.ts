@@ -21,7 +21,11 @@ export default function auth() {
 
       // refresh logic
       const refreshToken = await RefreshToken.findById(req.cookies.refresh_token);
-      if (!refreshToken || refreshToken.deleted_at) return res.status(status.UNAUTHORIZED).json({ error: { message: 'Invalid authorization token.', type: 'invalid_request_error' } });
+      if (!refreshToken || refreshToken.deleted_at) {
+        res.clearCookie('access_token');
+        res.clearCookie('refresh_token');
+        return res.status(status.UNAUTHORIZED).json({ error: { message: 'Invalid authorization token.', type: 'invalid_request_error' } });
+      }
 
       if (refreshToken && refreshToken.expires_at < new Date()) {
         res.clearCookie('access_token');

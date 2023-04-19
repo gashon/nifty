@@ -14,5 +14,6 @@
     "start": {
       "cache": false
     }
-  }
+  },
+  "globalEnv": ["DOPPLER_CLIENT_TOKEN", "DOPPLER_API_TOKEN"]
 }

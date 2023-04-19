@@ -2,9 +2,10 @@ module.exports = {
   apps: [
     {
       name: 'client',
-      script: 'yarn',
+      script: 'npm',
       args: 'run start',
-      cwd: '/home/ec2-user/app/apps/client',
+      cwd: '/usr/src/app/apps/client',
+      exec_mode: 'cluster',
       env: {
         NODE_ENV: 'development',
       },
@@ -17,9 +18,10 @@ module.exports = {
     },
     {
       name: 'api',
-      script: 'yarn',
+      script: 'npm',
       args: 'run start',
-      cwd: '/home/ec2-user/app/apps/api',
+      cwd: '/usr/src/app/apps/api',
+      exec_mode: 'cluster',
       env: {
         NODE_ENV: 'development',
       },
@@ -32,9 +34,10 @@ module.exports = {
     },
     {
       name: 'api-live',
-      script: 'yarn',
+      script: 'npm',
       args: 'run start',
-      cwd: '/home/ec2-user/app/apps/api-live',
+      cwd: '/usr/src/app/apps/api-live',
+      exec_mode: 'cluster',
       env: {
         NODE_ENV: 'development',
       },

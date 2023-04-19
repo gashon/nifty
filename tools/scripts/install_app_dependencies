@@ -9,55 +9,6 @@ set -e
 echo "Updating package lists..."
 sudo yum update -y
 
-# Check for Python installation
-echo "Checking for Python installation..."
-python_installed=$(which python3)
-
-if [ -z "$python_installed" ]; then
-  # Install Python if not found
-  echo "Python not found, installing..."
-  sudo yum install -y python3
-else
-  echo "Python already installed."
-fi
-
-# Check for Yarn installation
-echo "Checking for Yarn installation..."
-yarn_installed=$(which yarn)
-
-if [ -z "$yarn_installed" ]; then
-  # Install Yarn if not found
-  echo "Yarn not found, installing..."
-  curl -sL https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
-  sudo yum install -y yarn
-else
-  echo "Yarn already installed."
-fi
-
-# Check for Doppler CLI installation
-echo "Checking for Doppler CLI installation..."
-doppler_installed=$(which doppler)
-
-if [ -z "$doppler_installed" ]; then
-  # Install Doppler CLI if not found
-  echo "Doppler CLI not found, installing..."
-  curl -Ls https://cli.doppler.com/install.sh | sudo sh
-else
-  echo "Doppler CLI already installed."
-fi
-
-# Check for pm2 installation
-echo "Checking for pm2 installation..."
-pm2_installed=$(which pm2)
-
-if [ -z "$pm2_installed" ]; then
-  # Install pm2 if not found
-  echo "pm2 not found, installing..."
-  yarn global add pm2
-else
-  echo "pm2 already installed."
-fi
-
 # Install docker and docker-compose
 echo "Installing docker and docker-compose..."
 sudo yum install -y docker
@@ -69,13 +20,13 @@ sudo chmod -v +x /usr/local/bin/docker-compose
 # start docker
 sudo service docker start
 
-# Run yarn install
-echo "Running 'yarn install --no-interactive'..."
+# delete note-hive_app image if it exists
+echo "Deleting note-hive_app image if it exists..."
+docker rmi -f app-app
+# delete note-hive_app container if it exists
+echo "Deleting note-hive_app container if it exists..."
+docker rm -f app-app-1
 
-(
-  cd /home/ec2-user/app &&
-  yarn cache clean &&
-  yarn install --no-interactive
-)
+docker system prune -a --force
 
-echo "Script completed."
+echo "Dependencies completed."

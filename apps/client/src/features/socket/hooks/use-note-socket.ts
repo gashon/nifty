@@ -1,6 +1,7 @@
 
 import { useEffect, useState, useRef, useReducer } from 'react';
 import { v4 as uuidv4 } from "uuid";
+import { API_LIVE_URL } from "@/config";
 
 export const useNoteSocket = (noteId: string) => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
@@ -11,7 +12,7 @@ export const useNoteSocket = (noteId: string) => {
   useEffect(() => {
     if (!noteId) return;
 
-    const s = new WebSocket(`ws://localhost:8080/${noteId}`);
+    const s = new WebSocket(`${API_LIVE_URL}/${noteId}`);
 
     s.onopen = () => {
       console.log('socket opened');

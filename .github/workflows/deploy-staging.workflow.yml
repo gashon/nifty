@@ -1,8 +1,7 @@
-
 name: CI/CD Pipeline
 on:
   push:
-    branches: [ staging ]
+    branches: [staging]
 
 jobs:
   continuous-integration:
@@ -14,6 +13,31 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-1
+
+  build-and-push-docker-image:
+    runs-on: ubuntu-latest
+    needs: [continuous-integration]
+    if: github.ref == 'refs/heads/staging'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          push: true
+          tags: ghussein/nifty-staging-monorepo:latest
+          build-args: DOPPLER_CLIENT_TOKEN=${{ secrets.DOPPLER_CLIENT_STAGING_TOKEN }}
+        env:
+          DOPPLER_CLIENT_TOKEN: ${{ secrets.DOPPLER_CLIENT_STAGING_TOKEN }}
+          DOPPLER_API_TOKEN: ${{ secrets.DOPPLER_API_STAGING_TOKEN }}
 
   continuous-deployment:
     runs-on: ubuntu-latest
