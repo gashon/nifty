@@ -14,19 +14,27 @@
   },
   "scripts": {
     "apps:build": "turbo run build",
-    "apps:dev": "cross-env FORCE_COLOR=1 turbo run dev --parallel",
+    "apps:dev": "concurrently \"yarn run mongo:start\" \"yarn run redis:start\" \"wait-on tcp:localhost:27017 tcp:localhost:6379 && cross-env FORCE_COLOR=1 turbo run dev --parallel\"",
     "apps:start": "cross-env turbo run start --parallel",
     "apps:lint": "turbo run lint",
     "apps:format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "mongo:start": "docker run --rm -p 27017:27017 --name nifty-mongo -v mongo_data:/data/db mongo > /dev/null",
+    "mongo:stop": "docker stop nifty-mongo",
+    "mongo:restart": "yarn mongo:stop && yarn mongo:start",
+    "redis:start": "docker run --rm -p 6379:6379 --name nifty-redis -v redis_data:/data redis > /dev/null",
+    "redis:stop": "docker stop nifty-redis",
+    "redis:restart": "yarn redis:stop && yarn redis:start",
     "format": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,scss,md}\"",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,scss,md}\""
   },
   "devDependencies": {
+    "concurrently": "8.0.1",
+    "cross-env": "7.0.3",
     "eslint": "^7.32.0",
     "eslint-config-custom": "*",
     "prettier": "^2.7.1",
     "turbo": "latest",
-    "cross-env": "7.0.3"
+    "wait-on": "7.0.1"
   },
   "engines": {
     "node": ">=16.15.0",

@@ -2,7 +2,7 @@
 FROM node:16.15.0-alpine AS base
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
-COPY package.json package-lock.json turbo.json yarn.lock tailwind.config.js ./
+COPY package.json package-lock.json ecosystem.config.js turbo.json yarn.lock tailwind.config.js ./
 
 # ---- Dependencies ----
 FROM base AS dependencies
@@ -25,6 +25,7 @@ ARG DOPPLER_CLIENT_TOKEN
 RUN yarn install --no-interactive
 # build client
 RUN yarn apps:build
+RUN yarn global add pm2
 
 # ---- App Build --- 
 FROM builder as app
@@ -34,4 +35,4 @@ WORKDIR /usr/src/app
 EXPOSE 3000
 EXPOSE 7000
 EXPOSE 8080
-CMD ["yarn", "apps:start"]
+CMD pm2-runtime start /usr/src/app/ecosystem.config.js --env production --interpreter $(which node) 
