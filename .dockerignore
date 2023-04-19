@@ -13,3 +13,16 @@ build
 
 # Ignore all .DS_Store files
 .DS_Store
+
+# Ignore directories inside packages
+/packages/ui/node_modules
+/packages/server-lib/node_modules
+/packages/oauth/node_modules
+/packages/tsconfig/node_modules
+/packages/common/node_modules
+/packages/eslint-config-custom/node_modules
+
+# Ignore directories inside apps
+/apps/api-live/node_modules
+/apps/api/node_modules
+/apps/client/node_modules
