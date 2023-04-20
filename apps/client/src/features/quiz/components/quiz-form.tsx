@@ -38,7 +38,11 @@ const MultipleChoice: FC<{
               {String.fromCharCode(index + 97)}.
             </span>
 
-            <span className={`${index === selectedAnswer ? 'border-b-2' : ''}`}>
+            <span
+              className={`${
+                index === selectedAnswer ? 'bg-white text-black' : ''
+              }`}
+            >
               {answer}
             </span>
           </div>

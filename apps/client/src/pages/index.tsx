@@ -73,15 +73,15 @@ const Landing: FC<LandingProps> = ({ onWaitListFormSubmit }) => {
           <main className="container mx-auto px-6 py-8 md:px-0">
             <Navbar />
             <header className="pt-24 text-center">
-              <h1 className="text-primary text-2xl font-extrabold md:text-3xl lg:text-4xl xl:text-5xl">
+              <h1 className="text-primary text-3xl font-extrabold md:text-3xl lg:text-4xl xl:text-5xl">
                 Rethinking memory retention.
               </h1>
-              <p className="mx-auto max-w-2xl pt-3 text-sm text-tertiary md:text-base">
+              <p className="mx-auto max-w-2xl mt-4 text-sm text-tertiary md:text-base">
                 Unlock your note's full potential with our AI-powered
                 improvements.
               </p>
               <div className="mt-12 flex flex-col items-center">
-                <EmailForm setIsOpen={setIsOpen} />
+                {/* <EmailForm setIsOpen={setIsOpen} /> */}
                 <Modal
                   image="/waitlist-illustration.svg"
                   alt="waitlist illustration"
@@ -93,11 +93,13 @@ const Landing: FC<LandingProps> = ({ onWaitListFormSubmit }) => {
                 />
               </div>
             </header>
-            <div className="mx-auto max-w-5xl pt-36 md:pt-64">
+            <div className="mx-auto max-w-5xl pt-36 md:pt-60">
               <div
                 className="w-auto h-auto "
                 style={{
                   boxShadow: '0px 0px 57px 13px rgba(255, 255, 255, 0.2)',
+                  backgroundColor: 'transparent',
+                  borderRadius: '15px',
                 }}
               >
                 <Image
