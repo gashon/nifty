@@ -11,7 +11,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { ToastContainer } from 'react-toastify';
-import { Button } from '@nifty/ui/atoms';
+import { ErrorFallback } from '@/components/error-fallback';
 import { queryClient } from '@/lib/react-query';
 const UserFeedback = dynamic(() => import('@/components/feedback'), {
   ssr: false,
@@ -27,43 +27,16 @@ dayjs.extend(localizedFormat);
 dayjs.extend(relativeTime);
 dayjs.extend(duration);
 
-const ErrorFallback = () => {
-  return (
-    <div
-      className="text-red-500 w-screen h-screen flex flex-col justify-center items-center"
-      role="alert"
-    >
-      <h2 className=" text-lg font-semibold">
-        Ooops, something went wrong :({' '}
-      </h2>
-      <div className="flex flex-row gap-5 mt-5">
-        <Button
-          onClick={() =>
-            window.location.replace(
-              '/auth/login?redirect=' +
-                encodeURIComponent(location.pathname + location.search)
-            )
-          }
-        >
-          Login
-        </Button>
-        <Button
-          onClick={() =>
-            // reload the current page
-            window.location.replace(location.pathname + location.search)
-          }
-        >
-          Retry
-        </Button>
-      </div>
-    </div>
-  );
+const logError = (error: Error, info: { componentStack: string }) => {
+  // todo send error to sentry
+  console.error('Error', error);
+  console.error('Info', info);
 };
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <ErrorBoundary FallbackComponent={ErrorFallback} onError={logError}>
         <HelmetProvider>
           <QueryClientProvider client={queryClient}>
             <ThemeProvider>
