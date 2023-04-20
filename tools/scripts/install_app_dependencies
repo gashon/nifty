@@ -20,6 +20,4 @@ sudo chmod -v +x /usr/local/bin/docker-compose
 # start docker
 sudo service docker start
 
-docker system prune -a --force
-
 echo "Dependencies completed."
