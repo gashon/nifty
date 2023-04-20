@@ -40,7 +40,7 @@ const MultipleChoice: FC<{
 
             <span
               className={`${
-                index === selectedAnswer ? 'bg-white text-black' : ''
+                index === selectedAnswer ? 'bg-secondary text-secondary' : ''
               }`}
             >
               {answer}
