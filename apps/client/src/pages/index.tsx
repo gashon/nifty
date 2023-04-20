@@ -105,6 +105,7 @@ const Landing: FC<LandingProps> = ({ onWaitListFormSubmit }) => {
                   alt="Preview"
                   width={1920}
                   height={1080}
+                  priority={true}
                 />
               </div>
             </div>
