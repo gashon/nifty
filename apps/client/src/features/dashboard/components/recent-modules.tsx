@@ -1,18 +1,16 @@
 import { FC } from 'react';
 import Link from 'next/link';
-import { IoMdCreate } from 'react-icons/io';
-import { useAuth } from '@/features/auth';
 import {
   useRecentModules,
   useDeleteModule,
   ModuleCreationButton,
 } from '@/features/module';
+import { IUser } from '@nifty/server-lib/models/user';
 
 import { Button } from '@nifty/ui/atoms';
 import ModuleCard from '@nifty/ui/molecules/module-card';
 
-export const RecentModules: FC<{}> = ({}) => {
-  const { user } = useAuth();
+export const RecentModules: FC<{ user: IUser }> = ({ user }) => {
   const { data: modules, isFetched } = useRecentModules(user.id, 6);
   const { mutate: deleteModule } = useDeleteModule();
 

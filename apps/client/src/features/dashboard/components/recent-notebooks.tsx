@@ -1,11 +1,10 @@
 import { FC } from 'react';
 import { useRecentNotes, useDeleteNote } from '@/features/note';
-import { useAuth } from '@/features/auth';
+import { IUser } from '@nifty/server-lib/models/user';
 
 import NotebookItem from '@nifty/ui/molecules/notebook-item';
 
-export const RecentNotebooks: FC<{}> = ({}) => {
-  const { user } = useAuth();
+export const RecentNotebooks: FC<{ user: IUser }> = ({ user }) => {
   const { data: notes, isFetched } = useRecentNotes(user.id);
   const { mutate: deleteNote } = useDeleteNote();
 
@@ -13,9 +12,11 @@ export const RecentNotebooks: FC<{}> = ({}) => {
 
   return (
     <>
-     {!noNotes && <h3 className="pb-3 text-xs text-zinc-600 dark:text-zinc-400 lg:text-base">
-        Recently edited notebooks
-      </h3>}
+      {!noNotes && (
+        <h3 className="pb-3 text-xs text-zinc-600 dark:text-zinc-400 lg:text-base">
+          Recently edited notebooks
+        </h3>
+      )}
       <div className="flex flex-col gap-3">
         {!isFetched && (
           <>

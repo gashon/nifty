@@ -1,36 +1,29 @@
 import { NextSeo } from 'next-seo';
-import { lazy } from 'react';
 
-import { AuthProtection, AuthProvider } from '@/features/auth';
+import { AuthProtection, AuthProvider, getUser } from '@/features/auth';
 import { GreetingHeader } from '@/features/dashboard/components';
 
 import ThemeLayout from '@/layouts/theme';
 import DashboardLayout from '@/layouts/dashboard';
+import { IUser } from '@nifty/server-lib/models/user';
+import RecentModules from '@/features/dashboard/components/recent-modules';
+import RecentNotebooks from '@/features/dashboard/components/recent-notebooks';
 
-import { LoadingPage } from '@nifty/ui/pages/loading';
-
-const RecentModules = lazy(
-  () => import('@/features/dashboard/components/recent-modules')
-);
-const RecentNotebooks = lazy(
-  () => import('@/features/dashboard/components/recent-notebooks')
-);
-
-export default function Dashboard() {
+export default function Dashboard({ user }: { user: IUser }) {
   return (
     <>
       <NextSeo title={'Dashboard'} noindex />
       <AuthProvider>
-        <AuthProtection loadingComponent={<LoadingPage />}>
+        <AuthProtection loadingComponent={<></>}>
           <ThemeLayout>
             <DashboardLayout>
               <GreetingHeader greeting={`Hello`} quote="" />
               <div className="flex flex-col">
                 <section className="order-2 pt-9 lg:order-1">
-                  <RecentModules />
+                  <RecentModules user={user} />
                 </section>
                 <section className="order-1 pt-9 mt-5">
-                  <RecentNotebooks />
+                  <RecentNotebooks user={user} />
                 </section>
               </div>
             </DashboardLayout>
@@ -39,4 +32,27 @@ export default function Dashboard() {
       </AuthProvider>
     </>
   );
+}
+
+export async function getServerSideProps(context) {
+  const { data: user } = await getUser(context.req.headers);
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: `/error/external?message=${encodeURIComponent(
+          'You are not logged in!'
+        )}&${new URLSearchParams({
+          redirect: `/notes/${context.params.id}`,
+        })}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      user,
+    },
+  };
 }
