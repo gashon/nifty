@@ -21,7 +21,7 @@ export const Navbar: FC = () => {
       >
         <div>
           <Brand size={35} />
-          <span>Nifty</span>
+          <span>Niftie</span>
         </div>
       </Link>
       <div className="flex items-center gap-6">

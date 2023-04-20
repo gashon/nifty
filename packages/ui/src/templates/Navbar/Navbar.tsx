@@ -14,7 +14,7 @@ export const Navbar = () => {
     <nav className="relative flex justify-between">
       <a href="/" className="flex items-center gap-3 font-extrabold">
         <Brand size={35} />
-        <span>Nifty</span>
+        <span>Niftie</span>
       </a>
       <div className="flex items-center gap-6">
         <ul

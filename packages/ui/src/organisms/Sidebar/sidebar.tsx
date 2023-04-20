@@ -23,9 +23,12 @@ export const Sidebar: FC<SidebarProps> = ({ user, links }) => {
     <nav className="flex w-full flex-col justify-between p-3 lg:w-72 lg:p-6">
       <div>
         <div className="flex items-center justify-between">
-          <a href="/" className="text-primary flex items-center gap-3 px-0 font-extrabold lg:px-3">
+          <a
+            href="/"
+            className="text-primary flex items-center gap-3 px-0 font-extrabold lg:px-3"
+          >
             <Brand size={36} />
-            <span>Nifty</span>
+            <span>Niftie</span>
           </a>
           <div className="flex items-center gap-3">
             {!isDesktop && <UserCard {...user} />}
@@ -33,7 +36,7 @@ export const Sidebar: FC<SidebarProps> = ({ user, links }) => {
               data-testid="menu-button"
               type="button"
               className="inline-block lg:hidden"
-              onClick={() => setMenuOpen(prev => !prev)}
+              onClick={() => setMenuOpen((prev) => !prev)}
             >
               {menuOpen ? (
                 <FiX title="Close menu" size={24} />
@@ -43,9 +46,13 @@ export const Sidebar: FC<SidebarProps> = ({ user, links }) => {
             </button>
           </div>
         </div>
-        <AnimateHeight data-testid={`menu-${menuHeight}`} duration={150} height={menuHeight}>
+        <AnimateHeight
+          data-testid={`menu-${menuHeight}`}
+          duration={150}
+          height={menuHeight}
+        >
           <ul className="flex-1 pt-3 lg:pt-6">
-            {links.map(link => (
+            {links.map((link) => (
               <li key={link.href}>
                 <SidebarLink {...link} />
               </li>

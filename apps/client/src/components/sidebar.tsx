@@ -32,7 +32,7 @@ export const Sidebar: FC<SidebarProps> = ({ links }) => {
         <div className="flex items-center justify-between">
           <a href="/" className="text-primary flex items-center gap-3 px-0 font-extrabold lg:px-3">
             <Brand size={36} />
-            <span>Nifty</span>
+            <span>Niftie</span>
           </a>
           <div className="flex items-center gap-3">
             {!isDesktop && mounted && <UserCard {...user} />}
