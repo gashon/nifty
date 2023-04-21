@@ -104,7 +104,8 @@ export class QuizController implements IQuizController {
     if (!collaborator)
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
-    if (prevQuiz)
+    // todo autoincrement quiz title
+    if (prevQuiz && !req.body.title && prevQuiz.title !== body.title)
       throw new CustomException(`This note already has a quiz titled "${prevQuiz.title}"`, status.BAD_REQUEST);
 
     // generate quiz
@@ -131,7 +132,13 @@ export class QuizController implements IQuizController {
 
     // create quiz 
     const quizQuestions = [...(multipleChoiceResult || []), ...(freeResponseResult || [])];
-    const quiz = await this.quizService.createQuiz(createdBy, { title, questions: quizQuestions, note: noteId, collaborators: [quizCollaborator.id] });
+    const quiz = await this.quizService.createQuiz(createdBy, {
+      title,
+      questions: quizQuestions,
+      note: noteId,
+      collaborators: [quizCollaborator.id],
+      question_type: body.question_type,
+    });
 
     quizCollaborator.set({ foreign_key: quiz.id });
     quizCollaborator.save();

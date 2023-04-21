@@ -174,7 +174,7 @@ export const SubmissionPage: FC<{
               <main className="h-auto mt-10">
                 <SubmissionResults submission={submission} />
               </main>
-              <div className="w-full flex justify-end">
+              <div className="w-full flex justify-between items-end">
                 <Link href={`/quizzes/${submission.quiz.id}`}>
                   <span className="underline opacity-75">Try again</span>
                 </Link>

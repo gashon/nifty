@@ -25,7 +25,7 @@ const quizSchema = new mongoose.Schema<IQuiz>({
     ref: "Note",
   },
   question_type: {
-    type: {
+    type: new mongoose.Schema({
       multiple_choice: {
         type: Boolean,
         required: true,
@@ -34,7 +34,7 @@ const quizSchema = new mongoose.Schema<IQuiz>({
         type: Boolean,
         required: true,
       },
-    },
+    }, { _id: false }),
     required: true,
   },
   questions: {

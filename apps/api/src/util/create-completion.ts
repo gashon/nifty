@@ -28,7 +28,6 @@ const getOpenAIResponse = async (prompt: string) => {
   if (choice.finish_reason == "length")
     throw new Error("Too many tokens in prompt :(")
 
-  logger.info(`Generated: ${JSON.stringify(choice)}`);
   return choice.text
 }
 

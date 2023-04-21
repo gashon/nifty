@@ -37,7 +37,7 @@ export const openaiRequestHandler: {
 } = {
   multipleChoiceQuizGenerator: {
     format: formatNoteContent,
-    getPrompt: createFreeResponseGradingPrompt,
+    getPrompt: createMultipleChoiceQuizGenerationPrompt,
     reformat: (stringifiedQuiz: string): IMultipleChoiceQuizQuestion[] => {
       // randomize the order of the questions and mark the correct_index
       const quizContent = JSON.parse(stringifiedQuiz).questions
@@ -47,7 +47,7 @@ export const openaiRequestHandler: {
   },
   freeResponseQuizGenerator: {
     format: formatNoteContent,
-    getPrompt: createFreeResponseGradingPrompt,
+    getPrompt: createFreeResponseQuizGenerationPrompt,
     reformat: (stringifiedQuiz: string): IFreeResponseQuizQuestion[] => {
       const questions = JSON.parse(stringifiedQuiz).questions
       return questions.map((question: string, index: number) => ({
@@ -88,11 +88,12 @@ export async function openaiRequest<T>(generatorItem: {
 
   try {
     const formattedPayload = format(payload);
-    logger.info(`Sending openai request: ${JSON.stringify(formattedPayload)}`)
 
     const prompt = getPrompt(formattedPayload);
+    logger.info(`Sending openai request: ${JSON.stringify(prompt)}`)
+
     const result = await sendOpenAIRequest(prompt);
-    logger.info(`Successfully sent openai request: ${JSON.stringify(result)}`);
+    logger.info(`Successfully received openai response: ${JSON.stringify(result)}`);
 
     const formattedResult: ReturnType<typeof reformat> = reformat(result!);
     return formattedResult;
