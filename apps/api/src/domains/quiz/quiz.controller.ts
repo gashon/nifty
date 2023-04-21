@@ -22,7 +22,7 @@ import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
 import { DIRECTORY_TYPES } from '@/domains/directory/types';
 import { INoteService } from '../note';
 import { CollaboratorDocument } from '@nifty/server-lib/models/collaborator';
-import { setPermissions, Permission, gradeQuestions, countTokens } from '@/util';
+import { setPermissions, Permission, gradeQuestions, countTokens, createMultipleChoiceQuizGenerationPrompt, createFreeResponseQuizGenerationPrompt } from '@/util';
 import { SubmissionCreateRequest, ISubmissionAnswer, } from '@nifty/server-lib/models/submission';
 import { QuizCreateRequest, } from '@nifty/server-lib/models/quiz';
 
@@ -175,7 +175,7 @@ export class QuizController implements IQuizController {
       throw new CustomException('Quiz not found', status.NOT_FOUND);
 
     const prevQuestionQuestions: string[] = prevQuiz.questions.map(({ question }) => question);
-    const questionListString = prevQuestionQuestions.join(" ");
+    const questionListString = prevQuestionQuestions.join(", ");
 
     const numTokens = countTokens(`${note.content} ${questionListString}`, "text-davinci-003");
     if (numTokens > 2500)
@@ -186,14 +186,13 @@ export class QuizController implements IQuizController {
 
     const remixMultipleChoiceGenerator = openaiRequestHandler.multipleChoiceQuizGenerator;
     remixMultipleChoiceGenerator.getPrompt = (payload: string) => {
-      const prompt = openaiRequestHandler.multipleChoiceQuizGenerator.getPrompt(payload);
-      return `${prompt}\n\nYour questions MUST not be identical or similar to any of the following: ${questionListString}`;
+      console.log("GETTING FRO", payload)
+      return createMultipleChoiceQuizGenerationPrompt(payload, questionListString);
     }
 
     const remixFreeResponseGenerator = openaiRequestHandler.freeResponseQuizGenerator;
     remixFreeResponseGenerator.getPrompt = (payload: string) => {
-      const prompt = openaiRequestHandler.freeResponseQuizGenerator.getPrompt(payload);
-      return `${prompt}\n\nYour questions MUST not be identical or similar to any of the following: ${questionListString}`;
+      return createFreeResponseQuizGenerationPrompt(payload, questionListString);
     }
 
     // generate quiz

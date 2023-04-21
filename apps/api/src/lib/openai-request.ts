@@ -88,16 +88,18 @@ export async function openaiRequest<T>(generatorItem: {
 
   try {
     const formattedPayload = format(payload);
+    logger.info(`Sending openai request with payload: ${formattedPayload}}`);
 
     const prompt = getPrompt(formattedPayload);
-    logger.info(`Sending openai request: ${JSON.stringify(prompt)}`)
 
+    logger.info(`Sending openai request with prompt: ${prompt}}`);
     const result = await sendOpenAIRequest(prompt);
-    logger.info(`Successfully received openai response: ${JSON.stringify(result)}`);
 
+    logger.info(`Received openai response: ${result}}`);
     const formattedResult: ReturnType<typeof reformat> = reformat(result!);
     return formattedResult;
   } catch (err) {
+    console.log("GOT Error", err)
     logger.error(`Error sending or parsing openai request: ${JSON.stringify(err)}}`);
     throw new CustomException(errorMessage ?? 'Failed to generate openai request', status.BAD_REQUEST);
   }

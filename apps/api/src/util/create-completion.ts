@@ -13,6 +13,8 @@ const getOpenAIResponse = async (prompt: string) => {
 
   // rough estimate of number of tokens
   const numTokens = countTokens(prompt, model);
+  logger.info(`Sending openai request: ${JSON.stringify(prompt)} -- numTokens: ${numTokens}`)
+
   const response = await openai.createCompletion({
     prompt,
     model,
@@ -23,6 +25,7 @@ const getOpenAIResponse = async (prompt: string) => {
     stream: false,
     stop: null,
   });
+  logger.info(`Successfully received openai response: ${JSON.stringify(response.data)}`);
 
   const choice = response.data.choices[0]
   if (choice.finish_reason == "length")
@@ -35,6 +38,7 @@ export const sendOpenAIRequest = async (prompt: string) => {
   try {
     return getOpenAIResponse(prompt)
   } catch (err) {
+    console.log("ERR", err)
     logger.error(`Error sending openai request: ${JSON.stringify(err)}}`);
     // @ts-ignore
     const message = err.response?.data?.error?.message || err?.message;
