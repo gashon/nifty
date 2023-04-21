@@ -1,4 +1,5 @@
 import status from "http-status";
+import { jsonrepair } from 'jsonrepair'
 import logger from "@/lib/logger"
 import {
   sendOpenAIRequest,
@@ -39,8 +40,9 @@ export const openaiRequestHandler: {
     format: formatNoteContent,
     getPrompt: createMultipleChoiceQuizGenerationPrompt,
     reformat: (stringifiedQuiz: string): IMultipleChoiceQuizQuestion[] => {
+      const repairedJSON = jsonrepair(stringifiedQuiz);
       // randomize the order of the questions and mark the correct_index
-      const quizContent = JSON.parse(stringifiedQuiz).questions
+      const quizContent = JSON.parse(repairedJSON).questions
       const randomizedQuiz = shuffleQuiz(quizContent);
       return randomizedQuiz;
     }
@@ -49,7 +51,8 @@ export const openaiRequestHandler: {
     format: formatNoteContent,
     getPrompt: createFreeResponseQuizGenerationPrompt,
     reformat: (stringifiedQuiz: string): IFreeResponseQuizQuestion[] => {
-      const questions = JSON.parse(stringifiedQuiz).questions
+      const repairedJSON = jsonrepair(stringifiedQuiz);
+      const questions = JSON.parse(repairedJSON).questions
       return questions.map((question: string, index: number) => ({
         id: (index + 50).toString(), // 50 is a random pad to avoid collisions with multiple choice questions, we use serial ids to reduce token count https://platform.openai.com/tokenizer
         type: "free-response",
@@ -69,7 +72,8 @@ export const openaiRequestHandler: {
     },
     getPrompt: createFreeResponseGradingPrompt,
     reformat: (stringifiedGrades: string): IFreeResponseSubmissionGradingResponse[] => {
-      const { grades } = JSON.parse(stringifiedGrades);
+      const repairedJSON = jsonrepair(stringifiedGrades);
+      const { grades } = JSON.parse(repairedJSON);
       return grades.map(({ id, feedback_text, is_correct }: { id: number | string, feedback_text: string, is_correct: boolean }) => ({
         question_id: id.toString(),
         feedback_text,

@@ -186,7 +186,6 @@ export class QuizController implements IQuizController {
 
     const remixMultipleChoiceGenerator = openaiRequestHandler.multipleChoiceQuizGenerator;
     remixMultipleChoiceGenerator.getPrompt = (payload: string) => {
-      console.log("GETTING FRO", payload)
       return createMultipleChoiceQuizGenerationPrompt(payload, questionListString);
     }
 
