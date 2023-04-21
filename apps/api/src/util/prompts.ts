@@ -60,7 +60,7 @@ export const createFreeResponseGradingPrompt = (freeResponseQuestionsAndAnswers:
     {
       "grades": [
        {
-        question_id: <question_id>,
+        id: <number>,
         feedback_text: <string>,
         is_correct: <boolean>
        },

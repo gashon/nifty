@@ -54,7 +54,7 @@ const FreeResponse: FC<{
   return (
     <>
       <p className="opacity-75">
-        <span className="">Your answer:</span> {answer.answer_text ?? 'None'}
+        <span className="">Your answer:</span> {answer.answer_text ?? 'N/A'}
       </p>
 
       <p className="">

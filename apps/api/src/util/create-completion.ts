@@ -10,17 +10,19 @@ import {
 import { CustomException } from "@/exceptions";
 
 const getOpenAIResponse = async (prompt: string) => {
+  const model = "text-davinci-003"
+
   // rough estimate of number of tokens
-  const numTokens = countTokens(prompt);
+  const numTokens = countTokens(prompt, model);
   const response = await openai.createCompletion({
     prompt,
-    model: "text-davinci-003",
-    max_tokens: 3700 - numTokens, //~
+    model,
+    max_tokens: 4096 - numTokens,
     temperature: 0.2,
-    top_p: 1,
     frequency_penalty: 0.5,
     presence_penalty: 0.5,
-    stream: false
+    stream: false,
+    stop: null,
   });
 
   const choice = response.data.choices[0]

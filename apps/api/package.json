@@ -8,6 +8,7 @@
     "lint": "tsc --noEmit && eslint . --fix --ext js,ts"
   },
   "dependencies": {
+    "@dqbd/tiktoken": "1.0.6",
     "@nifty/server-lib": "*",
     "@sentry/node": "7.45.0",
     "@types/passport-github2": "1.2.5",

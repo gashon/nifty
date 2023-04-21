@@ -83,15 +83,12 @@ export class QuizController implements IQuizController {
     if (!body.question_type.multiple_choice && !body.question_type.free_response)
       throw new CustomException('Quiz must have at least one question type', status.BAD_REQUEST);
 
-    if (body.question_type.multiple_choice && body.question_type.free_response)
-      throw new CustomException('Quiz cannot have both multiple choice and free response questions', status.BAD_REQUEST);
-
     // validate note exists
     const note = await this.noteService.findNoteById(noteId);
     if (!note)
       throw new CustomException('Note not found', status.NOT_FOUND);
 
-    const numTokens = countTokens(note.content);
+    const numTokens = countTokens(note.content, "text-davinci-003");
     if (numTokens > 2500)
       throw new CustomException('Note must be less than 2500 words', status.BAD_REQUEST);
 
@@ -126,6 +123,7 @@ export class QuizController implements IQuizController {
       !req.body.title && this.directoryService.findDirectoryByNoteId(note.id),
     ]);
 
+    // set quiz title
     let title = req.body.title;
     if (!title && directory) {
       title = `${directory.name}: ${note.title}`;

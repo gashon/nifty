@@ -13,10 +13,8 @@ import { QuizCreateRequest } from '@nifty/server-lib/models/quiz';
 const schema = z.object({
   title: z.string().max(50).optional(),
   note: z.string().min(1).max(100), // note id
-  // todo checkbox for question type
-  // multiple_choice: z.boolean().default(false),
-  // free_response: z.boolean().default(false),
-  question_type: z.enum(['multiple_choice', 'free_response']),
+  multiple_choice: z.boolean().default(false),
+  free_response: z.boolean().default(false),
 });
 
 export const QuizCreationButton: FC = () => {
@@ -28,8 +26,8 @@ export const QuizCreationButton: FC = () => {
         title: values.title,
         note: values.note,
         question_type: {
-          multiple_choice: values.question_type === 'multiple_choice',
-          free_response: values.question_type === 'free_response',
+          multiple_choice: values.multiple_choice,
+          free_response: values.free_response,
         },
       };
       await createQuizMutation.mutateAsync(payload);
@@ -58,8 +56,9 @@ export const QuizCreationButton: FC = () => {
           onSubmit={onSubmit}
           className="w-full flex flex-col align-center justify-center"
         >
-          {({ formState, setValue, register, watch }) => {
-            const questionType = watch('question_type');
+          {({ formState, setValue, register, getValues, watch }) => {
+            const multipleChoice = watch('multiple_choice');
+            const freeResponse = watch('free_response');
 
             return (
               <>
@@ -85,15 +84,15 @@ export const QuizCreationButton: FC = () => {
                         <div
                           className="flex flex-row items-center gap-2 "
                           onClick={(e) => {
-                            setValue('question_type', 'multiple_choice');
+                            setValue('multiple_choice', !multipleChoice);
                           }}
                         >
                           <input
-                            type="radio"
+                            type="checkbox"
                             name="question_type"
                             className="w-4 h-4"
                             value="multiple_choice"
-                            checked={questionType === 'multiple_choice'}
+                            checked={multipleChoice}
                           />
                           <label className="text-black cursor-pointer">
                             Multiple choice
@@ -103,15 +102,15 @@ export const QuizCreationButton: FC = () => {
                         <div
                           className="flex flex-row items-center gap-2"
                           onClick={(e) => {
-                            setValue('question_type', 'free_response');
+                            setValue('free_response', !freeResponse);
                           }}
                         >
                           <input
-                            type="radio"
+                            type="checkbox"
                             name="question_type"
                             className="w-4 h-4"
                             value="free_response"
-                            checked={questionType === 'free_response'}
+                            checked={freeResponse}
                           />
                           <label className="text-black cursor-pointer">
                             Free response
