@@ -8,7 +8,7 @@ import {
   IFreeResponseQuizQuestion,
 } from '@nifty/server-lib/models/quiz';
 import { IQuizSubmissionAnswer } from '@nifty/server-lib/models/submission';
-import { useQuizSession, useCreateSubmission } from '@/features/quiz';
+import { useQuizSession, useCreateSubmission} from '@/features/quiz';
 
 type QuizQuestion =
   | Omit<IMultipleChoiceQuizQuestion, 'correct_index'>

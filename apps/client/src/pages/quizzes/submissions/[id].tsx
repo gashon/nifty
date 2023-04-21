@@ -6,7 +6,7 @@ import { BsArrowBarLeft } from 'react-icons/bs';
 import dayjs from 'dayjs';
 
 import { AuthProtection, AuthProvider, getUser } from '@/features/auth';
-import { getQuizSubmission } from '@/features/quiz';
+import { getQuizSubmission, useRemixQuiz } from '@/features/quiz';
 import { LoadingPage } from '@nifty/ui/pages/loading';
 import { IUser } from '@nifty/server-lib/models/user';
 import {
@@ -20,6 +20,7 @@ import {
   IQuizMultipleChoiceQuestion,
   IQuizFreeResponseQuestion,
 } from '@nifty/server-lib/models/quiz';
+import { Button } from '@nifty/ui/atoms';
 
 interface SubmissionResponse extends Omit<ISubmission, 'quiz'> {
   quiz: IQuiz; // quiz is populated
@@ -127,6 +128,7 @@ export const SubmissionPage: FC<{
 }> = ({ user, submission }) => {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
+  const remixQuizMutation = useRemixQuiz(submission.quiz.id);
 
   useEffect(() => {
     setIsMounted(true);
@@ -174,6 +176,17 @@ export const SubmissionPage: FC<{
                 <Link href={`/quizzes/${submission.quiz.id}`}>
                   <span className="underline opacity-75">Try again</span>
                 </Link>
+                <Button
+                  onClick={async () => {
+                    const payload = {
+                      question_type: {
+                            
+                      }
+                    }
+                    const res = await remixQuizMutation.mutateAsync(payload);
+                    router.push(`/quizzes/${res.data.id}`);
+                  }}
+                >Create another quiz!</Button>
               </div>
             </div>
           </div>

@@ -45,11 +45,10 @@ export class QuizService implements IQuizService {
     }).sort({ created_at: -1 });
   }
 
-  async createQuiz(createdBy: string, data: Partial<IQuiz>): Promise<QuizDocument> {
+  async createQuiz(createdBy: string, data: Omit<IQuiz, "created_by" | keyof Resource>): Promise<QuizDocument> {
     const doc = {
       ...data,
       created_by: createdBy,
-      parent: null,
     }
     const quiz = await this.quizModel.create(doc);
     return quiz;

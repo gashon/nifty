@@ -213,7 +213,13 @@ export class QuizController implements IQuizController {
 
     // create quiz 
     const quizQuestions = [...(multipleChoiceResult || []), ...(freeResponseResult || [])];
-    const quiz = await this.quizService.createQuiz(createdBy, { title, questions: quizQuestions, note: noteId, collaborators: [quizCollaborator.id] });
+    const quiz = await this.quizService.createQuiz(createdBy, {
+      title,
+      questions: quizQuestions,
+      note: noteId,
+      collaborators: [quizCollaborator.id],
+      question_type: body.question_type
+    });
 
     quizCollaborator.set({ foreign_key: quiz.id });
     quizCollaborator.save();
