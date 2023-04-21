@@ -1,11 +1,10 @@
 import status from "http-status";
+import { CreateCompletionResponse } from "openai";
+import { AxiosResponse } from "axios";
 import openai from "@/lib/openai";
 import logger from "@/lib/logger";
 import {
   countTokens,
-  createMultipleChoiceQuizGenerationPrompt,
-  createFreeResponseQuizGenerationPrompt,
-  createFreeResponseGradingPrompt
 } from "@/util"
 import { CustomException } from "@/exceptions";
 
@@ -33,40 +32,11 @@ const getOpenAIResponse = async (prompt: string) => {
   return choice.text
 }
 
-
-export const generateMultipleChoiceQuizFromNote = async (noteContent: string) => {
-  const prompt = createMultipleChoiceQuizGenerationPrompt(noteContent);
+export const sendOpenAIRequest = async (prompt: string) => {
   try {
     return getOpenAIResponse(prompt)
   } catch (err) {
-    logger.error(`Error generating quiz: ${JSON.stringify(err)}}`);
-    // @ts-ignore
-    const message = err.response?.data?.error?.message || err?.message;
-    throw new CustomException(message, status.BAD_REQUEST)
-  }
-}
-
-
-export const generateFreeResponseGrading = async (freeResponseQuestionsAndAnswers: string) => {
-  const prompt = createFreeResponseGradingPrompt(freeResponseQuestionsAndAnswers);
-
-  try {
-    return getOpenAIResponse(prompt)
-  } catch (err) {
-    logger.error(`Error grading free response: ${JSON.stringify(err)}}`);
-    // @ts-ignore
-    const message = err.response?.data?.error?.message || err?.message;
-    throw new CustomException(message, status.BAD_REQUEST)
-  }
-}
-
-
-export const generateFreeResponseQuizFromNote = async (noteContent: string) => {
-  const prompt = createFreeResponseQuizGenerationPrompt(noteContent);
-  try {
-    return getOpenAIResponse(prompt)
-  } catch (err) {
-    logger.error(`Error generating quiz: ${JSON.stringify(err)}}`);
+    logger.error(`Error sending openai request: ${JSON.stringify(err)}}`);
     // @ts-ignore
     const message = err.response?.data?.error?.message || err?.message;
     throw new CustomException(message, status.BAD_REQUEST)

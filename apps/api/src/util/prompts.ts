@@ -1,6 +1,6 @@
 
 
-export const createMultipleChoiceQuizGenerationPrompt = (noteContent: string): string => {
+export const createMultipleChoiceQuizGenerationPrompt = (noteContent: string, avoidQuestions?: string): string => {
   return `
     Generate a quiz from the following note content. 
     The quiz should have 5-10 questions with 4 possible answers for each.
@@ -22,7 +22,7 @@ export const createMultipleChoiceQuizGenerationPrompt = (noteContent: string): s
         ... 
       ]
     }
-
+    ${avoidQuestions ? `None of the questions you provide can be identical to our similar to these: ${avoidQuestions}` : ''}
     You're output should be stringified JSON - such that it can be parsed into a JavaScript object. Do not include any newline chars (your response should all be on one line).
     Do not include anything else in your response besides the one-line JSON object.
     ---
@@ -31,7 +31,7 @@ export const createMultipleChoiceQuizGenerationPrompt = (noteContent: string): s
   `
 }
 
-export const createFreeResponseQuizGenerationPrompt = (noteContent: string): string => {
+export const createFreeResponseQuizGenerationPrompt = (noteContent: string, avoidQuestions?: string): string => {
   return `
     Generate a quiz from the following note content. 
     The quiz should have 4-6 questions. Each question should be a free response question.
@@ -43,7 +43,7 @@ export const createFreeResponseQuizGenerationPrompt = (noteContent: string): str
         ...
       ]
     }
-
+    ${avoidQuestions ? `None of the questions you provide can be identical to our similar to these: ${avoidQuestions}` : ''}
     You're output should be stringified JSON - such that it can be parsed into a JavaScript object. Do not include any newline chars (your response should all be on one line).
     Do not include anything else in your response besides the one-line JSON object.
     ---
@@ -54,16 +54,19 @@ export const createFreeResponseQuizGenerationPrompt = (noteContent: string): str
 
 export const createFreeResponseGradingPrompt = (freeResponseQuestionsAndAnswers: string): string => {
   return `
-    You are responsible for grading the following free response questions.
+    You are an extremely strict grader and academic expert.
     You should provide feedback and identify whether or not the answer is correct.
+    Your feedback should identify aspects of the answer that are correct and incorrect.
+    For incorrect statements, feedback must explicitly identify the mistake and offer a correction.
+    The feedback should be less than 4 sentences.
     Return the grading as a JSON object in the following format:
     {
       "grades": [
-       {
-        id: <number>,
-        feedback_text: <string>,
-        is_correct: <boolean>
-       },
+        {
+          id: <number>,
+          feedback_text: <string>,
+          is_correct: <boolean>
+        },
         ...
       ]
     }

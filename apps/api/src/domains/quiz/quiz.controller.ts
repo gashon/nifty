@@ -139,6 +139,88 @@ export class QuizController implements IQuizController {
     return res.status(status.CREATED).json({ data: quiz });
   }
 
+  @httpPost("/:id/remix", auth())
+  async remixQuiz(req: Request, res: Response): Promise<Response<QuizCreateResponse>> {
+    const createdBy = res.locals.user._id;
+    const body: QuizCreateRequest = req.body;
+    const quizId = req.params.id;
+    const noteId = body.note;
+
+    if (!body.question_type.multiple_choice && !body.question_type.free_response)
+      throw new CustomException('Quiz must have at least one question type', status.BAD_REQUEST);
+
+    // validate note exists
+    const note = await this.noteService.findNoteById(noteId);
+    if (!note)
+      throw new CustomException('Note not found', status.NOT_FOUND);
+
+
+    // validate user has access to directory and note doesn't already have a quiz
+    const [collaborator, prevQuiz] = await Promise.all([
+      this.collaboratorService.findCollaboratorByNoteIdAndUserId(note.id, createdBy),
+      this.quizService.findQuizById(quizId),
+    ]);
+
+    if (!collaborator)
+      throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
+
+    if (!prevQuiz)
+      throw new CustomException('Quiz not found', status.NOT_FOUND);
+
+    const prevQuestionQuestions: string[] = prevQuiz.questions.map(({ question }) => question);
+    const questionListString = prevQuestionQuestions.join(" ");
+
+    const numTokens = countTokens(`${note.content} ${questionListString}`, "text-davinci-003");
+    if (numTokens > 2500)
+      throw new CustomException('Note must be less than 2500 words', status.BAD_REQUEST);
+
+    if (numTokens < 25)
+      throw new CustomException('Note must be at least 25 words', status.BAD_REQUEST);
+
+    const remixMultipleChoiceGenerator = openaiRequestHandler.multipleChoiceQuizGenerator;
+    remixMultipleChoiceGenerator.getPrompt = (payload: string) => {
+      const prompt = openaiRequestHandler.multipleChoiceQuizGenerator.getPrompt(payload);
+      return `${prompt}\n\nYour questions MUST not be identical or similar to any of the following: ${questionListString}`;
+    }
+
+    const remixFreeResponseGenerator = openaiRequestHandler.freeResponseQuizGenerator;
+    remixFreeResponseGenerator.getPrompt = (payload: string) => {
+      const prompt = openaiRequestHandler.freeResponseQuizGenerator.getPrompt(payload);
+      return `${prompt}\n\nYour questions MUST not be identical or similar to any of the following: ${questionListString}`;
+    }
+
+    // generate quiz
+    const [quizCollaborator, multipleChoiceResult, freeResponseResult, directory] = await Promise.all([
+      this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: setPermissions(Permission.ReadWriteDelete) }),
+      body.question_type.multiple_choice && openaiRequest({
+        payload: note.content,
+        generator: remixMultipleChoiceGenerator,
+        errorMessage: "Quiz could not be generated from note"
+      }),
+      body.question_type.free_response && openaiRequest({
+        payload: note.content,
+        generator: remixFreeResponseGenerator,
+        errorMessage: "Quiz could not be generated from note"
+      }),
+      !req.body.title && this.directoryService.findDirectoryByNoteId(note.id),
+    ]);
+
+    // set quiz title
+    let title = req.body.title;
+    if (!title && directory) {
+      title = `${directory.name}: ${note.title} - Remix`;
+    }
+
+    // create quiz 
+    const quizQuestions = [...(multipleChoiceResult || []), ...(freeResponseResult || [])];
+    const quiz = await this.quizService.createQuiz(createdBy, { title, questions: quizQuestions, note: noteId, collaborators: [quizCollaborator.id] });
+
+    quizCollaborator.set({ foreign_key: quiz.id });
+    quizCollaborator.save();
+
+    return res.status(status.CREATED).json({ data: quiz });
+  }
+
   @httpDelete("/:id", auth())
   async deleteQuizById(req: Request, res: Response): Promise<void> {
     const id = req.params.id;

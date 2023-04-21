@@ -1,22 +1,24 @@
 import status from "http-status";
 import logger from "@/lib/logger"
 import {
-  generateMultipleChoiceQuizFromNote,
-  generateFreeResponseQuizFromNote,
-  generateFreeResponseGrading,
-  shuffleQuiz
+  sendOpenAIRequest,
+  shuffleQuiz,
+  countTokens,
+  createMultipleChoiceQuizGenerationPrompt,
+  createFreeResponseQuizGenerationPrompt,
+  createFreeResponseGradingPrompt
 } from "@/util"
 import { CustomException } from "@/exceptions";
 import { IFreeResponseQuizQuestion, IMultipleChoiceQuizQuestion } from "@nifty/server-lib/models/quiz";
 import { IFreeResponseSubmissionGradingResponse } from "@nifty/server-lib/models/submission";
 
 type FormatFn = (data: any) => string;
-type SendRequestFn = (data: any) => Promise<any>;
+type SendRequestFn = (data: string) => string;
 type ReformatFn<T> = (data: string) => T;
 
 interface RequestItem<T> {
   format: FormatFn;
-  sendRequest: SendRequestFn;
+  getPrompt: SendRequestFn;
   reformat: ReformatFn<T>;
 }
 
@@ -35,7 +37,7 @@ export const openaiRequestHandler: {
 } = {
   multipleChoiceQuizGenerator: {
     format: formatNoteContent,
-    sendRequest: generateMultipleChoiceQuizFromNote,
+    getPrompt: createFreeResponseGradingPrompt,
     reformat: (stringifiedQuiz: string): IMultipleChoiceQuizQuestion[] => {
       // randomize the order of the questions and mark the correct_index
       const quizContent = JSON.parse(stringifiedQuiz).questions
@@ -45,7 +47,7 @@ export const openaiRequestHandler: {
   },
   freeResponseQuizGenerator: {
     format: formatNoteContent,
-    sendRequest: generateFreeResponseQuizFromNote,
+    getPrompt: createFreeResponseGradingPrompt,
     reformat: (stringifiedQuiz: string): IFreeResponseQuizQuestion[] => {
       const questions = JSON.parse(stringifiedQuiz).questions
       return questions.map((question: string, index: number) => ({
@@ -65,7 +67,7 @@ export const openaiRequestHandler: {
         }))
       })
     },
-    sendRequest: generateFreeResponseGrading,
+    getPrompt: createFreeResponseGradingPrompt,
     reformat: (stringifiedGrades: string): IFreeResponseSubmissionGradingResponse[] => {
       const { grades } = JSON.parse(stringifiedGrades);
       return grades.map(({ id, feedback_text, is_correct }: { id: number | string, feedback_text: string, is_correct: boolean }) => ({
@@ -82,16 +84,17 @@ export async function openaiRequest<T>(generatorItem: {
   payload: any;
   errorMessage?: string;
 }): Promise<T> {
-  const { generator: { format, sendRequest, reformat }, payload, errorMessage } = generatorItem;
+  const { generator: { format, getPrompt, reformat }, payload, errorMessage } = generatorItem;
 
   try {
     const formattedPayload = format(payload);
     logger.info(`Sending openai request: ${JSON.stringify(formattedPayload)}`)
 
-    const result = await sendRequest(formattedPayload);
+    const prompt = getPrompt(formattedPayload);
+    const result = await sendOpenAIRequest(prompt);
     logger.info(`Successfully sent openai request: ${JSON.stringify(result)}`);
 
-    const formattedResult: ReturnType<typeof reformat> = reformat(result);
+    const formattedResult: ReturnType<typeof reformat> = reformat(result!);
     return formattedResult;
   } catch (err) {
     logger.error(`Error sending or parsing openai request: ${JSON.stringify(err)}}`);
