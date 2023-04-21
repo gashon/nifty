@@ -128,7 +128,9 @@ export const SubmissionPage: FC<{
 }> = ({ user, submission }) => {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
-  const remixQuizMutation = useRemixQuiz(submission.quiz.id);
+  const { mutateAsync: remixQuiz, isLoading: remixIsLoading } = useRemixQuiz(
+    submission.quiz.id
+  );
 
   useEffect(() => {
     setIsMounted(true);
@@ -179,14 +181,16 @@ export const SubmissionPage: FC<{
                 <Button
                   onClick={async () => {
                     const payload = {
-                      question_type: {
-                            
-                      }
-                    }
-                    const res = await remixQuizMutation.mutateAsync(payload);
-                    router.push(`/quizzes/${res.data.id}`);
+                      question_type: submission.quiz.question_type,
+                      note: submission.quiz.note,
+                    };
+                    const { data: quizResponse } = await remixQuiz(payload);
+                    router.push(`/quizzes/${quizResponse.data.id}`);
                   }}
-                >Create another quiz!</Button>
+                  loading={remixIsLoading}
+                >
+                  Create another quiz!
+                </Button>
               </div>
             </div>
           </div>
