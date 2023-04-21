@@ -16,7 +16,7 @@ const getOpenAIResponse = async (prompt: string) => {
     prompt,
     model: "text-davinci-003",
     max_tokens: 3700 - numTokens, //~
-    temperature: 0.7,
+    temperature: 0.2,
     top_p: 1,
     frequency_penalty: 0.5,
     presence_penalty: 0.5,
