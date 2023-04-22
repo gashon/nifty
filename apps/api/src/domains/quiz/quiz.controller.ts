@@ -104,10 +104,6 @@ export class QuizController implements IQuizController {
     if (!collaborator)
       throw new CustomException('You do not have access to this directory', status.FORBIDDEN);
 
-    // todo autoincrement quiz title
-    if (prevQuiz && !req.body.title && prevQuiz.title !== body.title)
-      throw new CustomException(`This note already has a quiz titled "${prevQuiz.title}"`, status.BAD_REQUEST);
-
     // generate quiz
     const [quizCollaborator, multipleChoiceResult, freeResponseResult, directory] = await Promise.all([
       this.collaboratorService.createCollaborator(createdBy, { user: createdBy, type: "quiz", permissions: setPermissions(Permission.ReadWriteDelete) }),

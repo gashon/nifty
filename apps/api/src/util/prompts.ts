@@ -22,7 +22,7 @@ export const createMultipleChoiceQuizGenerationPrompt = (noteContent: string, av
         ... 
       ]
     }
-    ${avoidQuestions ? `None of the questions you provide can be identical to our similar to these: ${avoidQuestions}` : ''}
+    ${avoidQuestions ? `Each question you provide be completely  different than these: ${avoidQuestions}` : ''}
     You're output should be stringified JSON - such that it can be parsed into a JavaScript object. Do not include any newline chars (your response should all be on one line).
     Do not include anything else in your response besides the one-line JSON object.
     ---
