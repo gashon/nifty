@@ -13,7 +13,7 @@ const InternalError: FC<InternalErrorProps> = () => {
   const { message, redirect } = router.query;
 
   return (
-    <main className="bg-primary flex h-screen flex-col items-center justify-center gap-6">
+    <main className="bg-primary relative flex h-screen flex-col items-center justify-center gap-6">
       <Image
         src="/auth-denied.svg"
         alt="Sad illustration"
@@ -49,6 +49,17 @@ const InternalError: FC<InternalErrorProps> = () => {
           variant="secondary"
         >
           Log in
+        </Button>
+      </div>
+      <div className="absolute bottom-5 left-5">
+        <Button
+          variant="primary"
+          onClick={() => {
+            // reload the page (redirect to the "redirect" page)
+            location.replace('/');
+          }}
+        >
+          Homepage
         </Button>
       </div>
     </main>
