@@ -8,9 +8,13 @@ import {
   IFreeResponseQuizQuestion,
 } from '@nifty/server-lib/models/quiz';
 import { IQuizSubmissionAnswer } from '@nifty/server-lib/models/submission';
-import { useQuizSession, useCreateSubmission} from '@/features/quiz';
+import {
+  useQuizSession,
+  useCreateSubmission,
+  useQuizStorage,
+} from '@/features/quiz';
 
-type QuizQuestion =
+export type QuizQuestion =
   | Omit<IMultipleChoiceQuizQuestion, 'correct_index'>
   | IFreeResponseQuizQuestion;
 
@@ -88,20 +92,9 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
 }) => {
   const submitQuizMutation = useCreateSubmission(quizId);
   const { getTotalTime, startSession, deleteSessions } = useQuizSession(quizId);
-  const [answers, setAnswers] = useState<IQuizSubmissionAnswer[]>(
-    questions.map((question) => {
-      return question.type === 'multiple-choice'
-        ? {
-            question_id: question.id,
-            answer_index: -1,
-            type: question.type,
-          }
-        : {
-            question_id: question.id,
-            answer_text: '',
-            type: question.type,
-          };
-    })
+  const { answers, setAnswers, saveAnswersToStorage } = useQuizStorage(
+    quizId,
+    questions
   );
   const { handleSubmit, formState } = useForm();
 
@@ -112,23 +105,28 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
   const onAnswerChange = useCallback(
     (questionId: string, userAnswer: string | number) => {
       setAnswers((prevAnswers): IQuizSubmissionAnswer[] => {
-        const answer = prevAnswers.find((a) => a.question_id === questionId);
-        if (answer) {
-          if (answer.type === 'free-response') {
-            return prevAnswers.map((a) =>
-              a.question_id === questionId
-                ? { ...a, answer_text: userAnswer as string }
-                : a
-            );
-          }
-          // update answer index
-          return prevAnswers.map((a) =>
-            a.question_id === questionId
-              ? { ...a, answer_index: userAnswer as number }
-              : a
-          );
+        const answerIndex = prevAnswers.findIndex(
+          (a) => a.question_id === questionId
+        );
+        const answer = prevAnswers[answerIndex];
+        if (!answer) return prevAnswers;
+
+        const newAnswers = [...prevAnswers];
+        // todo: refactor this
+        if (answer.type === 'free-response') {
+          newAnswers[answerIndex] = {
+            ...answer,
+            answer_text: userAnswer as string,
+          };
+        } else {
+          // 'multiple-choice'
+          newAnswers[answerIndex] = {
+            ...answer,
+            answer_index: userAnswer as number,
+          };
         }
-        return prevAnswers;
+        saveAnswersToStorage(newAnswers);
+        return newAnswers;
       });
     },
     []
