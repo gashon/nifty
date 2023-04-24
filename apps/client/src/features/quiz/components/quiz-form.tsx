@@ -8,7 +8,7 @@ import {
   IFreeResponseQuizQuestion,
 } from '@nifty/server-lib/models/quiz';
 import { IQuizSubmissionAnswer } from '@nifty/server-lib/models/submission';
-import { useQuizSession, useCreateSubmission } from '@/features/quiz';
+import { useQuizSession, useCreateSubmission} from '@/features/quiz';
 
 type QuizQuestion =
   | Omit<IMultipleChoiceQuizQuestion, 'correct_index'>
@@ -25,7 +25,7 @@ const MultipleChoice: FC<{
       {question.answers &&
         question.answers.map((answer, index) => (
           <div
-            key={index}
+            key={`multiple-choice-${index}`}
             className={`cursor-pointer text-lg border-green 
             ${selectedAnswer === index ? '' : 'opacity-75'}
           `}
@@ -58,6 +58,7 @@ const FreeResponse: FC<{
   return (
     <>
       <textarea
+        key={`free-response-${question.id}`}
         className="w-full h-28 p-2 text-primary opacity-75 rounded bg-transparent border-none"
         placeholder="Answer..."
         onChange={(e) => {
@@ -154,7 +155,7 @@ export const QuizForm: FC<{ questions: QuizQuestion[]; quizId: string }> = ({
       >
         <>
           {questions.map((question, index) => (
-            <div className="mb-5 flex flex-col" key={question.id}>
+            <div className="mb-5 flex flex-col" key={`question-${question.id}`}>
               <div className="flex flex-row mb-2 text-xl">
                 <p className="opacity-75 mr-1">{index + 1}. </p>
                 <p> {question.question}</p>

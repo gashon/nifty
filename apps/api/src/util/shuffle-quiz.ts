@@ -1,8 +1,7 @@
-import { v4 as uuid } from 'uuid';
 import { IMultipleChoiceQuizQuestion } from '@nifty/server-lib/models/quiz';
 
 export function shuffleQuiz(questions: IMultipleChoiceQuizQuestion[]): IMultipleChoiceQuizQuestion[] {
-  return questions.map((question: any) => {
+  return questions.map((question: any, index: number) => {
     // shallow copy
     const answers = [...question.answers];
     // initially, 0 index is correct
@@ -15,7 +14,7 @@ export function shuffleQuiz(questions: IMultipleChoiceQuizQuestion[]): IMultiple
     // find the correct index
     correctIndex = answers.findIndex((answer: any) => answer === question.answers[correctIndex]);
     return {
-      id: uuid(),
+      id: index.toString(),
       type: "multiple-choice",
       question: question.question,
       answers: answers,

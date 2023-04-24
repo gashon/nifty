@@ -8,8 +8,8 @@ const middleware: NextMiddleware = async function middleware(req) {
       req.nextUrl.searchParams.get('refresh_token'),
     ]
 
-    const refreshCookie = req.cookies.get('refresh_token');
-    if (!refreshToken && !refreshCookie) return NextResponse.next();
+    // If there is no authorization token, continue
+    if (!refreshToken) return NextResponse.next();
 
     // Set redirect
     const redirect = decodeURIComponent(req.nextUrl.searchParams.get('redirect') || '/dashboard');

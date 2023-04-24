@@ -63,6 +63,7 @@ export class NoteService implements INoteService {
       _id: {
         $in: directory.notes
       },
+      deleted_at: null,
       ...query
     });
   }

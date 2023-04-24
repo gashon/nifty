@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import dayjs from 'dayjs';
 
 import { useInfiniteQuizzes, useDeleteQuiz } from '@/features/quiz';
 import ModuleCard from '@nifty/ui/molecules/module-card';
@@ -24,16 +25,19 @@ export const QuizList: FC = () => {
       {isFetched && (
         <>
           {data.pages.map(({ data }: any) =>
-            data.map((quiz) => (
-              <div key={quiz.id}>
-                <ModuleCard
-                  onDelete={() => deleteQuiz(quiz.id)}
-                  name={quiz.title}
-                  {...quiz}
-                  href={`/quizzes/${quiz.id}?title=${quiz.title}`}
-                />
-              </div>
-            ))
+            data.map((quiz) => {
+              return (
+                <div key={quiz.id}>
+                  <ModuleCard
+                    onDelete={() => deleteQuiz(quiz.id)}
+                    name={quiz.title}
+                    {...quiz}
+                    href={`/quizzes/${quiz.id}?title=${quiz.title}`}
+                    alias={dayjs(quiz.created_at).format('MMMM D, YYYY h:mm A')}
+                  />
+                </div>
+              );
+            })
           )}
         </>
       )}

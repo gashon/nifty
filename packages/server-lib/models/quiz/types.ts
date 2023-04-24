@@ -25,16 +25,16 @@ export interface IQuiz extends Resource {
   note: string;
   title: string;
   questions: IQuizQuestion[];
-}
-
-export type QuizDocument = mongoose.Document<string, object, IQuiz> & IQuiz;
-
-export type QuizCreateRequest = Pick<IQuiz, | 'note'> & {
-  title?: string;
   question_type: {
     multiple_choice: boolean;
     free_response: boolean;
   }
+}
+
+export type QuizDocument = mongoose.Document<string, object, IQuiz> & IQuiz;
+
+export type QuizCreateRequest = Pick<IQuiz, 'note'| 'question_type'> & {
+  title?: string;
 }
 export type QuizUpdateRequest = Partial<Expand<Omit<IQuiz, 'created_by'>>>
 

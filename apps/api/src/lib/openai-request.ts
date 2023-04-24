@@ -1,23 +1,25 @@
 import status from "http-status";
-import { v4 as uuid } from 'uuid';
+import { jsonrepair } from 'jsonrepair'
 import logger from "@/lib/logger"
 import {
-  generateMultipleChoiceQuizFromNote,
-  generateFreeResponseQuizFromNote,
-  generateFreeResponseGrading,
-  shuffleQuiz
+  sendOpenAIRequest,
+  shuffleQuiz,
+  countTokens,
+  createMultipleChoiceQuizGenerationPrompt,
+  createFreeResponseQuizGenerationPrompt,
+  createFreeResponseGradingPrompt
 } from "@/util"
 import { CustomException } from "@/exceptions";
 import { IFreeResponseQuizQuestion, IMultipleChoiceQuizQuestion } from "@nifty/server-lib/models/quiz";
 import { IFreeResponseSubmissionGradingResponse } from "@nifty/server-lib/models/submission";
 
 type FormatFn = (data: any) => string;
-type SendRequestFn = (data: any) => Promise<any>;
+type SendRequestFn = (data: string) => string;
 type ReformatFn<T> = (data: string) => T;
 
 interface RequestItem<T> {
   format: FormatFn;
-  sendRequest: SendRequestFn;
+  getPrompt: SendRequestFn;
   reformat: ReformatFn<T>;
 }
 
@@ -36,21 +38,23 @@ export const openaiRequestHandler: {
 } = {
   multipleChoiceQuizGenerator: {
     format: formatNoteContent,
-    sendRequest: generateMultipleChoiceQuizFromNote,
+    getPrompt: createMultipleChoiceQuizGenerationPrompt,
     reformat: (stringifiedQuiz: string): IMultipleChoiceQuizQuestion[] => {
+      const repairedJSON = jsonrepair(stringifiedQuiz);
       // randomize the order of the questions and mark the correct_index
-      const quizContent = JSON.parse(stringifiedQuiz).questions
+      const quizContent = JSON.parse(repairedJSON).questions
       const randomizedQuiz = shuffleQuiz(quizContent);
       return randomizedQuiz;
     }
   },
   freeResponseQuizGenerator: {
     format: formatNoteContent,
-    sendRequest: generateFreeResponseQuizFromNote,
+    getPrompt: createFreeResponseQuizGenerationPrompt,
     reformat: (stringifiedQuiz: string): IFreeResponseQuizQuestion[] => {
-      const questions = JSON.parse(stringifiedQuiz).questions
-      return questions.map((question: string) => ({
-        id: uuid(),
+      const repairedJSON = jsonrepair(stringifiedQuiz);
+      const questions = JSON.parse(repairedJSON).questions
+      return questions.map((question: string, index: number) => ({
+        id: (index + 50).toString(), // 50 is a random pad to avoid collisions with multiple choice questions, we use serial ids to reduce token count https://platform.openai.com/tokenizer
         type: "free-response",
         question: question,
       }))
@@ -60,16 +64,21 @@ export const openaiRequestHandler: {
     format: (questionsAndAnswers: any[]) => {
       return JSON.stringify({
         questions: questionsAndAnswers.map(({ question, answer }) => ({
-          question_id: question.id,
+          id: question.id, // map question_id to id to reduce token count https://platform.openai.com/tokenizer
           question: question.question,
-          answer_text: answer.answer_text,
+          answer_text: answer.answer_text, // todo consider mapping to "answer"
         }))
       })
     },
-    sendRequest: generateFreeResponseGrading,
+    getPrompt: createFreeResponseGradingPrompt,
     reformat: (stringifiedGrades: string): IFreeResponseSubmissionGradingResponse[] => {
-      const { grades } = JSON.parse(stringifiedGrades);
-      return grades;
+      const repairedJSON = jsonrepair(stringifiedGrades);
+      const { grades } = JSON.parse(repairedJSON);
+      return grades.map(({ id, feedback_text, is_correct }: { id: number | string, feedback_text: string, is_correct: boolean }) => ({
+        question_id: id.toString(),
+        feedback_text,
+        is_correct,
+      }))
     }
   },
 }
@@ -79,16 +88,23 @@ export async function openaiRequest<T>(generatorItem: {
   payload: any;
   errorMessage?: string;
 }): Promise<T> {
-  const { generator: { format, sendRequest, reformat }, payload, errorMessage } = generatorItem;
+  const { generator: { format, getPrompt, reformat }, payload, errorMessage } = generatorItem;
 
   try {
     const formattedPayload = format(payload);
-    const result = await sendRequest(formattedPayload);
+    logger.info(`Sending openai request with payload: ${formattedPayload}}`);
 
-    const formattedResult: ReturnType<typeof reformat> = reformat(result);
+    const prompt = getPrompt(formattedPayload);
+
+    logger.info(`Sending openai request with prompt: ${prompt}}`);
+    const result = await sendOpenAIRequest(prompt);
+
+    logger.info(`Received openai response: ${result}}`);
+    const formattedResult: ReturnType<typeof reformat> = reformat(result!);
     return formattedResult;
   } catch (err) {
-    logger.error(`Error generating req: ${JSON.stringify(err)}}`);
+    console.log("GOT Error", err)
+    logger.error(`Error sending or parsing openai request: ${JSON.stringify(err)}}`);
     throw new CustomException(errorMessage ?? 'Failed to generate openai request', status.BAD_REQUEST);
   }
 }
