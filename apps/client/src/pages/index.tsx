@@ -81,7 +81,7 @@ const Landing: FC<LandingProps> = ({ onWaitListFormSubmit }) => {
                 improvements.
               </p>
               <div className="mt-12 flex flex-col items-center">
-                <EmailForm setIsOpen={setIsOpen} />
+                {/* <EmailForm setIsOpen={setIsOpen} /> */}
                 <Modal
                   image="/waitlist-illustration.svg"
                   alt="waitlist illustration"
