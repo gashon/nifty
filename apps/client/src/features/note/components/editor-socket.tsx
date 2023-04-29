@@ -142,7 +142,15 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
           autoFocus
           onKeyUp={() => {
             // todo send cursor updates
-            const value = editor.children;
+            let value = editor.children;
+            if (value.length === 0) {
+              value = [
+                {
+                  type: 'paragraph',
+                  children: [{ text: '' }],
+                },
+              ];
+            }
             sendDocumentUpdate(JSON.stringify(value));
           }}
         />
