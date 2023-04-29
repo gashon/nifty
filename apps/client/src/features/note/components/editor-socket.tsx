@@ -20,7 +20,6 @@ import { withHistory } from 'slate-history';
 import { Editable, ReactEditor, Slate, withReact } from 'slate-react';
 import { useNoteSocket, useSocketMessageHandler } from '@/features/socket/';
 import { BulletedListElement } from '../types';
-import { SOCKET_EVENT } from '@nifty/api-live/types';
 import { useWordCount } from '@/features/note';
 
 const SHORTCUTS = {
@@ -85,8 +84,7 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
     },
     [editor]
   );
-  // todo handle collaboration
-  useSocketMessageHandler({
+  const { sendDocumentUpdate } = useSocketMessageHandler({
     socket,
     documentId,
     onDocumentLoad,
@@ -142,23 +140,10 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
           placeholder="Write some markdown..."
           spellCheck
           autoFocus
-          onKeyUp={(event) => {
+          onKeyUp={() => {
             // todo send cursor updates
             const value = editor.children;
-
-            console.log('SENDING', value);
-            // send current document
-            socket.send(
-              JSON.stringify({
-                event: SOCKET_EVENT.DOCUMENT_UPDATE,
-                payload: {
-                  note: {
-                    id: documentId,
-                    content: JSON.stringify(value),
-                  },
-                },
-              })
-            );
+            sendDocumentUpdate(JSON.stringify(value));
           }}
         />
       </Slate>

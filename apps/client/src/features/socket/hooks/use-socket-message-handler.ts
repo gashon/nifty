@@ -1,4 +1,4 @@
-import { useEffect, } from 'react';
+import { useEffect, useCallback } from 'react';
 import { SOCKET_EVENT } from '@nifty/api-live/types';
 
 type SocketMessageHandlerParams = {
@@ -14,7 +14,7 @@ export const useSocketMessageHandler = ({
   documentId,
   onDocumentLoad,
   onDocumentUpdate
-}: SocketMessageHandlerParams): void => {
+}: SocketMessageHandlerParams) => {
   useEffect(() => {
     if (socket) {
       socket.onmessage = (e) => {
@@ -41,4 +41,24 @@ export const useSocketMessageHandler = ({
       };
     }
   }, [socket, documentId, onDocumentLoad]);
+
+  const sendDocumentUpdate = useCallback(
+    (noteContent: string) => {
+      if (socket) {
+        socket.send(
+          JSON.stringify({
+            event: SOCKET_EVENT.DOCUMENT_UPDATE,
+            payload: {
+              note: {
+                id: documentId,
+                content: noteContent,
+              },
+            },
+          })
+        );
+      }
+    }
+    , [socket]);
+
+  return { sendDocumentUpdate };
 };
