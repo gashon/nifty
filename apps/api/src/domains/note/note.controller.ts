@@ -178,6 +178,11 @@ export class NoteController implements INoteController {
     if (!checkPermissions(note.public_permissions, Permission.ReadWrite) && !collaborator)
       throw new CustomException('You do not have access to this note', status.FORBIDDEN);
 
+    if (data.public_permissions !== undefined) {
+      if (!collaborator || collaborator.user !== note.created_by)
+        throw new CustomException('Only the note owner can change this setting', status.FORBIDDEN);
+    }
+
     // update note
     const updatedNote = await this.noteService.updateNoteById(id, data);
 
