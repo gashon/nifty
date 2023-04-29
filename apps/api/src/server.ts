@@ -39,7 +39,7 @@ server.setConfig((app) => {
     message: 'Too many requests from this IP, please try again after 15 minutes',
   }))
 
-  app.use(earlyAccessGuard);
+  // app.use(earlyAccessGuard);
 
   app.use('/', indexRouter);
 });

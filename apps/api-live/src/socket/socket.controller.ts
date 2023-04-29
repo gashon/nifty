@@ -57,7 +57,7 @@ export class WebSocketServer extends Server {
 
         // attach user permissions to the socket
         // todo store in redis
-        socket["collaborator"] = collaborator;
+        socket["collaborator"] = collaborator ?? undefined;
         socket["notePermissions"] = notePermissions;
       } catch (err) {
         // @ts-ignore

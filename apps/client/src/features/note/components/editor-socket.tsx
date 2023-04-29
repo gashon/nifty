@@ -2,7 +2,6 @@ import {
   FC,
   useCallback,
   useMemo,
-  useRef,
   useState,
   ReactElement,
   useReducer,
@@ -53,10 +52,10 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
   );
   const [_, forceRerender] = useReducer((s) => s + 1, 0);
   const { socket, connectionFailed } = useNoteSocket(documentId);
-  const [initValue, setInitValue] =
-    useState<Descendant[] | undefined>(undefined);
+  const [initValue, setInitValue] = useState<Descendant[] | undefined>(
+    undefined
+  );
 
-  const remoteUpdateRef = useRef(false);
   const onDocumentLoad = useCallback((note) => {
     setInitValue(
       note.content
@@ -82,11 +81,11 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
   const onDocumentUpdate = useCallback(
     (note: any) => {
       // todo handle collaboration
-      remoteUpdateRef.current = true;
       updateEditorContent(JSON.parse(note.content));
     },
     [editor]
   );
+  // todo handle collaboration
   useSocketMessageHandler({
     socket,
     documentId,
@@ -136,37 +135,31 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
 
   return (
     <>
-      <Slate
-        editor={editor}
-        value={initValue}
-        onChange={(value) => {
-          if (remoteUpdateRef.current) {
-            remoteUpdateRef.current = false;
-            return;
-          }
-          // @ts-ignore
-          // todo send cursor updates
-          if (value[0]?.children[0].text === '') return;
-          // send current document
-          socket.send(
-            JSON.stringify({
-              event: SOCKET_EVENT.DOCUMENT_UPDATE,
-              payload: {
-                note: {
-                  id: documentId,
-                  content: JSON.stringify(value),
-                },
-              },
-            })
-          );
-        }}
-      >
+      <Slate editor={editor} value={initValue}>
         <Editable
           onDOMBeforeInput={handleDOMBeforeInput}
           renderElement={renderElement}
           placeholder="Write some markdown..."
           spellCheck
           autoFocus
+          onKeyUp={(event) => {
+            // todo send cursor updates
+            const value = editor.children;
+
+            console.log('SENDING', value);
+            // send current document
+            socket.send(
+              JSON.stringify({
+                event: SOCKET_EVENT.DOCUMENT_UPDATE,
+                payload: {
+                  note: {
+                    id: documentId,
+                    content: JSON.stringify(value),
+                  },
+                },
+              })
+            );
+          }}
         />
       </Slate>
     </>
