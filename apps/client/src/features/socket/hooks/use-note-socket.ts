@@ -1,13 +1,11 @@
 
 import { useEffect, useState, useRef, useReducer } from 'react';
-import { v4 as uuidv4 } from "uuid";
 import { API_LIVE_URL } from "@/config";
 
 export const useNoteSocket = (noteId: string) => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [reconnect, forceReconnect] = useReducer((x) => x + 1, 0);
   const [connectionFailed, setConnectionFailed] = useState<boolean>(false);
-  const id = useRef(uuidv4());
 
   useEffect(() => {
     if (!noteId) return;

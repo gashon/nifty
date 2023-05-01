@@ -8,7 +8,6 @@ type NoteNeighborsQuery = {
 
 const fetchNoteNeighbors = async (noteId: string, { sort, limit }: NoteNeighborsQuery) => {
   try {
-    console.log("GETTING")
     const response = await axios.get(`/api/v1/notes/${noteId}/neighbors`, {
       params: {
         sort,

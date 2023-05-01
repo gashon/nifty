@@ -3,6 +3,7 @@ import http from 'http';
 import rateLimit from 'express-rate-limit';
 import morgan from 'morgan';
 import mongoose from '@nifty/server-lib/mongoose';
+import logger from '@/lib/logger';
 
 import { initRedisClient } from '@/lib/redis';
 import { WebSocketServer } from '@/socket';
@@ -30,5 +31,5 @@ const server = http.createServer(app);
 new WebSocketServer(redis, { server });
 
 server.listen(port, () => {
-  console.log(`Websockets listening on ${port}`);
+  logger.info(`Server started on port ${port}`)
 });

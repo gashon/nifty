@@ -1,4 +1,5 @@
 import { RedisClientType as RedisType, createClient, RedisModules, RedisFunctions, RedisScripts } from 'redis'
+import logger from '@/lib/logger';
 
 export type RedisClientType = RedisType<RedisModules, RedisFunctions, RedisScripts>
 
@@ -13,19 +14,19 @@ export function initRedisClient(): RedisClientType {
   })();
 
   client.on('error', (err) => {
-    console.log('Redis error: ', err);
+    logger.error(`Redis client error: ${err}`);
   });
 
   client.on('end', () => {
-    console.log('Redis client connection closed');
+    logger.info('Redis client disconnected');
   });
 
   client.on('connect', () => {
-    console.log('Redis client connected');
+    logger.info('Redis client connected');
   });
 
   client.on('ready', () => {
-    console.log('Redis client ready');
+    logger.info('Redis client ready');
   });
 
   return client
