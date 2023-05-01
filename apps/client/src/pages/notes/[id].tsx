@@ -2,10 +2,12 @@ import { NextSeo } from 'next-seo';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { BsArrowBarLeft } from 'react-icons/bs';
+import { GiHamburgerMenu } from 'react-icons/gi';
 
 import { AuthProtection, AuthProvider, getUser } from '@/features/auth';
 import { LoadingPage } from '@nifty/ui/pages/loading';
-import { DocumentSection } from '@/features/note';
+import { DocumentSection, NoteSettingsDrawer } from '@/features/note';
+import { Authorization } from '@/lib/authorization';
 
 function Document({ user }) {
   const router = useRouter();
@@ -37,6 +39,16 @@ function Document({ user }) {
               <main className="h-screen">
                 <DocumentSection />
               </main>
+              <Authorization checkPolicy={'note:settings:mutate'}>
+                <NoteSettingsDrawer
+                  noteId={id as string}
+                  triggerButton={
+                    <button className="fixed top-5 right-5 p-5 text-2xl text-white bg-primary rounded-full shadow-lg">
+                      <GiHamburgerMenu />
+                    </button>
+                  }
+                />
+              </Authorization>
             </div>
           </div>
         </AuthProtection>

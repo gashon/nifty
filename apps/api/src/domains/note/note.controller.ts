@@ -44,30 +44,6 @@ export class NoteController implements INoteController {
     res.status(status.OK).json({ data: notes });
   }
 
-  @httpGet('/:id', auth())
-  async getNote(req: Request, res: Response): Promise<void> {
-    const userId = res.locals.user._id;
-    const note = await this.noteService.findNoteById(req.params.id);
-
-    if (!note)
-      throw new CustomException('Note not found', status.NOT_FOUND);
-
-    if (!checkPermissions(note.public_permissions, Permission.Read) && !note.collaborators.includes(userId))
-      throw new CustomException('You do not have access to this note', status.FORBIDDEN);
-
-    // update last viewed at
-    const { collaborators } = await note.populate('collaborators');
-    const collaborator = collaborators.find((collaborator: any) => collaborator.user === userId) as CollaboratorDocument | undefined;
-    if (collaborator) {
-      collaborator.set({
-        last_viewed_at: new Date()
-      })
-      collaborator.save();
-    }
-
-    res.status(status.OK).json({ data: note });
-  }
-
   @httpGet('/:id/neighbors', auth())
   async getNoteNeighbors(req: Request, res: Response): Promise<void> {
 
@@ -94,6 +70,30 @@ export class NoteController implements INoteController {
 
     const neighbors = await this.noteService.findNoteNeighbors(noteId, directory.id, sortBy, limit / 2);
     res.status(status.OK).json({ data: neighbors });
+  }
+
+  @httpGet('/:id', auth())
+  async getNote(req: Request, res: Response): Promise<void> {
+    const userId = res.locals.user._id;
+    const note = await this.noteService.findNoteById(req.params.id);
+
+    if (!note)
+      throw new CustomException('Note not found', status.NOT_FOUND);
+
+    if (!checkPermissions(note.public_permissions, Permission.Read) && !note.collaborators.includes(userId))
+      throw new CustomException('You do not have access to this note', status.FORBIDDEN);
+
+    // update last viewed at
+    const { collaborators } = await note.populate('collaborators');
+    const collaborator = collaborators.find((collaborator: any) => collaborator.user === userId) as CollaboratorDocument | undefined;
+    if (collaborator) {
+      collaborator.set({
+        last_viewed_at: new Date()
+      })
+      collaborator.save();
+    }
+
+    res.status(status.OK).json({ data: note });
   }
 
   @httpGet('/', auth())

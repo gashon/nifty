@@ -67,9 +67,11 @@ export const Drawer = ({
                         </div>
                       </div>
                     </div>
-                    <div className="mt-6 relative flex-1 px-4 sm:px-6">{children}</div>
+                    <div className="mt-6 relative flex-1 px-4 sm:px-6">
+                      {children}
+                    </div>
                   </div>
-                  <div className="flex-shrink-0 px-4 py-4 flex justify-end space-x-2">
+                  <div className="flex-shrink-0 px-4 py-4 flex justify-start space-x-2">
                     {renderFooter()}
                   </div>
                 </div>

@@ -1,31 +1,51 @@
 import { FC, useState } from 'react';
 import { DropdownMenu } from '@nifty/ui/atoms';
-import { AiOutlinePlus, AiOutlineRead, AiOutlineEdit } from 'react-icons/ai';
+import { AiOutlineRead, AiOutlineEdit } from 'react-icons/ai';
 import { ImCancelCircle } from 'react-icons/im';
 import { Permission } from '@nifty/api/util/handle-permissions';
 
-export const NotePermissionDropdown: FC<{
-  setPermissions: (value: Permission) => void;
-}> = ({ setPermissions }) => {
-  const [selection, setSelection] =
-    useState<'Not Public' | 'Public Read' | 'Public Read-Write'>('Not Public');
+type NotePermissionDropdownProps =
+  | {
+      setPermissions: (value: Permission) => void;
+      onChange?: never;
+      initPermissions?: Permission;
+    }
+  | {
+      setPermissions?: never;
+      onChange: (value: Permission) => unknown;
+      initPermissions?: Permission;
+    };
+
+const getPermissionString = (permission: Permission) => {
+  switch (permission) {
+    case Permission.None:
+      return 'Not Public';
+    case Permission.Read:
+      return 'Public Read';
+    case Permission.ReadWrite:
+      return 'Public Read-Write';
+    default:
+      return 'Not Public';
+  }
+};
+
+export const NotePermissionDropdown: FC<NotePermissionDropdownProps> = ({
+  setPermissions,
+  onChange,
+  initPermissions,
+}) => {
+  const [selection, setSelection] = useState<
+    'Not Public' | 'Public Read' | 'Public Read-Write'
+  >(getPermissionString(initPermissions) ?? 'Not Public');
 
   const handleChange = (permission: Permission) => {
-    setPermissions(permission);
-    switch (permission) {
-      case Permission.None:
-        setSelection('Not Public');
-        break;
-      case Permission.Read:
-        setSelection('Public Read');
-        break;
-      case Permission.ReadWrite:
-        setSelection('Public Read-Write');
-        break;
-      default:
-        setSelection('Not Public');
-        break;
+    setSelection(getPermissionString(permission));
+
+    if (typeof onChange === 'function') {
+      onChange(permission);
+      return;
     }
+    setPermissions(permission);
   };
 
   return (

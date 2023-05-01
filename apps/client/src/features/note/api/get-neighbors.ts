@@ -8,6 +8,7 @@ type NoteNeighborsQuery = {
 
 const fetchNoteNeighbors = async (noteId: string, { sort, limit }: NoteNeighborsQuery) => {
   try {
+    console.log("GETTING")
     const response = await axios.get(`/api/v1/notes/${noteId}/neighbors`, {
       params: {
         sort,
@@ -16,12 +17,13 @@ const fetchNoteNeighbors = async (noteId: string, { sort, limit }: NoteNeighbors
     });
     return response.data;
   } catch (err) {
+    console.error(err);
     return null;
   }
 };
 
 export const useGetNoteNeighbors = (noteId, query: NoteNeighborsQuery) => {
-  return useQuery(['note', noteId], () => fetchNoteNeighbors(noteId, query), {
+  return useQuery(['note', "neighbors", noteId], () => fetchNoteNeighbors(noteId, query), {
     enabled: !!noteId,
   });
 };
