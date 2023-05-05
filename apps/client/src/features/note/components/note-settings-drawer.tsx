@@ -54,7 +54,6 @@ export const NoteSettingsDrawer: FC<NoteSettingsDrawerProps> = ({
           </>
         )}
       >
-        Note settings
         {/* Update note permissions dropdown */}
         {isFetched && (
           <NotePermissionDropdown
