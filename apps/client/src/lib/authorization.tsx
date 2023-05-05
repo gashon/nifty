@@ -17,9 +17,6 @@ export const POLICIES = {
   'theme:mutate': {
     allowedPermissions: [USER_PERMISSIONS.BETA_TESTER],
   },
-  'note:settings:mutate': {
-    allowedPermissions: [USER_PERMISSIONS.BETA_TESTER],
-  },
 };
 
 export const useAuthorization = () => {
