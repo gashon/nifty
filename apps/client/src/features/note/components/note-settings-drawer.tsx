@@ -7,6 +7,7 @@ import {
   useGetNote,
 } from '@/features/note';
 import { Permission } from '@nifty/api/util/handle-permissions';
+import { successNotification } from '@/lib/notification';
 
 type NoteSettingsDrawerProps = {
   triggerButton: ReactElement;
@@ -33,9 +34,14 @@ export const NoteSettingsDrawer: FC<NoteSettingsDrawerProps> = ({
     );
 
   const updateNotePermissions = async (permission: Permission) => {
-    await updateNote({
-      public_permissions: permission,
-    });
+    try {
+      await updateNote({
+        public_permissions: permission,
+      });
+      successNotification('Note permissions updated');
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
