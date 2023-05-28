@@ -10,6 +10,7 @@ import passport from '@/lib/passport';
 import createLoginLink from '@/util/create-login-link'
 import auth from '@/middlewares/auth';
 import oauthLogin from '@/middlewares/oauth-login';
+import { ACCESS_TOKEN_NAME, REFRESH_TOKEN_NAME } from '@/constants';
 
 const router = express.Router();
 
@@ -85,7 +86,7 @@ router.get(
 
 router.get('/user', auth(), async (req, res, next) => {
   try {
-    const token = await Token.findById(req.cookies.access_token).populate('user');
+    const token = await Token.findById(req.cookies[ACCESS_TOKEN_NAME]).populate('user');
     if (!token) return res.sendStatus(status.UNAUTHORIZED);
 
     res.send(token.user);
@@ -99,14 +100,14 @@ router.get('/logout', async (req, res, next) => {
     await Token.updateMany({
       _id: {
         $in: [
-          req.cookies.access_token,
-          req.cookies.refresh_token,
+          req.cookies[ACCESS_TOKEN_NAME],
+          req.cookies[REFRESH_TOKEN_NAME],
         ]
       }
     }, { deleted_at: new Date() });
 
-    res.clearCookie('access_token');
-    res.clearCookie('refresh_token');
+    res.clearCookie(ACCESS_TOKEN_NAME);
+    res.clearCookie(REFRESH_TOKEN_NAME);
 
     res.sendStatus(200);
   } catch (err) {
