@@ -3,6 +3,7 @@ import {
   useCallback,
   useMemo,
   useState,
+  useEffect,
   ReactElement,
   useReducer,
 } from 'react';
@@ -51,9 +52,8 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
   );
   const [_, forceRerender] = useReducer((s) => s + 1, 0);
   const { socket, connectionFailed } = useNoteSocket(documentId);
-  const [initValue, setInitValue] = useState<Descendant[] | undefined>(
-    undefined
-  );
+  const [initValue, setInitValue] =
+    useState<Descendant[] | undefined>(undefined);
 
   const onDocumentLoad = useCallback((note) => {
     setInitValue(
@@ -68,12 +68,17 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
     );
   }, []);
   const updateEditorContent = (newContent: Descendant[]) => {
-    // Replace the entire editor content with new content
-    editor.children = newContent;
-    // Re-render the editor
-    Editor.normalize(editor, { force: true });
-    // Focus the editor to ensure updates are displayed immediately
-    ReactEditor.focus(editor);
+    try {
+      // console.log('GOT', newContent, editor);
+      // Replace the entire editor content with new content
+      editor.children = newContent;
+      // Re-render the editor
+      Editor.normalize(editor, { force: true });
+      // Focus the editor to ensure updates are displayed immediately
+      ReactEditor.focus(editor);
+    } catch (err) {
+      console.log(err);
+    }
     forceRerender();
   };
 
@@ -127,6 +132,21 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
     },
     [editor]
   );
+
+  useEffect(() => {
+    if (!socket || !initValue || connectionFailed) return;
+    const interval = setInterval(() => {
+      console.log('SENDING');
+      sendDocumentUpdate(
+        JSON.stringify([
+          {
+            type: 'paragraph',
+            children: [{ text: (Math.random() + 1).toString(36).substring(7) }],
+          },
+        ])
+      );
+    }, 2000);
+  }, [socket, initValue, connectionFailed]);
 
   if (!initValue) return <p className="underline text-xl">Loading...</p>;
   if (connectionFailed) return fallBackEditor;
