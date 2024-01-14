@@ -24,7 +24,7 @@
     "ws": "8.13.0"
   },
   "devDependencies": {
-    "common": "workspace:*",
+    "@nifty/common": "workspace:*",
     "@nifty/tsconfig": "workspace:*",
     "@types/express": "^4.17.14",
     "@types/multer": "^1.4.7",

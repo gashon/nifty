@@ -60,7 +60,7 @@
     "@types/react-dom": "^18.0.7",
     "@types/react-syntax-highlighter": "^15.5.5",
     "autoprefixer": "^10.4.13",
-    "common": "workspace:*",
+    "@nifty/common": "workspace:*",
     "eslint": "8.22.0",
     "eslint-config-custom": "workspace:*",
     "postcss": "^8.4.19",

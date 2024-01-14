@@ -97,6 +97,9 @@ importers:
         specifier: 3.8.2
         version: 3.8.2
     devDependencies:
+      '@nifty/common':
+        specifier: workspace:*
+        version: link:../../packages/common
       '@nifty/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
@@ -118,9 +121,6 @@ importers:
       '@types/throng':
         specifier: ^5.0.4
         version: 5.0.4
-      common:
-        specifier: workspace:*
-        version: link:../../packages/common
       esbuild:
         specifier: ^0.15.13
         version: 0.15.13
@@ -185,6 +185,9 @@ importers:
         specifier: 8.13.0
         version: 8.13.0
     devDependencies:
+      '@nifty/common':
+        specifier: workspace:*
+        version: link:../../packages/common
       '@nifty/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
@@ -203,9 +206,6 @@ importers:
       '@types/ws':
         specifier: 8.5.4
         version: 8.5.4
-      common:
-        specifier: workspace:*
-        version: link:../../packages/common
       esbuild:
         specifier: ^0.15.13
         version: 0.15.13
@@ -345,6 +345,9 @@ importers:
       '@babel/core':
         specifier: ^7.0.0
         version: 7.21.3
+      '@nifty/common':
+        specifier: workspace:*
+        version: link:../../packages/common
       '@nifty/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
@@ -372,9 +375,6 @@ importers:
       autoprefixer:
         specifier: ^10.4.13
         version: 10.4.13(postcss@8.4.19)
-      common:
-        specifier: workspace:*
-        version: link:../../packages/common
       eslint:
         specifier: 8.22.0
         version: 8.22.0
@@ -530,18 +530,30 @@ importers:
       '@headlessui/tailwindcss':
         specifier: 0.1.2
         version: 0.1.2(tailwindcss@3.2.4)
+      formik:
+        specifier: ^2.2.9
+        version: 2.2.9(react@18.2.0)
+      next:
+        specifier: 13.0.0
+        version: 13.0.0(@babel/core@7.21.3)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: ^18.2.0
         version: 18.2.0
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      react-hook-form:
+        specifier: ^7.43.2
+        version: 7.43.2(react@18.2.0)
       storybook-dark-mode:
         specifier: 2.1.1
         version: 2.1.1(react-dom@18.2.0)(react@18.2.0)
       tailwind-scrollbar-hide:
         specifier: 1.1.7
         version: 1.1.7
+      typescript:
+        specifier: ^4.8.4
+        version: 4.8.4
     devDependencies:
       '@babel/core':
         specifier: ^7.21.3
@@ -576,6 +588,12 @@ importers:
       '@storybook/testing-library':
         specifier: ^0.0.13
         version: 0.0.13(react-dom@18.2.0)(react@18.2.0)
+      '@types/react':
+        specifier: ^18.0.22
+        version: 18.0.22
+      '@types/react-dom':
+        specifier: ^18.0.7
+        version: 18.0.7
       babel-loader:
         specifier: ^8.3.0
         version: 8.3.0(@babel/core@7.21.3)(webpack@5.88.2)
@@ -2282,6 +2300,7 @@ packages:
   /@colors/colors@1.5.0:
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
     engines: {node: '>=0.1.90'}
+    requiresBuild: true
 
   /@cspotcode/source-map-support@0.8.1:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -6926,6 +6945,7 @@ packages:
   /big-integer@1.6.51:
     resolution: {integrity: sha512-GPEid2Y9QU1Exl1rpO9B2IPJGHPSupF5GnVIP0blYvNOMer2bTvSWs1jGOUg04hTmu67nmLsQ9TBo1puaotBHg==}
     engines: {node: '>=0.6'}
+    requiresBuild: true
 
   /big.js@5.2.2:
     resolution: {integrity: sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==}

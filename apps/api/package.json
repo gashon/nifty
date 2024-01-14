@@ -38,7 +38,7 @@
     "@types/morgan": "^1.9.3",
     "@types/node": "^18.11.9",
     "@types/throng": "^5.0.4",
-    "common": "workspace:*",
+    "@nifty/common": "workspace:*",
     "esbuild": "^0.15.13",
     "esbuild-register": "^3.3.3",
     "eslint": "8.22.0",
