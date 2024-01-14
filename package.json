@@ -35,11 +35,13 @@
     "eslint": "^7.32.0",
     "eslint-config-custom": "*",
     "prettier": "^2.7.1",
-    "turbo": "latest",
     "wait-on": "7.0.1"
   },
   "engines": {
     "node": ">=16.15.0",
     "yarn": ">=1.22.0"
+  },
+  "dependencies": {
+    "turbo": "1.11.3"
   }
 }
