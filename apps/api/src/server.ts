@@ -43,7 +43,7 @@ server.setConfig((app) => {
     })
   );
 
-  app.use(earlyAccessGuard);
+  // app.use(earlyAccessGuard);
 
   app.use('/', indexRouter);
 });
