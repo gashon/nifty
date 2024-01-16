@@ -391,7 +391,11 @@ importers:
         specifier: ^4.8.4
         version: 4.8.4
 
-  packages/common: {}
+  packages/common:
+    dependencies:
+      '@nifty/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
 
   packages/eslint-config-custom:
     dependencies:
@@ -489,8 +493,11 @@ importers:
         specifier: ^0.32.11
         version: 0.32.11
     devDependencies:
+      '@nifty/common':
+        specifier: workspace:*
+        version: link:../common
       '@nifty/tsconfig':
-        specifier: '*'
+        specifier: workspace*
         version: link:../tsconfig
       '@types/flat':
         specifier: ^5.0.2
@@ -520,7 +527,7 @@ importers:
         specifier: 8.22.0
         version: 8.22.0
       eslint-config-custom:
-        specifier: '*'
+        specifier: workspace:*
         version: link:../eslint-config-custom
 
   packages/tsconfig: {}
