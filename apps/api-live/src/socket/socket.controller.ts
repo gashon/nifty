@@ -6,7 +6,6 @@ import { SocketService, closeSocketOnError } from "@/socket";
 import { SOCKET_EVENT } from "@/types";
 import { RedisClientType } from "@/lib/redis";
 import { CollaboratorDocument } from "@nifty/server-lib/models/collaborator";
-import { NoteDocument } from "@nifty/server-lib/models/note";
 
 const SAVE_TO_DISK_INTERVAL = 15000; // 15 seconds
 const HEARTBEAT_INTERVAL = 30000; // 30 seconds

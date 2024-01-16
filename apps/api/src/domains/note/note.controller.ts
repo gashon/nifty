@@ -180,7 +180,8 @@ export class NoteController implements INoteController {
 
     if (data.public_permissions !== undefined) {
       if (!collaborator || collaborator.user !== note.created_by)
-        throw new CustomException('Only the note owner can change this setting', status.FORBIDDEN);
+        throw new CustomException('Only the note owner can change this setting', status.NOT_ACCEPTABLE); // todo fix to FORBIDDEN without error page redirect (axios interceptor)
+      throw new CustomException('Realtime collaboration is not yet a support feature', status.NOT_ACCEPTABLE); // todo fix to FORBIDDEN without error page redirect (axios interceptor)
     }
 
     // update note

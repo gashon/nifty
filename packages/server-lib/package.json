@@ -37,7 +37,8 @@
     "@types/randomstring": "^1.1.8",
     "@types/snowflake-sdk": "^1.6.12",
     "eslint": "8.22.0",
-    "eslint-config-custom": "*",
-    "@nifty/tsconfig": "*"
+    "eslint-config-custom": "workspace:*",
+    "@nifty/tsconfig": "workspace*",
+    "@nifty/common": "workspace:*"
   }
 }

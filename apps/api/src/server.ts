@@ -11,6 +11,7 @@ import earlyAccessGuard from './middlewares/guards/early-access';
 import errorHandler from './middlewares/error-handler';
 import indexRouter from './routes/index';
 import { container } from './domains/inversify.config';
+import logger from './lib/logger';
 
 const port = parseInt(process.env.PORT!, 10) || 7000;
 const dev = process.env.NODE_ENV !== 'production';
@@ -53,7 +54,9 @@ export async function start() {
   await mongoose.connect(process.env.DATABASE_URL!);
 
   const serverInstance = server.build();
-  serverInstance.listen(port, () => console.log('Listening on port', port));
+  serverInstance.listen(port, () =>
+    logger.info(`Server started on port ${port}`),
+  );
 }
 
 if (!module.parent) {

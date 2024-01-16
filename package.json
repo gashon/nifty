@@ -13,15 +13,16 @@
     ]
   },
   "scripts": {
-    "apps:build": "turbo run build",
-    "apps:dev": "concurrently \"yarn run mongo:start\" \"yarn run redis:start\" \"wait-on tcp:localhost:27017 tcp:localhost:6379 && cross-env FORCE_COLOR=1 turbo run dev --parallel\"",
-    "apps:start": "cross-env turbo run start --parallel",
-    "apps:lint": "turbo run lint",
-    "apps:format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "mongo:start": "docker run --rm -p 27017:27017 --name nifty-mongo -v mongo_data:/data/db mongo > /dev/null",
+    "test": "turbo run dev",
+    "build": "turbo run build",
+    "dev": "concurrently \"pnpm run mongo:start\" \"pnpm run redis:start\" \"wait-on tcp:localhost:27017 tcp:localhost:6379 && cross-env FORCE_COLOR=1 turbo run dev --parallel --verbosity 2\"",
+    "start": "cross-env turbo run start --parallel",
+    "lint": "turbo run lint",
+    "mongo:start": "docker run --rm -p 27017:27017 --name nifty-mongo -v $(pwd)/data/mongo_data:/data/db mongo:latest > /dev/null",
     "mongo:stop": "docker stop nifty-mongo",
     "mongo:restart": "yarn mongo:stop && yarn mongo:start",
-    "redis:start": "docker run --rm -p 6379:6379 --name nifty-redis -v redis_data:/data redis > /dev/null",
+    "mongo:exec": "docker exec -it nifty-mongo mongosh",
+    "redis:start": "docker run --rm -p 6379:6379 --name nifty-redis -v $(pwd)/data/redis_data:/data redis > /dev/null",
     "redis:stop": "docker stop nifty-redis",
     "redis:restart": "yarn redis:stop && yarn redis:start",
     "format": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,scss,md}\"",
@@ -33,11 +34,13 @@
     "eslint": "^7.32.0",
     "eslint-config-custom": "*",
     "prettier": "^2.7.1",
-    "turbo": "latest",
     "wait-on": "7.0.1"
   },
   "engines": {
     "node": ">=16.15.0",
     "yarn": ">=1.22.0"
+  },
+  "dependencies": {
+    "turbo": "1.11.3"
   }
 }

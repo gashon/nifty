@@ -2,8 +2,11 @@ import { ErrorRequestHandler } from 'express';
 import * as Sentry from "@sentry/node";
 import mongoose from '@nifty/server-lib/mongoose';
 import { CustomException } from '../exceptions';
+import logger from '@/lib/logger';
 
 const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, next) {
+  logger.error(JSON.stringify(err));
+
   //send error to sentry
   res.sentry = Sentry.captureException(err);
   if (err instanceof CustomException) {
@@ -23,7 +26,6 @@ const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, n
       },
     });
   } else if ((err.name === 'MongoError' || err.name === 'MongoServerError') && err.code === 11000) {
-    console.log(err);
 
     const [path, value] = Object.entries(err.keyValue)[0];
 
@@ -36,7 +38,6 @@ const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, n
       },
     });
   } else if (err instanceof mongoose.Error.ValidationError) {
-    console.log(err);
 
     res.status(400).send({
       error: {
@@ -47,7 +48,6 @@ const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, n
       },
     });
   } else if (err instanceof mongoose.Error.CastError) {
-    console.log(err);
 
     res.status(400).send({
       error: {
@@ -58,7 +58,7 @@ const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, n
       },
     });
   } else {
-    console.log(err);
+
     res.status(500).send({
       error: {
         message:

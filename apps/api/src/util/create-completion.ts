@@ -38,7 +38,6 @@ export const sendOpenAIRequest = async (prompt: string) => {
   try {
     return getOpenAIResponse(prompt)
   } catch (err) {
-    console.log("ERR", err)
     logger.error(`Error sending openai request: ${JSON.stringify(err)}}`);
     // @ts-ignore
     const message = err.response?.data?.error?.message || err?.message;

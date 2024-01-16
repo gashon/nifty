@@ -8,6 +8,7 @@ import { Button } from '@nifty/ui/atoms';
 import { FormDrawer, Form, InputField, FieldWrapper } from '@nifty/ui/form';
 import { NoteCreateRequest } from '@nifty/server-lib/models/note';
 import { Permission } from '@nifty/api/util/handle-permissions';
+import { Authorization } from '@/lib/authorization';
 
 const PermissionSchema = z.nativeEnum(Permission);
 const schema = z.object({
@@ -87,24 +88,28 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({
                 className="inline-flex justify-between text-left w-full mt-5"
                 style={{ marginBottom: -5 }}
               >
-                <FieldWrapper
-                  label="Public Permissions"
-                  error={formState.errors['public_permissions'] as FieldError}
-                >
-                  <NotePermissionDropdown
-                    setPermissions={(value: Permission) =>
-                      setValue('public_permissions', value)
-                    }
-                  />
-                </FieldWrapper>
+                <Authorization checkPolicy="note:settings:mutate">
+                  <FieldWrapper
+                    label="Public Permissions"
+                    error={formState.errors['public_permissions'] as FieldError}
+                  >
+                    <NotePermissionDropdown
+                      setPermissions={(value: Permission) =>
+                        setValue('public_permissions', value)
+                      }
+                    />
+                  </FieldWrapper>
+                </Authorization>
 
-                <Button
-                  type="submit"
-                  disabled={formState.isSubmitting}
-                  loading={formState.isSubmitting}
-                >
-                  <FiArrowRight />
-                </Button>
+                <div className="w-full flex justify-end">
+                  <Button
+                    type="submit"
+                    disabled={formState.isSubmitting}
+                    loading={formState.isSubmitting}
+                  >
+                    <FiArrowRight />
+                  </Button>
+                </div>
               </div>
             </>
           )}

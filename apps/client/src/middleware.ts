@@ -1,4 +1,5 @@
 import { NextMiddleware, NextResponse } from 'next/server';
+import { ACCESS_TOKEN_NAME, REFRESH_TOKEN_NAME } from '@nifty/api/constants';
 
 const middleware: NextMiddleware = async function middleware(req) {
   try {
@@ -21,13 +22,13 @@ const middleware: NextMiddleware = async function middleware(req) {
 
     // Set the authorization token
     if (accessToken)
-      res.cookies.set('access_token', accessToken, {
+      res.cookies.set(ACCESS_TOKEN_NAME, accessToken, {
         maxAge: 60 * 60 * 24 * 365 * 10, // cookie expiration handled on login and UNAUTHORIZED
         path: '/',
         httpOnly: false, // used by the client to check if the user is logged in
       });
     if (refreshToken)
-      res.cookies.set('refresh_token', refreshToken, {
+      res.cookies.set(REFRESH_TOKEN_NAME, refreshToken, {
         maxAge: 60 * 60 * 24 * 365 * 10,
         path: '/',
         httpOnly: true,

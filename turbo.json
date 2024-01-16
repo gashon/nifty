@@ -3,17 +3,15 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**"]
+      "outputs": [".next/**", "!.next/cache/**"]
     },
-    "lint": {
-      "outputs": []
-    },
+    "lint": {},
     "dev": {
-      "cache": false
+      "cache": false,
+      "persistent": true
     },
     "start": {
-      "cache": false
+      "persistent": true
     }
-  },
-  "globalEnv": ["DOPPLER_CLIENT_TOKEN", "DOPPLER_API_TOKEN"]
+  }
 }

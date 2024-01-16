@@ -103,7 +103,6 @@ export async function openaiRequest<T>(generatorItem: {
     const formattedResult: ReturnType<typeof reformat> = reformat(result!);
     return formattedResult;
   } catch (err) {
-    console.log("GOT Error", err)
     logger.error(`Error sending or parsing openai request: ${JSON.stringify(err)}}`);
     throw new CustomException(errorMessage ?? 'Failed to generate openai request', status.BAD_REQUEST);
   }
