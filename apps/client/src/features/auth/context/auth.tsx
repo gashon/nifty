@@ -32,11 +32,13 @@ export const AuthContext = createContext<AuthContextType>(undefined);
 type AuthProviderProps = {
   children: React.ReactNode;
   preloadedUser?: AuthUserDTO;
+  disableFetch?: boolean;
 };
 
 export const AuthProvider: FC<AuthProviderProps> = ({
   children,
   preloadedUser,
+  disableFetch = false,
 }) => {
   const router = useRouter();
   const [isOffline, setIsOffline] = useState<boolean | undefined>(false);
@@ -44,7 +46,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({
   const [error, setError] = useState<Error | undefined>(undefined);
 
   useEffect(() => {
-    if (user) return;
+    if (user || disableFetch) return;
     // check if user is persisted
     const persistedUser = storage.get<AuthUserDTO | undefined>('user');
 

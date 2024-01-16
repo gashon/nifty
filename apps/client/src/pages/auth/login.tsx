@@ -11,7 +11,7 @@ import { Brand } from '@nifty/ui/atoms';
 
 export default function Login() {
   return (
-    <AuthProvider>
+    <AuthProvider disableFetch>
       <ThemeLayout>
         <main className="bg-primary flex min-h-screen items-center justify-center px-6 md:px-0">
           <div className="flex flex-col items-center">

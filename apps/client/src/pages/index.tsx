@@ -67,54 +67,52 @@ const Landing: FC<LandingProps> = ({ onWaitListFormSubmit }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <AuthProvider>
-      <ThemeLayout>
-        <div className="min-h-screen overflow-hidden bg-gradient-to-b from-[#0a0a0a] to-zinc-900">
-          <main className="container mx-auto px-6 py-8 md:px-0">
-            <Navbar />
-            <header className="pt-24 text-center">
-              <h1 className="text-primary text-3xl font-extrabold md:text-3xl lg:text-4xl xl:text-5xl">
-                Rethinking memory retention.
-              </h1>
-              <p className="mx-auto max-w-2xl mt-4 text-sm text-tertiary md:text-base">
-                Unlock your note's full potential with our AI-powered
-                improvements.
-              </p>
-              <div className="mt-12 flex flex-col items-center">
-                {/* <EmailForm setIsOpen={setIsOpen} /> */}
-                <Modal
-                  image="/waitlist-illustration.svg"
-                  alt="waitlist illustration"
-                  title="You're on the waiting list!"
-                  description="We will send you an email as soon as Nifty is ready.
+    <ThemeLayout>
+      <div className="min-h-screen overflow-hidden bg-gradient-to-b from-[#0a0a0a] to-zinc-900">
+        <main className="container mx-auto px-6 py-8 md:px-0">
+          <Navbar />
+          <header className="pt-24 text-center">
+            <h1 className="text-primary text-3xl font-extrabold md:text-3xl lg:text-4xl xl:text-5xl">
+              Rethinking memory retention.
+            </h1>
+            <p className="mx-auto max-w-2xl mt-4 text-sm text-tertiary md:text-base">
+              Unlock your note's full potential with our AI-powered
+              improvements.
+            </p>
+            <div className="mt-12 flex flex-col items-center">
+              {/* <EmailForm setIsOpen={setIsOpen} /> */}
+              <Modal
+                image="/waitlist-illustration.svg"
+                alt="waitlist illustration"
+                title="You're on the waiting list!"
+                description="We will send you an email as soon as Nifty is ready.
                           Thanks for your interest 🤟"
-                  open={isOpen}
-                  onClose={() => setIsOpen(false)}
-                />
-              </div>
-            </header>
-            <div className="mx-auto max-w-5xl pt-36 md:pt-60">
-              <div
-                className="w-auto h-auto "
-                style={{
-                  boxShadow: '0px 0px 57px 13px rgba(255, 255, 255, 0.2)',
-                  backgroundColor: 'transparent',
-                  borderRadius: '15px',
-                }}
-              >
-                <Image
-                  src="/preview.png"
-                  alt="Preview"
-                  width={1920}
-                  height={1080}
-                  priority={true}
-                />
-              </div>
+                open={isOpen}
+                onClose={() => setIsOpen(false)}
+              />
             </div>
-          </main>
-        </div>
-      </ThemeLayout>
-    </AuthProvider>
+          </header>
+          <div className="mx-auto max-w-5xl pt-36 md:pt-60">
+            <div
+              className="w-auto h-auto "
+              style={{
+                boxShadow: '0px 0px 57px 13px rgba(255, 255, 255, 0.2)',
+                backgroundColor: 'transparent',
+                borderRadius: '15px',
+              }}
+            >
+              <Image
+                src="/preview.png"
+                alt="Preview"
+                width={1920}
+                height={1080}
+                priority={true}
+              />
+            </div>
+          </div>
+        </main>
+      </div>
+    </ThemeLayout>
   );
 };
 

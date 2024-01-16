@@ -12,11 +12,9 @@ type ThemeLayoutProps = {
 const ThemeLayout: FC<ThemeLayoutProps> = ({ children }) => {
   return (
     <div className="relative">
-      <Authorization checkPolicy="theme:mutate">
-        <div className="fixed bottom-5 left-5">
-          <ThemeSelection />
-        </div>
-      </Authorization>
+      <div className="fixed bottom-5 left-5">
+        <ThemeSelection />
+      </div>
       {children}
     </div>
   );

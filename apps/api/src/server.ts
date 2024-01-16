@@ -4,7 +4,7 @@ import morgan from 'morgan';
 import 'reflect-metadata';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import rateLimit from 'express-rate-limit';
-import * as Sentry from "@sentry/node";
+import * as Sentry from '@sentry/node';
 import mongoose from '@nifty/server-lib/mongoose';
 
 import earlyAccessGuard from './middlewares/guards/early-access';
@@ -34,11 +34,14 @@ server.setConfig((app) => {
   app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
 
-  app.use(rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: dev ? Number.MAX_SAFE_INTEGER : 100, // limit each IP to x requests per windowMs
-    message: 'Too many requests from this IP, please try again after 15 minutes',
-  }))
+  app.use(
+    rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: dev ? Number.MAX_SAFE_INTEGER : 100, // limit each IP to x requests per windowMs
+      message:
+        'Too many requests from this IP, please try again after 15 minutes',
+    })
+  );
 
   app.use(earlyAccessGuard);
 
@@ -55,7 +58,7 @@ export async function start() {
 
   const serverInstance = server.build();
   serverInstance.listen(port, () =>
-    logger.info(`Server started on port ${port}`),
+    logger.info(`Server started on port ${port}`)
   );
 }
 

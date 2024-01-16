@@ -85,8 +85,6 @@ const ThemeSelection: FC = ({}) => {
   }, []);
   if (!isMounted) return null;
 
-  const themeHasBeenSelected = storage.get('theme_selected');
-
   const updateTheme = (t: ThemeType) => {
     storage.set('theme_selected', true);
     setTheme(t);
@@ -107,7 +105,6 @@ const ThemeSelection: FC = ({}) => {
           }))}
         >
           {theme && <Icon theme={theme as ThemeType} />}
-          {!themeHasBeenSelected && <p className="underline">Change Theme!</p>}
         </DropdownMenu>
       </div>
     </Suspense>
