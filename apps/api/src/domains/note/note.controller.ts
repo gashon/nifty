@@ -17,24 +17,24 @@ import {
   NoteModel,
 } from '@nifty/server-lib/models/note';
 import { PaginationParams } from '@/types';
-import { INoteService, INoteController } from '@/domains/note';
-import { ICollaboratorService } from '@/domains/collaborator';
-import { IDirectoryService } from '../directory';
+import { INoteController } from '@/domains/note';
 import { NOTE_TYPES, NoteCreateResponse } from '@/domains/note/types';
 import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
 import { DIRECTORY_TYPES } from '@/domains/directory/types';
 import { setPermissions, Permission, checkPermissions } from '@/util';
-import { CollaboratorDocument } from '@nifty/server-lib/models/collaborator';
+import {
+  CollaboratorDocument,
+  CollaboratorModel,
+} from '@nifty/server-lib/models/collaborator';
+import { DirectoryModel } from '@nifty/server-lib/models/directory';
 
 @controller('/v1/notes')
 export class NoteController implements INoteController {
   constructor(
-    // @inject(NOTE_TYPES.SERVICE) private noteService: INoteService,
     @inject(NOTE_TYPES.MODEL) private noteModel: NoteModel,
-    @inject(DIRECTORY_TYPES.SERVICE)
-    private directoryService: IDirectoryService,
-    @inject(COLLABORATOR_TYPES.SERVICE)
-    private collaboratorService: ICollaboratorService
+    @inject(DIRECTORY_TYPES.MODEL) private directoryModel: DirectoryModel,
+    @inject(COLLABORATOR_TYPES.MODEL)
+    private collaboratorModel: CollaboratorModel
   ) {}
 
   @httpGet('/recent', auth())
@@ -48,8 +48,11 @@ export class NoteController implements INoteController {
         status.BAD_REQUEST
       );
 
-    const collaborators =
-      await this.collaboratorService.findCollaboratorsByType(userId, 'note');
+    const collaborators = await this.collaboratorModel.find({
+      user: userId,
+      type: 'note',
+    });
+
     const noteIds = collaborators
       .map((c) => c.foreign_key)
       .filter((id) => !!id);
@@ -93,11 +96,35 @@ export class NoteController implements INoteController {
     const note = await this.noteModel.findById(noteId);
     if (!note) throw new CustomException('Note not found', status.NOT_FOUND);
 
-    const collaborator =
-      await this.collaboratorService.findCollaboratorByNoteIdAndUserId(
-        noteId,
-        userId
-      );
+    const collaboratorsAggregation = await this.collaboratorModel.aggregate([
+      {
+        $match: {
+          user: userId,
+        },
+      },
+      {
+        $lookup: {
+          from: 'notes',
+          localField: '_id',
+          foreignField: 'collaborators',
+          as: 'note',
+        },
+      },
+      {
+        $unwind: {
+          path: '$note',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $match: {
+          'note._id': noteId,
+        },
+      },
+    ]);
+
+    const collaborator = collaboratorsAggregation[0] || null;
+
     if (
       !checkPermissions(note.public_permissions, Permission.Read) &&
       !collaborator
@@ -107,7 +134,12 @@ export class NoteController implements INoteController {
         status.FORBIDDEN
       );
 
-    const directory = await this.directoryService.findDirectoryByNoteId(noteId);
+    const directory = await this.directoryModel.findOne({
+      notes: {
+        $in: [noteId],
+      },
+    });
+
     if (!directory)
       throw new CustomException('Directory not found', status.NOT_FOUND);
 
@@ -143,7 +175,7 @@ export class NoteController implements INoteController {
   @httpGet('/:id', auth())
   async getNote(req: Request, res: Response): Promise<void> {
     const userId = res.locals.user._id;
-    const note = await this.noteService.findNoteById(req.params.id);
+    const note = await this.noteModel.findById(req.params.id);
 
     if (!note) throw new CustomException('Note not found', status.NOT_FOUND);
 
@@ -179,41 +211,65 @@ export class NoteController implements INoteController {
 
     if (directoryId) {
       // validate directory exists
-      const directory = await this.directoryService.findDirectoryById(
-        directoryId
-      );
+      const directory = await this.directoryModel.findById(directoryId);
       if (!directory)
         throw new CustomException('Directory not found', status.NOT_FOUND);
 
       // validate user has access to directory
-      const collaborator =
-        await this.collaboratorService.findCollaboratorByDirectoryIdAndUserId(
-          directory.id,
-          userId
-        );
+      // TODO(gashon) make this a method in CollaboratorModel
+      const collaboratorsAggregation = await this.collaboratorModel.aggregate([
+        {
+          $match: {
+            user: userId,
+          },
+        },
+        {
+          $lookup: {
+            from: 'directories',
+            localField: '_id',
+            foreignField: 'collaborators',
+            as: 'directory',
+          },
+        },
+        {
+          $unwind: {
+            path: '$directory',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $match: {
+            'directory._id': directoryId,
+          },
+        },
+      ]);
+
+      const collaborator = collaboratorsAggregation[0] || null;
       if (!collaborator)
         throw new CustomException(
           'You do not have access to this directory',
           status.FORBIDDEN
         );
 
+      // paginate notes by directory id
       const query = {
         ...req.query,
         directory_id: undefined,
-      } as PaginationParams;
-      notes = await this.noteService.paginateNotesByDirectoryId(
-        directoryId,
-        query
-      );
-    } else {
-      notes = await this.noteService.paginateNotes(
-        {
-          filter: {
-            'collaborators.user': userId,
-          },
+      } as PaginationParams<INote>;
+
+      notes = this.noteModel.paginate({
+        _id: {
+          $in: directory.notes,
         },
-        req.query as PaginationParams
-      );
+        deleted_at: null,
+        ...query,
+      });
+    } else {
+      notes = await this.noteModel.paginate({
+        filter: {
+          'collaborators.user': userId,
+        },
+      });
     }
 
     res.status(status.OK).json({ data: notes });
@@ -228,40 +284,64 @@ export class NoteController implements INoteController {
     const directoryId = req.body.directory_id;
 
     // validate directory exists
-    const directory = await this.directoryService.findDirectoryById(
-      directoryId
-    );
+    const directory = await this.directoryModel.findById(directoryId);
     if (!directory)
       throw new CustomException('Directory not found', status.NOT_FOUND);
 
     // validate user has access to directory
-    const collaborator =
-      await this.collaboratorService.findCollaboratorByDirectoryIdAndUserId(
-        directory.id,
-        createdBy
-      );
+    // TODO(gashon) attach this to collaborator method
+    const collaboratorsAggregation = await this.collaboratorModel.aggregate([
+      {
+        $match: {
+          user: createdBy,
+        },
+      },
+      {
+        $lookup: {
+          from: 'directories',
+          localField: '_id',
+          foreignField: 'collaborators',
+          as: 'directory',
+        },
+      },
+      {
+        $unwind: {
+          path: '$directory',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $match: {
+          'directory._id': directoryId,
+        },
+      },
+    ]);
+
+    const collaborator = collaboratorsAggregation[0] || null;
     if (!collaborator)
       throw new CustomException(
         'You do not have access to this directory',
         status.FORBIDDEN
       );
 
-    const noteCollaborator = await this.collaboratorService.createCollaborator(
-      createdBy,
-      {
-        user: createdBy,
-        type: 'note',
-        permissions: setPermissions(Permission.ReadWriteDelete),
-      }
-    );
-    const { public_permissions, ...noteBody } = req.body;
-    const note = await this.noteService.createNote(createdBy, {
+    const noteCollaborator = await this.collaboratorModel.create({
+      user: createdBy,
+      type: 'note',
+      permissions: setPermissions(Permission.ReadWriteDelete),
+      created_by: createdBy,
+    });
+
+    const { public_permissions, ...noteBody } = req.body as NoteCreateRequest;
+    const doc = {
       public_permissions: setPermissions(
         (public_permissions ?? Permission.None) as Permission
       ),
       collaborators: [noteCollaborator.id],
       ...noteBody,
-    } as NoteCreateRequest);
+      created_by: createdBy,
+      parent: null,
+    };
+    const note = await this.noteModel.create(doc);
 
     // add the note to the directory
     directory.set({
@@ -279,17 +359,43 @@ export class NoteController implements INoteController {
   async updateNote(req: Request, res: Response): Promise<void> {
     const id = req.params.id;
     const userId = res.locals.user._id;
+    // TODO(gashon) attach NoteUpdateRequest type!
     const data = req.body;
 
     // validate note exists
-    const note = await this.noteService.findNoteById(id);
+    const note = await this.noteModel.findById(id);
     if (!note) throw new CustomException('Note not found', status.NOT_FOUND);
 
-    const collaborator =
-      await this.collaboratorService.findCollaboratorByNoteIdAndUserId(
-        note.id,
-        userId
-      );
+    // TODO(gashon) attach this to collaborator methods
+    const collaboratorsAggregation = await this.collaboratorModel.aggregate([
+      {
+        $match: {
+          user: userId,
+        },
+      },
+      {
+        $lookup: {
+          from: 'notes',
+          localField: '_id',
+          foreignField: 'collaborators',
+          as: 'note',
+        },
+      },
+      {
+        $unwind: {
+          path: '$note',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $match: {
+          'note._id': note.id,
+        },
+      },
+    ]);
+
+    const collaborator = collaboratorsAggregation[0] || null;
+
     // validate user has access to note
     if (
       !checkPermissions(note.public_permissions, Permission.ReadWrite) &&
@@ -313,7 +419,10 @@ export class NoteController implements INoteController {
     }
 
     // update note
-    const updatedNote = await this.noteService.updateNoteById(id, data);
+    const updatedNote = await this.noteModel.updateOne(
+      { _id: id },
+      { $set: data }
+    );
 
     res.status(status.OK).json({ data: updatedNote });
   }
@@ -324,15 +433,15 @@ export class NoteController implements INoteController {
     const userId = res.locals.user._id;
 
     // validate note exists
-    const note = await this.noteService.findNoteById(id);
+    const note = await this.noteModel.findById(id);
     if (!note) throw new CustomException('Note not found', status.NOT_FOUND);
 
-    const collaborator =
-      await this.collaboratorService.findCollaboratorByForeignKey(
-        note.id,
-        'note',
-        userId
-      );
+    const collaborator = await this.collaboratorModel.findOne({
+      foreign_key: note.id,
+      type: 'note',
+      ...(userId && { user: userId }),
+    });
+
     // validate user has access to note
     if (
       !checkPermissions(note.public_permissions, Permission.ReadWriteDelete) &&
@@ -346,7 +455,11 @@ export class NoteController implements INoteController {
     // todo handle permissions
 
     // delete note
-    await this.noteService.deleteNoteById(id);
+    await this.noteModel.updateOne(
+      { _id: id },
+      { $set: { deleted_at: new Date() } },
+      { new: true }
+    );
 
     res.status(status.NO_CONTENT).json();
   }
