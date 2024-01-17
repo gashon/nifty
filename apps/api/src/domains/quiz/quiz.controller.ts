@@ -99,9 +99,7 @@ export class QuizController implements IQuizController {
     const quizzes = await this.quizModel
       .find({
         _id: {
-          $in: collaborators.data.map(
-            (collaborator) => collaborator.foreign_key
-          ),
+          $in: collaborators.data.map((collaborator) => collaborator.quiz),
         },
         deleted_at: null,
       })
@@ -236,7 +234,7 @@ export class QuizController implements IQuizController {
       created_by: createdBy,
     });
 
-    quizCollaborator.set({ foreign_key: quiz.id });
+    quizCollaborator.set({ quiz: quiz.id });
     quizCollaborator.save();
 
     return res.status(status.CREATED).json({ data: quiz });
@@ -397,7 +395,7 @@ export class QuizController implements IQuizController {
       created_by: createdBy,
     });
 
-    quizCollaborator.set({ foreign_key: quiz.id });
+    quizCollaborator.set({ quiz: quiz.id });
     quizCollaborator.save();
 
     return res.status(status.CREATED).json({ data: quiz });
@@ -414,7 +412,7 @@ export class QuizController implements IQuizController {
 
     const collaborator = await this.collaboratorModel.findOne({
       user: userId,
-      foreign_key: quiz.id,
+      quiz: quiz.id,
     });
 
     // validate user has access to quiz

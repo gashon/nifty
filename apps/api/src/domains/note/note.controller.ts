@@ -53,9 +53,7 @@ export class NoteController implements INoteController {
       type: 'note',
     });
 
-    const noteIds = collaborators
-      .map((c) => c.foreign_key)
-      .filter((id) => !!id);
+    const noteIds = collaborators.map((c) => c.note).filter((id) => !!id);
 
     const notes = await this.noteModel
       .find(
@@ -348,7 +346,7 @@ export class NoteController implements INoteController {
       notes: [...directory.notes, note.id],
       collaborators: [...directory.collaborators],
     });
-    noteCollaborator.set({ foreign_key: note.id });
+    noteCollaborator.set({ note: note.id });
 
     await Promise.all([directory.save(), noteCollaborator.save()]);
 
@@ -437,7 +435,7 @@ export class NoteController implements INoteController {
     if (!note) throw new CustomException('Note not found', status.NOT_FOUND);
 
     const collaborator = await this.collaboratorModel.findOne({
-      foreign_key: note.id,
+      note: note.id,
       type: 'note',
       ...(userId && { user: userId }),
     });

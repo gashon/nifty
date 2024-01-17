@@ -1,12 +1,17 @@
-import WebSocket, { RawData, OPEN } from "ws";
-import { Model } from "mongoose"
-import { RedisClientType } from "@/lib/redis";
-import { SocketRepository } from "./socket.repository";
-import Note, { NoteDocument } from "@nifty/server-lib/models/note";
-import AccessToken, { TokenDocument } from "@nifty/server-lib/models/token";
-import Collaborator, { CollaboratorDocument } from "@nifty/server-lib/models/collaborator";
-import { SOCKET_EVENT } from "@/types";
-import { Permission, checkPermissions } from "@nifty/api/util/handle-permissions";
+import WebSocket, { RawData, OPEN } from 'ws';
+import { Model } from 'mongoose';
+import { RedisClientType } from '@/lib/redis';
+import { SocketRepository } from './socket.repository';
+import Note, { NoteDocument } from '@nifty/server-lib/models/note';
+import AccessToken, { TokenDocument } from '@nifty/server-lib/models/token';
+import Collaborator, {
+  CollaboratorDocument,
+} from '@nifty/server-lib/models/collaborator';
+import { SOCKET_EVENT } from '@/types';
+import {
+  Permission,
+  checkPermissions,
+} from '@nifty/api/util/handle-permissions';
 
 export class SocketService {
   private socketRepository: SocketRepository;
@@ -23,7 +28,11 @@ export class SocketService {
 
   // call with a socket to broadcast to all other sockets
   async broadcast(documentId: string, message: object): Promise<void>;
-  async broadcast(documentId: string, message: object, socket: WebSocket): Promise<void>;
+  async broadcast(
+    documentId: string,
+    message: object,
+    socket: WebSocket
+  ): Promise<void>;
   async broadcast(documentId: string, message: object, socket?: WebSocket) {
     const payload = JSON.stringify(message);
     const editors = await this.socketRepository.getEditorSockets(documentId);
@@ -40,30 +49,37 @@ export class SocketService {
 
   async getNotePermissions(documentId: string): Promise<Permission> {
     const note = await this.noteModel.findById(documentId);
-    if (!note) throw new Error("Document not found");
+    if (!note) throw new Error('Document not found');
     return note.public_permissions;
   }
 
-  async validateAccess(accessToken: string, documentId: string): Promise<[boolean, CollaboratorDocument | null]> {
+  async validateAccess(
+    accessToken: string,
+    documentId: string
+  ): Promise<[boolean, CollaboratorDocument | null]> {
     const note = await this.noteModel.findById(documentId);
-    if (!note) throw new Error("Document not found");
+    if (!note) throw new Error('Document not found');
     // token is in req headers
     const token = await this.accessTokenModel.findById(accessToken);
-    if (!token || !token.user) throw new Error("Access token not found");
+    if (!token || !token.user) throw new Error('Access token not found');
 
-    const hasPublicPermissions = checkPermissions(note.public_permissions, Permission.Read);
+    const hasPublicPermissions = checkPermissions(
+      note.public_permissions,
+      Permission.Read
+    );
     if (hasPublicPermissions) return [true, null];
 
     const collaborator = await this.collaboratorModel.findOne({
-      type: "note",
-      foreign_key: documentId,
-      user: token.user
+      type: 'note',
+      note: documentId,
+      user: token.user,
     });
-    if (!collaborator) throw new Error("You don't have access to this document");
+    if (!collaborator)
+      throw new Error("You don't have access to this document");
 
     // update last viewed at
     collaborator.set({
-      last_viewed_at: new Date()
+      last_viewed_at: new Date(),
     });
     collaborator.save();
     return [true, collaborator as CollaboratorDocument];
@@ -90,13 +106,15 @@ export class SocketService {
   }
 
   async setContent(documentId: string, content: string, editor: WebSocket) {
-    if (!this.socketRepository.socketIsEditor(documentId, editor)) throw new Error("You are not an editor of this document");
+    if (!this.socketRepository.socketIsEditor(documentId, editor))
+      throw new Error('You are not an editor of this document');
     return this.socketRepository.setContent(documentId, content, editor);
   }
 
-  async getContent(documentId: string): Promise<string>
+  async getContent(documentId: string): Promise<string>;
   async getContent(documentId: string, editor?: WebSocket): Promise<string> {
-    if (editor && !this.socketRepository.socketIsEditor(documentId, editor)) throw new Error("You are not an editor of this document");
+    if (editor && !this.socketRepository.socketIsEditor(documentId, editor))
+      throw new Error('You are not an editor of this document');
     return this.socketRepository.getContent(documentId);
   }
 
@@ -111,15 +129,15 @@ export class SocketService {
       const pingMessage = { event: SOCKET_EVENT.EDITOR_PING };
       socket.send(JSON.stringify(pingMessage));
       const timeout = setTimeout(() => {
-        reject(new Error("Socket timed out"));
+        reject(new Error('Socket timed out'));
       }, 1000);
-      socket.once("message", (data) => {
+      socket.once('message', (data) => {
         clearTimeout(timeout);
         const message = JSON.parse(data.toString());
         if (message.event === SOCKET_EVENT.EDITOR_PONG) {
           resolve(true);
         } else {
-          reject(new Error("Socket did not respond with PONG"));
+          reject(new Error('Socket did not respond with PONG'));
         }
       });
     });
@@ -127,9 +145,13 @@ export class SocketService {
 
   // pass editor to require permissions
   async saveContentToDisk(documentId: string): Promise<[NoteDocument, boolean]>;
-  async saveContentToDisk(documentId: string, editor: WebSocket): Promise<[NoteDocument, boolean]>;
+  async saveContentToDisk(
+    documentId: string,
+    editor: WebSocket
+  ): Promise<[NoteDocument, boolean]>;
   async saveContentToDisk(documentId: string, editor?: WebSocket) {
-    if (editor && !this.socketRepository.socketIsEditor(documentId, editor)) throw new Error("You are not an editor of this document");
+    if (editor && !this.socketRepository.socketIsEditor(documentId, editor))
+      throw new Error('You are not an editor of this document');
 
     const memoryContent = await this.socketRepository.getContent(documentId);
     return this.socketRepository.updateMongoDocument(documentId, memoryContent);
@@ -141,13 +163,13 @@ export class SocketService {
         message instanceof ArrayBuffer
           ? new TextDecoder().decode(message)
           : message instanceof Buffer
-            ? message.toString()
-            : message;
+          ? message.toString()
+          : message;
 
-      return JSON.parse(data as string)
+      return JSON.parse(data as string);
     } catch (error) {
       return null;
     }
   }
-
 }
+

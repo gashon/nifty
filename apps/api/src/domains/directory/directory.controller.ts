@@ -25,7 +25,9 @@ import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
 import { setPermissions, Permission } from '@/util';
 import { NOTE_TYPES } from '../note';
 import { NoteModel } from '@nifty/server-lib/models/note';
-import { CollaboratorModel } from '@nifty/server-lib/models/collaborator';
+import collaborator, {
+  CollaboratorModel,
+} from '@nifty/server-lib/models/collaborator';
 
 @controller('/v1/directories')
 export class DirectoryController implements IDirectoryController {
@@ -50,11 +52,11 @@ export class DirectoryController implements IDirectoryController {
 
     const collaborators = await this.collaboratorModel.find({
       user: userId,
-      type: 'director',
+      type: 'directory',
     });
 
     const directoryIds = collaborators
-      .map((c) => c.foreign_key)
+      .map((c) => c.directory)
       .filter((id) => !!id);
 
     const notes = await this.directoryModel
@@ -160,7 +162,7 @@ export class DirectoryController implements IDirectoryController {
       parent: null,
     });
 
-    rootCollaborator.set({ foreign_key: directory.id });
+    rootCollaborator.set({ directory: directory.id });
     rootCollaborator.save();
 
     return res.status(status.CREATED).json({ data: directory });

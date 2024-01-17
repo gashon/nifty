@@ -28,8 +28,23 @@ const collaboratorSchema = new mongoose.Schema<ICollaborator>(
       required: true,
       immutable: true,
     },
-    foreign_key: {
+    directory: {
       type: String,
+      ref: 'Directory',
+      required: false,
+      default: undefined,
+    },
+    note: {
+      type: String,
+      ref: 'Note',
+      required: false,
+      default: undefined,
+    },
+    quiz: {
+      type: String,
+      ref: 'Quiz',
+      required: false,
+      default: undefined,
     },
     permissions: {
       type: Number,

@@ -4,28 +4,36 @@ import { ListResponse } from '../../utils/types/tsoa/list-response';
 
 // unix permissions
 export type PermissionsType = number; // 0-7
-export type CollaboratorType = 'directory' | 'note' | 'quiz';
 
 type CollaboratorBase = {
   created_by: string;
   user: string;
   permissions: PermissionsType;
-  foreign_key?: string; // updated after foreign creation
+  last_viewed_at?: Date;
 } & Resource;
 
 export type ICollaborator =
-  | ({
-      type: Omit<CollaboratorType, 'note'>;
-    } & CollaboratorBase)
-  | ({
-      type: 'note';
-      last_viewed_at?: Date;
-    } & CollaboratorBase);
+  //   | {
+  //       type: 'note';
+  //       note: string;
+  //     }
+  //   | {
+  //       type: 'directory';
+  //       directory: string;
+  //     }
+  //   | { type: 'quiz'; quiz: string }
+  // ) &
+  {
+    type: 'quiz' | 'note' | 'directory';
+    directory?: string;
+    quiz?: string;
+    note?: string;
+  } & CollaboratorBase;
 
 export type CollaboratorModel = mongoose.Model<ICollaborator>;
 
 export type CollaboratorCreateRequest = Partial<
-  Pick<ICollaborator, 'user' | 'type' | 'permissions' | 'foreign_key'>
+  Pick<ICollaborator, 'user' | 'type' | 'permissions'>
 >;
 
 export type CollaboratorDocument = mongoose.Document<
