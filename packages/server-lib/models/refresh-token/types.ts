@@ -1,5 +1,6 @@
 import mongoose from '../../mongoose';
 import Resource from '../../utils/types/resource';
+import { IRefreshTokenMethods } from './methods';
 
 export interface IRefreshToken extends Resource {
   user: string;
@@ -7,4 +8,14 @@ export interface IRefreshToken extends Resource {
   created_by_ip: string;
 }
 
-export type RefreshTokenDocument = mongoose.Document<string, object, IRefreshToken>;
+export type RefreshTokenDocument = mongoose.Document<
+  string,
+  object,
+  IRefreshToken
+>;
+
+export type RefreshTokenModel = mongoose.Model<
+  IRefreshToken,
+  any,
+  IRefreshTokenMethods
+>;

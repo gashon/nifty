@@ -1,13 +1,15 @@
-import { INote } from "./interfaces"
+import { INote } from './interfaces';
 
 export enum NOTE_TYPES {
-  SERVICE = "NoteService",
-  CONTROLLER = "NoteController"
-};
+  SERVICE = 'NoteService',
+  MODEL = 'NoteModel',
+  CONTROLLER = 'NoteController',
+}
 
 export type NoteCreateResponse = {
-  data: INote,
-}
+  data: INote;
+};
 export type NoteUpdateResponse = {
-  data: INote,
-}
+  data: INote;
+};
+

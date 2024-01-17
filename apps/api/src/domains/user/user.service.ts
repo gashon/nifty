@@ -1,13 +1,13 @@
 import { injectable } from 'inversify';
 import { Model } from 'mongoose';
-import User, { UserDocument } from "@nifty/server-lib/models/user";
+import User, { UserDocument } from '@nifty/server-lib/models/user';
 import { IUserService, IUser } from './interfaces';
 
 @injectable()
 export class UserService implements IUserService {
-  private userModel: Model<UserDocument>;
+  private userModel: Model<IUser>;
   constructor() {
-    this.userModel = User
+    this.userModel = User;
   }
 
   async findUserById(id: string): Promise<UserDocument | null> {
@@ -19,7 +19,10 @@ export class UserService implements IUserService {
     return user;
   }
 
-  async findOrCreate(key: Partial<IUser>, data: Partial<IUser>): Promise<[UserDocument, boolean]> {
+  async findOrCreate(
+    key: Partial<IUser>,
+    data: Partial<IUser>
+  ): Promise<[UserDocument, boolean]> {
     const user = await this.userModel.findOne(key);
     if (user) return [user, false];
 

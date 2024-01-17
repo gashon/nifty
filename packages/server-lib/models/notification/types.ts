@@ -11,4 +11,10 @@ export interface INotification extends Resource {
   emails: string[];
 }
 
-export type NotificationDocument = mongoose.Document<string, object, INotification>;
+export type NotificationModel = mongoose.Model<INotification>;
+
+export type NotificationDocument = mongoose.Document<
+  string,
+  object,
+  INotification
+>;

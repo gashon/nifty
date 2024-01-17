@@ -1,4 +1,4 @@
-import mongoose from "../../mongoose";
+import mongoose from '../../mongoose';
 import Resource from '../../utils/types/resource';
 import { Expand } from '../../utils/types/tsoa/expand';
 import { ListResponse } from '../../utils/types/tsoa/list-response';
@@ -13,8 +13,13 @@ export interface IDirectory extends Resource {
   credits?: number;
 }
 
-export type DirectoryDocument = mongoose.Document<string, object, IDirectory> & IDirectory;
+export type DirectoryDocument = mongoose.Document<string, object, IDirectory> &
+  IDirectory;
 
-export type DirectoryCreateRequest = Partial<Expand<Pick<IDirectory, 'credits' | 'alias' | 'name' | 'parent'>>>
+export type DirectoryModel = mongoose.Model<IDirectory>;
 
-export type DirectoryListResponse = ListResponse<DirectoryDocument>
+export type DirectoryCreateRequest = Partial<
+  Expand<Pick<IDirectory, 'credits' | 'alias' | 'name' | 'parent'>>
+>;
+
+export type DirectoryListResponse = ListResponse<IDirectory>;

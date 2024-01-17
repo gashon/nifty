@@ -1,5 +1,8 @@
 import { Container } from 'inversify';
-import { BaseRepositoryFactory, IBaseRepositoryFactory } from "../lib/repository-base";
+import {
+  BaseRepositoryFactory,
+  IBaseRepositoryFactory,
+} from '../lib/repository-base';
 import {
   IUserController,
   IUserService,
@@ -13,7 +16,7 @@ import {
   DirectoryController,
   DirectoryService,
   DIRECTORY_TYPES,
-} from "@/domains/directory"
+} from '@/domains/directory';
 import {
   ICollaboratorController,
   ICollaboratorService,
@@ -35,22 +38,32 @@ import {
   QuizService,
   QUIZ_TYPES,
 } from '@/domains/quiz';
+import Note, { NoteModel } from '@nifty/server-lib/models/note';
 
 const container = new Container();
 
 // deprecated
-container.bind<IBaseRepositoryFactory>("RepositoryGetter").to(BaseRepositoryFactory);
+container
+  .bind<IBaseRepositoryFactory>('RepositoryGetter')
+  .to(BaseRepositoryFactory);
 
 container.bind<IUserService>(USER_TYPES.SERVICE).to(UserService);
 container.bind<IUserController>(USER_TYPES.CONTROLLER).to(UserController);
 
 container.bind<IDirectoryService>(DIRECTORY_TYPES.SERVICE).to(DirectoryService);
-container.bind<IDirectoryController>(DIRECTORY_TYPES.CONTROLLER).to(DirectoryController);
+container
+  .bind<IDirectoryController>(DIRECTORY_TYPES.CONTROLLER)
+  .to(DirectoryController);
 
-container.bind<ICollaboratorService>(COLLABORATOR_TYPES.SERVICE).to(CollaboratorService);
-container.bind<ICollaboratorController>(COLLABORATOR_TYPES.CONTROLLER).to(CollaboratorController);
+container
+  .bind<ICollaboratorService>(COLLABORATOR_TYPES.SERVICE)
+  .to(CollaboratorService);
+container
+  .bind<ICollaboratorController>(COLLABORATOR_TYPES.CONTROLLER)
+  .to(CollaboratorController);
 
 container.bind<INoteService>(NOTE_TYPES.SERVICE).to(NoteService);
+container.bind<NoteModel>(NOTE_TYPES.MODEL).to(Note);
 container.bind<INoteController>(NOTE_TYPES.CONTROLLER).to(NoteController);
 
 container.bind<IQuizService>(QUIZ_TYPES.SERVICE).to(QuizService);
