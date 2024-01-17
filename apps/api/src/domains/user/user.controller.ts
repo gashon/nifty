@@ -2,16 +2,15 @@ import status from 'http-status';
 import { controller, httpGet, httpPost } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { Request, Response } from 'express';
-import { UserCreateRequest } from '@nifty/server-lib/models/user';
+import { UserCreateRequest, UserModel } from '@nifty/server-lib/models/user';
 import { CustomException } from '@/exceptions';
 import auth from '@/middlewares/auth';
 
-import { IUserService, IUserController } from '@/domains';
-import { USER_TYPES } from "@/domains/user/types";
+import { IUserController } from '@/domains';
+import { USER_TYPES } from '@/domains/user/types';
 @controller('/v1/users')
 export class UserController implements IUserController {
-  constructor(@inject(USER_TYPES.SERVICE) private userService: IUserService) {
-  }
+  constructor(@inject(USER_TYPES.MODEL) private userModel: UserModel) {}
 
   @httpGet('/me', auth())
   async getMe(_: Request, res: Response): Promise<void> {
@@ -21,25 +20,29 @@ export class UserController implements IUserController {
 
   @httpGet('/:id')
   async getUser(req: Request, res: Response): Promise<void> {
-    const user = await this.userService.findUserById(req.params.id);
+    const user = await this.userModel.findById(req.params.id);
     res.status(status.OK).json({ data: user });
   }
 
-  @httpPost("/")
+  @httpPost('/')
   async createUser(req: Request, res: Response): Promise<void> {
-    const user = await this.userService.createUser(req.body as UserCreateRequest);
+    const user = await this.userModel.create(req.body as UserCreateRequest);
     res.status(status.CREATED).json({ data: user });
   }
 
-  @httpPost("/subscribe")
+  @httpPost('/subscribe')
   async subscribe(req: Request, res: Response): Promise<void> {
-    const [user, created] = await this.userService.findOrCreate(req.body, { email: req.body.email });
+    const user = await this.userModel.findOneAndUpdate(
+      { email: req.body.email },
+      {
+        $setOnInsert: { ...req.body },
+      },
+      {
+        new: true, // return new doc if one is upserted
+        upsert: true, // insert the document if it does not exist
+      }
+    );
 
-    if (!created)
-      throw new CustomException('You are already on the waitlist!', status.CONFLICT);
-
-
-    // todo add notification (create notification service + repo first)
     // await Notification.create({
     //   type: 'subscribe',
     //   emails: [user.email],

@@ -48,6 +48,7 @@ import { SUBMISSION_TYPES } from './submission/types';
 import Submission, {
   SubmissionModel,
 } from '@nifty/server-lib/models/submission';
+import User, { UserModel } from '@nifty/server-lib/models/user';
 
 const container = new Container();
 
@@ -57,6 +58,7 @@ container
   .to(BaseRepositoryFactory);
 
 container.bind<IUserService>(USER_TYPES.SERVICE).to(UserService);
+container.bind<UserModel>(USER_TYPES.MODEL).to(User);
 container.bind<IUserController>(USER_TYPES.CONTROLLER).to(UserController);
 
 container.bind<IDirectoryService>(DIRECTORY_TYPES.SERVICE).to(DirectoryService);
