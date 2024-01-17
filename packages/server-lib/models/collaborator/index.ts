@@ -28,23 +28,21 @@ const collaboratorSchema = new mongoose.Schema<ICollaborator>(
       required: true,
       immutable: true,
     },
+    // collaborator can be attached to directory, note, or quiz
     directory: {
       type: String,
       ref: 'Directory',
       required: false,
-      default: undefined,
     },
     note: {
       type: String,
       ref: 'Note',
       required: false,
-      default: undefined,
     },
     quiz: {
       type: String,
       ref: 'Quiz',
       required: false,
-      default: undefined,
     },
     permissions: {
       type: Number,

@@ -56,7 +56,7 @@ export class DirectoryController implements IDirectoryController {
     });
 
     const directoryIds = collaborators
-      .map((c) => c.directory)
+      .map((c) => (c.type === 'directory' ? c.directory : undefined))
       .filter((id) => !!id);
 
     const notes = await this.directoryModel

@@ -13,22 +13,18 @@ type CollaboratorBase = {
 } & Resource;
 
 export type ICollaborator =
-  //   | {
-  //       type: 'note';
-  //       note: string;
-  //     }
-  //   | {
-  //       type: 'directory';
-  //       directory: string;
-  //     }
-  //   | { type: 'quiz'; quiz: string }
-  // ) &
-  {
-    type: 'quiz' | 'note' | 'directory';
-    directory?: string;
-    quiz?: string;
-    note?: string;
-  } & CollaboratorBase;
+  | ({
+      type: 'note';
+      note: string;
+    } & CollaboratorBase)
+  | ({
+      type: 'directory';
+      directory: string;
+    } & CollaboratorBase)
+  | ({
+      type: 'quiz';
+      quiz: string;
+    } & CollaboratorBase);
 
 export type CollaboratorModel = mongoose.Model<ICollaborator>;
 
