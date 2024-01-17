@@ -43,6 +43,11 @@ import Directory, { DirectoryModel } from '@nifty/server-lib/models/directory';
 import Collaborator, {
   CollaboratorModel,
 } from '@nifty/server-lib/models/collaborator';
+import Quiz, { QuizModel } from '@nifty/server-lib/models/quiz';
+import { SUBMISSION_TYPES } from './submission/types';
+import Submission, {
+  SubmissionModel,
+} from '@nifty/server-lib/models/submission';
 
 const container = new Container();
 
@@ -73,6 +78,9 @@ container.bind<NoteModel>(NOTE_TYPES.MODEL).to(Note);
 container.bind<INoteController>(NOTE_TYPES.CONTROLLER).to(NoteController);
 
 container.bind<IQuizService>(QUIZ_TYPES.SERVICE).to(QuizService);
+container.bind<QuizModel>(QUIZ_TYPES.MODEL).to(Quiz);
 container.bind<IQuizController>(QUIZ_TYPES.CONTROLLER).to(QuizController);
+
+container.bind<SubmissionModel>(SUBMISSION_TYPES.MODEL).to(Submission);
 
 export { container };
