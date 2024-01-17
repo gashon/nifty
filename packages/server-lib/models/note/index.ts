@@ -2,7 +2,7 @@ import { Model } from 'mongoose';
 
 import mongoose from '../../mongoose';
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
-import { INote, NoteDocument } from './types';
+import { INote, NoteDocument, NoteModel } from './types';
 
 const noteSchema = new mongoose.Schema<INote>(
   {

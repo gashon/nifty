@@ -20,11 +20,13 @@ export default function mongoosePaginate(schema: mongoose.Schema) {
     if (query.limit) options.limit = query.limit;
     if (query.page) options.page = query.page;
     if (query.sort) options.sort = query.sort;
-    if (query.expand) options.expand = query.expand.map((i: string) => parseJSON(i));
+    if (query.expand)
+      options.expand = query.expand.map((i: string) => parseJSON(i));
 
     query = omit(query, ['page', 'limit', 'sort', 'expand']);
 
-    const limit = +options.limit > 0 ? (+options.limit <= 100 ? +options.limit : 100) : 20;
+    const limit =
+      +options.limit > 0 ? (+options.limit <= 100 ? +options.limit : 100) : 20;
     const page = +options.page > 0 ? +options.page : 1;
     const skip = (page - 1) * limit;
 
@@ -35,7 +37,8 @@ export default function mongoosePaginate(schema: mongoose.Schema) {
     if (options.expand) result.populate(options.expand);
 
     const docsPromise = result
-      .where('deleted_at').equals(null)
+      .where('deleted_at')
+      .equals(null)
       .select(options.select)
       .skip(skip)
       .limit(limit)
