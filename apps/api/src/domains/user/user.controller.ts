@@ -3,7 +3,6 @@ import { controller, httpGet, httpPost } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { Request, Response } from 'express';
 import { UserCreateRequest, UserModel } from '@nifty/server-lib/models/user';
-import { CustomException } from '@/exceptions';
 import auth from '@/middlewares/auth';
 
 import { IUserController } from '@/domains';
