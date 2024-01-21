@@ -18,9 +18,10 @@ import { QUIZ_TYPES, QuizCreateResponse } from '@/domains/quiz/types';
 import { NOTE_TYPES } from '@/domains/note/types';
 import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
 import { DIRECTORY_TYPES } from '@/domains/directory/types';
-import {
+import collaborator, {
   CollaboratorDocument,
   CollaboratorModel,
+  ICollaborator,
 } from '@nifty/server-lib/models/collaborator';
 import {
   setPermissions,
@@ -99,7 +100,9 @@ export class QuizController implements IQuizController {
     const quizzes = await this.quizModel
       .find({
         _id: {
-          $in: collaborators.data.map((collaborator) => collaborator.quiz),
+          $in: collaborators.data.map(
+            (collaborator) => collaborator.type === 'quiz' && collaborator.quiz
+          ),
         },
         deleted_at: null,
       })

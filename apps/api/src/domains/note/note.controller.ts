@@ -53,7 +53,9 @@ export class NoteController implements INoteController {
       type: 'note',
     });
 
-    const noteIds = collaborators.map((c) => c.note).filter((id) => !!id);
+    const noteIds = collaborators
+      .map((c) => c.type === 'note' && c.note)
+      .filter((id) => !!id);
 
     const notes = await this.noteModel
       .find(

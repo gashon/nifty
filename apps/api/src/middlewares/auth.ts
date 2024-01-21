@@ -5,32 +5,49 @@ import RefreshToken from '@nifty/server-lib/models/refresh-token';
 import { IUser } from '@nifty/server-lib/models/user';
 import { ACCESS_TOKEN_NAME, REFRESH_TOKEN_NAME } from '@/constants';
 
-export default function auth() {
+export default function auth(): RequestHandler {
   const authHandler: RequestHandler = async (req, res, next) => {
     if (req.cookies[ACCESS_TOKEN_NAME] && req.cookies[REFRESH_TOKEN_NAME]) {
       // Fetch relevant token
-      const accessToken = (await Token.findById(req.cookies[ACCESS_TOKEN_NAME]).populate<{ user: IUser }>(
-        'user'
-      )) as IToken & TokenDocument & { user: IUser };
+      const accessToken = (await Token.findById(
+        req.cookies[ACCESS_TOKEN_NAME]
+      ).populate<{ user: IUser }>('user')) as IToken &
+        TokenDocument & { user: IUser };
 
-      if (accessToken && accessToken.expires_at > new Date() && !accessToken.deleted_at) {
+      if (
+        accessToken?.expires_at &&
+        accessToken.expires_at > new Date() &&
+        !accessToken.deleted_at
+      ) {
         // Set locals
         res.locals.user = accessToken.user;
         return next();
       }
 
       // refresh logic
-      const refreshToken = await RefreshToken.findById(req.cookies[REFRESH_TOKEN_NAME]);
+      const refreshToken = await RefreshToken.findById(
+        req.cookies[REFRESH_TOKEN_NAME]
+      );
       if (!refreshToken || refreshToken.deleted_at) {
         res.clearCookie(ACCESS_TOKEN_NAME);
         res.clearCookie(REFRESH_TOKEN_NAME);
-        return res.status(status.UNAUTHORIZED).json({ error: { message: 'Invalid authorization token.', type: 'invalid_request_error' } });
+        return res.status(status.UNAUTHORIZED).json({
+          error: {
+            message: 'Invalid authorization token.',
+            type: 'invalid_request_error',
+          },
+        });
       }
 
       if (refreshToken && refreshToken.expires_at < new Date()) {
         res.clearCookie(ACCESS_TOKEN_NAME);
         res.clearCookie(REFRESH_TOKEN_NAME);
-        return res.status(status.UNAUTHORIZED).json({ error: { message: 'Your session has expired. Please login again.', type: 'invalid_request_error' } });
+        return res.status(status.UNAUTHORIZED).json({
+          error: {
+            message: 'Your session has expired. Please login again.',
+            type: 'invalid_request_error',
+          },
+        });
       }
 
       const newAccessToken = await refreshToken.createAccessToken();
@@ -42,10 +59,14 @@ export default function auth() {
 
       res.locals.user = newAccessToken.user;
       return next();
-
     } else {
       // user is not logged in
-      return res.status(status.UNAUTHORIZED).json({ error: { message: 'You are not logged in.', type: 'invalid_request_error' } });
+      return res.status(status.UNAUTHORIZED).json({
+        error: {
+          message: 'You are not logged in.',
+          type: 'invalid_request_error',
+        },
+      });
     }
   };
 
