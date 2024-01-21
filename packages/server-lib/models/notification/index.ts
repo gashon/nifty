@@ -1,9 +1,7 @@
-import { Model } from 'mongoose';
-
 import mongoose from '../../mongoose';
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
 import sendEmail from './middleware/send-email';
-import { INotification, NotificationDocument } from './types';
+import type { INotification, NotificationModel } from './types';
 
 const notificationSchema = new mongoose.Schema<INotification>(
   {
