@@ -16,7 +16,7 @@ import {
 } from '@nifty/server-lib/models/directory';
 import { PaginationParams } from '@/types';
 import { IDirectoryController } from '@/domains/directory';
-import { ICollaborator } from '@/domains/collaborator';
+import { ICollaborator } from '@nifty/server-lib/models/collaborator';
 import {
   DIRECTORY_TYPES,
   DirectoryCreateResponse,

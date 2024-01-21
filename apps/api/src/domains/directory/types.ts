@@ -1,4 +1,4 @@
-import { IDirectory } from './interfaces';
+import type { IDirectory } from '@nifty/server-lib/models/directory';
 
 export enum DIRECTORY_TYPES {
   SERVICE = 'DirectoryService',
