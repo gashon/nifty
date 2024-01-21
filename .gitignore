@@ -397,3 +397,6 @@ $RECYCLE.BIN/
 
 # docker db volume mounts
 data
+
+.turbo/
+

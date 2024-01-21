@@ -10,7 +10,7 @@ const googleStrategy = new GoogleStrategy(
     callbackURL: `${process.env.API_BASE_URL}/ajax/auth/login/google/callback`,
     userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
   },
-  async (accessToken, refreshToken, profile, cb) => {
+  async (_accessToken, _refreshToken, profile, cb) => {
     const user: IUser = await User.findOneAndUpdate(
       { email: profile._json.email },
       {
@@ -25,14 +25,22 @@ const googleStrategy = new GoogleStrategy(
   }
 );
 
-const githubStrategy = new GitHubStrategy({
-  clientID: process.env.GITHUB_CLIENT_ID!,
-  clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-  callbackURL: `${process.env.API_BASE_URL}/ajax/auth/login/github/callback`,
-  scope: ['user:email', 'read:user'],
-},
-  async (accessToken, refreshToken, profile, cb) => {
-    const email = profile.emails?.find((e: any) => e.primary?.value) || profile.emails?.[0]?.value;
+const githubStrategy = new GitHubStrategy(
+  {
+    clientID: process.env.GITHUB_CLIENT_ID!,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    callbackURL: `${process.env.API_BASE_URL}/ajax/auth/login/github/callback`,
+    scope: ['user:email', 'read:user'],
+  },
+  async (
+    _accessToken: string,
+    _refreshToken: string,
+    profile: any,
+    cb: any
+  ) => {
+    const email =
+      profile.emails?.find((e: any) => e.primary?.value) ||
+      profile.emails?.[0]?.value;
     if (!email) return cb(new Error('No email found'));
 
     const user: IUser = await User.findOneAndUpdate(
@@ -47,9 +55,9 @@ const githubStrategy = new GitHubStrategy({
 
     return cb(null, user);
   }
-)
+);
 
-passport.use('github', githubStrategy)
+passport.use('github', githubStrategy);
 passport.use('google', googleStrategy);
 
 export default passport;

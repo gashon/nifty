@@ -42,9 +42,15 @@ importers:
       '@sentry/node':
         specifier: 7.45.0
         version: 7.45.0
+      '@types/passport':
+        specifier: ^1.0.11
+        version: 1.0.11
       '@types/passport-github2':
         specifier: 1.2.5
         version: 1.2.5
+      '@types/passport-google-oauth20':
+        specifier: ^2.0.11
+        version: 2.0.11
       cookie-parser:
         specifier: ~1.4.4
         version: 1.4.4
@@ -84,6 +90,9 @@ importers:
       openai:
         specifier: 3.2.1
         version: 3.2.1
+      passport:
+        specifier: ^0.6.0
+        version: 0.6.0
       passport-github2:
         specifier: 0.1.12
         version: 0.1.12
@@ -5545,7 +5554,6 @@ packages:
       '@types/express': 4.17.14
       '@types/passport': 1.0.11
       '@types/passport-oauth2': 1.4.12
-    dev: true
 
   /@types/passport-oauth2@1.4.12:
     resolution: {integrity: sha512-RZg6cYTyEGinrZn/7REYQds6zrTxoBorX1/fdaz5UHzkG8xdFE7QQxkJagCr2ETzGII58FAFDmnmbTUVMrltNA==}
