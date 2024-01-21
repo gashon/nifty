@@ -1,4 +1,4 @@
-export * from "./quiz.controller"
-export * from "./quiz.service"
-export * from "./interfaces"
-export * from "./types"
+export * from './quiz.controller';
+export * from './interfaces';
+export * from './types';
+
