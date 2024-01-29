@@ -4,7 +4,8 @@
     "lib": ["ES2019", "DOM"],
     "module": "CommonJS",
     "outDir": "dist",
-    "rootDir": ".",
+    "rootDir": "../../",
+    "baseUrl": "./src",
     "typeRoots": ["node_modules/@types"]
   },
   "include": ["**/*"],
