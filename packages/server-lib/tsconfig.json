@@ -6,7 +6,7 @@
     "outDir": "dist",
     "rootDir": "../../",
     "typeRoots": ["node_modules/@types", "lib/types"],
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
       "@nifty/common/*": ["../common/src/*"]
