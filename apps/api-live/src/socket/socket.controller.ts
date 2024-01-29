@@ -1,11 +1,14 @@
-import WebSocket, { WebSocketServer as Server, ServerOptions } from "ws";
-import AsyncLock from "async-lock";
-import logger from "@/lib/logger";
-import { checkPermissions, Permission } from "@nifty/api/util/handle-permissions"
-import { SocketService, closeSocketOnError } from "@/socket";
-import { SOCKET_EVENT } from "@/types";
-import { RedisClientType } from "@/lib/redis";
-import { CollaboratorDocument } from "@nifty/server-lib/models/collaborator";
+import WebSocket, { WebSocketServer as Server, ServerOptions } from 'ws';
+import AsyncLock from 'async-lock';
+import logger from '@/lib/logger';
+import {
+  checkPermissions,
+  Permission,
+} from '@nifty/api/util/handle-permissions';
+import { SocketService, closeSocketOnError } from '@/socket';
+import { SOCKET_EVENT } from '@/types';
+import { RedisClientType } from '@/lib/redis';
+import { ICollaborator } from '@nifty/server-lib/models/collaborator';
 
 const SAVE_TO_DISK_INTERVAL = 15000; // 15 seconds
 const HEARTBEAT_INTERVAL = 30000; // 30 seconds
@@ -13,8 +16,8 @@ const LOCK_TIMEOUT = 10000; // 10 seconds
 
 interface WebSocketSession extends WebSocket {
   isAlive?: boolean;
-  collaborator?: CollaboratorDocument;
-  notePermissions?: Permission
+  collaborator?: ICollaborator;
+  notePermissions?: Permission;
 }
 
 // todo attach permissions to the note editing socket
@@ -29,17 +32,23 @@ export class WebSocketServer extends Server {
     // todo store in redis
     this.autoSaveClocks = {};
 
-    const heartbeatInterval = setInterval(() => this.heartbeat(), HEARTBEAT_INTERVAL);
+    const heartbeatInterval = setInterval(
+      () => this.heartbeat(),
+      HEARTBEAT_INTERVAL
+    );
     this.socketService.clearRedis();
 
-    this.on("connection", async (socket: WebSocketSession, request) => {
-      const documentId = request.url?.split("/").pop();
+    this.on('connection', async (socket: WebSocketSession, request) => {
+      const documentId = request.url?.split('/').pop();
       if (!documentId) return;
 
       // get access token from cookie
-      const accessToken = request.headers["cookie"]?.split(";").find((cookie) => cookie.includes("access_token"))?.split("=")[1];
+      const accessToken = request.headers['cookie']
+        ?.split(';')
+        .find((cookie) => cookie.includes('access_token'))
+        ?.split('=')[1];
       if (!accessToken) {
-        logger.error("No access token found");
+        logger.error('No access token found');
         socket.close();
         return;
       }
@@ -48,47 +57,47 @@ export class WebSocketServer extends Server {
         // get note permissions and validate access
         const [notePermissions, [hasAccess, collaborator]] = await Promise.all([
           this.socketService.getNotePermissions(documentId),
-          this.socketService.validateAccess(accessToken as string, documentId)
+          this.socketService.validateAccess(accessToken as string, documentId),
         ]);
 
         if (!hasAccess)
-          throw new Error("You do not have access to this document");
+          throw new Error('You do not have access to this document');
 
         // attach user permissions to the socket
         // todo store in redis
-        socket["collaborator"] = collaborator ?? undefined;
-        socket["notePermissions"] = notePermissions;
+        socket['collaborator'] = collaborator ?? undefined;
+        socket['notePermissions'] = notePermissions;
       } catch (err) {
         // @ts-ignore
-        logger.error(err.message)
+        logger.error(err.message);
         socket.close();
         return;
       }
 
-      logger.info(`New connection to document: ${documentId}`)
+      logger.info(`New connection to document: ${documentId}`);
       this.handleConnection(documentId, socket);
     });
 
-    this.on("error", (error) => {
+    this.on('error', (error) => {
       logger.error(error);
-      clearInterval(heartbeatInterval)
+      clearInterval(heartbeatInterval);
     });
 
-    this.on("close", () => {
-      logger.info("Closing websocket server...");
-      clearInterval(heartbeatInterval)
+    this.on('close', () => {
+      logger.info('Closing websocket server...');
+      clearInterval(heartbeatInterval);
     });
   }
 
   heartbeat() {
     this.clients.forEach((socket: WebSocketSession) => {
       if (socket.isAlive === false) {
-        logger.info("Socket is dead, closing connection");
+        logger.info('Socket is dead, closing connection');
         this.handleEditorLeave(socket);
         return socket.terminate();
       }
 
-      logger.info("Socket is alive, sending heartbeat");
+      logger.info('Socket is alive, sending heartbeat');
       socket.isAlive = false;
       socket.ping();
     });
@@ -96,38 +105,41 @@ export class WebSocketServer extends Server {
 
   @closeSocketOnError
   async handleConnection(documentId: string, socket: WebSocketSession) {
-    await this.syncLock.acquire(["connection", documentId], async () => {
+    await this.syncLock.acquire(['connection', documentId], async () => {
       await this.socketService.addEditorToDocument(documentId, socket);
 
       socket.isAlive = true;
       // broadcast the join to all connected users
       this.broadcastJoin(documentId, socket);
       // start autosave clock if not already started
-      this.findOrStartAutoSaveClock(documentId)
+      this.findOrStartAutoSaveClock(documentId);
       // send the current content to the new user
       this.sendCurrentDocumentContent(documentId, socket);
 
-      socket.on("pong", () => {
+      socket.on('pong', () => {
         socket.isAlive = true;
       });
 
-      socket.on("message", (message: WebSocket.RawData, _isBinary: boolean) => {
+      socket.on('message', (message: WebSocket.RawData, _isBinary: boolean) => {
         this.handleMessage(documentId, message, socket);
       });
 
-      socket.on("close", () => {
+      socket.on('close', () => {
         this.handleEditorLeave(socket, documentId);
       });
 
-      socket.on("error", () => {
+      socket.on('error', () => {
         this.handleEditorLeave(socket, documentId);
-      })
+      });
     });
   }
 
   async broadcastJoin(documentId: string, socket: WebSocketSession) {
     try {
-      const joinMessage = { event: SOCKET_EVENT.EDITOR_JOIN, payload: { note: { id: documentId } } };
+      const joinMessage = {
+        event: SOCKET_EVENT.EDITOR_JOIN,
+        payload: { note: { id: documentId } },
+      };
       this.socketService.broadcast(documentId, joinMessage, socket);
     } catch (err) {
       logger.error(err);
@@ -136,14 +148,14 @@ export class WebSocketServer extends Server {
 
   async findOrStartAutoSaveClock(documentId: string) {
     try {
-      await this.syncLock.acquire(["autosave", documentId], async () => {
+      await this.syncLock.acquire(['autosave', documentId], async () => {
         if (!this.autoSaveClocks[documentId]) {
           this.autoSaveClocks[documentId] = setInterval(async () => {
-            logger.info(`Autosaving document: ${documentId}...`)
+            logger.info(`Autosaving document: ${documentId}...`);
             await this.syncToDatabase(documentId);
           }, SAVE_TO_DISK_INTERVAL);
         }
-      })
+      });
     } catch (err) {
       logger.error(err);
     }
@@ -152,7 +164,10 @@ export class WebSocketServer extends Server {
   async sendCurrentDocumentContent(documentId: string, socket: WebSocket) {
     try {
       const content = await this.socketService.getContent(documentId);
-      const contentMessage = { event: SOCKET_EVENT.DOCUMENT_LOAD, payload: { note: { id: documentId, content } } };
+      const contentMessage = {
+        event: SOCKET_EVENT.DOCUMENT_LOAD,
+        payload: { note: { id: documentId, content } },
+      };
       socket.send(JSON.stringify(contentMessage));
     } catch (err) {
       logger.error(err);
@@ -166,9 +181,10 @@ export class WebSocketServer extends Server {
       await this.socketService.setContent(documentId, content, socket);
 
       const updateMessage = {
-        event: SOCKET_EVENT.DOCUMENT_UPDATE, payload: {
+        event: SOCKET_EVENT.DOCUMENT_UPDATE,
+        payload: {
           note: { id: documentId, content },
-        }
+        },
       };
       this.socketService.broadcast(documentId, updateMessage, socket);
     } catch (err) {
@@ -177,31 +193,35 @@ export class WebSocketServer extends Server {
     }
   }
 
-  async handleEditorLeave(socket: WebSocket): Promise<void>
-  async handleEditorLeave(socket: WebSocket, docId: string,): Promise<void>
+  async handleEditorLeave(socket: WebSocket): Promise<void>;
+  async handleEditorLeave(socket: WebSocket, docId: string): Promise<void>;
   async handleEditorLeave(socket: WebSocket, docId?: string): Promise<void> {
-    await this.syncLock.acquire(["disconnection", docId || "unknown"], async () => {
-      const documentId = docId || await this.socketService.getDocumentIdBySocket(socket);
-      if (!documentId) return;
+    await this.syncLock.acquire(
+      ['disconnection', docId || 'unknown'],
+      async () => {
+        const documentId =
+          docId || (await this.socketService.getDocumentIdBySocket(socket));
+        if (!documentId) return;
 
-      await Promise.all([
-        this.syncToDatabase(documentId),
-        this.socketService.disconnectEditor(documentId, socket),
-      ])
+        await Promise.all([
+          this.syncToDatabase(documentId),
+          this.socketService.disconnectEditor(documentId, socket),
+        ]);
 
-      const leaveMessage = { event: SOCKET_EVENT.EDITOR_LEAVE, documentId };
-      this.socketService.broadcast(documentId, leaveMessage);
+        const leaveMessage = { event: SOCKET_EVENT.EDITOR_LEAVE, documentId };
+        this.socketService.broadcast(documentId, leaveMessage);
 
-      // stop autosave clock if no editors left
-      const editors = await this.socketService.getEditorSockets(documentId);
-      if (editors.length === 0) {
-        logger.info(`Stopping autosave clock for document: ${documentId}`);
-        clearInterval(this.autoSaveClocks[documentId]);
-        delete this.autoSaveClocks[documentId];
+        // stop autosave clock if no editors left
+        const editors = await this.socketService.getEditorSockets(documentId);
+        if (editors.length === 0) {
+          logger.info(`Stopping autosave clock for document: ${documentId}`);
+          clearInterval(this.autoSaveClocks[documentId]);
+          delete this.autoSaveClocks[documentId];
 
-        await this.socketService.removeDocumentFromMemory(documentId);
+          await this.socketService.removeDocumentFromMemory(documentId);
+        }
       }
-    })
+    );
   }
 
   // ping all editors to make sure they are still alive
@@ -210,17 +230,19 @@ export class WebSocketServer extends Server {
   async countAndPruneActiveEditors(documentId: string): Promise<number> {
     const sockets = await this.socketService.getEditorSockets(documentId);
 
-    const activeEditors = await Promise.all(sockets.map(async (socket) => {
-      try {
-        logger.info("Pinging sockets");
-        await this.socketService.pingSocket(socket);
-        return socket;
-      } catch (err) {
-        logger.error(`Error: ${err}`);
-        this.handleEditorLeave(socket, documentId);
-        return null;
-      }
-    }));
+    const activeEditors = await Promise.all(
+      sockets.map(async (socket) => {
+        try {
+          logger.info('Pinging sockets');
+          await this.socketService.pingSocket(socket);
+          return socket;
+        } catch (err) {
+          logger.error(`Error: ${err}`);
+          this.handleEditorLeave(socket, documentId);
+          return null;
+        }
+      })
+    );
     return activeEditors.length;
   }
 
@@ -236,30 +258,51 @@ export class WebSocketServer extends Server {
 
   async syncToDatabase(documentId: string) {
     try {
-      const [_, updated] = await this.socketService.saveContentToDisk(documentId);
+      const [_, updated] = await this.socketService.saveContentToDisk(
+        documentId
+      );
 
       if (updated) {
         const updateMessage = { event: SOCKET_EVENT.DOCUMENT_SAVE, documentId };
         this.socketService.broadcast(documentId, updateMessage);
-        logger.info(`Saved document: ${documentId}`)
+        logger.info(`Saved document: ${documentId}`);
       }
     } catch (err) {
       logger.error(err);
     }
   }
 
-  validatePermissions(socket: WebSocketSession, requiredPermissions: Permission): boolean {
-    const hasPublicPermission = checkPermissions(socket.notePermissions!, requiredPermissions);
+  validatePermissions(
+    socket: WebSocketSession,
+    requiredPermissions: Permission
+  ): boolean {
+    const hasPublicPermission = checkPermissions(
+      socket.notePermissions!,
+      requiredPermissions
+    );
     if (hasPublicPermission) return true;
 
     if (!socket.collaborator) {
-      socket.send(JSON.stringify({ event: SOCKET_EVENT.PERMISSION_ERROR, message: "You do not have permission to perform this action" }));
+      socket.send(
+        JSON.stringify({
+          event: SOCKET_EVENT.PERMISSION_ERROR,
+          message: 'You do not have permission to perform this action',
+        })
+      );
       return false;
     }
 
-    const hasCollaboratorPermission = checkPermissions(socket.collaborator.permissions, requiredPermissions);
+    const hasCollaboratorPermission = checkPermissions(
+      socket.collaborator.permissions,
+      requiredPermissions
+    );
     if (!hasCollaboratorPermission) {
-      socket.send(JSON.stringify({ event: SOCKET_EVENT.PERMISSION_ERROR, message: "You do not have permission to perform this action" }));
+      socket.send(
+        JSON.stringify({
+          event: SOCKET_EVENT.PERMISSION_ERROR,
+          message: 'You do not have permission to perform this action',
+        })
+      );
       return false;
     }
 
@@ -267,11 +310,20 @@ export class WebSocketServer extends Server {
   }
 
   @closeSocketOnError
-  handleMessage(documentId: string, message: WebSocket.RawData, socket: WebSocketSession) {
+  handleMessage(
+    documentId: string,
+    message: WebSocket.RawData,
+    socket: WebSocketSession
+  ) {
     try {
       const data = this.socketService.parse(message);
       if (!data) {
-        socket.send(JSON.stringify({ event: SOCKET_EVENT.ERROR, message: "Invalid message format" }));
+        socket.send(
+          JSON.stringify({
+            event: SOCKET_EVENT.ERROR,
+            message: 'Invalid message format',
+          })
+        );
         return;
       }
 
@@ -290,12 +342,17 @@ export class WebSocketServer extends Server {
         case SOCKET_EVENT.EDITOR_PONG: // handled at the service layer (pingSocket)
           break;
         default:
-          socket.send(JSON.stringify({ event: SOCKET_EVENT.ERROR, message: "Invalid message event" }));
+          socket.send(
+            JSON.stringify({
+              event: SOCKET_EVENT.ERROR,
+              message: 'Invalid message event',
+            })
+          );
       }
     } catch (err) {
       logger.error(err);
       socket.close();
     }
   }
-
 }
+

@@ -2,10 +2,10 @@ import WebSocket, { RawData, OPEN } from 'ws';
 import { Model } from 'mongoose';
 import { RedisClientType } from '@/lib/redis';
 import { SocketRepository } from './socket.repository';
-import Note, { NoteDocument } from '@nifty/server-lib/models/note';
-import AccessToken, { TokenDocument } from '@nifty/server-lib/models/token';
+import Note, { INote } from '@nifty/server-lib/models/note';
+import AccessToken, { IToken } from '@nifty/server-lib/models/token';
 import Collaborator, {
-  CollaboratorDocument,
+  ICollaborator,
 } from '@nifty/server-lib/models/collaborator';
 import { SOCKET_EVENT } from '@/types';
 import {
@@ -15,9 +15,9 @@ import {
 
 export class SocketService {
   private socketRepository: SocketRepository;
-  private noteModel: Model<NoteDocument>;
-  private accessTokenModel: Model<TokenDocument>;
-  private collaboratorModel: Model<CollaboratorDocument>;
+  private noteModel: Model<INote>;
+  private accessTokenModel: Model<IToken>;
+  private collaboratorModel: Model<ICollaborator>;
 
   constructor(redisClient: RedisClientType) {
     this.socketRepository = new SocketRepository(redisClient);
@@ -56,7 +56,7 @@ export class SocketService {
   async validateAccess(
     accessToken: string,
     documentId: string
-  ): Promise<[boolean, CollaboratorDocument | null]> {
+  ): Promise<[boolean, ICollaborator | null]> {
     const note = await this.noteModel.findById(documentId);
     if (!note) throw new Error('Document not found');
     // token is in req headers
@@ -82,7 +82,7 @@ export class SocketService {
       last_viewed_at: new Date(),
     });
     collaborator.save();
-    return [true, collaborator as CollaboratorDocument];
+    return [true, collaborator as ICollaborator];
   }
 
   async getEditorSockets(documentId: string): Promise<WebSocket[]> {
@@ -144,11 +144,6 @@ export class SocketService {
   }
 
   // pass editor to require permissions
-  async saveContentToDisk(documentId: string): Promise<[NoteDocument, boolean]>;
-  async saveContentToDisk(
-    documentId: string,
-    editor: WebSocket
-  ): Promise<[NoteDocument, boolean]>;
   async saveContentToDisk(documentId: string, editor?: WebSocket) {
     if (editor && !this.socketRepository.socketIsEditor(documentId, editor))
       throw new Error('You are not an editor of this document');
@@ -172,4 +167,3 @@ export class SocketService {
     }
   }
 }
-

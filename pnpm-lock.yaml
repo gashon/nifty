@@ -187,6 +187,9 @@ importers:
       ts-node:
         specifier: ^10.9.1
         version: 10.9.1(@types/node@18.11.9)(typescript@4.8.4)
+      uuid:
+        specifier: 9.0.1
+        version: 9.0.1
       winston:
         specifier: 3.8.2
         version: 3.8.2
@@ -203,6 +206,9 @@ importers:
       '@types/express':
         specifier: ^4.17.14
         version: 4.17.14
+      '@types/morgan':
+        specifier: ^1.9.3
+        version: 1.9.3
       '@types/multer':
         specifier: ^1.4.7
         version: 1.4.7
@@ -212,6 +218,9 @@ importers:
       '@types/redis':
         specifier: 4.0.11
         version: 4.0.11
+      '@types/uuid':
+        specifier: 9.0.8
+        version: 9.0.8
       '@types/ws':
         specifier: 8.5.4
         version: 8.5.4
@@ -5702,6 +5711,10 @@ packages:
   /@types/uuid@8.3.4:
     resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
     dev: false
+
+  /@types/uuid@9.0.8:
+    resolution: {integrity: sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==}
+    dev: true
 
   /@types/webidl-conversions@7.0.0:
     resolution: {integrity: sha512-xTE1E+YF4aWPJJeUzaZI5DRntlkY3+BCVJi0axFptnjGmAoWxkyREIh/XMrfxVLejwQxMCfDXdICo0VLxThrog==}
@@ -17038,6 +17051,11 @@ packages:
 
   /uuid@9.0.0:
     resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
+    hasBin: true
+    dev: false
+
+  /uuid@9.0.1:
+    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
     hasBin: true
     dev: false
 
