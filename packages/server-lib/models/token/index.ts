@@ -1,9 +1,8 @@
-import { Model } from 'mongoose';
 import { ACCESS_TOKEN_EXPIRATION_IN_SECONDS } from '@nifty/common/constants';
 
 import mongoose from '../../mongoose';
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
-import { IToken, TokenDocument, TokenModel } from './types';
+import { IToken, TokenModel } from './types';
 
 const tokenSchema = new mongoose.Schema<IToken>(
   {

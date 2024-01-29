@@ -7,12 +7,12 @@ import RefreshToken from '@nifty/server-lib/models/refresh-token';
 import User, { IUser } from '@nifty/server-lib/models/user';
 
 import passport from '@/lib/passport';
-import createLoginLink from '@/util/create-login-link'
+import createLoginLink from '@/util/create-login-link';
 import auth from '@/middlewares/auth';
 import oauthLogin from '@/middlewares/oauth-login';
 import { ACCESS_TOKEN_NAME, REFRESH_TOKEN_NAME } from '@/constants';
 
-const router = express.Router();
+const router: express.IRouter = express.Router();
 
 router.post('/login/email', async (req, res, next) => {
   try {
@@ -24,10 +24,13 @@ router.post('/login/email', async (req, res, next) => {
       RefreshToken.create({
         user: user.id,
         created_by_ip: req.ip,
-      })
+      }),
     ]);
 
-    const loginLink = createLoginLink({ accessToken, refreshToken }, '/dashboard');
+    const loginLink = createLoginLink(
+      { accessToken, refreshToken },
+      '/dashboard'
+    );
     await Notification.create({
       type: 'login',
       emails: [req.body.email],
@@ -55,12 +58,13 @@ router.get(
   (req, res, next) => {
     next();
   },
-  passport.authenticate('github', { // todo export to middleware and share in both routes
+  passport.authenticate('github', {
+    // todo export to middleware and share in both routes
     session: false,
     failureRedirect: `${process.env.DASHBOARD_BASE_URL}/auth/login`,
   }),
   oauthLogin('github')
-)
+);
 
 router.get('/login/google', (req, res, next) => {
   passport.authenticate('google', {
@@ -86,7 +90,9 @@ router.get(
 
 router.get('/user', auth(), async (req, res, next) => {
   try {
-    const token = await Token.findById(req.cookies[ACCESS_TOKEN_NAME]).populate('user');
+    const token = await Token.findById(req.cookies[ACCESS_TOKEN_NAME]).populate(
+      'user'
+    );
     if (!token) return res.sendStatus(status.UNAUTHORIZED);
 
     res.send(token.user);
@@ -97,14 +103,17 @@ router.get('/user', auth(), async (req, res, next) => {
 
 router.get('/logout', async (req, res, next) => {
   try {
-    await Token.updateMany({
-      _id: {
-        $in: [
-          req.cookies[ACCESS_TOKEN_NAME],
-          req.cookies[REFRESH_TOKEN_NAME],
-        ]
-      }
-    }, { deleted_at: new Date() });
+    await Token.updateMany(
+      {
+        _id: {
+          $in: [
+            req.cookies[ACCESS_TOKEN_NAME],
+            req.cookies[REFRESH_TOKEN_NAME],
+          ],
+        },
+      },
+      { deleted_at: new Date() }
+    );
 
     res.clearCookie(ACCESS_TOKEN_NAME);
     res.clearCookie(REFRESH_TOKEN_NAME);
