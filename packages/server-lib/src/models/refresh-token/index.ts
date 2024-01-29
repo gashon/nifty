@@ -36,4 +36,7 @@ refreshTokenSchema.plugin(mongooseObjectId('ref_tkn', 'token'));
 
 export * from './types';
 export default (mongoose.models.RefreshToken as RefreshTokenModel) ||
-  mongoose.model<IRefreshToken>('RefreshToken', refreshTokenSchema);
+  mongoose.model<IRefreshToken, RefreshTokenModel>(
+    'RefreshToken',
+    refreshTokenSchema
+  );

@@ -7,7 +7,6 @@
     "lib": ["ES2019"],
     "module": "CommonJS",
     "outDir": "dist",
-    "rootDir": "../../",
     "target": "es6",
     "typeRoots": [
       "node_modules/@types",
