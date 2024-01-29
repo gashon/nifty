@@ -4,12 +4,12 @@
     "lib": ["ES2019", "DOM"],
     "module": "CommonJS",
     "outDir": "dist",
-    "rootDir": ".",
+    "rootDir": "../../",
     "typeRoots": ["node_modules/@types", "lib/types"],
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "common/*": ["../../common/src/*"]
+      "@nifty/common/*": ["../common/src/*"]
     }
   },
   "exclude": ["node_modules", "**/.*"]

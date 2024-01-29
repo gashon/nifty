@@ -1,4 +1,6 @@
 export enum COLLABORATOR_TYPES {
-  SERVICE = "CollaboratorService",
-  CONTROLLER = "CollaboratorRepository",
-};
+  SERVICE = 'CollaboratorService',
+  CONTROLLER = 'CollaboratorRepository',
+  MODEL = 'CollaboratorModel',
+}
+

@@ -4,13 +4,14 @@ import { inject } from 'inversify';
 import { Request, Response } from 'express';
 import { CustomException } from '@/exceptions';
 
-import { ICollaboratorService, ICollaboratorController } from '@/domains';
-import { COLLABORATOR_TYPES } from "@/domains/collaborator/types";
+import { ICollaboratorController } from '@/domains';
+import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
+import { CollaboratorModel } from '@nifty/server-lib/models/collaborator';
 
 @controller('/v1/collaborators')
 export class CollaboratorController implements ICollaboratorController {
-  constructor(@inject(COLLABORATOR_TYPES.SERVICE) private collaboratorService: ICollaboratorService) {
-  }
-
-
+  constructor(
+    @inject(COLLABORATOR_TYPES.MODEL)
+    private collaboratorModel: CollaboratorModel
+  ) {}
 }

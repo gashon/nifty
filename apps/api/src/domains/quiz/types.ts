@@ -1,13 +1,14 @@
-import { IQuiz } from "./interfaces"
+import type { IQuiz } from '@nifty/server-lib/models/quiz';
 
 export enum QUIZ_TYPES {
-  SERVICE = "QuizService",
-  CONTROLLER = "QuizController"
-};
+  SERVICE = 'QuizService',
+  MODEL = 'QuizModel',
+  CONTROLLER = 'QuizController',
+}
 
 export type QuizCreateResponse = {
-  data: IQuiz,
-}
+  data: IQuiz;
+};
 export type QuizUpdateResponse = {
-  data: IQuiz,
-}
+  data: IQuiz;
+};

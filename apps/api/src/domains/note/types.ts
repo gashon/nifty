@@ -1,13 +1,14 @@
-import { INote } from "./interfaces"
+import type { INote } from '@nifty/server-lib/models/note';
 
 export enum NOTE_TYPES {
-  SERVICE = "NoteService",
-  CONTROLLER = "NoteController"
-};
+  SERVICE = 'NoteService',
+  MODEL = 'NoteModel',
+  CONTROLLER = 'NoteController',
+}
 
 export type NoteCreateResponse = {
-  data: INote,
-}
+  data: INote;
+};
 export type NoteUpdateResponse = {
-  data: INote,
-}
+  data: INote;
+};
