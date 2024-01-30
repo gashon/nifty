@@ -1,4 +1,4 @@
-type SortKey<T> = [keyof T, 'asc' | 'desc'];
+type SortKey<T> = [keyof T, ('asc' | 'desc') | (-1 | 1)];
 
 export type PaginationParams<T> = {
   page?: number;

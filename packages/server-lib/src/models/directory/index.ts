@@ -3,6 +3,7 @@ import { Model } from 'mongoose';
 import mongoose from '../../mongoose';
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
 import { IDirectory, DirectoryDocument, DirectoryModel } from './types';
+import mongoosePaginate from '../../mongoose/plugins/mongoose-paginate';
 
 const directorySchema = new mongoose.Schema<IDirectory>(
   {
@@ -53,6 +54,7 @@ const directorySchema = new mongoose.Schema<IDirectory>(
 );
 
 directorySchema.plugin(mongooseObjectId('dir', 'directory'));
+directorySchema.plugin(mongoosePaginate);
 
 directorySchema.index({ name: 1, created_by: 1 }, {});
 

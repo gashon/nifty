@@ -1,3 +1,4 @@
+import { PaginateMethod } from '../..//mongoose/plugins/mongoose-paginate';
 import mongoose from '../../mongoose';
 import Resource from '../../utils/types/resource';
 import { Expand } from '../../utils/types/tsoa/expand';
@@ -16,7 +17,10 @@ export interface IDirectory extends Resource {
 export type DirectoryDocument = mongoose.Document<string, object, IDirectory> &
   IDirectory;
 
-export type DirectoryModel = mongoose.Model<IDirectory>;
+type DirectoryStaticMethods = PaginateMethod;
+
+export type DirectoryModel = mongoose.Model<IDirectory> &
+  DirectoryStaticMethods;
 
 export type DirectoryCreateRequest = Partial<
   Expand<Pick<IDirectory, 'credits' | 'alias' | 'name' | 'parent'>>

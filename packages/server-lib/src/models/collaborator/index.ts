@@ -8,6 +8,7 @@ import {
   PermissionsType,
   CollaboratorModel,
 } from './types';
+import mongoosePaginate from '../../mongoose/plugins/mongoose-paginate';
 
 const collaboratorSchema = new mongoose.Schema<ICollaborator>(
   {
@@ -63,6 +64,7 @@ const collaboratorSchema = new mongoose.Schema<ICollaborator>(
 );
 
 collaboratorSchema.plugin(mongooseObjectId('col', 'collaborator'));
+collaboratorSchema.plugin(mongoosePaginate);
 
 collaboratorSchema.index({ type: 1 }, {});
 collaboratorSchema.index({ user: 1 }, {});

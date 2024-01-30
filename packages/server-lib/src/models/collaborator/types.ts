@@ -1,3 +1,4 @@
+import { PaginateMethod } from '../../mongoose/plugins/mongoose-paginate';
 import mongoose from '../../mongoose';
 import Resource from '../../utils/types/resource';
 import { ListResponse } from '../../utils/types/tsoa/list-response';
@@ -26,7 +27,10 @@ export type ICollaborator =
       quiz: string;
     } & CollaboratorBase);
 
-export type CollaboratorModel = mongoose.Model<ICollaborator>;
+type CollaboratorStaticMethods = PaginateMethod;
+
+export type CollaboratorModel = mongoose.Model<ICollaborator> &
+  CollaboratorStaticMethods;
 
 export type CollaboratorCreateRequest = Partial<
   Pick<ICollaborator, 'user' | 'type' | 'permissions'>

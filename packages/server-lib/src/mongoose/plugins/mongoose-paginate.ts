@@ -8,8 +8,19 @@ interface Metadata {
   has_more?: boolean;
 }
 
+export interface PaginateMethod {
+  paginate(query?: Query, options?: any): Promise<any>;
+}
+
+type Query = {
+  limit?: number;
+  page?: number;
+  sort?: [string, ('asc' | 'desc') | number][];
+  expand?: string[];
+};
+
 export default function mongoosePaginate(schema: mongoose.Schema) {
-  schema.statics.paginate = function paginate(query = {}, options) {
+  schema.statics.paginate = function paginate(query: Query = {}, options: any) {
     options = {
       projection: {},
       sort: { created_at: -1 },

@@ -1,3 +1,4 @@
+import { PaginateMethod } from '../../mongoose/plugins/mongoose-paginate';
 import mongoose from '../../mongoose';
 import Resource from '../../utils/types/resource';
 import { Expand } from '../../utils/types/tsoa/expand';
@@ -16,7 +17,9 @@ export interface INote extends Resource {
 
 export type NoteDocument = mongoose.Document<string, object, INote> & INote;
 
-export type NoteModel = mongoose.Model<INote>;
+type NoteStaticMethods = PaginateMethod;
+
+export type NoteModel = mongoose.Model<INote> & NoteStaticMethods;
 
 export type NoteCreateRequest = Partial<
   Expand<Pick<INote, 'public_permissions' | 'title' | 'description'>>

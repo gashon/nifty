@@ -2,7 +2,8 @@ import { Model } from 'mongoose';
 
 import mongoose from '../../mongoose';
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
-import { INote, NoteDocument, NoteModel } from './types';
+import { INote, NoteModel } from './types';
+import mongoosePaginate from '../../mongoose/plugins/mongoose-paginate';
 
 const noteSchema = new mongoose.Schema<INote>(
   {
@@ -59,6 +60,7 @@ const noteSchema = new mongoose.Schema<INote>(
 );
 
 noteSchema.plugin(mongooseObjectId('note', 'note'));
+noteSchema.plugin(mongoosePaginate);
 
 noteSchema.index({ created_by: 1, title: 1 }, {});
 
