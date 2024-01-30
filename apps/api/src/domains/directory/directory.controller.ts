@@ -89,7 +89,7 @@ export class DirectoryController implements IDirectoryController {
       sort,
     });
 
-    const collaboratorIds = collaborators.data.map((c) => c.id);
+    const collaboratorIds = collaborators.map((c) => c.id);
     const directories = await this.directoryModel
       .find({
         collaborators: {
