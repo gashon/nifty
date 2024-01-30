@@ -17,7 +17,7 @@ export interface IDirectory extends Resource {
 export type DirectoryDocument = mongoose.Document<string, object, IDirectory> &
   IDirectory;
 
-type DirectoryStaticMethods = PaginateMethod;
+type DirectoryStaticMethods = PaginateMethod<IDirectory>;
 
 export type DirectoryModel = mongoose.Model<IDirectory> &
   DirectoryStaticMethods;

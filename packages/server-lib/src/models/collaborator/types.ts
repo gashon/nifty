@@ -27,7 +27,7 @@ export type ICollaborator =
       quiz: string;
     } & CollaboratorBase);
 
-type CollaboratorStaticMethods = PaginateMethod;
+type CollaboratorStaticMethods = PaginateMethod<ICollaborator>;
 
 export type CollaboratorModel = mongoose.Model<ICollaborator> &
   CollaboratorStaticMethods;

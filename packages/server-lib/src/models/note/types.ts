@@ -17,7 +17,7 @@ export interface INote extends Resource {
 
 export type NoteDocument = mongoose.Document<string, object, INote> & INote;
 
-type NoteStaticMethods = PaginateMethod;
+type NoteStaticMethods = PaginateMethod<INote>;
 
 export type NoteModel = mongoose.Model<INote> & NoteStaticMethods;
 

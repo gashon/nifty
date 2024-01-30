@@ -1,8 +1,6 @@
-type SortKey<T> = [keyof T, ('asc' | 'desc') | (-1 | 1)];
+import { Query } from '@nifty/server-lib/mongoose/plugins/mongoose-paginate';
 
-export type PaginationParams<T> = {
-  page?: number;
-  limit?: number;
-  sort?: SortKey<T>[];
-  expand?: string;
-};
+export type PaginationParams<T> = Pick<
+  Query<T>,
+  'limit' | 'page' | 'sort' | 'expand'
+>;

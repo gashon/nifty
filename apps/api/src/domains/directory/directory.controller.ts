@@ -83,7 +83,7 @@ export class DirectoryController implements IDirectoryController {
     const userId = res.locals.user._id;
     const { sort } = req.query as PaginationParams<ICollaborator>;
 
-    const collaborators = await this.collaboratorModel.paginate({
+    const collaborators = await this.collaboratorModel.find({
       user: userId,
       deleted_at: null,
       sort,

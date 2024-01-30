@@ -254,14 +254,12 @@ export class NoteController implements INoteController {
       // paginate notes by directory id
       const query = {
         ...req.query,
-        directory_id: undefined,
       } as PaginationParams<INote>;
 
       notes = this.noteModel.paginate({
-        _id: {
+        id: {
           $in: directory.notes,
         },
-        deleted_at: null,
         ...query,
       });
     } else {
