@@ -13,6 +13,7 @@ import { CustomException } from '@/exceptions';
 import {
   DirectoryCreateRequest,
   DirectoryModel,
+  IDirectory,
 } from '@nifty/server-lib/models/directory';
 import { PaginationParams } from '@/types';
 import { IDirectoryController } from '@/domains/directory';
@@ -83,21 +84,39 @@ export class DirectoryController implements IDirectoryController {
     const userId = res.locals.user._id;
     const { sort } = req.query as PaginationParams<ICollaborator>;
 
-    const collaborators = await this.collaboratorModel.find({
-      user: userId,
-      deleted_at: null,
-      sort,
-    });
-
-    const collaboratorIds = collaborators.map((c) => c.id);
-    const directories = await this.directoryModel
-      .find({
-        collaborators: {
-          $in: collaboratorIds,
+    const results = await this.collaboratorModel.aggregate<
+      ICollaborator & { directories: IDirectory[] }
+    >([
+      {
+        $match: {
+          user: userId,
+          deleted_at: null,
         },
-        deleted_at: null,
-      })
-      .sort({ created_at: -1 });
+      },
+      {
+        $lookup: {
+          from: 'directories',
+          localField: '_id',
+          foreignField: 'collaborators',
+          as: 'directories',
+        },
+      },
+      {
+        $unwind: '$directories',
+      },
+      {
+        $match: {
+          'directories.deleted_at': null,
+        },
+      },
+      {
+        $sort: {
+          'directories.created_at': -1,
+        },
+      },
+    ]);
+
+    const directories = results.map(({ directories }) => directories);
 
     res.status(status.OK).json({ data: directories });
   }

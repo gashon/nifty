@@ -2,12 +2,7 @@ import { Model } from 'mongoose';
 
 import mongoose from '../../mongoose';
 import mongooseObjectId from '../../mongoose/plugins/mongoose-object-id';
-import {
-  ICollaborator,
-  CollaboratorDocument,
-  PermissionsType,
-  CollaboratorModel,
-} from './types';
+import { ICollaborator, CollaboratorModel } from './types';
 import mongoosePaginate from '../../mongoose/plugins/mongoose-paginate';
 
 const collaboratorSchema = new mongoose.Schema<ICollaborator>(
