@@ -159,7 +159,6 @@ export interface SubmissionAnswerFreeResponse {
 
 export interface SubmissionAnswerMultipleChoice {
   answerIndex: number | null;
-  answerText: string | null;
   correctIndex: number | null;
   createdAt: Generated<Timestamp>;
   deletedAt: Timestamp | null;

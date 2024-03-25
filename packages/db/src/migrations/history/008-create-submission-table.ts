@@ -58,7 +58,6 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("answer_index", "integer")
     .addColumn("is_correct", "boolean")
     .addColumn("correct_index", "integer")
-    .addColumn("answer_text", "text")
     .addColumn("feedback_text", "text")
     .addColumn("created_at", "timestamp", (col) =>
       col.defaultTo(sql`now()`).notNull(),
