@@ -1,14 +1,16 @@
 import { ParsedUrlQuery } from 'querystring';
 import { AxiosResponse } from 'axios';
 import { axios } from '@/lib/axios';
-import { IUser } from '@nifty/server-lib/models/user';
+import {User} from "@nifty/common/types"
 
 import { LoginFormData } from '../types';
 
-export const getUser = async (headers?: { [key: string]: string }): Promise<AxiosResponse<IUser>> => {
-  return axios.get('/ajax/auth/user', {
+export const getUser = async (headers?: { [key: string]: string }): Promise<AxiosResponse<User>> => {
+  const data = await axios.get('/ajax/auth/user', {
     headers,
   });
+
+  return data;
 };
 
 export const emailLogin = async (payload: LoginFormData, params: ParsedUrlQuery, enabled?: boolean) => {

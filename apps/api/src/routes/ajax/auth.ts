@@ -7,7 +7,7 @@ import RefreshToken from '@nifty/server-lib/models/refresh-token';
 import User, { IUser } from '@nifty/server-lib/models/user';
 
 import { db } from "@nifty/common/db";
-import {AccessToken} from "@nifty/common/types";
+import { AccessToken } from "@nifty/common/types";
 
 import passport from '@/lib/passport';
 import createLoginLink from '@/util/create-login-link';
@@ -23,9 +23,9 @@ router.post('/login/email', async (req, res, next) => {
     let user = await db.selectFrom("user").select("id").where("email", '=', req.body.email).executeTakeFirst();
     if (!user) user = await db.insertInto("user").values({ email: req.body.email }).executeTakeFirst();
 
-    if(!user || user.deleted_at) return res.sendStatus(status.UNAUTHORIZED);
+    if (!user || user.deleted_at) return res.sendStatus(status.UNAUTHORIZED);
 
-    const {encodedAccessToken, encodedRefreshToken} = await generateTokens(user, {
+    const { encodedAccessToken, encodedRefreshToken } = await generateTokens(user, {
       strategy: 'email',
       requestIp: req.ip,
       requestUserAgent: req.headers['user-agent'] || ''
@@ -33,7 +33,7 @@ router.post('/login/email', async (req, res, next) => {
 
     // TODO - send email
     const loginLink = createLoginLink(
-      { encodedAccessToken, encodedRefreshToken},
+      { encodedAccessToken, encodedRefreshToken },
       '/dashboard'
     );
 
@@ -97,9 +97,9 @@ router.get(
 
 router.get('/user', auth(), async (req, res, next) => {
   try {
-    const user = await db.selectFrom("user").select("id").where("id", '=', res.locals.user.id).executeTakeFirst();
+    const user = await db.selectFrom("user").selectAll().where("id", '=', res.locals.user.id).executeTakeFirst();
 
-    res.send(user);
+    res.send({data: user})
   } catch (err) {
     next(err);
   }
