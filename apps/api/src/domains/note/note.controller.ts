@@ -9,19 +9,19 @@ import {
 import { inject } from 'inversify';
 import { Request, Response } from 'express';
 
-import auth from '@/middlewares/auth';
-import { CustomException } from '@/exceptions';
+import auth from '@nifty/api/middlewares/auth';
+import { CustomException } from '@nifty/api/exceptions';
 import {
   INote,
   NoteCreateRequest,
   NoteModel,
 } from '@nifty/server-lib/models/note';
-import { PaginationParams } from '@/types';
-import { INoteController } from '@/domains/note';
-import { NOTE_TYPES, NoteCreateResponse } from '@/domains/note/types';
-import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
-import { DIRECTORY_TYPES } from '@/domains/directory/types';
-import { setPermissions, Permission, checkPermissions } from '@/util';
+import { PaginationParams } from '@nifty/api/types';
+import { INoteController } from '@nifty/api/domains/note';
+import { NOTE_TYPES, NoteCreateResponse } from '@nifty/api/domains/note/types';
+import { COLLABORATOR_TYPES } from '@nifty/api/domains/collaborator/types';
+import { DIRECTORY_TYPES } from '@nifty/api/domains/directory/types';
+import { setPermissions, Permission, checkPermissions } from '@nifty/api/util';
 import {
   CollaboratorDocument,
   CollaboratorModel,

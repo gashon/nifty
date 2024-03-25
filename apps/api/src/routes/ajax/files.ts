@@ -1,5 +1,5 @@
 import express from 'express';
-// import storage from '@/storage';
+// import storage from '@nifty/api/storage';
 // import status from 'http-status';
 //
 // const router = express.Router();

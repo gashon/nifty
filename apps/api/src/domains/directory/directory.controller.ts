@@ -8,22 +8,22 @@ import {
 import { inject } from 'inversify';
 import { Request, Response } from 'express';
 
-import auth from '@/middlewares/auth';
-import { CustomException } from '@/exceptions';
+import auth from '@nifty/api/middlewares/auth';
+import { CustomException } from '@nifty/api/exceptions';
 import {
   DirectoryCreateRequest,
   DirectoryModel,
   IDirectory,
 } from '@nifty/server-lib/models/directory';
-import { PaginationParams } from '@/types';
-import { IDirectoryController } from '@/domains/directory';
+import { PaginationParams } from '@nifty/api/types';
+import { IDirectoryController } from '@nifty/api/domains/directory';
 import { ICollaborator } from '@nifty/server-lib/models/collaborator';
 import {
   DIRECTORY_TYPES,
   DirectoryCreateResponse,
-} from '@/domains/directory/types';
-import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
-import { setPermissions, Permission } from '@/util';
+} from '@nifty/api/domains/directory/types';
+import { COLLABORATOR_TYPES } from '@nifty/api/domains/collaborator/types';
+import { setPermissions, Permission } from '@nifty/api/util';
 import { NOTE_TYPES } from '../note';
 import { NoteModel } from '@nifty/server-lib/models/note';
 import collaborator, {

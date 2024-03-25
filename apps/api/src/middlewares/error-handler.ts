@@ -2,7 +2,7 @@ import { ErrorRequestHandler } from 'express';
 import * as Sentry from "@sentry/node";
 import mongoose from '@nifty/server-lib/mongoose';
 import { CustomException } from '../exceptions';
-import logger from '@/lib/logger';
+import logger from '@nifty/api/lib/logger';
 
 const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, next) {
   logger.error(JSON.stringify(err));

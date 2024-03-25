@@ -1,6 +1,6 @@
 import { IQuizQuestion, IFreeResponseQuizQuestion, IQuizMultipleChoiceQuestion, IQuizFreeResponseQuestion } from '@nifty/server-lib/models/quiz';
 import { IQuizSubmissionAnswer, IFreeResponseSubmissionGradingResponse, IQuizMultipleChoiceAnswer, IQuizFreeResponseAnswer, IMultipleChoiceSubmissionAnswer, IFreeResponseSubmissionAnswer, } from '@nifty/server-lib/models/submission';
-import { openaiRequest, openaiRequestHandler } from "@/lib/openai-request";
+import { openaiRequest, openaiRequestHandler } from "@nifty/api/lib/openai-request";
 
 type MultipleChoiceQA = {
   question: IQuizMultipleChoiceQuestion;

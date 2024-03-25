@@ -9,15 +9,15 @@ import { inject } from 'inversify';
 import { Request, Response } from 'express';
 import { FilterQuery } from 'mongoose';
 
-import auth from '@/middlewares/auth';
-import { openaiRequestHandler, openaiRequest } from '@/lib/openai-request';
-import { CustomException } from '@/exceptions';
-import { PaginationParams } from '@/types';
-import { IQuizController } from '@/domains/quiz';
-import { QUIZ_TYPES, QuizCreateResponse } from '@/domains/quiz/types';
-import { NOTE_TYPES } from '@/domains/note/types';
-import { COLLABORATOR_TYPES } from '@/domains/collaborator/types';
-import { DIRECTORY_TYPES } from '@/domains/directory/types';
+import auth from '@nifty/api/middlewares/auth';
+import { openaiRequestHandler, openaiRequest } from '@nifty/api/lib/openai-request';
+import { CustomException } from '@nifty/api/exceptions';
+import { PaginationParams } from '@nifty/api/types';
+import { IQuizController } from '@nifty/api/domains/quiz';
+import { QUIZ_TYPES, QuizCreateResponse } from '@nifty/api/domains/quiz/types';
+import { NOTE_TYPES } from '@nifty/api/domains/note/types';
+import { COLLABORATOR_TYPES } from '@nifty/api/domains/collaborator/types';
+import { DIRECTORY_TYPES } from '@nifty/api/domains/directory/types';
 import collaborator, {
   CollaboratorDocument,
   CollaboratorModel,
@@ -30,7 +30,7 @@ import {
   countTokens,
   createMultipleChoiceQuizGenerationPrompt,
   createFreeResponseQuizGenerationPrompt,
-} from '@/util';
+} from '@nifty/api/util';
 import {
   SubmissionCreateRequest,
   ISubmissionAnswer,

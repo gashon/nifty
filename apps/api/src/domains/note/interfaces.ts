@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import type { NoteCreateResponse } from '@/domains/note/types';
+import type { NoteCreateResponse } from '@nifty/api/domains/note/types';
 
 interface INoteController {
   getNote(req: Request, res: Response): Promise<void>;

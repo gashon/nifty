@@ -9,12 +9,12 @@ import User, { IUser } from '@nifty/server-lib/models/user';
 import { db } from "@nifty/common/db";
 import { AccessToken } from "@nifty/common/types";
 
-import passport from '@/lib/passport';
-import createLoginLink from '@/util/create-login-link';
-import auth from '@/middlewares/auth';
-import oauthLogin from '@/middlewares/oauth-login';
-import { ACCESS_TOKEN_EXPIRATION_IN_SECONDS, ACCESS_TOKEN_NAME, REFRESH_TOKEN_EXPIRATION_IN_SECONDS, REFRESH_TOKEN_NAME } from '@/constants';
-import { generateTokens } from '@/util/create-tokens';
+import passport from '@nifty/api/lib/passport';
+import createLoginLink from '@nifty/api/util/create-login-link';
+import auth from '@nifty/api/middlewares/auth';
+import oauthLogin from '@nifty/api/middlewares/oauth-login';
+import { ACCESS_TOKEN_EXPIRATION_IN_SECONDS, ACCESS_TOKEN_NAME, REFRESH_TOKEN_EXPIRATION_IN_SECONDS, REFRESH_TOKEN_NAME } from '@nifty/api/constants';
+import { generateTokens } from '@nifty/api/util/create-tokens';
 
 const router: express.IRouter = express.Router();
 

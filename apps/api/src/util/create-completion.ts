@@ -1,8 +1,8 @@
 import status from 'http-status';
-import openai from '@/lib/openai';
-import logger from '@/lib/logger';
-import { countTokens } from '@/util';
-import { CustomException } from '@/exceptions';
+import openai from '@nifty/api/lib/openai';
+import logger from '@nifty/api/lib/logger';
+import { countTokens } from '@nifty/api/util';
+import { CustomException } from '@nifty/api/exceptions';
 
 const getOpenAIResponse = async (prompt: string) => {
   const model = 'text-davinci-003';

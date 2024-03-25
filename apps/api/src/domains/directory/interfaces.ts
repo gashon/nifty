@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import type { DirectoryCreateResponse } from '@/domains/directory/types';
+import type { DirectoryCreateResponse } from '@nifty/api/domains/directory/types';
 
 interface IDirectoryController {
   getDirectory(req: Request, res: Response): Promise<void>;

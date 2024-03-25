@@ -2,10 +2,10 @@ import { RequestHandler } from 'express';
 import status from 'http-status';
 
 import { AccessTokenJwt, RefreshTokenJwt } from '@nifty/common/types';
-import { ACCESS_TOKEN_NAME, REFRESH_TOKEN_NAME } from '@/constants';
-import { verifyToken } from '@/lib/jwt';
-import { timestampIsExpired } from '@/util/timestamp';
-import { generateAccessToken } from '@/util/create-tokens';
+import { ACCESS_TOKEN_NAME, REFRESH_TOKEN_NAME } from '@nifty/api/constants';
+import { verifyToken } from '@nifty/api/lib/jwt';
+import { timestampIsExpired } from '@nifty/api/util/timestamp';
+import { generateAccessToken } from '@nifty/api/util/create-tokens';
 
 export default function auth(): RequestHandler {
   const authHandler: RequestHandler = async (req, res, next) => {

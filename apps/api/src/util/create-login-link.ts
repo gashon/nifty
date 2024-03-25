@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN_NAME, REFRESH_TOKEN_NAME } from "@/constants";
+import { ACCESS_TOKEN_NAME, REFRESH_TOKEN_NAME } from "@nifty/api/constants";
 import { RefreshToken } from "@nifty/common/types";
 
 type Tokens = {

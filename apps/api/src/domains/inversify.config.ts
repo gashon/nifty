@@ -1,18 +1,18 @@
 import { Container } from 'inversify';
 
-import { IUserController, UserController, USER_TYPES } from '@/domains/user';
+import { IUserController, UserController, USER_TYPES } from '@nifty/api/domains/user';
 import {
   IDirectoryController,
   DirectoryController,
   DIRECTORY_TYPES,
-} from '@/domains/directory';
+} from '@nifty/api/domains/directory';
 import {
   ICollaboratorController,
   CollaboratorController,
   COLLABORATOR_TYPES,
-} from '@/domains/collaborator';
-import { INoteController, NoteController, NOTE_TYPES } from '@/domains/note';
-import { IQuizController, QuizController, QUIZ_TYPES } from '@/domains/quiz';
+} from '@nifty/api/domains/collaborator';
+import { INoteController, NoteController, NOTE_TYPES } from '@nifty/api/domains/note';
+import { IQuizController, QuizController, QUIZ_TYPES } from '@nifty/api/domains/quiz';
 import { SUBMISSION_TYPES } from './submission/types';
 
 import Note, { NoteModel } from '@nifty/server-lib/models/note';

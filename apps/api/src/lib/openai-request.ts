@@ -1,6 +1,6 @@
 import status from "http-status";
 import { jsonrepair } from 'jsonrepair'
-import logger from "@/lib/logger"
+import logger from "@nifty/api/lib/logger"
 import {
   sendOpenAIRequest,
   shuffleQuiz,
@@ -8,8 +8,8 @@ import {
   createMultipleChoiceQuizGenerationPrompt,
   createFreeResponseQuizGenerationPrompt,
   createFreeResponseGradingPrompt
-} from "@/util"
-import { CustomException } from "@/exceptions";
+} from "@nifty/api/util"
+import { CustomException } from "@nifty/api/exceptions";
 import { IFreeResponseQuizQuestion, IMultipleChoiceQuizQuestion } from "@nifty/server-lib/models/quiz";
 import { IFreeResponseSubmissionGradingResponse } from "@nifty/server-lib/models/submission";
 

@@ -4,7 +4,7 @@ import status from 'http-status';
 import Token from '@nifty/server-lib/models/token';
 import { IUser } from '@nifty/server-lib/models/user';
 import { USER_PERMISSIONS } from '@nifty/common/constants';
-import { ACCESS_TOKEN_NAME } from '@/constants';
+import { ACCESS_TOKEN_NAME } from '@nifty/api/constants';
 
 const WHITE_LIST = ['/v1/users/subscribe'];
 

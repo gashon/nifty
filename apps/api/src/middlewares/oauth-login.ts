@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { IUser } from '@nifty/server-lib/models/user';
-import createLoginLink from '@/util/create-login-link';
+import createLoginLink from '@nifty/api/util/create-login-link';
 import { TokenStrategy } from '@nifty/common/types';
-import { generateTokens } from '@/util/create-tokens';
+import { generateTokens } from '@nifty/api/util/create-tokens';
 
 export default function oauthLogin(strategy: TokenStrategy) {
   return async (req: Request, res: Response, next: NextFunction) => {

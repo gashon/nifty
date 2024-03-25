@@ -1,7 +1,7 @@
-import { createToken } from "@/lib/jwt";
+import { createToken } from "@nifty/api/lib/jwt";
 import { User, AccessToken, RefreshTokenJwt, TokenStrategy, AccessTokenJwt } from "@nifty/common/types";
 import { db } from "@nifty/common/db"
-import { ACCESS_TOKEN_EXPIRATION_IN_SECONDS, REFRESH_TOKEN_EXPIRATION_IN_SECONDS } from "@/constants";
+import { ACCESS_TOKEN_EXPIRATION_IN_SECONDS, REFRESH_TOKEN_EXPIRATION_IN_SECONDS } from "@nifty/api/constants";
 
 type OutputTokens = {
   encodedAccessToken: string;

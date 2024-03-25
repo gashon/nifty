@@ -3,10 +3,10 @@ import { controller, httpGet, httpPost } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { Request, Response } from 'express';
 import { UserCreateRequest, UserModel } from '@nifty/server-lib/models/user';
-import auth from '@/middlewares/auth';
+import auth from '@nifty/api/middlewares/auth';
 
-import { IUserController } from '@/domains';
-import { USER_TYPES } from '@/domains/user/types';
+import { IUserController } from '@nifty/api/domains';
+import { USER_TYPES } from '@nifty/api/domains/user/types';
 @controller('/v1/users')
 export class UserController implements IUserController {
   constructor(@inject(USER_TYPES.MODEL) private userModel: UserModel) {}

@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import type { QuizCreateResponse } from '@/domains/quiz/types';
+import type { QuizCreateResponse } from '@nifty/api/domains/quiz/types';
 
 interface IQuizController {
   getQuiz(req: Request, res: Response): Promise<void>;
