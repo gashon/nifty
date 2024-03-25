@@ -4,6 +4,8 @@ import { Pool } from "pg";
 import { Kysely, PostgresDialect, CamelCasePlugin } from "kysely";
 import { DB } from "@nifty/db/types";
 
+export { sql } from "kysely";
+
 export const db = new Kysely<DB>({
   dialect: new PostgresDialect({
     pool: new Pool({

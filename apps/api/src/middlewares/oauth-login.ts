@@ -1,28 +1,27 @@
 import { Request, Response, NextFunction } from 'express';
 import { IUser } from '@nifty/server-lib/models/user';
-import Token from '@nifty/server-lib/models/token';
-import RefreshToken from '@nifty/server-lib/models/refresh-token';
 import createLoginLink from '@/util/create-login-link';
+import { TokenStrategy } from '@nifty/common/types';
+import { generateTokens } from '@/util/create-tokens';
 
-export default function oauthLogin(strategy: string) {
+export default function oauthLogin(strategy: TokenStrategy) {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const state = req.query.state && JSON.parse(req.query.state.toString());
       const user = req.user as IUser;
       if (!user) return res.redirect(`${process.env.DASHBOARD_BASE_URL}/auth/login`);
 
-      const [accessToken, refreshToken] = await Promise.all([
-        Token.create({ user: user.id, strategy }),
-        RefreshToken.create({
-          user: user.id,
-          created_by_ip: req.ip, // todo add fingerprint here
-        })
-      ]);
+      const {encodedAccessToken, encodedRefreshToken} = await generateTokens(user, {
+        strategy,
+        requestIp: req.ip,
+        requestUserAgent: req.headers['user-agent'] || ''
+      })
 
-      const loginLink = createLoginLink({ accessToken, refreshToken }, state.redirect?.toString() || '/dashboard');
+      const loginLink = createLoginLink({ encodedAccessToken, encodedRefreshToken}, state.redirect?.toString() || '/dashboard');
 
       res.redirect(loginLink.toString());
     } catch (err) {
+      console.log("err", err)
       next(err);
     }
   };

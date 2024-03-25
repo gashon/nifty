@@ -7,12 +7,14 @@ import RefreshToken from '@nifty/server-lib/models/refresh-token';
 import User, { IUser } from '@nifty/server-lib/models/user';
 
 import { db } from "@nifty/common/db";
+import {AccessToken} from "@nifty/common/types";
 
 import passport from '@/lib/passport';
 import createLoginLink from '@/util/create-login-link';
 import auth from '@/middlewares/auth';
 import oauthLogin from '@/middlewares/oauth-login';
 import { ACCESS_TOKEN_EXPIRATION_IN_SECONDS, ACCESS_TOKEN_NAME, REFRESH_TOKEN_EXPIRATION_IN_SECONDS, REFRESH_TOKEN_NAME } from '@/constants';
+import { generateTokens } from '@/util/create-tokens';
 
 const router: express.IRouter = express.Router();
 
@@ -23,22 +25,15 @@ router.post('/login/email', async (req, res, next) => {
 
     if(!user || user.deleted_at) return res.sendStatus(status.UNAUTHORIZED);
 
-    const [accessToken, refreshToken] = await Promise.all([
-      db.insertInto("token").values({
-        user_id: user.id,
-        strategy: 'email',
-        expiresAt: new Date(Date.now() + ACCESS_TOKEN_EXPIRATION_IN_SECONDS * 1000)
-      }).executeTakeFirst(),
-      db.insertInto("refresh_token").values({
-        user_id: user.id,
-        created_by_user_agent: req.headers['user-agent'],
-        created_by_ip: req.ip,
-        expiresAt: new Date(Date.now() + REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000)
-      }).executeTakeFirst()
-    ]);
+    const {encodedAccessToken, encodedRefreshToken} = await generateTokens(user, {
+      strategy: 'email',
+      requestIp: req.ip,
+      requestUserAgent: req.headers['user-agent'] || ''
+    });
 
+    // TODO - send email
     const loginLink = createLoginLink(
-      { accessToken, refreshToken },
+      { encodedAccessToken, encodedRefreshToken},
       '/dashboard'
     );
 

@@ -1,63 +1,59 @@
 import { RequestHandler } from 'express';
 import status from 'http-status';
-import Token, { TokenDocument, IToken } from '@nifty/server-lib/models/token';
-import RefreshToken from '@nifty/server-lib/models/refresh-token';
-import { IUser } from '@nifty/server-lib/models/user';
+
+import { AccessTokenJwt, RefreshTokenJwt } from '@nifty/common/types';
 import { ACCESS_TOKEN_NAME, REFRESH_TOKEN_NAME } from '@/constants';
+import { verifyToken } from '@/lib/jwt';
+import { timestampIsExpired } from '@/util/timestamp';
+import { generateAccessToken } from '@/util/create-tokens';
 
 export default function auth(): RequestHandler {
   const authHandler: RequestHandler = async (req, res, next) => {
-    if (req.cookies[ACCESS_TOKEN_NAME] && req.cookies[REFRESH_TOKEN_NAME]) {
-      // Fetch relevant token
-      const accessToken = (await Token.findById(
-        req.cookies[ACCESS_TOKEN_NAME]
-      ).populate<{ user: IUser }>('user')) as IToken &
-        TokenDocument & { user: IUser };
+    const encodedAccessToken = req.cookies[ACCESS_TOKEN_NAME];
+    const encodedRefreshToken = req.cookies[REFRESH_TOKEN_NAME];
 
-      if (
-        accessToken?.expires_at &&
-        accessToken.expires_at > new Date() &&
-        !accessToken.deleted_at
-      ) {
+    if (!!encodedAccessToken && !!encodedRefreshToken) {
+
+      const accessToken = verifyToken<AccessTokenJwt>(encodedAccessToken)
+      // TODO(@gashon) revokation logic
+      if(!timestampIsExpired(accessToken.expiresAt)) {
         // Set locals
         res.locals.user = accessToken.user;
         return next();
       }
 
-      // refresh logic
-      const refreshToken = await RefreshToken.findById(
-        req.cookies[REFRESH_TOKEN_NAME]
-      );
-      if (!refreshToken || refreshToken.deleted_at) {
+      // user access token is expired
+
+      const refreshToken = verifyToken<RefreshTokenJwt>(encodedRefreshToken);
+      const isRefreshTokenValid = refreshToken && !timestampIsExpired(refreshToken.expiresAt);
+      // TODO(@gashon) revokation logic
+      const isRefreshTokenDeleted = false;
+
+      if (!isRefreshTokenValid || isRefreshTokenDeleted) {
         res.clearCookie(ACCESS_TOKEN_NAME);
         res.clearCookie(REFRESH_TOKEN_NAME);
         return res.status(status.UNAUTHORIZED).json({
           error: {
-            message: 'Invalid authorization token.',
+            message: isRefreshTokenValid ? 'Your session has expired. Please login again.' : 'Invalid authorization token.',
             type: 'invalid_request_error',
           },
         });
       }
 
-      if (refreshToken && refreshToken.expires_at < new Date()) {
-        res.clearCookie(ACCESS_TOKEN_NAME);
-        res.clearCookie(REFRESH_TOKEN_NAME);
-        return res.status(status.UNAUTHORIZED).json({
-          error: {
-            message: 'Your session has expired. Please login again.',
-            type: 'invalid_request_error',
-          },
-        });
-      }
+      // create new access token
+      const {encoded: newAccessToken, expiresAt }= generateAccessToken(refreshToken.user, {
+        strategy: refreshToken.strategy,
+        requestIp: req.ip,
+        requestUserAgent: req.headers['user-agent'] || '',
+      });
 
-      const newAccessToken = await refreshToken.createAccessToken();
-      res.cookie(ACCESS_TOKEN_NAME, newAccessToken.id, {
-        maxAge: newAccessToken.expires_at.getTime() - Date.now(),
+      res.cookie(ACCESS_TOKEN_NAME, newAccessToken, {
+        expires: expiresAt,
         path: '/',
         httpOnly: true,
       });
 
-      res.locals.user = newAccessToken.user;
+      res.locals.user = refreshToken.user;
       return next();
     } else {
       // user is not logged in

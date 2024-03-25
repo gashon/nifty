@@ -1,1 +1,1 @@
-export * from "@nifty/db/lib/index"
+export * from '../../../db/src/lib/kysely'

@@ -20,8 +20,8 @@ const middleware: NextMiddleware = async function middleware(req) {
   try {
     // Check for the authorization token in the query params
     const [accessToken, refreshToken] = [
-      req.nextUrl.searchParams.get('access_token'),
-      req.nextUrl.searchParams.get('refresh_token'),
+      req.nextUrl.searchParams.get(ACCESS_TOKEN_NAME),
+      req.nextUrl.searchParams.get(REFRESH_TOKEN_NAME),
     ];
 
     // If there is no authorization token, continue
