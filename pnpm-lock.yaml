@@ -415,6 +415,22 @@ importers:
         specifier: workspace:*
         version: link:../tsconfig
 
+  packages/db:
+    dependencies:
+      '@nifty/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      kysely:
+        specifier: 0.27.3
+        version: 0.27.3
+    devDependencies:
+      esbuild:
+        specifier: ^0.15.13
+        version: 0.15.13
+      esbuild-runner:
+        specifier: 2.2.2
+        version: 2.2.2(esbuild@0.15.13)
+
   packages/eslint-config-custom:
     dependencies:
       '@typescript-eslint/eslint-plugin':
@@ -8990,6 +9006,17 @@ packages:
       esbuild: 0.15.13
     dev: true
 
+  /esbuild-runner@2.2.2(esbuild@0.15.13):
+    resolution: {integrity: sha512-fRFVXcmYVmSmtYm2mL8RlUASt2TDkGh3uRcvHFOKNr/T58VrfVeKD9uT9nlgxk96u0LS0ehS/GY7Da/bXWKkhw==}
+    hasBin: true
+    peerDependencies:
+      esbuild: '*'
+    dependencies:
+      esbuild: 0.15.13
+      source-map-support: 0.5.21
+      tslib: 2.4.0
+    dev: true
+
   /esbuild-sunos-64@0.15.13:
     resolution: {integrity: sha512-jVeu2GfxZQ++6lRdY43CS0Tm/r4WuQQ0Pdsrxbw+aOrHQPHV0+LNOLnvbN28M7BSUGnJnHkHm2HozGgNGyeIRw==}
     engines: {node: '>=12'}
@@ -11908,6 +11935,11 @@ packages:
 
   /kuler@2.0.0:
     resolution: {integrity: sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==}
+    dev: false
+
+  /kysely@0.27.3:
+    resolution: {integrity: sha512-lG03Ru+XyOJFsjH3OMY6R/9U38IjDPfnOfDgO3ynhbDr+Dz8fak+X6L62vqu3iybQnj+lG84OttBuU9KY3L9kA==}
+    engines: {node: '>=14.0.0'}
     dev: false
 
   /language-subtag-registry@0.3.22:
@@ -16481,6 +16513,10 @@ packages:
 
   /tslib@1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
+
+  /tslib@2.4.0:
+    resolution: {integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==}
+    dev: true
 
   /tslib@2.6.1:
     resolution: {integrity: sha512-t0hLfiEKfMUoqhG+U1oid7Pva4bbDPHYfJNiB7BiIjRkj1pyC++4N3huJfqY6aRH6VTB0rvtzQwjM4K6qpfOig==}
