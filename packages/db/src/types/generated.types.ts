@@ -187,6 +187,7 @@ export interface User {
   email: string;
   firstName: string | null;
   id: Generated<number>;
+  lastLogin: Timestamp | null;
   lastName: string | null;
   updatedAt: Generated<Timestamp>;
 }

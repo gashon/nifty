@@ -2,6 +2,8 @@ import User, { IUser } from '@nifty/server-lib/models/user';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as GitHubStrategy } from 'passport-github2';
+import { db, sql } from '@nifty/db/lib';
+import { User } from '@nifty/db/types';
 
 const googleStrategy = new GoogleStrategy(
   {
@@ -11,15 +13,16 @@ const googleStrategy = new GoogleStrategy(
     userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
   },
   async (_accessToken, _refreshToken, profile, cb) => {
-    const user: IUser = await User.findOneAndUpdate(
-      { email: profile._json.email },
-      {
-        avatar: profile._json.picture,
-        last_login: Date.now(),
-        verified: true,
-      },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    );
+
+    // findOrCreate sql query
+    const {rows}= await sql<typeof User>`
+      INSERT INTO "user" (email, avatar_url, last_login)
+      VALUES (${profile._json.email}, ${profile._json.picture}, ${new Date})
+      ON CONFLICT (email) DO UPDATE
+      SET last_login = ${new Date}
+      RETURNING *
+    `.execute(db)
+    const [user] = rows
 
     return cb(null, user);
   }
@@ -43,15 +46,15 @@ const githubStrategy = new GitHubStrategy(
       profile.emails?.[0]?.value;
     if (!email) return cb(new Error('No email found'));
 
-    const user: IUser = await User.findOneAndUpdate(
-      { email },
-      {
-        avatar: profile._json.avatar_url,
-        last_login: Date.now(),
-        verified: true,
-      },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    );
+    // findOrCreate sql query
+    const {rows}= await sql<typeof User>`
+      INSERT INTO "user" (email, avatar_url, last_login)
+      VALUES (${email}, ${profile._json.avatar_url}, ${new Date})
+      ON CONFLICT (email) DO UPDATE
+      SET last_login = ${new Date}
+      RETURNING *
+    `.execute(db)
+    const [user] = rows
 
     return cb(null, user);
   }
