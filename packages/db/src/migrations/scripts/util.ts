@@ -8,7 +8,7 @@ export const migrator = new Migrator({
   provider: new FileMigrationProvider({
     fs,
     path,
-    migrationFolder: path.resolve(__dirname, "../logs"),
+    migrationFolder: path.resolve(__dirname, "../history"),
   }),
 });
 
