@@ -4,20 +4,24 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "dev": "pnpm types:generate && pnpm start",
+    "dev": "pnpm start",
     "start": "docker run --rm -v data:/var/lib/postgresql/data --name nifty-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=nifty_db -e POSTGRES_USER=postgres -p 5431:5432 postgres",
     "stop": "docker stop nifty-db && docker rm nifty-db",
     "reset": "docker exec -it nifty-db psql -U postgres -c 'DROP DATABASE IF EXISTS nifty_db'",
-    "migrate": "node -r esbuild-runner/register  src/db/migrations/scripts/to-latest.ts && pnpm db:types:generate",
-    "migrate:undo:all": "node -r esbuild-runner/register  src/db/migrations/scripts/drop-all.ts && pnpm db:types:generate",
-    "types:generate": "kysely-codegen --dialect postgres --camel-case --out-file src/db/types/generated.types.ts"
+    "migrate": "node -r esbuild-runner/register ./src/migrations/scripts/to-latest.ts && pnpm db:types:generate",
+    "migrate:undo:all": "node -r esbuild-runner/register  ./src/migrations/scripts/drop-all.ts && pnpm db:types:generate",
+    "types:generate": "kysely-codegen --dialect postgres --camel-case --out-file ./types/generated.types.ts"
   },
   "dependencies": {
     "@nifty/tsconfig": "workspace:*",
-    "kysely": "0.27.3"
+    "kysely": "0.27.3",
+    "pg": "^8.8.0"
   },
   "devDependencies": {
+    "@types/pg": "8.11.4",
+    "dotenv": "16.4.5",
     "esbuild": "^0.15.13",
-    "esbuild-runner": "2.2.2"
+    "esbuild-runner": "2.2.2",
+    "kysely-codegen": "0.14.1"
   }
 }

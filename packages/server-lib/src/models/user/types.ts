@@ -2,9 +2,10 @@ import mongoose from '../../mongoose';
 import Resource from '../../utils/types/resource';
 import { IToken, LoginStrategy } from '../token';
 export interface IUser extends Resource {
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
-  avatar: string;
+  avater_url: string;
   last_login?: Date | number;
   permissions?: string[];
   /** @ignore */

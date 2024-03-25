@@ -25,7 +25,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .column("id")
     .execute();
 
-  await sql`CREATE INDEX user_email_index ON user (email) USING HASH`.execute(db);
+  await sql`CREATE INDEX "user_email_index" ON "user" USING HASH(email)`.execute(db);
 
 }
 

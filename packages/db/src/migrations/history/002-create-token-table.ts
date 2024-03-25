@@ -1,14 +1,23 @@
 import { Kysely, sql } from "kysely";
-import * as utils from "../utils";
+import { createEnum } from "../utils";
 
 export async function up(db: Kysely<any>): Promise<void> {
+  await db.schema
+    .createType("token_strategy")
+    .asEnum(["google", "facebook", "github", "email", "invite", "refresh"])
+    .execute();
+
+
   await db.schema
     .createTable("token")
     .addColumn("id", "serial", (col) =>
       col.primaryKey(),
     )
     .addColumn("user_id", "serial", (col) => col.notNull().references("user.id"))
-    .addColumn("strategy", utils.enum("google", "facebook", "github", "email", "invite", "refresh"), (col) => col.notNull())
+    // .addColumn("strategy", enum("google", "facebook", "github", "email", "invite", "refresh"), (col) => col.notNull())
+    // .addColumn("strategy", sql`enum('google', 'facebook', 'github', 'email', 'invite', 'refresh')`, (col) => col.notNull())
+  // @ts-ignore
+    .addColumn("strategy", sql`"token_strategy"`, (col) => col.notNull())
     .addColumn("expires_at", "timestamp", (col) => col.notNull())
     .addColumn("created_at", "timestamp", (col) =>
       col.defaultTo(sql`now()`).notNull(),
@@ -34,4 +43,5 @@ export async function up(db: Kysely<any>): Promise<void> {
 
 export async function down(db: Kysely<any>): Promise<void> {
   await db.schema.dropTable("token").execute();
+  await db.schema.dropType("token_strategy").execute();
 }

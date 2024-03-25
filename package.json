@@ -15,7 +15,7 @@
   "scripts": {
     "test": "turbo run dev",
     "build": "turbo run build",
-    "dev": "concurrently \"pnpm run mongo:start\" \"pnpm run redis:start\" \"wait-on tcp:localhost:27017 tcp:localhost:6379 && cross-env FORCE_COLOR=1 turbo run dev --parallel --verbosity 2\"",
+    "dev": "concurrently \"pnpm run redis:start\" \"wait-on tcp:localhost:6379 && cross-env FORCE_COLOR=1 turbo run dev --parallel --verbosity 2\"",
     "start": "cross-env turbo run start --parallel",
     "lint": "turbo run lint",
     "mongo:start": "docker run --rm -p 27017:27017 --name nifty-mongo -v $(pwd)/data/mongo_data:/data/db mongo:latest > /dev/null",

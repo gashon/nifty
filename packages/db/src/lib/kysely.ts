@@ -1,8 +1,8 @@
 import * as dotenv from "dotenv";
-dotenv.config();
+dotenv.config({path: __dirname + "/../../../../../.env"});
 import { Pool } from "pg";
 import { Kysely, PostgresDialect, CamelCasePlugin } from "kysely";
-import { DB } from "@/db/types";
+import { DB } from "@nifty/db/types";
 
 export const db = new Kysely<DB>({
   dialect: new PostgresDialect({
