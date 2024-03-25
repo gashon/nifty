@@ -97,12 +97,9 @@ router.get(
 
 router.get('/user', auth(), async (req, res, next) => {
   try {
-    const token = await Token.findById(req.cookies[ACCESS_TOKEN_NAME]).populate(
-      'user'
-    );
-    if (!token) return res.sendStatus(status.UNAUTHORIZED);
+    const user = await db.selectFrom("user").select("id").where("id", '=', res.locals.user.id).executeTakeFirst();
 
-    res.send(token.user);
+    res.send(user);
   } catch (err) {
     next(err);
   }
