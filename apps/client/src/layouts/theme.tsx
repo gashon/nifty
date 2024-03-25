@@ -1,8 +1,8 @@
 import { lazy, FC, ReactNode } from 'react';
-import { Authorization } from '@/lib/authorization';
+import { Authorization } from '@nifty/client/lib/authorization';
 
 const ThemeSelection = lazy(
-  () => import('@/components/theme-selection/theme-selection')
+  () => import('@nifty/client/components/theme-selection/theme-selection')
 );
 
 type ThemeLayoutProps = {

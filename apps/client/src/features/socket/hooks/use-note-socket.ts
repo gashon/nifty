@@ -1,6 +1,6 @@
 
 import { useEffect, useState, useRef, useReducer } from 'react';
-import { API_LIVE_URL } from "@/config";
+import { API_LIVE_URL } from "@nifty/client/config";
 
 export const useNoteSocket = (noteId: string) => {
   const [socket, setSocket] = useState<WebSocket | null>(null);

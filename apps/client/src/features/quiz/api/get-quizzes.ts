@@ -2,7 +2,7 @@ import { useInfiniteQuery, UseInfiniteQueryResult } from 'react-query';
 
 import { QuizListResponse } from '@nifty/server-lib/models/quiz';
 import { PaginationParams } from '@nifty/api/types';
-import { axios } from '@/lib/axios';
+import { axios } from '@nifty/client/lib/axios';
 
 export const getQuizzes = async ({ sort, limit, page, expand }: PaginationParams): Promise<QuizListResponse> => {
   const { data } = await axios.get(`/api/v1/quizzes`, {

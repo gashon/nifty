@@ -2,7 +2,7 @@ import { InfiniteData, useInfiniteQuery, UseInfiniteQueryResult } from 'react-qu
 
 import { NoteListResponse } from '@nifty/server-lib/models/note';
 import { PaginationParams } from '@nifty/api/types';
-import { axios } from '@/lib/axios';
+import { axios } from '@nifty/client/lib/axios';
 
 export const getNotes = async (directoryId: string | undefined, { sort, limit, page, expand }: PaginationParams, headers?: { [key: string]: string }): Promise<{ data: NoteListResponse }> => {
   const { data } = await axios.get(`/api/v1/notes`, {

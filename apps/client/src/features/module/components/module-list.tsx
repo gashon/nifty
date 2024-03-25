@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { useInfiniteDirectories, useDeleteModule } from '@/features/module';
+import { useInfiniteDirectories, useDeleteModule } from '@nifty/client/features/module';
 import ModuleCard from '@nifty/ui/molecules/module-card';
 
 export const ModuleList: FC = () => {

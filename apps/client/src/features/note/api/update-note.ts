@@ -1,8 +1,8 @@
 import { NoteUpdateRequest } from '@nifty/server-lib/models/note';
 import { AxiosResponse } from 'axios';
 import { useMutation } from 'react-query';
-import { axios } from '@/lib/axios';
-import { MutationConfig, queryClient } from '@/lib/react-query';
+import { axios } from '@nifty/client/lib/axios';
+import { MutationConfig, queryClient } from '@nifty/client/lib/react-query';
 import { NoteUpdateResponse } from "@nifty/api/domains/note/types"
 
 export const updateNote = (noteId: string, data: NoteUpdateRequest): Promise<AxiosResponse<NoteUpdateResponse>> => {

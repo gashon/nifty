@@ -15,7 +15,7 @@
     "baseUrl": ".",
     "jsx": "preserve",
     "paths": {
-      "@/*": ["src/*"],
+      "@nifty/client/*": ["src/*"],
       "@nifty/ui/*": ["../../packages/ui/src/*"],
       "@nifty/common/*": ["../../packages/common/src/*"],
       "@nifty/server-lib/*": ["../../packages/server-lib/src/*"],

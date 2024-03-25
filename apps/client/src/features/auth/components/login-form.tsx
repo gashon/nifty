@@ -4,8 +4,8 @@ import { useRouter } from 'next/router';
 
 import { Button } from 'ui/components/elements';
 import { InputField, Form } from 'ui/components/form';
-import { login } from '@/features/auth/api';
-import { LoginFormData } from '@/features/auth/types';
+import { login } from '@nifty/client/features/auth/api';
+import { LoginFormData } from '@nifty/client/features/auth/types';
 import { GoogleLogin } from './google-login';
 
 const schema = z.object({

@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { FiMenu, FiX } from 'react-icons/fi';
 import AnimateHeight from 'react-animate-height';
 
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@nifty/client/features/auth';
 import { Brand } from '@nifty/ui/atoms';
 import { SidebarLink } from '@nifty/ui/molecules';
 const UserCard = dynamic(() => import('@nifty/ui/molecules/user-card'), { ssr: false });

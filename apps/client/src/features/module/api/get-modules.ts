@@ -2,7 +2,7 @@ import { useInfiniteQuery, UseInfiniteQueryResult } from 'react-query';
 
 import { DirectoryListResponse } from '@nifty/server-lib/models/directory';
 import { PaginationParams } from '@nifty/api/types';
-import { axios } from '@/lib/axios';
+import { axios } from '@nifty/client/lib/axios';
 
 export const getDirectories = async ({ sort, limit, page, expand }: PaginationParams): Promise<DirectoryListResponse> => {
   const { data } = await axios.get(`/api/v1/directories`, {

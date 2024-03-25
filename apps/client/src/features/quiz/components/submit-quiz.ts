@@ -1,6 +1,6 @@
 import { useMutation } from 'react-query';
-import { axios } from '@/lib/axios';
-import { MutationConfig, queryClient } from '@/lib/react-query';
+import { axios } from '@nifty/client/lib/axios';
+import { MutationConfig, queryClient } from '@nifty/client/lib/react-query';
 import { SubmissionCreateRequest } from "@nifty/server-lib/models/submission";
 
 export const submitQuiz = async (payload: SubmissionCreateRequest) => {

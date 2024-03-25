@@ -1,6 +1,6 @@
 import { useState, useEffect, FC, memo, Suspense } from 'react';
 import { useTheme } from 'next-themes';
-import storage from '@/lib/storage';
+import storage from '@nifty/client/lib/storage';
 
 import { DropdownMenu } from '@nifty/ui/atoms';
 

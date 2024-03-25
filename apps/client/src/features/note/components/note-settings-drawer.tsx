@@ -1,13 +1,13 @@
 import { FC, ReactElement, cloneElement } from 'react';
 import { Drawer, Button } from '@nifty/ui/atoms';
-import { useDisclosure } from '@/hooks/use-disclosure';
+import { useDisclosure } from '@nifty/client/hooks/use-disclosure';
 import {
   useUpdateNote,
   NotePermissionDropdown,
   useGetNote,
-} from '@/features/note';
+} from '@nifty/client/features/note';
 import { Permission } from '@nifty/api/util/handle-permissions';
-import { successNotification } from '@/lib/notification';
+import { successNotification } from '@nifty/client/lib/notification';
 
 type NoteSettingsDrawerProps = {
   triggerButton: ReactElement;

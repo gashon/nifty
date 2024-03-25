@@ -5,8 +5,8 @@ import { useState, useEffect, FC } from 'react';
 import { BsArrowBarLeft } from 'react-icons/bs';
 import dayjs from 'dayjs';
 
-import { AuthProtection, AuthProvider, getUser } from '@/features/auth';
-import { getQuizSubmission, useRemixQuiz } from '@/features/quiz';
+import { AuthProtection, AuthProvider, getUser } from '@nifty/client/features/auth';
+import { getQuizSubmission, useRemixQuiz } from '@nifty/client/features/quiz';
 import { LoadingPage } from '@nifty/ui/pages/loading';
 import { IUser } from '@nifty/server-lib/models/user';
 import {

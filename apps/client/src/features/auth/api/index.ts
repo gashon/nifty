@@ -1,6 +1,6 @@
 import { ParsedUrlQuery } from 'querystring';
 import { AxiosResponse } from 'axios';
-import { axios } from '@/lib/axios';
+import { axios } from '@nifty/client/lib/axios';
 import {User} from "@nifty/common/types"
 
 import { LoginFormData } from '../types';

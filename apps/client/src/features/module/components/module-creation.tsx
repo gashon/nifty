@@ -4,7 +4,7 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import { FiArrowRight } from 'react-icons/fi';
 import { FieldError } from 'react-hook-form';
 
-import { useCreateModule } from '@/features/module';
+import { useCreateModule } from '@nifty/client/features/module';
 
 import { Button } from '@nifty/ui/atoms';
 import { FormDrawer, Form, InputField } from '@nifty/ui/form';

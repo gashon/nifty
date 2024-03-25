@@ -4,17 +4,17 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useState, useEffect, FC } from 'react';
 
 const LongPollDocumentEditor = dynamic(
-  () => import('@/features/note/components/editor'),
+  () => import('@nifty/client/features/note/components/editor'),
   { ssr: false }
 );
 const SocketDocumentEditor = dynamic(
-  () => import('@/features/note/components/editor-socket'),
+  () => import('@nifty/client/features/note/components/editor-socket'),
   {
     ssr: false,
   }
 );
 const PageNavigation = dynamic(
-  () => import('@/features/note/components/page-navigation'),
+  () => import('@nifty/client/features/note/components/page-navigation'),
   {
     ssr: false,
   }

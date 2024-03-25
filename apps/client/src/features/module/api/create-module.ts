@@ -1,8 +1,8 @@
 import { DirectoryListResponse, DirectoryCreateRequest } from '@nifty/server-lib/models/directory';
 import { AxiosResponse } from 'axios';
 import { useMutation } from 'react-query';
-import { axios } from '@/lib/axios';
-import { MutationConfig, queryClient } from '@/lib/react-query';
+import { axios } from '@nifty/client/lib/axios';
+import { MutationConfig, queryClient } from '@nifty/client/lib/react-query';
 import { DirectoryCreateResponse } from "@nifty/api/domains/directory/types"
 
 export const createModule = (data: DirectoryCreateRequest): Promise<AxiosResponse<DirectoryCreateResponse>> => {

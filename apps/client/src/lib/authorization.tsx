@@ -1,6 +1,6 @@
 import { useCallback, ReactNode } from 'react';
 import { USER_PERMISSIONS } from '@nifty/common/constants';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@nifty/client/features/auth';
 
 export enum ROLES {
   ADMIN = 'ADMIN',

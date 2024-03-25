@@ -1,7 +1,7 @@
 import { QuizListResponse } from '@nifty/server-lib/models/quiz';
 import { useMutation } from 'react-query';
-import { axios } from '@/lib/axios';
-import { MutationConfig, queryClient } from '@/lib/react-query';
+import { axios } from '@nifty/client/lib/axios';
+import { MutationConfig, queryClient } from '@nifty/client/lib/react-query';
 
 export const deleteQuiz = (quizId: string) => {
   return axios.delete(`/api/v1/quizzes/${quizId}`);

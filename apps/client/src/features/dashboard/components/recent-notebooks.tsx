@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { useRecentNotes, useDeleteNote } from '@/features/note';
+import { useRecentNotes, useDeleteNote } from '@nifty/client/features/note';
 import { IUser } from '@nifty/server-lib/models/user';
 
 import NotebookItem from '@nifty/ui/molecules/notebook-item';

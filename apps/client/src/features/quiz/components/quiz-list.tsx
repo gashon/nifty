@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import dayjs from 'dayjs';
 
-import { useInfiniteQuizzes, useDeleteQuiz } from '@/features/quiz';
+import { useInfiniteQuizzes, useDeleteQuiz } from '@nifty/client/features/quiz';
 import ModuleCard from '@nifty/ui/molecules/module-card';
 
 export const QuizList: FC = () => {

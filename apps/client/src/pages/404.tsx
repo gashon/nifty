@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-const FourOFourSVG = dynamic(() => import('@/components/404-img'), {
+const FourOFourSVG = dynamic(() => import('@nifty/client/components/404-img'), {
   ssr: false,
 });
 

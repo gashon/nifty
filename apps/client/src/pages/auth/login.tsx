@@ -4,8 +4,8 @@ import {
   GoogleLogin,
   GithubLogin,
   AuthProvider,
-} from '@/features/auth';
-import ThemeLayout from '@/layouts/theme';
+} from '@nifty/client/features/auth';
+import ThemeLayout from '@nifty/client/layouts/theme';
 
 import { Brand } from '@nifty/ui/atoms';
 

@@ -1,7 +1,7 @@
 import { DirectoryListResponse } from '@nifty/server-lib/models/directory';
 import { useMutation } from 'react-query';
-import { axios } from '@/lib/axios';
-import { MutationConfig, queryClient } from '@/lib/react-query';
+import { axios } from '@nifty/client/lib/axios';
+import { MutationConfig, queryClient } from '@nifty/client/lib/react-query';
 
 export const deleteDirectory = (directoryId: string) => {
   return axios.delete(`/api/v1/directories/${directoryId}`);

@@ -4,7 +4,7 @@ import {
   useRecentModules,
   useDeleteModule,
   ModuleCreationButton,
-} from '@/features/module';
+} from '@nifty/client/features/module';
 import { IUser } from '@nifty/server-lib/models/user';
 
 import { Button } from '@nifty/ui/atoms';

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { FC } from 'react';
-import { useGetNoteNeighbors } from '@/features/note';
+import { useGetNoteNeighbors } from '@nifty/client/features/note';
 
 type PageNavigationProps = {
   id: string;

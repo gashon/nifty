@@ -1,15 +1,15 @@
 import { NextSeo } from 'next-seo';
 import { useRouter } from 'next/router';
 
-import ThemeLayout from '@/layouts/theme';
-import DashboardLayout from '@/layouts/dashboard';
-import { AuthProtection, getUser, AuthProvider } from '@/features/auth';
+import ThemeLayout from '@nifty/client/layouts/theme';
+import DashboardLayout from '@nifty/client/layouts/dashboard';
+import { AuthProtection, getUser, AuthProvider } from '@nifty/client/features/auth';
 import {
   NoteCreationButton,
   NotebookList,
   NotebookListSSR,
   getNotes,
-} from '@/features/note';
+} from '@nifty/client/features/note';
 
 import { LoadingPage } from '@nifty/ui/pages/loading';
 

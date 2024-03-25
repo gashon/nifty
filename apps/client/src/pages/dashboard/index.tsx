@@ -1,13 +1,13 @@
 import { NextSeo } from 'next-seo';
 
-import { AuthProtection, AuthProvider, getUser } from '@/features/auth';
-import { GreetingHeader } from '@/features/dashboard/components';
+import { AuthProtection, AuthProvider, getUser } from '@nifty/client/features/auth';
+import { GreetingHeader } from '@nifty/client/features/dashboard/components';
 
-import ThemeLayout from '@/layouts/theme';
-import DashboardLayout from '@/layouts/dashboard';
+import ThemeLayout from '@nifty/client/layouts/theme';
+import DashboardLayout from '@nifty/client/layouts/dashboard';
 import { IUser } from '@nifty/server-lib/models/user';
-import RecentModules from '@/features/dashboard/components/recent-modules';
-import RecentNotebooks from '@/features/dashboard/components/recent-notebooks';
+import RecentModules from '@nifty/client/features/dashboard/components/recent-modules';
+import RecentNotebooks from '@nifty/client/features/dashboard/components/recent-notebooks';
 
 export default function Dashboard({ user }: { user: IUser }) {
   return (

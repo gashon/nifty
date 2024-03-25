@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 
 import NotebookItem from '@nifty/ui/molecules/notebook-item';
-import { useInfiniteNotes, useDeleteNote } from '@/features/note';
+import { useInfiniteNotes, useDeleteNote } from '@nifty/client/features/note';
 import { useQueryClient } from 'react-query';
 
 type NotebookListProps = {

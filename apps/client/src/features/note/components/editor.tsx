@@ -11,7 +11,7 @@ import {
 import { withHistory } from 'slate-history';
 import { Editable, ReactEditor, Slate, withReact } from 'slate-react';
 import { BulletedListElement } from '../types';
-import { useGetNote, useUpdateNote } from '@/features/note/api';
+import { useGetNote, useUpdateNote } from '@nifty/client/features/note/api';
 
 const SHORTCUTS = {
   '*': 'list-item',

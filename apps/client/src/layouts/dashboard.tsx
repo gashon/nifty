@@ -1,6 +1,6 @@
 import { FC, ReactElement, PropsWithChildren } from 'react';
 import { FiBook, FiCheck, FiGrid, FiHome } from 'react-icons/fi';
-import { Sidebar } from '@/components/sidebar';
+import { Sidebar } from '@nifty/client/components/sidebar';
 
 type DashboardLayoutProps = {
   children: ReactElement | ReactElement[];

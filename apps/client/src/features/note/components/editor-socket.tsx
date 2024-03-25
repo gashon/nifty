@@ -19,9 +19,9 @@ import {
 } from 'slate';
 import { withHistory } from 'slate-history';
 import { Editable, ReactEditor, Slate, withReact } from 'slate-react';
-import { useNoteSocket, useSocketMessageHandler } from '@/features/socket/';
+import { useNoteSocket, useSocketMessageHandler } from '@nifty/client/features/socket/';
 import { BulletedListElement } from '../types';
-import { useWordCount } from '@/features/note';
+import { useWordCount } from '@nifty/client/features/note';
 
 const SHORTCUTS = {
   '*': 'list-item',

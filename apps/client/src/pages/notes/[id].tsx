@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import { BsArrowBarLeft } from 'react-icons/bs';
 import { GiHamburgerMenu } from 'react-icons/gi';
 
-import { AuthProtection, AuthProvider, getUser } from '@/features/auth';
+import { AuthProtection, AuthProvider, getUser } from '@nifty/client/features/auth';
 import { LoadingPage } from '@nifty/ui/pages/loading';
-import { DocumentSection, NoteSettingsDrawer } from '@/features/note';
-import { Authorization } from '@/lib/authorization';
+import { DocumentSection, NoteSettingsDrawer } from '@nifty/client/features/note';
+import { Authorization } from '@nifty/client/lib/authorization';
 
 function Document({ user }) {
   const router = useRouter();

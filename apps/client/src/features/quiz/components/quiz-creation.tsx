@@ -3,8 +3,8 @@ import { FC, useCallback } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
 import { FieldError } from 'react-hook-form';
 
-import { NoteDropdown } from '@/features/note';
-import { useCreateQuiz } from '@/features/quiz';
+import { NoteDropdown } from '@nifty/client/features/note';
+import { useCreateQuiz } from '@nifty/client/features/quiz';
 
 import { Button } from '@nifty/ui/atoms';
 import { FormDrawer, Form, InputField, FieldWrapper } from '@nifty/ui/form';

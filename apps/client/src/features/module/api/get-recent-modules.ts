@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { axios } from '@/lib/axios';
+import { axios } from '@nifty/client/lib/axios';
 import { DirectoryDocument } from '@nifty/server-lib/models/directory';
 
 export const getRecentlyEditedModules = async (k?: number, headers?: { [key: string]: string }): Promise<{ data: Partial<DirectoryDocument>[] }> => {

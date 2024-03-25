@@ -1,5 +1,5 @@
 import { useEffect, FC, ReactElement, PropsWithChildren } from 'react';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@nifty/client/features/auth';
 
 type AuthProtectionProps = {
   loadingComponent: ReactElement;

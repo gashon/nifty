@@ -8,8 +8,8 @@ import React, {
 } from 'react';
 import { useRouter } from 'next/router';
 import { AxiosResponse } from 'axios';
-import storage from '@/lib/storage';
-import { getUser, emailLogin, LoginFormSchema, signOut } from '@/features/auth';
+import storage from '@nifty/client/lib/storage';
+import { getUser, emailLogin, LoginFormSchema, signOut } from '@nifty/client/features/auth';
 import { IUser } from '@nifty/server-lib/models/user';
 
 export type AuthUserDTO = IUser | null;

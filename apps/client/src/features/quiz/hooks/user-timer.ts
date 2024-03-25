@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import storage from "@/lib/storage";
+import storage from "@nifty/client/lib/storage";
 
 interface TimeSession {
   start_time: number;

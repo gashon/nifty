@@ -1,10 +1,10 @@
 import { NextSeo } from 'next-seo';
 import { useRouter } from 'next/router';
 
-import ThemeLayout from '@/layouts/theme';
-import DashboardLayout from '@/layouts/dashboard';
-import { AuthProtection, AuthProvider, getUser } from '@/features/auth';
-import { ModuleList, ModuleCreationButton } from '@/features/module';
+import ThemeLayout from '@nifty/client/layouts/theme';
+import DashboardLayout from '@nifty/client/layouts/dashboard';
+import { AuthProtection, AuthProvider, getUser } from '@nifty/client/features/auth';
+import { ModuleList, ModuleCreationButton } from '@nifty/client/features/module';
 
 import { LoadingPage } from '@nifty/ui/pages/loading';
 

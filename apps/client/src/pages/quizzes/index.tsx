@@ -1,10 +1,10 @@
 import { NextSeo } from 'next-seo';
 import { useRouter } from 'next/router';
 
-import ThemeLayout from '@/layouts/theme';
-import DashboardLayout from '@/layouts/dashboard';
-import { AuthProtection, AuthProvider, getUser } from '@/features/auth';
-import { QuizList, QuizCreationButton } from '@/features/quiz';
+import ThemeLayout from '@nifty/client/layouts/theme';
+import DashboardLayout from '@nifty/client/layouts/dashboard';
+import { AuthProtection, AuthProvider, getUser } from '@nifty/client/features/auth';
+import { QuizList, QuizCreationButton } from '@nifty/client/features/quiz';
 
 import { LoadingPage } from '@nifty/ui/pages/loading';
 

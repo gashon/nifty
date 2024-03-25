@@ -3,8 +3,8 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, FC } from 'react';
 import { BsArrowBarLeft } from 'react-icons/bs';
 
-import { AuthProtection, AuthProvider, getUser } from '@/features/auth';
-import { QuizForm, getQuiz } from '@/features/quiz';
+import { AuthProtection, AuthProvider, getUser } from '@nifty/client/features/auth';
+import { QuizForm, getQuiz } from '@nifty/client/features/quiz';
 import { LoadingPage } from '@nifty/ui/pages/loading';
 import { IUser } from '@nifty/server-lib/models/user';
 import { IQuiz } from '@nifty/server-lib/models/quiz';

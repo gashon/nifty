@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import { DropdownMenu } from '@nifty/ui/atoms';
-import { useInfiniteNotes } from '@/features/note';
+import { useInfiniteNotes } from '@nifty/client/features/note';
 
 export const NoteDropdown: FC<{
   onChange: (value: string | undefined) => void;

@@ -1,7 +1,7 @@
 import Axios from 'axios';
 
-import { errorNotification, successNotification } from "@/lib/notification";
-import { API_URL } from '@/config';
+import { errorNotification, successNotification } from "@nifty/client/lib/notification";
+import { API_URL } from '@nifty/client/config';
 
 export const axios = Axios.create({
   baseURL: API_URL,

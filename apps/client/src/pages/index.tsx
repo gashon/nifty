@@ -1,9 +1,9 @@
 import * as z from 'zod';
 import Image from 'next/image';
 import { Dispatch, FC, SetStateAction, useState, useCallback } from 'react';
-import ThemeLayout from '@/layouts/theme';
-import { subscribeUser } from '@/features/user';
-import { AuthProvider } from '@/features/auth';
+import ThemeLayout from '@nifty/client/layouts/theme';
+import { subscribeUser } from '@nifty/client/features/user';
+import { AuthProvider } from '@nifty/client/features/auth';
 
 import { Modal } from '@nifty/ui/molecules/modal';
 import { Navbar } from '@nifty/ui/templates/Navbar';

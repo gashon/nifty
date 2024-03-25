@@ -11,9 +11,9 @@ import { HelmetProvider } from 'react-helmet-async';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { ToastContainer } from 'react-toastify';
-import { ErrorFallback } from '@/components/error-fallback';
-import { queryClient } from '@/lib/react-query';
-const UserFeedback = dynamic(() => import('@/components/feedback'), {
+import { ErrorFallback } from '@nifty/client/components/error-fallback';
+import { queryClient } from '@nifty/client/lib/react-query';
+const UserFeedback = dynamic(() => import('@nifty/client/components/feedback'), {
   ssr: false,
 });
 

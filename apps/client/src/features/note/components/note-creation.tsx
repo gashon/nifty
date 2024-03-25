@@ -3,12 +3,12 @@ import { FC, useCallback } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
 import { FieldError } from 'react-hook-form';
 
-import { useCreateNote, NotePermissionDropdown } from '@/features/note';
+import { useCreateNote, NotePermissionDropdown } from '@nifty/client/features/note';
 import { Button } from '@nifty/ui/atoms';
 import { FormDrawer, Form, InputField, FieldWrapper } from '@nifty/ui/form';
 import { NoteCreateRequest } from '@nifty/server-lib/models/note';
 import { Permission } from '@nifty/api/util/handle-permissions';
-import { Authorization } from '@/lib/authorization';
+import { Authorization } from '@nifty/client/lib/authorization';
 
 const PermissionSchema = z.nativeEnum(Permission);
 const schema = z.object({
