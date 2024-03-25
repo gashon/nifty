@@ -17,7 +17,6 @@
     "paths": {
       "@/*": ["src/*"],
       "@nifty/server-lib/*": ["../../packages/server-lib/src/*"],
-      "@nifty/db/*": ["../../packages/db/src/*"],
       "@nifty/common/*": ["../../packages/common/src/*"]
     }
   },

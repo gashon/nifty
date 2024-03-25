@@ -6,7 +6,7 @@ import Token from '@nifty/server-lib/models/token';
 import RefreshToken from '@nifty/server-lib/models/refresh-token';
 import User, { IUser } from '@nifty/server-lib/models/user';
 
-import { db } from "@nifty/db/lib";
+import { db } from "@nifty/common/db";
 
 import passport from '@/lib/passport';
 import createLoginLink from '@/util/create-login-link';
@@ -20,6 +20,8 @@ router.post('/login/email', async (req, res, next) => {
   try {
     let user = await db.selectFrom("user").select("id").where("email", '=', req.body.email).executeTakeFirst();
     if (!user) user = await db.insertInto("user").values({ email: req.body.email }).executeTakeFirst();
+
+    if(!user || user.deleted_at) return res.sendStatus(status.UNAUTHORIZED);
 
     const [accessToken, refreshToken] = await Promise.all([
       db.insertInto("token").values({

@@ -1,8 +1,7 @@
-import User, { IUser } from '@nifty/server-lib/models/user';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as GitHubStrategy } from 'passport-github2';
-import { db, sql } from '@nifty/db/lib';
+import { db, sql } from '@nifty/common/db';
 import { User } from '@nifty/db/types';
 
 const googleStrategy = new GoogleStrategy(
@@ -15,7 +14,7 @@ const googleStrategy = new GoogleStrategy(
   async (_accessToken, _refreshToken, profile, cb) => {
 
     // findOrCreate sql query
-    const {rows}= await sql<typeof User>`
+    const {rows}= await sql<User>`
       INSERT INTO "user" (email, avatar_url, last_login)
       VALUES (${profile._json.email}, ${profile._json.picture}, ${new Date})
       ON CONFLICT (email) DO UPDATE
@@ -47,7 +46,7 @@ const githubStrategy = new GitHubStrategy(
     if (!email) return cb(new Error('No email found'));
 
     // findOrCreate sql query
-    const {rows}= await sql<typeof User>`
+    const {rows}= await sql<User>`
       INSERT INTO "user" (email, avatar_url, last_login)
       VALUES (${email}, ${profile._json.avatar_url}, ${new Date})
       ON CONFLICT (email) DO UPDATE

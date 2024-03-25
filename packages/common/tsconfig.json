@@ -5,8 +5,11 @@
     "module": "CommonJS",
     "outDir": "dist",
     "rootDir": "../../",
-    "baseUrl": "./src",
-    "typeRoots": ["node_modules/@types"]
+    "baseUrl": ".",
+    "typeRoots": ["node_modules/@types", "types"],
+    "paths": {
+      "@nifty/db/*": ["../db/src/*"],
+    }
   },
   "include": ["**/*"],
   "exclude": ["node_modules"]

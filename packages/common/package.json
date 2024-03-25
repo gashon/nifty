@@ -4,6 +4,7 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "@nifty/tsconfig": "workspace:*"
+    "@nifty/tsconfig": "workspace:*",
+    "@nifty/db": "workspace:*"
   }
 }
