@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@nifty/common": "workspace:*",
+    "@nifty/db": "workspace:*",
     "@nifty/tsconfig": "workspace:*",
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "2.8.13",

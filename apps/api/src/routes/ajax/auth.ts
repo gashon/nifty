@@ -6,39 +6,48 @@ import Token from '@nifty/server-lib/models/token';
 import RefreshToken from '@nifty/server-lib/models/refresh-token';
 import User, { IUser } from '@nifty/server-lib/models/user';
 
+import { db } from "@nifty/db/lib";
+
 import passport from '@/lib/passport';
 import createLoginLink from '@/util/create-login-link';
 import auth from '@/middlewares/auth';
 import oauthLogin from '@/middlewares/oauth-login';
-import { ACCESS_TOKEN_NAME, REFRESH_TOKEN_NAME } from '@/constants';
+import { ACCESS_TOKEN_EXPIRATION_IN_SECONDS, ACCESS_TOKEN_NAME, REFRESH_TOKEN_EXPIRATION_IN_SECONDS, REFRESH_TOKEN_NAME } from '@/constants';
 
 const router: express.IRouter = express.Router();
 
 router.post('/login/email', async (req, res, next) => {
   try {
-    let user = await User.findOne({ email: req.body.email });
-    if (!user) user = await User.create({ email: req.body.email });
+    let user = await db.selectFrom("user").select("id").where("email", '=', req.body.email).executeTakeFirst();
+    if (!user) user = await db.insertInto("user").values({ email: req.body.email }).executeTakeFirst();
 
     const [accessToken, refreshToken] = await Promise.all([
-      Token.create({ user: user.id, strategy: 'email' }),
-      RefreshToken.create({
-        user: user.id,
+      db.insertInto("token").values({
+        user_id: user.id,
+        strategy: 'email',
+        expiresAt: new Date(Date.now() + ACCESS_TOKEN_EXPIRATION_IN_SECONDS * 1000)
+      }).executeTakeFirst(),
+      db.insertInto("refresh_token").values({
+        user_id: user.id,
+        created_by_user_agent: req.headers['user-agent'],
         created_by_ip: req.ip,
-      }),
+        expiresAt: new Date(Date.now() + REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000)
+      }).executeTakeFirst()
     ]);
 
     const loginLink = createLoginLink(
       { accessToken, refreshToken },
       '/dashboard'
     );
-    await Notification.create({
-      type: 'login',
-      emails: [req.body.email],
-      data: { login_link: loginLink.toString() },
-    });
+    // await Notification.create({
+    //   type: 'login',
+    //   emails: [req.body.email],
+    //   data: { login_link: loginLink.toString() },
+    // });
 
     res.sendStatus(status.OK);
   } catch (err) {
+    console.log('err', err)
     next(err);
   }
 });

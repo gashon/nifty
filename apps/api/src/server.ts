@@ -54,7 +54,7 @@ server.setErrorConfig((app) => {
 
 export async function start() {
   // Connect to MongoDB
-  await mongoose.connect(process.env.DATABASE_URL!);
+  await mongoose.connect(process.env.MONGODB_URL!);
 
   const serverInstance = server.build();
   serverInstance.listen(port, () =>

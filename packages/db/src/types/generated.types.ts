@@ -181,13 +181,13 @@ export interface Token {
 }
 
 export interface User {
-  avatarUrl: string;
+  avatarUrl: string | null;
   createdAt: Generated<Timestamp>;
   deletedAt: Timestamp | null;
   email: string;
-  firstName: string;
+  firstName: string | null;
   id: Generated<number>;
-  lastName: string;
+  lastName: string | null;
   updatedAt: Generated<Timestamp>;
 }
 
