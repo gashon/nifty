@@ -39,6 +39,7 @@ router.post('/login/email', async (req, res, next) => {
       { accessToken, refreshToken },
       '/dashboard'
     );
+
     // await Notification.create({
     //   type: 'login',
     //   emails: [req.body.email],

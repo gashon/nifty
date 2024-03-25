@@ -1,3 +1,3 @@
-export {sql } from "kysely";
+export { sql } from "kysely";
 export * from './kysely';
 

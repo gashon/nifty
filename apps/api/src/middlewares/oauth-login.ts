@@ -20,7 +20,6 @@ export default function oauthLogin(strategy: string) {
       ]);
 
       const loginLink = createLoginLink({ accessToken, refreshToken }, state.redirect?.toString() || '/dashboard');
-      console.log('loginLink', loginLink.toString());
 
       res.redirect(loginLink.toString());
     } catch (err) {
