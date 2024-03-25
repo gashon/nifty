@@ -51,7 +51,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     )
     .addColumn("directory_id", "serial", (col) => col.notNull().references("directory.id"))
     .addColumn("note_id", "serial", (col) => col.notNull().references("note.id"))
-    .addPrimaryKeyConstraint("directory_note_pkey", ["directory_id", "note_id"])
+    .addUniqueConstraint("directory_note_unique_note", ["directory_id", "note_id"])
     .addColumn("deleted_at", "timestamp")
     .execute();
 

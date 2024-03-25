@@ -40,7 +40,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     )
     .addColumn("note_id", "serial", (col) => col.notNull().references("note.id"))
     .addColumn("collaborator_id", "serial", (col) => col.notNull().references("collaborator.id"))
-    .addPrimaryKeyConstraint("note_collaborator_pkey", ["note_id", "collaborator_id"])
+    .addUniqueConstraint("note_unique_collaborator", ["note_id", "collaborator_id"])
     .addColumn("created_at", "timestamp", (col) =>
       col.defaultTo(sql`now()`).notNull(),
     )
@@ -77,7 +77,7 @@ export async function up(db: Kysely<any>): Promise<void> {
       col.defaultTo(sql`now()`).notNull(),
     )
     .addColumn("deleted_at", "timestamp")
-    .addPrimaryKeyConstraint("quiz_collaborator_pkey", ["quiz_id", "collaborator_id"])
+    .addUniqueConstraint("quiz_unique_collaborator", ["quiz_id", "collaborator_id"])
     .execute();
 
   await db.schema
@@ -107,7 +107,7 @@ export async function up(db: Kysely<any>): Promise<void> {
       col.defaultTo(sql`now()`).notNull(),
     )
     .addColumn("deleted_at", "timestamp")
-    .addPrimaryKeyConstraint("directory_collaborator_pkey", ["directory_id", "collaborator_id"])
+    .addUniqueConstraint("directory_unique_collaborator", ["directory_id", "collaborator_id"])
     .execute();
 
   await db.schema

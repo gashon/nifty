@@ -7,16 +7,12 @@ export async function up(db: Kysely<any>): Promise<void> {
     .asEnum(["google", "facebook", "github", "email", "invite", "refresh"])
     .execute();
 
-
   await db.schema
     .createTable("token")
     .addColumn("id", "serial", (col) =>
       col.primaryKey(),
     )
     .addColumn("user_id", "serial", (col) => col.notNull().references("user.id"))
-    // .addColumn("strategy", enum("google", "facebook", "github", "email", "invite", "refresh"), (col) => col.notNull())
-    // .addColumn("strategy", sql`enum('google', 'facebook', 'github', 'email', 'invite', 'refresh')`, (col) => col.notNull())
-  // @ts-ignore
     .addColumn("strategy", sql`"token_strategy"`, (col) => col.notNull())
     .addColumn("expires_at", "timestamp", (col) => col.notNull())
     .addColumn("created_at", "timestamp", (col) =>

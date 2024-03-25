@@ -47,7 +47,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("note_id", "serial", (col) => col.notNull().references("note.id"))
     .addColumn("tag", "varchar", (col) => col.notNull())
     // unique tags for each note
-    .addPrimaryKeyConstraint("note_tag_pkey", ["note_id", "tag"])
+    .addUniqueConstraint("note_tag_note_id_tag_unique", ["note_id", "tag"])
     .addColumn("created_at", "timestamp", (col) =>
       col.defaultTo(sql`now()`).notNull(),
     )

@@ -47,14 +47,14 @@ export async function up(db: Kysely<any>): Promise<void> {
     .column("quiz_id")
     .execute();
 
+  // multiple choice
   await db.schema
-    .createTable("submission_answer")
+    .createTable("submission_answer_multiple_choice")
     .addColumn("id", "serial", (col) =>
       col.primaryKey(),
     )
     .addColumn("submission_id", "serial", (col) => col.notNull().references("submission.id"))
-    .addColumn("question_id", "serial", (col) => col.notNull().references("quiz_question.id"))
-    .addColumn("type", "varchar", (col) => col.notNull())
+    .addColumn("question_id", "serial", (col) => col.notNull().references("quiz_question_multiple_choice.id"))
     .addColumn("answer_index", "integer")
     .addColumn("is_correct", "boolean")
     .addColumn("correct_index", "integer")
@@ -70,15 +70,58 @@ export async function up(db: Kysely<any>): Promise<void> {
     .execute();
 
   await db.schema
-    .createIndex("submission_answer_id_index")
-    .on("submission_answer")
+    .createIndex("submission_answer_multiple_choice_id_index")
+    .on("submission_answer_multiple_choice")
     .column("id")
     .execute();
 
   await db.schema
-    .createIndex("submission_answer_submission_id_index")
-    .on("submission_answer")
+    .createIndex("submission_answer_multiple_choice_submission_id_index")
+    .on("submission_answer_multiple_choice")
     .column("submission_id")
+    .execute();
+
+  await db.schema
+    .createIndex("submission_answer_multiple_choice_question_id_index")
+    .on("submission_answer_multiple_choice")
+    .column("question_id")
+    .execute();
+
+  // free response
+  await db.schema
+    .createTable("submission_answer_free_response")
+    .addColumn("id", "serial", (col) =>
+      col.primaryKey(),
+    )
+    .addColumn("submission_id", "serial", (col) => col.notNull().references("submission.id"))
+    .addColumn("question_id", "serial", (col) => col.notNull().references("quiz_question_free_response.id"))
+    .addColumn("answer_text", "text")
+    .addColumn("feedback_text", "text")
+    .addColumn("created_at", "timestamp", (col) =>
+      col.defaultTo(sql`now()`).notNull(),
+    )
+    .addColumn("updated_at", "timestamp", (col) =>
+      col.defaultTo(sql`now()`).notNull(),
+    )
+    .addColumn("deleted_at", "timestamp")
+    .execute();
+
+  await db.schema
+    .createIndex("submission_answer_free_response_id_index")
+    .on("submission_answer_free_response")
+    .column("id")
+    .execute();
+
+  await db.schema
+    .createIndex("submission_answer_free_response_submission_id_index")
+    .on("submission_answer_free_response")
+    .column("submission_id")
+    .execute();
+
+  await db.schema
+    .createIndex("submission_answer_free_response_question_id_index")
+    .on("submission_answer_free_response")
+    .column("question_id")
     .execute();
 }
 
