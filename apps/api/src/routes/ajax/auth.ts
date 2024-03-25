@@ -85,9 +85,6 @@ router.get('/login/google', (req, res, next) => {
 
 router.get(
   '/login/google/callback',
-  (req, res, next) => {
-    next();
-  },
   passport.authenticate('google', {
     session: false,
     failureRedirect: `${process.env.DASHBOARD_BASE_URL}/auth/login`,
@@ -99,7 +96,7 @@ router.get('/user', auth(), async (req, res, next) => {
   try {
     const user = await db.selectFrom("user").selectAll().where("id", '=', res.locals.user.id).executeTakeFirst();
 
-    res.send({data: user})
+    res.send(user);
   } catch (err) {
     next(err);
   }
