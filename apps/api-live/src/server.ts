@@ -3,10 +3,10 @@ import http from 'http';
 import rateLimit from 'express-rate-limit';
 import morgan from 'morgan';
 import mongoose from '@nifty/server-lib/mongoose';
-import logger from '@/lib/logger';
+import logger from '@nifty/api-live/lib/logger';
 
-import { initRedisClient } from '@/lib/redis';
-import { WebSocketServer } from '@/socket';
+import { initRedisClient } from '@nifty/api-live/lib/redis';
+import { WebSocketServer } from '@nifty/api-live/socket';
 
 const port = 8080;
 const dev = process.env.NODE_ENV !== 'production';

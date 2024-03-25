@@ -1,5 +1,5 @@
 import { RedisClientType as RedisType, createClient, RedisModules, RedisFunctions, RedisScripts } from 'redis'
-import logger from '@/lib/logger';
+import logger from '@nifty/api-live/lib/logger';
 
 export type RedisClientType = RedisType<RedisModules, RedisFunctions, RedisScripts>
 

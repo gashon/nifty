@@ -16,7 +16,7 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
+      "@nifty/api-live/*": ["src/*"],
       "@nifty/server-lib/*": ["../../packages/server-lib/src/*"],
       "@nifty/api/*": ["../api/src/*"],
       "@nifty/common/*": ["../../packages/common/src/*"]

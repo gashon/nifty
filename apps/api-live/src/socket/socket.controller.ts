@@ -1,13 +1,13 @@
 import WebSocket, { WebSocketServer as Server, ServerOptions } from 'ws';
 import AsyncLock from 'async-lock';
-import logger from '@/lib/logger';
+import logger from '@nifty/api-live/lib/logger';
 import {
   checkPermissions,
   Permission,
 } from '@nifty/api/util/handle-permissions';
-import { SocketService, closeSocketOnError } from '@/socket';
-import { SOCKET_EVENT } from '@/types';
-import { RedisClientType } from '@/lib/redis';
+import { SocketService, closeSocketOnError } from '@nifty/api-live/socket';
+import { SOCKET_EVENT } from '@nifty/api-live/types';
+import { RedisClientType } from '@nifty/api-live/lib/redis';
 import { ICollaborator } from '@nifty/server-lib/models/collaborator';
 
 const SAVE_TO_DISK_INTERVAL = 15000; // 15 seconds

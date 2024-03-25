@@ -1,5 +1,5 @@
 import { WebSocket } from "ws";
-import logger from '@/lib/logger';
+import logger from '@nifty/api-live/lib/logger';
 
 export function closeSocketOnError(target: any, methodName: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value;

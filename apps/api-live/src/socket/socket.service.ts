@@ -1,13 +1,13 @@
 import WebSocket, { RawData, OPEN } from 'ws';
 import { Model } from 'mongoose';
-import { RedisClientType } from '@/lib/redis';
+import { RedisClientType } from '@nifty/api-live/lib/redis';
 import { SocketRepository } from './socket.repository';
 import Note, { INote } from '@nifty/server-lib/models/note';
 import AccessToken, { IToken } from '@nifty/server-lib/models/token';
 import Collaborator, {
   ICollaborator,
 } from '@nifty/server-lib/models/collaborator';
-import { SOCKET_EVENT } from '@/types';
+import { SOCKET_EVENT } from '@nifty/api-live/types';
 import {
   Permission,
   checkPermissions,
