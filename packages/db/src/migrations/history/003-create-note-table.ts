@@ -6,7 +6,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("id", "serial", (col) =>
       col.primaryKey(),
     )
-    .addColumn("created_by", "serial", (col) => col.notNull().references("user.id"))
+    .addColumn("created_by", "integer", (col) => col.notNull().references("user.id"))
     .addColumn("title", "varchar", (col) => col.notNull())
     .addColumn("content", "text", (col) => col.notNull())
     .addColumn("description", "varchar", (col) => col.notNull())
@@ -44,7 +44,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("id", "serial", (col) =>
       col.primaryKey(),
     )
-    .addColumn("note_id", "serial", (col) => col.notNull().references("note.id"))
+    .addColumn("note_id", "integer", (col) => col.notNull().references("note.id"))
     .addColumn("tag", "varchar", (col) => col.notNull())
     // unique tags for each note
     .addUniqueConstraint("note_tag_note_id_tag_unique", ["note_id", "tag"])

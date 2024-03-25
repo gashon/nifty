@@ -6,8 +6,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("id", "serial", (col) =>
       col.primaryKey(),
     )
-    .addColumn("created_by", "serial", (col) => col.notNull().references("user.id"))
-    .addColumn("quiz_id", "serial", (col) => col.notNull().references("quiz.id"))
+    .addColumn("created_by", "integer", (col) => col.notNull().references("user.id"))
+    .addColumn("quiz_id", "integer", (col) => col.notNull().references("quiz.id"))
     .addColumn("total_questions", "integer", (col) => col.notNull())
     .addColumn("total_correct", "integer", (col) => col.notNull())
     .addColumn("total_incorrect", "integer", (col) => col.notNull())
@@ -53,8 +53,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("id", "serial", (col) =>
       col.primaryKey(),
     )
-    .addColumn("submission_id", "serial", (col) => col.notNull().references("submission.id"))
-    .addColumn("question_id", "serial", (col) => col.notNull().references("quiz_question_multiple_choice.id"))
+    .addColumn("submission_id", "integer", (col) => col.notNull().references("submission.id"))
+    .addColumn("question_id", "integer", (col) => col.notNull().references("quiz_question_multiple_choice.id"))
     .addColumn("answer_index", "integer")
     .addColumn("is_correct", "boolean")
     .addColumn("correct_index", "integer")
@@ -93,8 +93,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("id", "serial", (col) =>
       col.primaryKey(),
     )
-    .addColumn("submission_id", "serial", (col) => col.notNull().references("submission.id"))
-    .addColumn("question_id", "serial", (col) => col.notNull().references("quiz_question_free_response.id"))
+    .addColumn("submission_id", "integer", (col) => col.notNull().references("submission.id"))
+    .addColumn("question_id", "integer", (col) => col.notNull().references("quiz_question_free_response.id"))
     .addColumn("answer_text", "text")
     .addColumn("feedback_text", "text")
     .addColumn("created_at", "timestamp", (col) =>

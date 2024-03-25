@@ -10,7 +10,7 @@
     "reset": "docker exec -it nifty-db psql -U postgres -c 'DROP DATABASE IF EXISTS nifty_db'",
     "migrate": "node -r esbuild-runner/register ./src/migrations/scripts/to-latest.ts && pnpm types:generate",
     "migrate:undo:all": "node -r esbuild-runner/register  ./src/migrations/scripts/drop-all.ts && pnpm types:generate",
-    "types:generate": "kysely-codegen --dialect postgres --camel-case --out-file ./types/generated.types.ts"
+    "types:generate": "kysely-codegen --dialect postgres --camel-case --out-file ./src/types/generated.types.ts"
   },
   "dependencies": {
     "@nifty/tsconfig": "workspace:*",

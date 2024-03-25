@@ -6,8 +6,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("id", "serial", (col) =>
       col.primaryKey(),
     )
-    .addColumn("created_by", "serial", (col) => col.notNull().references("user.id"))
-    .addColumn("note_id", "serial", (col) => col.notNull().references("note.id"))
+    .addColumn("created_by", "integer", (col) => col.notNull().references("user.id"))
+    .addColumn("note_id", "integer", (col) => col.notNull().references("note.id"))
     .addColumn("title", "varchar", (col) => col.notNull())
     .addColumn("multiple_choice_activated", "boolean", (col) => col.notNull())
     .addColumn("free_response_activated", "boolean", (col) => col.notNull())
@@ -50,7 +50,7 @@ export async function up(db: Kysely<any>): Promise<void> {
       col.primaryKey(),
     )
     .addColumn("question", "text", (col) => col.notNull())
-    .addColumn("quiz_id", "serial", (col) => col.notNull().references("quiz.id"))
+    .addColumn("quiz_id", "integer", (col) => col.notNull().references("quiz.id"))
     .addColumn("answers", sql<string[]>`varchar[]`, (col) => col.notNull())
     .addColumn("correct_index", "integer", (col) => col.notNull())
     .addColumn("created_at", "timestamp", (col) =>
@@ -80,7 +80,7 @@ export async function up(db: Kysely<any>): Promise<void> {
       col.primaryKey(),
     )
     .addColumn("question", "text", (col) => col.notNull())
-    .addColumn("quiz_id", "serial", (col) => col.notNull().references("quiz.id"))
+    .addColumn("quiz_id", "integer", (col) => col.notNull().references("quiz.id"))
     .addColumn("created_at", "timestamp", (col) =>
       col.defaultTo(sql`now()`).notNull(),
     )

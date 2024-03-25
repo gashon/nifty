@@ -6,9 +6,9 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("id", "serial", (col) =>
       col.primaryKey(),
     )
-    .addColumn("created_by", "serial", (col) => col.notNull().references("user.id"))
+    .addColumn("created_by", "integer", (col) => col.notNull().references("user.id"))
     .addColumn("name", "varchar", (col) => col.notNull())
-    .addColumn("parent_id", "serial", (col) => col.references("directory.id"))
+    .addColumn("parent_id", "integer", (col) => col.references("directory.id"))
     .addColumn("alias", "varchar")
     .addColumn("credits", "integer")
     .addColumn("created_at", "timestamp", (col) =>
@@ -49,8 +49,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("id", "serial", (col) =>
       col.primaryKey(),
     )
-    .addColumn("directory_id", "serial", (col) => col.notNull().references("directory.id"))
-    .addColumn("note_id", "serial", (col) => col.notNull().references("note.id"))
+    .addColumn("directory_id", "integer", (col) => col.notNull().references("directory.id"))
+    .addColumn("note_id", "integer", (col) => col.notNull().references("note.id"))
     .addUniqueConstraint("directory_note_unique_note", ["directory_id", "note_id"])
     .addColumn("deleted_at", "timestamp")
     .execute();

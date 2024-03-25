@@ -6,8 +6,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("id", "serial", (col) =>
       col.primaryKey(),
     )
-    .addColumn("created_by", "serial", (col) => col.notNull().references("user.id"))
-    .addColumn("user_id", "serial", (col) => col.notNull().references("user.id"))
+    .addColumn("created_by", "integer", (col) => col.notNull().references("user.id"))
+    .addColumn("user_id", "integer", (col) => col.notNull().references("user.id"))
     .addColumn("permissions", "integer", (col) => col.notNull())
     .addColumn("last_viewed_at", "timestamp")
     .addColumn("type", "varchar", (col) => col.notNull())
@@ -38,8 +38,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("id", "serial", (col) =>
       col.primaryKey(),
     )
-    .addColumn("note_id", "serial", (col) => col.notNull().references("note.id"))
-    .addColumn("collaborator_id", "serial", (col) => col.notNull().references("collaborator.id"))
+    .addColumn("note_id", "integer", (col) => col.notNull().references("note.id"))
+    .addColumn("collaborator_id", "integer", (col) => col.notNull().references("collaborator.id"))
     .addUniqueConstraint("note_unique_collaborator", ["note_id", "collaborator_id"])
     .addColumn("created_at", "timestamp", (col) =>
       col.defaultTo(sql`now()`).notNull(),
@@ -68,8 +68,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("id", "serial", (col) =>
       col.primaryKey(),
     )
-    .addColumn("quiz_id", "serial", (col) => col.notNull().references("quiz.id"))
-    .addColumn("collaborator_id", "serial", (col) => col.notNull().references("collaborator.id"))
+    .addColumn("quiz_id", "integer", (col) => col.notNull().references("quiz.id"))
+    .addColumn("collaborator_id", "integer", (col) => col.notNull().references("collaborator.id"))
     .addColumn("created_at", "timestamp", (col) =>
       col.defaultTo(sql`now()`).notNull(),
     )
@@ -98,8 +98,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("id", "serial", (col) =>
       col.primaryKey(),
     )
-    .addColumn("directory_id", "serial", (col) => col.notNull().references("directory.id"))
-    .addColumn("collaborator_id", "serial", (col) => col.notNull().references("collaborator.id"))
+    .addColumn("directory_id", "integer", (col) => col.notNull().references("directory.id"))
+    .addColumn("collaborator_id", "integer", (col) => col.notNull().references("collaborator.id"))
     .addColumn("created_at", "timestamp", (col) =>
       col.defaultTo(sql`now()`).notNull(),
     )
