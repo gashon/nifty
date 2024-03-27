@@ -11,248 +11,121 @@ import { Request, Response } from 'express';
 import auth from '@nifty/api/middlewares/auth';
 import { CustomException } from '@nifty/api/exceptions';
 import {
-  DirectoryCreateRequest,
-  DirectoryModel,
-  IDirectory,
-} from '@nifty/server-lib/models/directory';
+  DirectoryService,
+  DirectoryCollaboratorService,
+} from '@nifty/api/domains';
+import { ExpressResponse } from '../../dto';
+import type {
+  CreateDirectoryRequestBody,
+  CreateDirectoryResponse,
+  DeleteDirectoryRequestParam,
+  DeleteDirectoryResponse,
+  GetDirectoriesResponse,
+} from '@nifty/api/domains/directory/dto';
+import { BINDING } from '@nifty/api/domains/binding';
+import { Permission } from '@nifty/api/util';
 import { PaginationParams } from '@nifty/api/types';
-import { IDirectoryController } from '@nifty/api/domains/directory';
-import { ICollaborator } from '@nifty/server-lib/models/collaborator';
-import {
-  DIRECTORY_TYPES,
-  DirectoryCreateResponse,
-} from '@nifty/api/domains/directory/types';
-import { COLLABORATOR_TYPES } from '@nifty/api/domains/collaborator/types';
-import { setPermissions, Permission } from '@nifty/api/util';
-import { NOTE_TYPES } from '@nifty/api/domains/note/types';
-import { NoteModel } from '@nifty/server-lib/models/note';
-import collaborator, {
-  CollaboratorModel,
-} from '@nifty/server-lib/models/collaborator';
 
 @controller('/v1/directories')
-export class DirectoryController implements IDirectoryController {
+export class DirectoryController {
   constructor(
-    @inject(DIRECTORY_TYPES.MODEL)
-    private directoryModel: DirectoryModel,
-    @inject(NOTE_TYPES.MODEL) private noteModel: NoteModel,
-    @inject(COLLABORATOR_TYPES.MODEL)
-    private collaboratorModel: CollaboratorModel
+    @inject(BINDING.DIRECTORY_SERVICE)
+    private directoryService: DirectoryService,
+    @inject(BINDING.DIRECTORY_COLLABORATOR_SERVICE)
+    private directoryCollaboratorService: DirectoryCollaboratorService
   ) {}
 
   @httpGet('/recent', auth())
-  async getRecentNotes(req: Request, res: Response): Promise<void> {
-    const userId = res.locals.user._id;
-    const k = (req.query.k as number | undefined) ?? 5;
-
-    if (k < 0 || k > 100)
-      throw new CustomException(
-        'k must be between 0 and 100',
-        status.BAD_REQUEST
-      );
-
-    const collaborators = await this.collaboratorModel.find({
-      user: userId,
-      type: 'directory',
-    });
-
-    const directoryIds = collaborators
-      .map((c) => (c.type === 'directory' ? c.directory : undefined))
-      .filter((id) => !!id);
-
-    const notes = await this.directoryModel
-      .find({
-        _id: {
-          $in: directoryIds,
-        },
-        deleted_at: null,
-      })
-      .sort({ created_at: -1 })
-      .limit(k);
-
-    res.status(status.OK).json({ data: notes });
+  async getRecentDirectories(req: Request, res: Response): Promise<void> {
+    //TODO(@gashon) implement
+    res.json({ data: [] });
+    return;
   }
 
-  @httpGet('/:id')
-  async getDirectory(req: Request, res: Response): Promise<void> {
-    const directory = await this.directoryModel.findById(req.params.id);
-    res.status(status.OK).json({ data: directory });
+  @httpGet('/:id', auth())
+  async getDirectory(
+    req: Request,
+    res: Response
+  ): ExpressResponse<GetDirectoriesResponse> {
+    const userId = res.locals.user.id;
+    const id = Number(req.params.id);
+
+    const hasPermission =
+      await this.directoryCollaboratorService.userHasPermissionToDirectory({
+        directoryId: id,
+        userId,
+        permission: Permission.Read,
+      });
+
+    if (!hasPermission) {
+      throw new CustomException('Permission denied', status.FORBIDDEN);
+    }
+
+    const directory = await this.directoryService.getDirectoryById({
+      id,
+      select: '*',
+    });
+    return res.json({ data: directory });
   }
 
   @httpGet('/', auth())
-  async getDirectories(req: Request, res: Response): Promise<void> {
-    const userId = res.locals.user._id;
-    const { sort } = req.query as PaginationParams<ICollaborator>;
+  async getDirectories(
+    req: Request,
+    res: Response
+  ): ExpressResponse<GetDirectoriesResponse> {
+    const userId = res.locals.user.id;
+    const { cursor, limit } = req.query as PaginationParams;
 
-    const results = await this.collaboratorModel.aggregate<
-      ICollaborator & { directories: IDirectory[] }
-    >([
-      {
-        $match: {
-          user: userId,
-          deleted_at: null,
-        },
-      },
-      {
-        $lookup: {
-          from: 'directories',
-          localField: '_id',
-          foreignField: 'collaborators',
-          as: 'directories',
-        },
-      },
-      {
-        $unwind: '$directories',
-      },
-      {
-        $match: {
-          'directories.deleted_at': null,
-        },
-      },
-      {
-        $sort: {
-          'directories.created_at': -1,
-        },
-      },
-    ]);
+    const cursorDate = cursor ? new Date(cursor) : undefined;
+    const directories =
+      await this.directoryCollaboratorService.paginateDirectoriesByUserId({
+        userId,
+        cursor: cursorDate,
+        limit: Number(limit),
+      });
 
-    const directories = results.map(({ directories }) => directories);
-
-    res.status(status.OK).json({ data: directories });
+    return res.json({ data: directories });
   }
 
   @httpPost('/', auth())
   async createDirectory(
     req: Request,
     res: Response
-  ): Promise<Response<DirectoryCreateResponse>> {
-    const createdBy = res.locals.user._id;
-    // validate parent
-    const parent = await this.directoryModel.findById(req.body.parent);
-    if (parent && parent._id) {
-      // TODO(gashon) move to collaborator method
-      const collaboratorAggregation = await this.collaboratorModel.aggregate([
-        {
-          $match: {
-            user: createdBy,
-          },
-        },
-        {
-          $lookup: {
-            from: 'directories',
-            localField: '_id',
-            foreignField: 'collaborators',
-            as: 'directory',
-          },
-        },
-        {
-          $unwind: {
-            path: '$directory',
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $match: {
-            'directory._id': parent._id,
-          },
-        },
-      ]);
+  ): Promise<ExpressResponse<CreateDirectoryResponse>> {
+    const userId = res.locals.user.id;
+    const values = req.body as CreateDirectoryRequestBody;
 
-      const collaborator = collaboratorAggregation[0] || null;
-      if (!collaborator)
-        throw new CustomException(
-          'You do not have access to this directory',
-          status.FORBIDDEN
-        );
-    }
+    const { directory } =
+      await this.directoryService.createDirectoryAndCollaborator({
+        userId,
+        values,
+        // Default permission for the creator
+        collabortorPermissions: Permission.ReadWriteDelete,
+      });
 
-    const rootCollaborator = await this.collaboratorModel.create({
-      permissions: setPermissions(Permission.ReadWriteDelete),
-      user: createdBy,
-      type: 'directory',
-      created_by: createdBy,
-    });
-
-    const doc = req.body as DirectoryCreateRequest;
-    const directory = await this.directoryModel.create({
-      ...doc,
-      collaborators: [rootCollaborator.id],
-      created_by: createdBy,
-      parent: null,
-    });
-
-    rootCollaborator.set({ directory: directory.id });
-    rootCollaborator.save();
-
-    return res.status(status.CREATED).json({ data: directory });
+    return res.json({ data: directory });
   }
 
   @httpDelete('/:id', auth())
-  async deleteDirectory(req: Request, res: Response): Promise<void> {
-    const userId = res.locals.user._id;
-    const directory = await this.directoryModel.findById(req.params.id);
-    if (!directory)
-      throw new CustomException('Directory not found', status.NOT_FOUND);
+  async deleteDirectory(
+    req: Request,
+    res: Response
+  ): ExpressResponse<DeleteDirectoryResponse> {
+    const id = Number(req.params.id) as DeleteDirectoryRequestParam;
 
-    // TODO(gashon) move to collaborators method
-    const collaboratorsAggregation = await this.collaboratorModel.aggregate([
-      {
-        $match: {
-          user: userId,
-        },
-      },
-      {
-        $lookup: {
-          from: 'directories',
-          localField: '_id',
-          foreignField: 'collaborators',
-          as: 'directory',
-        },
-      },
-      {
-        $unwind: {
-          path: '$directory',
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $match: {
-          'directory._id': directory.id,
-        },
-      },
-    ]);
+    const hasPermission =
+      await this.directoryCollaboratorService.userHasPermissionToDirectory({
+        directoryId: id,
+        userId: res.locals.user.id,
+        permission: Permission.ReadWriteDelete,
+      });
 
-    const collaborator = collaboratorsAggregation[0] || null;
+    if (!hasPermission) {
+      throw new CustomException('Permission denied', status.FORBIDDEN);
+    }
 
-    if (!collaborator || !directory.collaborators.includes(collaborator._id))
-      throw new CustomException(
-        'You do not have access to this directory',
-        status.FORBIDDEN
-      );
+    await this.directoryService.deleteDirectoryById(id);
 
-    // handle cascading deletions
-    // TODO (gashon) handle in transaction
-    await Promise.all([
-      this.noteModel.updateMany(
-        {
-          _id: { $in: directory.notes },
-        },
-        { $set: { deleted_at: new Date() } },
-        { new: true }
-      ),
-      this.directoryModel.updateOne(
-        {
-          _id: directory.id,
-        },
-        {
-          $set: {
-            deleted_at: new Date(),
-          },
-        },
-        {}
-      ),
-    ]);
-
-    res.status(status.NO_CONTENT).send();
+    return res.json({ data: { id } });
   }
 }

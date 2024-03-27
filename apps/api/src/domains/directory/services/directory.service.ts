@@ -25,4 +25,24 @@ export class DirectoryService {
   }) {
     return this.directoryRepository.createDirectory({ values, returning });
   }
+
+  async createDirectoryAndCollaborator({
+    userId,
+    values,
+    collabortorPermissions,
+  }: {
+    userId: number;
+    values: Insertable<Directory>;
+    collabortorPermissions: number;
+  }) {
+    return this.directoryRepository.createDirectoryAndCollaborator({
+      userId,
+      values,
+      collabortorPermissions,
+    });
+  }
+
+  async deleteDirectoryById(id: number) {
+    return this.directoryRepository.deleteDirectoryById(id);
+  }
 }

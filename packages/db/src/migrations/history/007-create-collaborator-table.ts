@@ -11,8 +11,7 @@ export async function up(db: Kysely<any>): Promise<void> {
       col.notNull().references('user.id')
     )
     .addColumn('permissions', 'integer', (col) => col.notNull())
-    .addColumn('last_viewed_at', 'timestamp')
-    .addColumn('type', 'varchar', (col) => col.notNull())
+    .addColumn('last_viewed_at', 'timestamp', (col) => col.defaultTo(null))
     .addColumn('created_at', 'timestamp', (col) =>
       col.defaultTo(sql`now()`).notNull()
     )

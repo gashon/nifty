@@ -6,40 +6,42 @@ import {
   httpDelete,
   controller,
 } from 'inversify-express-utils';
+import type { Request, Response } from 'express';
+import status from 'http-status';
 
-import type {
-  KysleyDB,
-  Insertable,
-  SelectExpression,
-  DB,
-  Note,
-  Updateable,
-} from '@nifty/common/types';
 import { BINDING } from '@nifty/api/domains/binding';
 import {
   DirectoryService,
-  DirectoryNoteService,
   DirectoryCollaboratorService,
   NoteService,
   NoteCollaboratorService,
 } from '@nifty/api/domains';
 import type {
-  CreateNotesResponse,
-  GetNotesResponse,
+  GetNoteRequestParam,
   GetNoteResponse,
-} from '@nifty/api/domains';
+  GetUserNotesResponse,
+  GetDirectoryNotesRequestParam,
+  GetDirectoryNotesRequestQuery,
+  GetDirectoryNotesResponse,
+  CreateNoteRequestBody,
+  CreateNoteResponse,
+  UpdateNoteRequestBody,
+  DeleteNoteRequestParam,
+  UpdateNoteResponse,
+  DeleteNoteResponse,
+  UpdateNoteRequestParam,
+} from '@nifty/api/domains/note/dto';
 import type { ExpressResponse } from '@nifty/api/domains/dto';
 import { Permission } from '@nifty/api/util';
 import { PaginationParams } from '@nifty/api/types';
 import auth from '@nifty/api/middlewares/auth';
+import { CustomException } from '@nifty/api/exceptions';
 
 @controller('/v1/notes')
 export class NoteController {
   constructor(
     @inject(BINDING.DIRECTORY_SERVICE)
     private directoryService: DirectoryService,
-    @inject(BINDING.DIRECTORY_NOTE_SERVICE)
-    private directoryNoteService: DirectoryNoteService,
     @inject(BINDING.DIRECTORY_COLLABORATOR_SERVICE)
     private directoryCollaboratorService: DirectoryCollaboratorService,
     @inject(BINDING.NOTE_SERVICE)
@@ -63,7 +65,7 @@ export class NoteController {
   @httpGet('/:id', auth())
   async getNote(req: Request, res: Response): ExpressResponse<GetNoteResponse> {
     const userId = req.locals.user.id;
-    const id = req.params.id as GetNoteParam;
+    const id = Number(req.params.id) as GetNoteRequestParam;
 
     const hasPermission =
       await this.noteCollaboratorService.userHasPermissionToNote({
@@ -73,7 +75,10 @@ export class NoteController {
       });
 
     if (!hasPermission) {
-      throw new ForbiddenError('User does not have permission to read note');
+      throw new CustomException(
+        'User does not have permission to read note',
+        status.FORBIDDEN
+      );
     }
 
     const note = await this.noteService.getNoteById({
@@ -92,10 +97,11 @@ export class NoteController {
     const userId = req.locals.user.id;
     const { limit, cursor } = req.query as PaginationParams;
 
+    const cursorDate = cursor ? new Date(cursor) : undefined;
     const notes = await this.noteCollaboratorService.paginateNotesByUserId({
       userId,
-      limit,
-      cursor,
+      limit: Number(limit),
+      cursor: cursorDate,
       select: '*',
     });
 
@@ -108,8 +114,8 @@ export class NoteController {
     res: Response
   ): ExpressResponse<GetDirectoryNotesResponse> {
     const userId = req.locals.user.id;
-    const directoryId = req.params.id as GetDirectoryNotesParam;
-    const { limit, cursor } = req.query as GetDirectoryNotesQuery;
+    const directoryId = Number(req.params.id) as GetDirectoryNotesRequestParam;
+    const { limit, cursor } = req.query as GetDirectoryNotesRequestQuery;
 
     const hasPermission =
       await this.directoryCollaboratorService.userHasPermissionToDirectory({
@@ -118,15 +124,17 @@ export class NoteController {
         permission: Permission.Read,
       });
     if (!hasPermission) {
-      throw new ForbiddenError(
-        'User does not have permission to read directory notes'
+      throw new CustomException(
+        'User does not have permission to read directory',
+        status.FORBIDDEN
       );
     }
 
-    const notes = await this.directoryNoteService.paginateNotesByDirectoryId({
+    const cursorDate = cursor ? new Date(cursor) : undefined;
+    const notes = await this.noteService.paginateNotesByDirectoryId({
       directoryId,
-      limit,
-      cursor,
+      limit: Number(limit),
+      cursor: cursorDate,
       select: '*',
     });
 
@@ -138,14 +146,18 @@ export class NoteController {
     req: Request,
     res: Response
   ): ExpressResponse<CreateNoteResponse> {
-    const values = req.body as CreateNoteRequest;
+    const userId = req.locals.user.id;
+    const { directoryId, ...values } = req.body as CreateNoteRequestBody;
 
-    const newNote = await this.noteService.createNote({
+    const { note } = await this.noteService.createNoteAndCollaborator({
       values,
-      returning: '*',
+      userId,
+      directoryId,
+      // Default to read-write-delete permission for the creator
+      collabortorPermissions: Permission.ReadWriteDelete,
     });
 
-    return res.json({ data: newNote });
+    return res.json({ data: note });
   }
 
   @httpPatch('/:id', auth())
@@ -153,15 +165,30 @@ export class NoteController {
     req: Request,
     res: Response
   ): ExpressResponse<UpdateNoteResponse> {
-    const id = req.params.id as Pick<Note, 'id'>;
-    const values = req.body as UpdateNoteRequest;
+    const userId = req.locals.user.id;
+    const id = Number(req.params.id) as UpdateNoteRequestParam;
+    const values = req.body as UpdateNoteRequestBody;
 
-    await this.noteService.updateNote({
+    const hasPermission =
+      await this.noteCollaboratorService.userHasPermissionToNote({
+        userId,
+        noteId: id,
+        permission: Permission.ReadWrite,
+      });
+
+    if (!hasPermission) {
+      throw new CustomException(
+        'User does not have permission to update note',
+        status.FORBIDDEN
+      );
+    }
+
+    await this.noteService.updateNoteById({
       id,
       values,
     });
 
-    return res.json({ data: id });
+    return res.json({ data: { id } });
   }
 
   @httpDelete('/:id', auth())
@@ -169,10 +196,25 @@ export class NoteController {
     req: Request,
     res: Response
   ): ExpressResponse<DeleteNoteResponse> {
-    const id = req.params.id as DeleteNoteParam;
+    const userId = req.locals.user.id;
+    const id = Number(req.params.id) as DeleteNoteRequestParam;
 
-    await this.noteService.deleteNote(id);
+    const hasPermission =
+      await this.noteCollaboratorService.userHasPermissionToNote({
+        userId,
+        noteId: id,
+        permission: Permission.ReadWriteDelete,
+      });
 
-    return res.json({ data: id });
+    if (!hasPermission) {
+      throw new CustomException(
+        'User does not have permission to delete note',
+        status.FORBIDDEN
+      );
+    }
+
+    await this.noteService.deleteNoteById(id);
+
+    return res.json({ data: { id } });
   }
 }

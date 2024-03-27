@@ -9,6 +9,7 @@ import type {
   Updateable,
 } from '@nifty/common/types';
 import { BINDING } from '@nifty/api/domains/binding';
+import { Permission } from '@nifty/api/util';
 
 @injectable()
 export class NoteRepository {
@@ -26,11 +27,66 @@ export class NoteRepository {
     if (returning !== '*')
       return query.returning(returning).executeTakeFirstOrThrow();
 
-    const note = await query.returningAll().executeTakeFirstOrThrow();
-    // Remove the deletedAt field from the returned note object
-    const { deletedAt, ...sanitizedNote } = note;
+    return query.returningAll().executeTakeFirstOrThrow();
+  }
 
-    return sanitizedNote;
+  async createNoteAndCollaborator({
+    userId,
+    directoryId,
+    values,
+    collabortorPermissions,
+  }: {
+    userId: number;
+    directoryId: number | null;
+    values: Insertable<Note>;
+    collabortorPermissions: Permission;
+  }) {
+    return this.db.transaction().execute(async (trx) => {
+      // create note and collaborators together
+      const [note, collaborator] = await Promise.all([
+        await trx
+          .insertInto('note')
+          .values(values)
+          .returningAll()
+          .executeTakeFirstOrThrow(),
+        trx
+          .insertInto('collaborator')
+          .values({
+            userId,
+            createdBy: userId,
+            permissions: collabortorPermissions,
+          })
+          .returningAll()
+          .executeTakeFirstOrThrow(),
+      ]);
+
+      // link note with collaborator and optional directory
+      const jobs = [
+        trx
+          .insertInto('noteCollaborator')
+          .values({
+            userId,
+            collaboratorId: collaborator.id,
+            noteId: note.id,
+          })
+          .returningAll()
+          .executeTakeFirstOrThrow(),
+        directoryId
+          ? trx
+              .insertInto('directoryNote')
+              .values({
+                directoryId,
+                noteId: note.id,
+              })
+              .returningAll()
+              .executeTakeFirstOrThrow()
+          : null,
+      ];
+
+      const [noteCollaborator, directoryNote] = await Promise.all(jobs);
+
+      return { note, collaborator, noteCollaborator, directoryNote };
+    });
   }
 
   async getNoteById({
@@ -38,14 +94,16 @@ export class NoteRepository {
     select,
   }: {
     id: number;
-    select: readonly SelectExpression<DB, 'note'>[];
+    select: readonly SelectExpression<DB, 'note'>[] | '*';
   }) {
-    return this.db
+    const query = this.db
       .selectFrom('note')
       .where('id', '=', id)
-      .where('deletedAt', 'is', null)
-      .select(select)
-      .executeTakeFirstOrThrow();
+      .where('deletedAt', 'is', null);
+
+    if (select !== '*') return query.select(select).executeTakeFirstOrThrow();
+
+    return query.selectAll().executeTakeFirstOrThrow();
   }
 
   async updateNoteById({
@@ -72,5 +130,30 @@ export class NoteRepository {
       .where('deletedAt', 'is', null)
       .returning(['id'])
       .executeTakeFirstOrThrow();
+  }
+
+  async paginateNotesByDirectoryId({
+    directoryId,
+    select,
+    limit,
+    cursor,
+  }: {
+    directoryId: number;
+    select: readonly SelectExpression<DB, 'note'>[] | '*';
+    limit: number;
+    cursor?: Date;
+  }) {
+    let query = this.db
+      .selectFrom('note')
+      .where('directoryId', '=', directoryId)
+      .where('deletedAt', 'is', null)
+      .orderBy('createdAt', 'desc');
+
+    if (cursor) {
+      query = query.where('note.createdAt', '<', cursor);
+    }
+
+    if (select !== '*') return query.select(select).limit(limit).execute();
+    return query.selectAll().limit(limit).execute();
   }
 }

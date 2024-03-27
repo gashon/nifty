@@ -15,7 +15,6 @@ export interface Collaborator {
   id: Generated<number>;
   lastViewedAt: Timestamp | null;
   permissions: number;
-  type: string;
   updatedAt: Generated<Timestamp>;
   userId: number;
 }
@@ -42,21 +41,13 @@ export interface DirectoryCollaborator {
   userId: number;
 }
 
-export interface DirectoryNote {
-  createdAt: Generated<Timestamp>;
-  deletedAt: Timestamp | null;
-  directoryId: number;
-  id: Generated<number>;
-  noteId: number;
-  updatedAt: Generated<Timestamp>;
-}
-
 export interface Note {
   content: string;
   createdAt: Generated<Timestamp>;
   createdBy: number;
   deletedAt: Timestamp | null;
   description: string;
+  directoryId: number | null;
   id: Generated<number>;
   imgUrl: string;
   publicPermissions: number;
@@ -201,7 +192,6 @@ export interface DB {
   collaborator: Collaborator;
   directory: Directory;
   directoryCollaborator: DirectoryCollaborator;
-  directoryNote: DirectoryNote;
   note: Note;
   noteCollaborator: NoteCollaborator;
   noteTag: NoteTag;

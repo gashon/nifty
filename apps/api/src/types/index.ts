@@ -1,4 +1,4 @@
 export type PaginationParams = {
-  limit: number;
+  limit: string;
   cursor?: string;
 };

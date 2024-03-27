@@ -69,6 +69,36 @@ export class DirectoryCollaboratorRepository {
     return query.execute();
   }
 
+  async paginateDirectoriesByUserId({
+    userId,
+    limit,
+    cursor,
+  }: {
+    userId: number;
+    limit: number;
+    cursor?: Date;
+  }) {
+    const query = this.db
+      .selectFrom('directoryCollaborator')
+      .where('directoryCollaborator.userId', '=', userId)
+      .innerJoin(
+        'directory',
+        'directory.id',
+        'directoryCollaborator.directoryId'
+      )
+      .where('directory.deletedAt', 'is', null)
+      .where('directoryCollaborator.deletedAt', 'is', null)
+      .selectAll()
+      .orderBy('directory.createdAt', 'desc')
+      .limit(limit);
+
+    if (cursor) {
+      query.where('directory.createdAt', '<', cursor);
+    }
+
+    return query.execute();
+  }
+
   async getDirectoryCollaboratorByDirectoryIdAndUserId({
     directoryId,
     userId,

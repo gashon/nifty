@@ -43,49 +43,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .on('directory')
     .column('created_at')
     .execute();
-
-  await db.schema
-    .createTable('directory_note')
-    .addColumn('id', 'serial', (col) => col.primaryKey())
-    .addColumn('directory_id', 'integer', (col) =>
-      col.notNull().references('directory.id')
-    )
-    .addColumn('note_id', 'integer', (col) =>
-      col.notNull().references('note.id')
-    )
-    .addUniqueConstraint('directory_note_unique_note', [
-      'directory_id',
-      'note_id',
-    ])
-    .addColumn('created_at', 'timestamp', (col) =>
-      col.defaultTo(sql`now()`).notNull()
-    )
-    .addColumn('updated_at', 'timestamp', (col) =>
-      col.defaultTo(sql`now()`).notNull()
-    )
-    .addColumn('deleted_at', 'timestamp')
-    .execute();
-
-  await db.schema
-    .createIndex('directory_note_id_index')
-    .on('directory_note')
-    .column('id')
-    .execute();
-
-  await db.schema
-    .createIndex('directory_note_directory_id_index')
-    .on('directory_note')
-    .column('directory_id')
-    .execute();
-
-  await db.schema
-    .createIndex('directory_note_note_id_index')
-    .on('directory_note')
-    .column('note_id')
-    .execute();
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
-  await db.schema.dropTable('directory_note').execute();
   await db.schema.dropTable('directory').execute();
 }

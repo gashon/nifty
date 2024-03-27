@@ -43,7 +43,6 @@ import User, { type UserModel } from '@nifty/server-lib/models/user';
 import {
   DirectoryRepository,
   DirectoryCollaboratorRepository,
-  DirectoryNoteRepository,
   CollaboratorRepository,
   NoteRepository,
   NoteCollaboratorRepository,
@@ -51,7 +50,6 @@ import {
   NoteCollaboratorService,
   DirectoryService,
   DirectoryCollaboratorService,
-  DirectoryNoteService,
 } from '@nifty/api/domains';
 import { BINDING } from '@nifty/api/domains/binding';
 
@@ -67,11 +65,6 @@ container
   .bind<InstanceType<typeof DirectoryService>>(BINDING.DIRECTORY_SERVICE)
   .to(DirectoryService);
 container
-  .bind<InstanceType<typeof DirectoryNoteService>>(
-    BINDING.DIRECTORY_NOTE_SERVICE
-  )
-  .to(DirectoryNoteService);
-container
   .bind<InstanceType<typeof DirectoryCollaboratorService>>(
     BINDING.DIRECTORY_COLLABORATOR_SERVICE
   )
@@ -84,11 +77,6 @@ container
     BINDING.DIRECTORY_COLLABORATOR_REPOSITORY
   )
   .to(DirectoryCollaboratorRepository);
-container
-  .bind<InstanceType<typeof DirectoryNoteRepository>>(
-    BINDING.DIRECTORY_NOTE_REPOSITORY
-  )
-  .to(DirectoryNoteRepository);
 container
   .bind<DirectoryModel>(DIRECTORY_TYPES.MODEL)
   .toDynamicValue(() => Directory);

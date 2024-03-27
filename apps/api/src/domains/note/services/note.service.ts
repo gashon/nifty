@@ -9,6 +9,7 @@ import type {
 } from '@nifty/common/types';
 import { BINDING } from '@nifty/api/domains/binding';
 import { NoteRepository } from '@nifty/api/domains';
+import { Permission } from '@nifty/api/util';
 
 @injectable()
 export class NoteService {
@@ -17,16 +18,22 @@ export class NoteService {
     private noteRepository: NoteRepository
   ) {}
 
-  async createNote({
+  async createNoteAndCollaborator({
+    userId,
+    directoryId,
     values,
-    returning,
+    collabortorPermissions,
   }: {
+    userId: number;
+    directoryId: number | null;
     values: Insertable<Note>;
-    returning: readonly SelectExpression<DB, 'note'>[] | '*';
+    collabortorPermissions: Permission;
   }) {
-    return this.noteRepository.createNote({
+    return this.noteRepository.createNoteAndCollaborator({
+      userId,
+      directoryId,
       values,
-      returning,
+      collabortorPermissions,
     });
   }
 
@@ -35,7 +42,7 @@ export class NoteService {
     select,
   }: {
     id: number;
-    select: readonly SelectExpression<DB, 'note'>[];
+    select: readonly SelectExpression<DB, 'note'>[] | '*';
   }) {
     return this.noteRepository.getNoteById({
       id,
@@ -58,5 +65,24 @@ export class NoteService {
 
   async deleteNoteById(id: number) {
     return this.noteRepository.deleteNoteById(id);
+  }
+
+  async paginateNotesByDirectoryId({
+    directoryId,
+    select,
+    limit,
+    cursor,
+  }: {
+    directoryId: number;
+    select: readonly SelectExpression<DB, 'note'>[] | '*';
+    limit: number;
+    cursor?: Date;
+  }) {
+    return this.noteRepository.paginateNotesByDirectoryId({
+      directoryId,
+      select,
+      limit,
+      cursor,
+    });
   }
 }

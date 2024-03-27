@@ -9,20 +9,23 @@ import type {
 
 type NoteWithoutDeletedAt = Omit<Note, 'deletedAt'>;
 
-export type CreateNoteRequest = Insertable<Note>;
+export type CreateNoteRequestBody = Insertable<Note> & {
+  directoryId: number | null;
+};
 export type CreateNoteResponse = AppResponse<NoteWithoutDeletedAt>;
 
-export type GetNoteParam = Pick<Note, 'id'>;
+export type GetNoteRequestParam = number;
 export type GetNoteResponse = AppResponse<Note>;
 
 export type GetUserNotesResponse = AppResponse<Note[]>;
 
-export type GetDirectoryNotesParam = Pick<Directory, 'id'>;
-export type GetDirectoryNotesQuery = PaginationParams;
+export type GetDirectoryNotesRequestParam = number;
+export type GetDirectoryNotesRequestQuery = PaginationParams;
 export type GetDirectoryNotesResponse = AppResponse<Note[]>;
 
-export type UpdateNoteRequest = Updateable<Note>;
+export type UpdateNoteRequestBody = Updateable<Note>;
+export type UpdateNoteRequestParam = number;
 export type UpdateNoteResponse = AppResponse<{ id: Pick<Note, 'id'> }>;
 
-export type DeleteNoteParam = Pick<Note, 'id'>;
+export type DeleteNoteRequestParam = number;
 export type DeleteNoteResponse = AppResponse<{ id: Pick<Note, 'id'> }>;

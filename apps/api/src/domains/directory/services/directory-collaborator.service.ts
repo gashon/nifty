@@ -78,4 +78,20 @@ export class DirectoryCollaboratorService {
       cursor,
     });
   }
+
+  async paginateDirectoriesByUserId({
+    userId,
+    limit,
+    cursor,
+  }: {
+    userId: number;
+    limit: number;
+    cursor?: Date;
+  }) {
+    return this.directoryCollaboratorRepository.paginateDirectoriesByUserId({
+      userId,
+      limit,
+      cursor,
+    });
+  }
 }

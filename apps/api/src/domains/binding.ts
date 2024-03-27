@@ -6,10 +6,8 @@ export const BINDING = {
 
   DIRECTORY_SERVICE: 'DirectoryService',
   DIRECTORY_COLLABORATOR_SERVICE: 'DirectoryCollaboratorService',
-  DIRECTORY_NOTE_SERVICE: 'DirectoryNoteService',
   DIRECTORY_REPOSITORY: 'DirectoryRepository',
   DIRECTORY_COLLABORATOR_REPOSITORY: 'DirectoryCollaboratorRepository',
-  DIRECTORY_NOTE_REPOSITORY: 'DirectoryNoteRepository',
   DIRECTORY_MODEL: 'DirectoryModel',
   DIRECTORY_CONTROLLER: 'DirectoryController',
 
