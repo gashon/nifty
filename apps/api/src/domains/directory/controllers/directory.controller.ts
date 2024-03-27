@@ -24,7 +24,7 @@ import {
 } from '@nifty/api/domains/directory/types';
 import { COLLABORATOR_TYPES } from '@nifty/api/domains/collaborator/types';
 import { setPermissions, Permission } from '@nifty/api/util';
-import { NOTE_TYPES } from '../note';
+import { NOTE_TYPES } from '@nifty/api/domains/note/types';
 import { NoteModel } from '@nifty/server-lib/models/note';
 import collaborator, {
   CollaboratorModel,

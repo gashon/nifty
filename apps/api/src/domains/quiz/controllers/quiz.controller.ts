@@ -10,7 +10,10 @@ import { Request, Response } from 'express';
 import { FilterQuery } from 'mongoose';
 
 import auth from '@nifty/api/middlewares/auth';
-import { openaiRequestHandler, openaiRequest } from '@nifty/api/lib/openai-request';
+import {
+  openaiRequestHandler,
+  openaiRequest,
+} from '@nifty/api/lib/openai-request';
 import { CustomException } from '@nifty/api/exceptions';
 import { PaginationParams } from '@nifty/api/types';
 import { IQuizController } from '@nifty/api/domains/quiz';
@@ -37,7 +40,7 @@ import {
   SubmissionModel,
 } from '@nifty/server-lib/models/submission';
 import { QuizCreateRequest, QuizModel } from '@nifty/server-lib/models/quiz';
-import { SUBMISSION_TYPES } from '../submission/types';
+import { SUBMISSION_TYPES } from '@nifty/api/domains/submission/types';
 import { NoteModel } from '@nifty/server-lib/models/note';
 import { DirectoryModel } from '@nifty/server-lib/models/directory';
 
