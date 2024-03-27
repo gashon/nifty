@@ -1,6 +1,13 @@
 import { Container } from 'inversify';
 
-import { IUserController, UserController, USER_TYPES } from '@nifty/api/domains/user';
+import type { KysleyDB } from '@nifty/common/types/pg';
+import { db } from '@nifty/common/db';
+
+import {
+  IUserController,
+  UserController,
+  USER_TYPES,
+} from '@nifty/api/domains/user';
 import {
   IDirectoryController,
   DirectoryController,
@@ -11,8 +18,16 @@ import {
   CollaboratorController,
   COLLABORATOR_TYPES,
 } from '@nifty/api/domains/collaborator';
-import { INoteController, NoteController, NOTE_TYPES } from '@nifty/api/domains/note';
-import { IQuizController, QuizController, QUIZ_TYPES } from '@nifty/api/domains/quiz';
+import {
+  INoteController,
+  NoteController,
+  NOTE_TYPES,
+} from '@nifty/api/domains/note';
+import {
+  IQuizController,
+  QuizController,
+  QUIZ_TYPES,
+} from '@nifty/api/domains/quiz';
 import { SUBMISSION_TYPES } from './submission/types';
 
 import Note, { NoteModel } from '@nifty/server-lib/models/note';
@@ -25,12 +40,55 @@ import Submission, {
   SubmissionModel,
 } from '@nifty/server-lib/models/submission';
 import User, { type UserModel } from '@nifty/server-lib/models/user';
+import {
+  DirectoryRepository,
+  DirectoryCollaboratorRepository,
+  DirectoryNoteRepository,
+  CollaboratorRepository,
+  NoteRepository,
+  NoteCollaboratorRepository,
+  NoteService,
+  NoteCollaboratorService,
+  DirectoryService,
+  DirectoryCollaboratorService,
+  DirectoryNoteService,
+} from '@nifty/api/domains';
+import { BINDING } from '@nifty/api/domains/binding';
 
 const container = new Container();
+
+container.bind<KysleyDB>(BINDING.DB).toConstantValue(db);
 
 container.bind<UserModel>(USER_TYPES.MODEL).toDynamicValue(() => User);
 container.bind<IUserController>(USER_TYPES.CONTROLLER).to(UserController);
 
+// Directory
+container
+  .bind<InstanceType<typeof DirectoryService>>(BINDING.DIRECTORY_SERVICE)
+  .to(DirectoryService);
+container
+  .bind<InstanceType<typeof DirectoryNoteService>>(
+    BINDING.DIRECTORY_NOTE_SERVICE
+  )
+  .to(DirectoryNoteService);
+container
+  .bind<InstanceType<typeof DirectoryCollaboratorService>>(
+    BINDING.DIRECTORY_COLLABORATOR_SERVICE
+  )
+  .to(DirectoryCollaboratorService);
+container
+  .bind<InstanceType<typeof DirectoryRepository>>(BINDING.DIRECTORY_REPOSITORY)
+  .to(DirectoryRepository);
+container
+  .bind<InstanceType<typeof DirectoryCollaboratorRepository>>(
+    BINDING.DIRECTORY_COLLABORATOR_REPOSITORY
+  )
+  .to(DirectoryCollaboratorRepository);
+container
+  .bind<InstanceType<typeof DirectoryNoteRepository>>(
+    BINDING.DIRECTORY_NOTE_REPOSITORY
+  )
+  .to(DirectoryNoteRepository);
 container
   .bind<DirectoryModel>(DIRECTORY_TYPES.MODEL)
   .toDynamicValue(() => Directory);
@@ -39,12 +97,34 @@ container
   .to(DirectoryController);
 
 container
+  .bind<InstanceType<typeof CollaboratorRepository>>(
+    BINDING.COLLABORATOR_REPOSITORY
+  )
+  .to(CollaboratorRepository);
+container
   .bind<CollaboratorModel>(COLLABORATOR_TYPES.MODEL)
   .toDynamicValue(() => Collaborator);
 container
   .bind<ICollaboratorController>(COLLABORATOR_TYPES.CONTROLLER)
   .to(CollaboratorController);
 
+// Note
+container
+  .bind<InstanceType<typeof NoteService>>(BINDING.NOTE_SERVICE)
+  .to(NoteService);
+container
+  .bind<InstanceType<typeof NoteCollaboratorService>>(
+    BINDING.NOTE_COLLABORATOR_SERVICE
+  )
+  .to(NoteCollaboratorService);
+container
+  .bind<InstanceType<typeof NoteRepository>>(BINDING.NOTE_REPOSITORY)
+  .to(NoteRepository);
+container
+  .bind<InstanceType<typeof NoteCollaboratorRepository>>(
+    BINDING.NOTE_COLLABORATOR_REPOSITORY
+  )
+  .to(NoteCollaboratorRepository);
 container.bind<NoteModel>(NOTE_TYPES.MODEL).toDynamicValue(() => Note);
 container.bind<INoteController>(NOTE_TYPES.CONTROLLER).to(NoteController);
 

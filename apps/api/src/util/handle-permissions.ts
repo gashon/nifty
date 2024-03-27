@@ -1,4 +1,4 @@
-import { PermissionsType } from "@nifty/server-lib/models/collaborator";
+import { PermissionsType } from '@nifty/server-lib/models/collaborator';
 
 export enum Permission {
   Read = 1,
@@ -7,10 +7,13 @@ export enum Permission {
   None = 0,
 }
 
-export const checkPermissions = (permissions: PermissionsType, requiredPermissions: Permission): boolean => {
+export const isPermitted = (
+  permissions: PermissionsType,
+  requiredPermissions: Permission
+): boolean => {
   return (permissions & requiredPermissions) === requiredPermissions;
-}
+};
 
 export const setPermissions = (requiredPermissions: Permission): number => {
   return requiredPermissions;
-}
+};

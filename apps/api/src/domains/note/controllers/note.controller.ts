@@ -1,464 +1,178 @@
-import status from 'http-status';
+import { inject } from 'inversify';
 import {
-  controller,
   httpGet,
   httpPost,
   httpPatch,
   httpDelete,
+  controller,
 } from 'inversify-express-utils';
-import { inject } from 'inversify';
-import { Request, Response } from 'express';
 
-import auth from '@nifty/api/middlewares/auth';
-import { CustomException } from '@nifty/api/exceptions';
+import type {
+  KysleyDB,
+  Insertable,
+  SelectExpression,
+  DB,
+  Note,
+  Updateable,
+} from '@nifty/common/types';
+import { BINDING } from '@nifty/api/domains/binding';
 import {
-  INote,
-  NoteCreateRequest,
-  NoteModel,
-} from '@nifty/server-lib/models/note';
+  DirectoryService,
+  DirectoryNoteService,
+  DirectoryCollaboratorService,
+  NoteService,
+  NoteCollaboratorService,
+} from '@nifty/api/domains';
+import type {
+  CreateNotesResponse,
+  GetNotesResponse,
+  GetNoteResponse,
+} from '@nifty/api/domains';
+import type { ExpressResponse } from '@nifty/api/domains/dto';
+import { Permission } from '@nifty/api/util';
 import { PaginationParams } from '@nifty/api/types';
-import { INoteController } from '@nifty/api/domains/note';
-import { NOTE_TYPES, NoteCreateResponse } from '@nifty/api/domains/note/types';
-import { COLLABORATOR_TYPES } from '@nifty/api/domains/collaborator/types';
-import { DIRECTORY_TYPES } from '@nifty/api/domains/directory/types';
-import { setPermissions, Permission, checkPermissions } from '@nifty/api/util';
-import {
-  CollaboratorDocument,
-  CollaboratorModel,
-} from '@nifty/server-lib/models/collaborator';
-import { DirectoryModel } from '@nifty/server-lib/models/directory';
+import auth from '@nifty/api/middlewares/auth';
 
 @controller('/v1/notes')
-export class NoteController implements INoteController {
+export class NoteController {
   constructor(
-    @inject(NOTE_TYPES.MODEL) private noteModel: NoteModel,
-    @inject(DIRECTORY_TYPES.MODEL) private directoryModel: DirectoryModel,
-    @inject(COLLABORATOR_TYPES.MODEL)
-    private collaboratorModel: CollaboratorModel
+    @inject(BINDING.DIRECTORY_SERVICE)
+    private directoryService: DirectoryService,
+    @inject(BINDING.DIRECTORY_NOTE_SERVICE)
+    private directoryNoteService: DirectoryNoteService,
+    @inject(BINDING.DIRECTORY_COLLABORATOR_SERVICE)
+    private directoryCollaboratorService: DirectoryCollaboratorService,
+    @inject(BINDING.NOTE_SERVICE)
+    private noteService: NoteService,
+    @inject(BINDING.NOTE_COLLABORATOR_SERVICE)
+    private noteCollaboratorService: NoteCollaboratorService
   ) {}
 
   @httpGet('/recent', auth())
   async getRecentNotes(req: Request, res: Response): Promise<void> {
-    const userId = res.locals.user._id;
-    const k = (req.query.k as number | undefined) ?? 5;
-
-    if (k < 0 || k > 100)
-      throw new CustomException(
-        'k must be between 0 and 100',
-        status.BAD_REQUEST
-      );
-
-    const collaborators = await this.collaboratorModel.find({
-      user: userId,
-      type: 'note',
-    });
-
-    const noteIds = collaborators
-      .map((c) => c.type === 'note' && c.note)
-      .filter((id) => !!id);
-
-    const notes = await this.noteModel
-      .find(
-        {
-          _id: {
-            $in: noteIds,
-          },
-          deleted_at: null,
-        },
-        {
-          _id: 1,
-          title: 1,
-          created_at: 1,
-          updated_at: 1,
-          collaborators: 1,
-          public_permissions: 1,
-        }
-      )
-      .sort({ updated_at: -1 })
-      .limit(k);
-
-    res.status(status.OK).json({ data: notes });
+    res.json({ data: [] });
+    return;
   }
 
   @httpGet('/:id/neighbors', auth())
   async getNoteNeighbors(req: Request, res: Response): Promise<void> {
-    const { sort, limit } = req.query as PaginationParams<INote>;
-    const userId = res.locals.user._id;
-    const noteId = req.params.id;
-
-    // limit must be an even number to get the same number of notes before and after
-    if (!limit || limit % 2 !== 0 || limit < 0)
-      throw new CustomException(
-        'Limit must be an even number',
-        status.BAD_REQUEST
-      );
-
-    const note = await this.noteModel.findById(noteId);
-    if (!note) throw new CustomException('Note not found', status.NOT_FOUND);
-
-    const collaboratorsAggregation = await this.collaboratorModel.aggregate([
-      {
-        $match: {
-          user: userId,
-        },
-      },
-      {
-        $lookup: {
-          from: 'notes',
-          localField: '_id',
-          foreignField: 'collaborators',
-          as: 'note',
-        },
-      },
-      {
-        $unwind: {
-          path: '$note',
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $match: {
-          'note._id': noteId,
-        },
-      },
-    ]);
-
-    const collaborator = collaboratorsAggregation[0] || null;
-
-    if (
-      !checkPermissions(note.public_permissions, Permission.Read) &&
-      !collaborator
-    )
-      throw new CustomException(
-        'You do not have access to this note',
-        status.FORBIDDEN
-      );
-
-    const directory = await this.directoryModel.findOne({
-      notes: {
-        $in: [noteId],
-      },
-    });
-
-    if (!directory)
-      throw new CustomException('Directory not found', status.NOT_FOUND);
-
-    if (!note) {
-      res.json({ data: { before: [], after: [] } });
-      return;
-    }
-
-    // find neighbors
-    const query = {
-      _id: {
-        $ne: noteId,
-      },
-      directory_id: directory.id,
-      deleted_at: null,
-    };
-
-    const [before, after] = await Promise.all([
-      this.noteModel
-        .find({ ...query, created_at: { $lt: note.created_at } })
-        .sort({ created_at: -1 })
-        .limit(limit),
-      this.noteModel
-        .find({ ...query, created_at: { $gt: note.created_at } })
-        .sort({ created_at: 1 })
-        .limit(limit),
-    ]);
-
-    const data = { neighbors: { before, after } };
-    res.status(status.OK).json({ data });
+    res.json({ data: [] });
+    return;
   }
 
   @httpGet('/:id', auth())
-  async getNote(req: Request, res: Response): Promise<void> {
-    const userId = res.locals.user._id;
-    const note = await this.noteModel.findById(req.params.id);
+  async getNote(req: Request, res: Response): ExpressResponse<GetNoteResponse> {
+    const userId = req.locals.user.id;
+    const id = req.params.id as GetNoteParam;
 
-    if (!note) throw new CustomException('Note not found', status.NOT_FOUND);
-
-    if (
-      !checkPermissions(note.public_permissions, Permission.Read) &&
-      !note.collaborators.includes(userId)
-    )
-      throw new CustomException(
-        'You do not have access to this note',
-        status.FORBIDDEN
-      );
-
-    // update last viewed at
-    const { collaborators } = await note.populate('collaborators');
-    const collaborator = collaborators.find(
-      (collaborator: any) => collaborator.user === userId
-    ) as CollaboratorDocument | undefined;
-    if (collaborator) {
-      collaborator.set({
-        last_viewed_at: new Date(),
+    const hasPermission =
+      await this.noteCollaboratorService.userHasPermissionToNote({
+        noteId: id,
+        userId,
+        permission: Permission.Read,
       });
-      collaborator.save();
+
+    if (!hasPermission) {
+      throw new ForbiddenError('User does not have permission to read note');
     }
 
-    res.status(status.OK).json({ data: note });
+    const note = await this.noteService.getNoteById({
+      id,
+      select: '*',
+    });
+
+    return res.json({ data: note });
   }
 
   @httpGet('/', auth())
-  async getNotes(req: Request, res: Response): Promise<void> {
-    const userId = res.locals.user._id;
-    const directoryId = req.query.directory_id as string | undefined;
-    let notes;
+  async getUserNotes(
+    req: Request,
+    res: Response
+  ): ExpressResponse<GetUserNotesResponse> {
+    const userId = req.locals.user.id;
+    const { limit, cursor } = req.query as PaginationParams;
 
-    if (directoryId) {
-      // validate directory exists
-      const directory = await this.directoryModel.findById(directoryId);
-      if (!directory)
-        throw new CustomException('Directory not found', status.NOT_FOUND);
+    const notes = await this.noteCollaboratorService.paginateNotesByUserId({
+      userId,
+      limit,
+      cursor,
+      select: '*',
+    });
 
-      // validate user has access to directory
-      // TODO(gashon) make this a method in CollaboratorModel
-      const collaboratorsAggregation = await this.collaboratorModel.aggregate([
-        {
-          $match: {
-            user: userId,
-          },
-        },
-        {
-          $lookup: {
-            from: 'directories',
-            localField: '_id',
-            foreignField: 'collaborators',
-            as: 'directory',
-          },
-        },
-        {
-          $unwind: {
-            path: '$directory',
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $match: {
-            'directory._id': directoryId,
-          },
-        },
-      ]);
+    return res.json({ data: notes });
+  }
 
-      const collaborator = collaboratorsAggregation[0] || null;
-      if (!collaborator)
-        throw new CustomException(
-          'You do not have access to this directory',
-          status.FORBIDDEN
-        );
+  @httpGet('/directories/:id', auth())
+  async getDirectoryNotes(
+    req: Request,
+    res: Response
+  ): ExpressResponse<GetDirectoryNotesResponse> {
+    const userId = req.locals.user.id;
+    const directoryId = req.params.id as GetDirectoryNotesParam;
+    const { limit, cursor } = req.query as GetDirectoryNotesQuery;
 
-      // paginate notes by directory id
-      const query = {
-        ...req.query,
-      } as PaginationParams<INote>;
-
-      notes = this.noteModel.paginate({
-        id: {
-          $in: directory.notes,
-        },
-        ...query,
+    const hasPermission =
+      await this.directoryCollaboratorService.userHasPermissionToDirectory({
+        directoryId,
+        userId,
+        permission: Permission.Read,
       });
-    } else {
-      notes = await this.noteModel.paginate({
-        filter: {
-          'collaborators.user': userId,
-        },
-      });
+    if (!hasPermission) {
+      throw new ForbiddenError(
+        'User does not have permission to read directory notes'
+      );
     }
 
-    res.status(status.OK).json({ data: notes });
+    const notes = await this.directoryNoteService.paginateNotesByDirectoryId({
+      directoryId,
+      limit,
+      cursor,
+      select: '*',
+    });
+
+    return res.json({ data: notes });
   }
 
   @httpPost('/', auth())
   async createNote(
     req: Request,
     res: Response
-  ): Promise<Response<NoteCreateResponse>> {
-    const createdBy = res.locals.user._id;
-    const directoryId = req.body.directory_id;
+  ): ExpressResponse<CreateNoteResponse> {
+    const values = req.body as CreateNoteRequest;
 
-    // validate directory exists
-    const directory = await this.directoryModel.findById(directoryId);
-    if (!directory)
-      throw new CustomException('Directory not found', status.NOT_FOUND);
-
-    // validate user has access to directory
-    // TODO(gashon) attach this to collaborator method
-    const collaboratorsAggregation = await this.collaboratorModel.aggregate([
-      {
-        $match: {
-          user: createdBy,
-        },
-      },
-      {
-        $lookup: {
-          from: 'directories',
-          localField: '_id',
-          foreignField: 'collaborators',
-          as: 'directory',
-        },
-      },
-      {
-        $unwind: {
-          path: '$directory',
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $match: {
-          'directory._id': directoryId,
-        },
-      },
-    ]);
-
-    const collaborator = collaboratorsAggregation[0] || null;
-    if (!collaborator)
-      throw new CustomException(
-        'You do not have access to this directory',
-        status.FORBIDDEN
-      );
-
-    const noteCollaborator = await this.collaboratorModel.create({
-      user: createdBy,
-      type: 'note',
-      permissions: setPermissions(Permission.ReadWriteDelete),
-      created_by: createdBy,
+    const newNote = await this.noteService.createNote({
+      values,
+      returning: '*',
     });
 
-    const { public_permissions, ...noteBody } = req.body as NoteCreateRequest;
-    const doc = {
-      public_permissions: setPermissions(
-        (public_permissions ?? Permission.None) as Permission
-      ),
-      collaborators: [noteCollaborator.id],
-      ...noteBody,
-      created_by: createdBy,
-      parent: null,
-    };
-    const note = await this.noteModel.create(doc);
-
-    // add the note to the directory
-    directory.set({
-      notes: [...directory.notes, note.id],
-      collaborators: [...directory.collaborators],
-    });
-    noteCollaborator.set({ note: note.id });
-
-    await Promise.all([directory.save(), noteCollaborator.save()]);
-
-    return res.status(status.CREATED).json({ data: note });
+    return res.json({ data: newNote });
   }
 
   @httpPatch('/:id', auth())
-  async updateNote(req: Request, res: Response): Promise<void> {
-    const id = req.params.id;
-    const userId = res.locals.user._id;
-    // TODO(gashon) attach NoteUpdateRequest type!
-    const data = req.body;
+  async updateNote(
+    req: Request,
+    res: Response
+  ): ExpressResponse<UpdateNoteResponse> {
+    const id = req.params.id as Pick<Note, 'id'>;
+    const values = req.body as UpdateNoteRequest;
 
-    // validate note exists
-    const note = await this.noteModel.findById(id);
-    if (!note) throw new CustomException('Note not found', status.NOT_FOUND);
+    await this.noteService.updateNote({
+      id,
+      values,
+    });
 
-    // TODO(gashon) attach this to collaborator methods
-    const collaboratorsAggregation = await this.collaboratorModel.aggregate([
-      {
-        $match: {
-          user: userId,
-        },
-      },
-      {
-        $lookup: {
-          from: 'notes',
-          localField: '_id',
-          foreignField: 'collaborators',
-          as: 'note',
-        },
-      },
-      {
-        $unwind: {
-          path: '$note',
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $match: {
-          'note._id': note.id,
-        },
-      },
-    ]);
-
-    const collaborator = collaboratorsAggregation[0] || null;
-
-    // validate user has access to note
-    if (
-      !checkPermissions(note.public_permissions, Permission.ReadWrite) &&
-      !collaborator
-    )
-      throw new CustomException(
-        'You do not have access to this note',
-        status.FORBIDDEN
-      );
-
-    if (data.public_permissions !== undefined) {
-      if (!collaborator || collaborator.user !== note.created_by)
-        throw new CustomException(
-          'Only the note owner can change this setting',
-          status.NOT_ACCEPTABLE
-        ); // todo fix to FORBIDDEN without error page redirect (axios interceptor)
-      throw new CustomException(
-        'Realtime collaboration is not yet a support feature',
-        status.NOT_ACCEPTABLE
-      ); // todo fix to FORBIDDEN without error page redirect (axios interceptor)
-    }
-
-    // update note
-    const updatedNote = await this.noteModel.updateOne(
-      { _id: id },
-      { $set: data }
-    );
-
-    res.status(status.OK).json({ data: updatedNote });
+    return res.json({ data: id });
   }
 
   @httpDelete('/:id', auth())
-  async deleteNoteById(req: Request, res: Response): Promise<void> {
-    const id = req.params.id;
-    const userId = res.locals.user._id;
+  async deleteNoteById(
+    req: Request,
+    res: Response
+  ): ExpressResponse<DeleteNoteResponse> {
+    const id = req.params.id as DeleteNoteParam;
 
-    // validate note exists
-    const note = await this.noteModel.findById(id);
-    if (!note) throw new CustomException('Note not found', status.NOT_FOUND);
+    await this.noteService.deleteNote(id);
 
-    const collaborator = await this.collaboratorModel.findOne({
-      note: note.id,
-      type: 'note',
-      ...(userId && { user: userId }),
-    });
-
-    // validate user has access to note
-    if (
-      !checkPermissions(note.public_permissions, Permission.ReadWriteDelete) &&
-      !collaborator
-    )
-      throw new CustomException(
-        'You do not have access to this note',
-        status.FORBIDDEN
-      );
-
-    // todo handle permissions
-
-    // delete note
-    await this.noteModel.updateOne(
-      { _id: id },
-      { $set: { deleted_at: new Date() } },
-      { new: true }
-    );
-
-    res.status(status.NO_CONTENT).json();
+    return res.json({ data: id });
   }
 }

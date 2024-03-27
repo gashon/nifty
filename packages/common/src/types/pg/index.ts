@@ -1,1 +1,1 @@
-export * from "@nifty/db/types/generated.types"
+export * from '../../../../db/src/types/index';

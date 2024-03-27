@@ -39,13 +39,16 @@ export interface DirectoryCollaborator {
   directoryId: number;
   id: Generated<number>;
   updatedAt: Generated<Timestamp>;
+  userId: number;
 }
 
 export interface DirectoryNote {
+  createdAt: Generated<Timestamp>;
   deletedAt: Timestamp | null;
   directoryId: number;
   id: Generated<number>;
   noteId: number;
+  updatedAt: Generated<Timestamp>;
 }
 
 export interface Note {
@@ -68,6 +71,7 @@ export interface NoteCollaborator {
   id: Generated<number>;
   noteId: number;
   updatedAt: Generated<Timestamp>;
+  userId: number;
 }
 
 export interface NoteTag {
@@ -98,6 +102,7 @@ export interface QuizCollaborator {
   id: Generated<number>;
   quizId: number;
   updatedAt: Generated<Timestamp>;
+  userId: number;
 }
 
 export interface QuizQuestionFreeResponse {
