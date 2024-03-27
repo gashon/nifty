@@ -42,6 +42,16 @@ export class DirectoryService {
     });
   }
 
+  async getDirectoryById({
+    id,
+    select,
+  }: {
+    id: number;
+    select: readonly SelectExpression<DB, 'directory'>[] | '*';
+  }) {
+    return this.directoryRepository.getDirectoryById({ id, select });
+  }
+
   async deleteDirectoryById(id: number) {
     return this.directoryRepository.deleteDirectoryById(id);
   }

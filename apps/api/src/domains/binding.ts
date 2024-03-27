@@ -1,6 +1,8 @@
 export const BINDING = {
   DB: 'DB',
 
+  USER_SERVICE: 'UserService',
+  USER_REPOSITORY: 'UserRepository',
   USER_MODEL: 'UserModel',
   USER_CONTROLLER: 'UserController',
 

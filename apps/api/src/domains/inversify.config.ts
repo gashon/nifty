@@ -15,7 +15,6 @@ import {
 } from '@nifty/api/domains/directory';
 import {
   ICollaboratorController,
-  CollaboratorController,
   COLLABORATOR_TYPES,
 } from '@nifty/api/domains/collaborator';
 import {
@@ -50,6 +49,8 @@ import {
   NoteCollaboratorService,
   DirectoryService,
   DirectoryCollaboratorService,
+  UserRepository,
+  UserService,
 } from '@nifty/api/domains';
 import { BINDING } from '@nifty/api/domains/binding';
 
@@ -57,6 +58,9 @@ const container = new Container();
 
 container.bind<KysleyDB>(BINDING.DB).toConstantValue(db);
 
+// User
+container.bind<UserRepository>(BINDING.USER_REPOSITORY).to(UserRepository);
+container.bind<UserService>(BINDING.USER_SERVICE).to(UserService);
 container.bind<UserModel>(USER_TYPES.MODEL).toDynamicValue(() => User);
 container.bind<IUserController>(USER_TYPES.CONTROLLER).to(UserController);
 
@@ -92,9 +96,6 @@ container
 container
   .bind<CollaboratorModel>(COLLABORATOR_TYPES.MODEL)
   .toDynamicValue(() => Collaborator);
-container
-  .bind<ICollaboratorController>(COLLABORATOR_TYPES.CONTROLLER)
-  .to(CollaboratorController);
 
 // Note
 container
