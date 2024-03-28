@@ -37,6 +37,7 @@ import { PaginationParams } from '@nifty/api/types';
 import auth from '@nifty/api/middlewares/auth';
 import { CustomException } from '@nifty/api/exceptions';
 import { authGuard } from '@nifty/api/middlewares/guards/auth';
+import { getPaginationMeta } from '@nifty/api/util/pagination';
 
 @controller('/v1/notes')
 export class NoteController {
@@ -96,7 +97,7 @@ export class NoteController {
     res: Response
   ): ExpressResponse<GetUserNotesResponse> {
     const userId = res.locals.user.id;
-    const { limit, cursor } = req.query as PaginationParams;
+    const { limit, cursor, orderBy } = req.query as PaginationParams<'note'>;
 
     const cursorDate = cursor ? new Date(cursor) : undefined;
     const notes = await this.noteCollaboratorService.paginateNotesByUserId({
@@ -104,6 +105,7 @@ export class NoteController {
       limit: Number(limit),
       cursor: cursorDate,
       select: '*',
+      orderBy,
     });
 
     return res.json({ data: notes });
@@ -117,7 +119,8 @@ export class NoteController {
   ): ExpressResponse<GetDirectoryNotesResponse> {
     const userId = res.locals.user.id;
     const directoryId = Number(req.params.id) as GetDirectoryNotesRequestParam;
-    const { limit, cursor } = req.query as GetDirectoryNotesRequestQuery;
+    const { limit, cursor, orderBy } =
+      req.query as GetDirectoryNotesRequestQuery;
 
     const hasPermission =
       await this.directoryCollaboratorService.userHasPermissionToDirectory({
@@ -138,9 +141,13 @@ export class NoteController {
       limit: Number(limit),
       cursor: cursorDate,
       select: '*',
+      orderBy,
     });
 
-    return res.json({ data: notes });
+    return res.json({
+      data: notes,
+      pagination: getPaginationMeta(notes, limit),
+    });
   }
 
   @httpPost('/', auth())

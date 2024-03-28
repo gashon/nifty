@@ -9,6 +9,7 @@ import type {
 import { BINDING } from '@nifty/api/domains/binding';
 import { NoteCollaboratorRepository } from '@nifty/api/domains';
 import { Permission, isPermitted } from '@nifty/api/util';
+import { OrderBy } from '@nifty/api/types';
 
 @injectable()
 export class NoteCollaboratorService {
@@ -69,17 +70,20 @@ export class NoteCollaboratorService {
     select,
     limit,
     cursor,
+    orderBy = 'note.createdAt desc',
   }: {
     userId: number;
     select: readonly SelectExpression<DB, 'note'>[] | '*';
     limit: number;
-    cursor?: Date;
+    cursor: Date;
+    orderBy?: OrderBy<'note'>;
   }) {
     return this.noteCollaboratorRepository.paginateNotesByUserId({
       userId,
       select,
       limit,
       cursor,
+      orderBy,
     });
   }
 }

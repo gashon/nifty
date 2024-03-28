@@ -140,7 +140,7 @@ export class DirectoryCollaboratorRepository {
           'directory.id',
           'directoryCollaborator.directoryId'
         )
-        .where('userId', '=', userId)
+        .where('directoryCollaborator.userId', '=', userId)
         .select(select)
         .executeTakeFirst()
     );

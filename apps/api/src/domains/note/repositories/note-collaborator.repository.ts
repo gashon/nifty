@@ -8,6 +8,7 @@ import type {
   NoteCollaborator,
 } from '@nifty/common/types';
 import { BINDING } from '@nifty/api/domains/binding';
+import { OrderBy } from '@nifty/api/types';
 
 @injectable()
 export class NoteCollaboratorRepository {
@@ -77,11 +78,13 @@ export class NoteCollaboratorRepository {
     select,
     limit,
     cursor,
+    orderBy,
   }: {
     userId: number;
     select: readonly SelectExpression<DB, 'note'>[] | '*';
     limit: number;
     cursor?: Date;
+    orderBy: OrderBy<'note'>;
   }) {
     let query = this.db
       .selectFrom('noteCollaborator')
@@ -94,16 +97,8 @@ export class NoteCollaboratorRepository {
     }
 
     if (select !== '*')
-      return query
-        .select(select)
-        .orderBy('note.createdAt', 'desc')
-        .limit(limit)
-        .execute();
+      return query.select(select).orderBy(orderBy).limit(limit).execute();
 
-    return query
-      .selectAll()
-      .orderBy('note.createdAt', 'desc')
-      .limit(limit)
-      .execute();
+    return query.selectAll().orderBy(orderBy).limit(limit).execute();
   }
 }

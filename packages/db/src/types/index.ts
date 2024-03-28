@@ -34,6 +34,7 @@ export type {
   Updateable,
   SelectExpression,
   Transaction,
+  SelectQueryBuilder,
 } from 'kysely';
 export type KysleyDB = Kysely<DBType>;
 export * from './generated.types';

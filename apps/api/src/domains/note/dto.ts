@@ -1,4 +1,7 @@
-import type { AppResponse } from '@nifty/api/domains/dto';
+import type {
+  AppPaginationResponse,
+  AppResponse,
+} from '@nifty/api/domains/dto';
 import { PaginationParams } from '@nifty/api/types';
 import type {
   Insertable,
@@ -20,8 +23,8 @@ export type GetNoteResponse = AppResponse<Note>;
 export type GetUserNotesResponse = AppResponse<Note[]>;
 
 export type GetDirectoryNotesRequestParam = number;
-export type GetDirectoryNotesRequestQuery = PaginationParams;
-export type GetDirectoryNotesResponse = AppResponse<Note[]>;
+export type GetDirectoryNotesRequestQuery = PaginationParams<'note'>;
+export type GetDirectoryNotesResponse = AppPaginationResponse<Note[]>;
 
 export type UpdateNoteRequestBody = Updateable<Note>;
 export type UpdateNoteRequestParam = number;

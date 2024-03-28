@@ -10,6 +10,8 @@ import type {
 } from '@nifty/common/types';
 import { BINDING } from '@nifty/api/domains/binding';
 import { Permission } from '@nifty/api/util';
+import { OrderBy } from '@nifty/api/types';
+import { buildQueryWithCursor } from '@nifty/api/util/pagination';
 
 @injectable()
 export class NoteRepository {
@@ -137,17 +139,19 @@ export class NoteRepository {
     select,
     limit,
     cursor,
+    orderBy,
   }: {
     directoryId: number;
     select: readonly SelectExpression<DB, 'note'>[] | '*';
     limit: number;
     cursor?: Date;
+    orderBy: OrderBy<'note'>[];
   }) {
     let query = this.db
       .selectFrom('note')
       .where('directoryId', '=', directoryId)
       .where('deletedAt', 'is', null)
-      .orderBy('createdAt', 'desc');
+      .orderBy(orderBy);
 
     if (cursor) {
       query = query.where('note.createdAt', '<', cursor);

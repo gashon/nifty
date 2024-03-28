@@ -10,11 +10,12 @@ import type {
 import { BINDING } from '@nifty/api/domains/binding';
 import { NoteRepository } from '@nifty/api/domains';
 import { Permission } from '@nifty/api/util';
+import { OrderBy, PaginationParams } from '@nifty/api/types';
 
 @injectable()
 export class NoteService {
   constructor(
-    @inject(BINDING.DIRECTORY_REPOSITORY)
+    @inject(BINDING.NOTE_REPOSITORY)
     private noteRepository: NoteRepository
   ) {}
 
@@ -72,17 +73,20 @@ export class NoteService {
     select,
     limit,
     cursor,
+    orderBy = ['createdAt desc'],
   }: {
     directoryId: number;
     select: readonly SelectExpression<DB, 'note'>[] | '*';
     limit: number;
     cursor?: Date;
+    orderBy?: OrderBy<'note'>[];
   }) {
     return this.noteRepository.paginateNotesByDirectoryId({
       directoryId,
       select,
       limit,
       cursor,
+      orderBy,
     });
   }
 }
