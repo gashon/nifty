@@ -1,11 +1,17 @@
 import { ErrorRequestHandler } from 'express';
-import * as Sentry from "@sentry/node";
+import * as Sentry from '@sentry/node';
 import mongoose from '@nifty/server-lib/mongoose';
 import { CustomException } from '../exceptions';
 import logger from '@nifty/api/lib/logger';
 
-const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, next) {
-  logger.error(JSON.stringify(err));
+const errorHandler: ErrorRequestHandler = function errorHandler(
+  err,
+  req,
+  res,
+  next
+) {
+  // logger.error(err);
+  console.log({ err });
 
   //send error to sentry
   res.sentry = Sentry.captureException(err);
@@ -21,12 +27,15 @@ const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, n
   } else if (err instanceof SyntaxError) {
     res.status(400).send({
       error: {
-        message: 'Invalid request (check your POST parameters): unable to parse JSON request body',
+        message:
+          'Invalid request (check your POST parameters): unable to parse JSON request body',
         type: 'invalid_request_error',
       },
     });
-  } else if ((err.name === 'MongoError' || err.name === 'MongoServerError') && err.code === 11000) {
-
+  } else if (
+    (err.name === 'MongoError' || err.name === 'MongoServerError') &&
+    err.code === 11000
+  ) {
     const [path, value] = Object.entries(err.keyValue)[0];
 
     res.status(400).send({
@@ -38,7 +47,6 @@ const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, n
       },
     });
   } else if (err instanceof mongoose.Error.ValidationError) {
-
     res.status(400).send({
       error: {
         param: Object.keys(err.errors)[0],
@@ -48,7 +56,6 @@ const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, n
       },
     });
   } else if (err instanceof mongoose.Error.CastError) {
-
     res.status(400).send({
       error: {
         param: err.path,
@@ -58,7 +65,6 @@ const errorHandler: ErrorRequestHandler = function errorHandler(err, req, res, n
       },
     });
   } else {
-
     res.status(500).send({
       error: {
         message:
