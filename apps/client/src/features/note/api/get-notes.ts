@@ -7,7 +7,6 @@ import {
 import { PaginationParams } from '@nifty/api/types';
 import { axios } from '@nifty/client/lib/axios';
 import { GetDirectoryNotesResponse } from '@nifty/api/domains/note/dto';
-import { Note } from '@nifty/common/types';
 
 export const getNotes = async (
   directoryId: string | undefined,

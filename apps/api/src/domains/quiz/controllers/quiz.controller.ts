@@ -102,7 +102,7 @@ export class QuizController {
     res: Response
   ): ExpressResponse<GetQuizzesResponse> {
     const userId = res.locals.user._id;
-    const { limit, cursor } = req.query as PaginationParams;
+    const { limit, cursor, orderBy } = req.query as PaginationParams;
 
     const cursorDate = cursor ? new Date(cursor) : undefined;
     const quizzes = await this.quizCollaboratorService.paginateQuizzesByUserId({
@@ -110,6 +110,7 @@ export class QuizController {
       select: '*',
       limit: Number(limit),
       cursor: cursorDate,
+      orderBy,
     });
 
     return res.status(status.OK).json({ data: quizzes });
