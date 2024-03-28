@@ -31,6 +31,8 @@ import type {
   DeleteNoteResponse,
   UpdateNoteRequestParam,
   GetUserNotesRequestQuery,
+  GetNoteNeighborsRequestQuery,
+  GetNoteNeighborsResponse,
 } from '@nifty/api/domains/note/dto';
 import type { ExpressResponse } from '@nifty/api/domains/dto';
 import { Permission } from '@nifty/api/util';
@@ -54,9 +56,74 @@ export class NoteController {
   ) {}
 
   @httpGet('/:id/neighbors', auth())
-  async getNoteNeighbors(req: Request, res: Response): Promise<void> {
-    res.json({ data: [] });
-    return;
+  async getNoteNeighbors(
+    req: Request,
+    res: Response
+  ): ExpressResponse<GetNoteNeighborsResponse> {
+    const userId = res.locals.user.id;
+    const noteId = Number(req.params.id);
+    const { limit, validateNoteHasDirectory } =
+      req.query as GetNoteNeighborsRequestQuery;
+
+    const hasPermissionToNote =
+      await this.noteCollaboratorService.userHasPermissionToNote({
+        noteId,
+        userId,
+        permission: Permission.Read,
+      });
+
+    if (!hasPermissionToNote) {
+      throw new CustomException(
+        'User does not have permission to read note',
+        status.FORBIDDEN
+      );
+    }
+
+    // validate access to note and directory
+    const note = await this.noteService.getNoteById({
+      id: noteId,
+      select: ['directoryId', 'createdAt'],
+    });
+
+    if (!note) {
+      throw new CustomException('Note not found', status.NOT_FOUND);
+    }
+
+    if (validateNoteHasDirectory && !note.directoryId) {
+      return res.status(status.OK).json({
+        data: {
+          before: [],
+          after: [],
+        },
+      });
+    }
+
+    // validate user has access to the directory
+    if (note.directoryId) {
+      const hasPermissionToDirectory =
+        await this.directoryCollaboratorService.userHasPermissionToDirectory({
+          directoryId: note.directoryId,
+          userId,
+          permission: Permission.Read,
+        });
+
+      if (!hasPermissionToDirectory) {
+        throw new CustomException(
+          'User does not have permission to read directory',
+          status.FORBIDDEN
+        );
+      }
+    }
+
+    const notes = await this.noteService.getNearbyNotesByNoteIdAndUserId({
+      noteId,
+      userId,
+      limit: Number(limit),
+      directoryId: note.directoryId,
+      createdAt: note.createdAt,
+    });
+
+    return res.status(status.OK).json({ data: notes });
   }
 
   @httpGet('/:id', auth())

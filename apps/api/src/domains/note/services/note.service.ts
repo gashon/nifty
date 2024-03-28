@@ -8,7 +8,7 @@ import type {
   Updateable,
 } from '@nifty/common/types';
 import { BINDING } from '@nifty/api/domains/binding';
-import { NoteRepository } from '@nifty/api/domains';
+import { NoteRepository, NoteCollaboratorRepository } from '@nifty/api/domains';
 import { Permission } from '@nifty/api/util';
 import { OrderBy, PaginationParams } from '@nifty/api/types';
 
@@ -16,8 +16,32 @@ import { OrderBy, PaginationParams } from '@nifty/api/types';
 export class NoteService {
   constructor(
     @inject(BINDING.NOTE_REPOSITORY)
-    private noteRepository: NoteRepository
+    private noteRepository: NoteRepository,
+    @inject(BINDING.NOTE_COLLABORATOR_REPOSITORY)
+    private noteCollaboratorRepository: NoteCollaboratorRepository
   ) {}
+
+  async getNearbyNotesByNoteIdAndUserId({
+    noteId,
+    userId,
+    limit,
+    directoryId,
+    createdAt,
+  }: {
+    noteId: number;
+    userId: number;
+    directoryId: number | null;
+    createdAt: Date;
+    limit: number;
+  }) {
+    return this.noteCollaboratorRepository.getNearbyNotesByNoteIdAndUserId({
+      noteId,
+      userId,
+      directoryId,
+      createdAt,
+      limit,
+    });
+  }
 
   async createNoteAndCollaborator({
     userId,

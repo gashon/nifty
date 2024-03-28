@@ -53,14 +53,8 @@ export class NoteCollaboratorService {
       return false;
     }
 
-    const hasPublicPermission = isPermitted(
-      res.note.publicPermissions,
-      permission
-    );
-    const hasCollaboratorPermission = isPermitted(
-      res.collaborator.permissions,
-      permission
-    );
+    const hasPublicPermission = isPermitted(res.publicPermissions, permission);
+    const hasCollaboratorPermission = isPermitted(res.permissions, permission);
 
     return hasPublicPermission || hasCollaboratorPermission;
   }

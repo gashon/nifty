@@ -7,7 +7,10 @@ type PageNavigationProps = {
 };
 
 export const PageNavigation: FC<PageNavigationProps> = ({ id }) => {
-  const { data: neighbors } = useGetNoteNeighbors(id, { limit: 2 });
+  const { data: neighbors } = useGetNoteNeighbors(id, {
+    limit: 1,
+    validateNoteHasDirectory: true,
+  });
 
   if (!neighbors?.data) return null;
   const [[beforeNote], [afterNote]] = [

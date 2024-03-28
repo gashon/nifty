@@ -73,6 +73,58 @@ export class NoteCollaboratorRepository {
       .execute();
   }
 
+  async getNearbyNotesByNoteIdAndUserId({
+    noteId,
+    directoryId,
+    createdAt,
+    userId,
+    limit,
+  }: {
+    noteId: number;
+    userId: number;
+    directoryId: number | null;
+    createdAt: Date;
+    limit: number;
+  }) {
+    const [before, after] = await Promise.all([
+      this.db
+        .selectFrom('note')
+        .where((eb) => {
+          return directoryId === null
+            ? eb('note.directoryId', 'is', null)
+            : eb('note.directoryId', '=', directoryId);
+        })
+        .where('note.directoryId', '=', directoryId)
+        .where('note.id', '<>', noteId)
+        .where('note.deletedAt', 'is', null)
+        .where('note.createdAt', '<', createdAt)
+        .innerJoin('noteCollaborator', 'noteCollaborator.noteId', 'note.id')
+        .where('noteCollaborator.userId', '=', userId)
+        .selectAll()
+        .orderBy('note.createdAt', 'desc')
+        .limit(limit)
+        .execute(),
+      this.db
+        .selectFrom('note')
+        .where((eb) => {
+          return directoryId === null
+            ? eb('note.directoryId', 'is', null)
+            : eb('note.directoryId', '=', directoryId);
+        })
+        .where('note.id', '<>', noteId)
+        .where('note.deletedAt', 'is', null)
+        .where('note.createdAt', '>', createdAt)
+        .innerJoin('noteCollaborator', 'noteCollaborator.noteId', 'note.id')
+        .where('noteCollaborator.userId', '=', userId)
+        .selectAll()
+        .orderBy('note.createdAt', 'asc')
+        .limit(limit)
+        .execute(),
+    ]);
+
+    return { before, after };
+  }
+
   async paginateNotesByUserId({
     userId,
     select,

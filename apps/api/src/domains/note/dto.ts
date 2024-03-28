@@ -13,6 +13,18 @@ import type {
 
 type NoteWithoutDeletedAt = Omit<Note, 'deletedAt'>;
 
+export type GetNoteNeighborsRequestQuery = Omit<
+  PaginationParams<'note'>,
+  'cursor' | 'orderBy'
+> & {
+  // ensure note has directory
+  validateNoteHasDirectory?: boolean;
+};
+export type GetNoteNeighborsResponse = {
+  before: Selectable<Note>[];
+  after: Selectable<Note>[];
+};
+
 export type CreateNoteRequestBody = Omit<Insertable<Note>, 'createdBy'> & {
   directoryId: number | null;
 };

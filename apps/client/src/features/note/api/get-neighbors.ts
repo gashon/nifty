@@ -1,18 +1,14 @@
 import { useQuery } from 'react-query';
 import { axios } from '@nifty/client/lib/axios';
+import type { GetNoteNeighborsRequestQuery } from '@nifty/api/domains/note/dto';
 
-type NoteNeighborsQuery = {
-  sort?: string;
-  limit: number;
-};
-
-const fetchNoteNeighbors = async (noteId: string, { sort, limit }: NoteNeighborsQuery) => {
+const fetchNoteNeighbors = async (
+  noteId: string,
+  params: GetNoteNeighborsRequestQuery
+) => {
   try {
     const response = await axios.get(`/api/v1/notes/${noteId}/neighbors`, {
-      params: {
-        sort,
-        limit,
-      },
+      params,
     });
     return response.data;
   } catch (err) {
@@ -21,8 +17,15 @@ const fetchNoteNeighbors = async (noteId: string, { sort, limit }: NoteNeighbors
   }
 };
 
-export const useGetNoteNeighbors = (noteId, query: NoteNeighborsQuery) => {
-  return useQuery(['note', "neighbors", noteId], () => fetchNoteNeighbors(noteId, query), {
-    enabled: !!noteId,
-  });
+export const useGetNoteNeighbors = (
+  noteId,
+  query: GetNoteNeighborsRequestQuery
+) => {
+  return useQuery(
+    ['note', 'neighbors', noteId],
+    () => fetchNoteNeighbors(noteId, query),
+    {
+      enabled: !!noteId,
+    }
+  );
 };
