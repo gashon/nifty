@@ -9,11 +9,12 @@ import type {
 import { BINDING } from '@nifty/api/domains/binding';
 import { QuizCollaboratorRepository } from '@nifty/api/domains';
 import { Permission, isPermitted } from '@nifty/api/util';
+import { OrderBy } from '@nifty/api/types';
 
 @injectable()
 export class QuizCollaboratorService {
   constructor(
-    @inject(BINDING.DIRECTORY_REPOSITORY)
+    @inject(BINDING.QUIZ_COLLABORATOR_REPOSITORY)
     private quizCollaboratorRepository: QuizCollaboratorRepository
   ) {}
 
@@ -65,17 +66,20 @@ export class QuizCollaboratorService {
     select,
     limit,
     cursor,
+    orderBy = 'quiz.createdAt desc',
   }: {
     userId: number;
     select: readonly SelectExpression<DB, 'quiz'>[] | '*';
     limit: number;
     cursor?: Date;
+    orderBy?: OrderBy<'quiz'>;
   }) {
     return this.quizCollaboratorRepository.paginateQuizsByUserId({
       userId,
       select,
       limit,
       cursor,
+      orderBy,
     });
   }
 }

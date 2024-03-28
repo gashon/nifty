@@ -1,4 +1,7 @@
-import type { AppResponse } from '@nifty/api/domains/dto';
+import type {
+  AppPaginationResponse,
+  AppResponse,
+} from '@nifty/api/domains/dto';
 import { PaginationParams } from '@nifty/api/types';
 import type {
   Insertable,
@@ -15,8 +18,8 @@ import type {
 export type GetQuizByIdResponse = AppResponse<Quiz>;
 export type GetQuizByIdRequestParams = number;
 
-export type GetQuizzesResponse = AppResponse<Quiz[]>;
-export type GetQuizzesRequestQuery = PaginationParams;
+export type GetQuizzesResponse = AppPaginationResponse<Quiz>;
+export type GetQuizzesRequestQuery = PaginationParams<'quiz'>;
 
 export type CreateQuizResponse = AppResponse<Quiz>;
 export type CreateQuizRequestBody = Omit<Insertable<Quiz>, 'createdBy'>;

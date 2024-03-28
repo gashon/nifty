@@ -8,6 +8,7 @@ import type {
   QuizCollaborator,
 } from '@nifty/common/types';
 import { BINDING } from '@nifty/api/domains/binding';
+import { OrderBy } from '@nifty/api/types';
 
 @injectable()
 export class QuizCollaboratorRepository {
@@ -77,11 +78,13 @@ export class QuizCollaboratorRepository {
     select,
     limit,
     cursor,
+    orderBy,
   }: {
     userId: number;
     select: readonly SelectExpression<DB, 'quiz'>[] | '*';
     limit: number;
     cursor?: Date;
+    orderBy: OrderBy<'quiz'>;
   }) {
     let query = this.db
       .selectFrom('quizCollaborator')
@@ -94,16 +97,8 @@ export class QuizCollaboratorRepository {
     }
 
     if (select !== '*')
-      return query
-        .select(select)
-        .orderBy('quiz.createdAt', 'desc')
-        .limit(limit)
-        .execute();
+      return query.select(select).orderBy(orderBy).limit(limit).execute();
 
-    return query
-      .selectAll()
-      .orderBy('quiz.createdAt', 'desc')
-      .limit(limit)
-      .execute();
+    return query.selectAll().orderBy(orderBy).limit(limit).execute();
   }
 }
