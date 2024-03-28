@@ -65,7 +65,7 @@ export class NoteController {
 
   @httpGet('/:id', auth())
   async getNote(req: Request, res: Response): ExpressResponse<GetNoteResponse> {
-    const userId = req.locals.user.id;
+    const userId = res.locals.user.id;
     const id = Number(req.params.id) as GetNoteRequestParam;
 
     const hasPermission =
@@ -148,7 +148,7 @@ export class NoteController {
     req: Request,
     res: Response
   ): ExpressResponse<CreateNoteResponse> {
-    const userId = req.locals.user.id;
+    const userId = res.locals.user.id;
     const { directoryId, ...values } = req.body as CreateNoteRequestBody;
 
     const { note } = await this.noteService.createNoteAndCollaborator({
@@ -167,7 +167,7 @@ export class NoteController {
     req: Request,
     res: Response
   ): ExpressResponse<UpdateNoteResponse> {
-    const userId = req.locals.user.id;
+    const userId = res.locals.user.id;
     const id = Number(req.params.id) as UpdateNoteRequestParam;
     const values = req.body as UpdateNoteRequestBody;
 
@@ -198,7 +198,7 @@ export class NoteController {
     req: Request,
     res: Response
   ): ExpressResponse<DeleteNoteResponse> {
-    const userId = req.locals.user.id;
+    const userId = res.locals.user.id;
     const id = Number(req.params.id) as DeleteNoteRequestParam;
 
     const hasPermission =
