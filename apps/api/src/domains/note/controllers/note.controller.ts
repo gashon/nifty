@@ -154,7 +154,7 @@ export class NoteController {
     const { directoryId, ...values } = req.body as CreateNoteRequestBody;
 
     const { note } = await this.noteService.createNoteAndCollaborator({
-      values,
+      values: { ...values, createdBy: userId },
       userId,
       directoryId,
       // Default to read-write-delete permission for the creator

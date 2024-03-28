@@ -3,7 +3,10 @@ import { FC, useCallback } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
 import { FieldError } from 'react-hook-form';
 
-import { useCreateNote, NotePermissionDropdown } from '@nifty/client/features/note';
+import {
+  useCreateNote,
+  NotePermissionDropdown,
+} from '@nifty/client/features/note';
 import { Button } from '@nifty/ui/atoms';
 import { FormDrawer, Form, InputField, FieldWrapper } from '@nifty/ui/form';
 import { NoteCreateRequest } from '@nifty/server-lib/models/note';
@@ -28,7 +31,7 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({
 
   const onSubmit = useCallback(
     async (values: NoteCreateRequest) => {
-      const payload = { ...values, directory_id: moduleId };
+      const payload = { ...values, directoryId: moduleId };
       await createNodeMutation.mutateAsync(payload);
     },
     [createNodeMutation]

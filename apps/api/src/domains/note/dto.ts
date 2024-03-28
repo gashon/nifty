@@ -12,7 +12,7 @@ import type {
 
 type NoteWithoutDeletedAt = Omit<Note, 'deletedAt'>;
 
-export type CreateNoteRequestBody = Insertable<Note> & {
+export type CreateNoteRequestBody = Omit<Insertable<Note>, 'createdBy'> & {
   directoryId: number | null;
 };
 export type CreateNoteResponse = AppResponse<NoteWithoutDeletedAt>;

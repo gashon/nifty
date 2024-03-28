@@ -11,7 +11,7 @@ export async function up(db: Kysely<any>): Promise<void> {
       col.references('directory.id')
     )
     .addColumn('title', 'varchar', (col) => col.notNull())
-    .addColumn('content', 'text', (col) => col.notNull())
+    .addColumn('content', 'text', (col) => col.notNull().defaultTo(''))
     .addColumn('description', 'varchar', (col) => col.notNull())
     .addColumn('img_url', 'varchar', (col) => col.notNull())
     .addColumn('public_permissions', 'integer', (col) => col.notNull())

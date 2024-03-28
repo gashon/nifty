@@ -14,7 +14,7 @@ import { OrderBy } from '@nifty/api/types';
 @injectable()
 export class NoteCollaboratorService {
   constructor(
-    @inject(BINDING.DIRECTORY_REPOSITORY)
+    @inject(BINDING.NOTE_COLLABORATOR_REPOSITORY)
     private noteCollaboratorRepository: NoteCollaboratorRepository
   ) {}
 

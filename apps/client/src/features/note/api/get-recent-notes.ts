@@ -8,7 +8,7 @@ export const getRecentlyEditedNotes = async (headers?: {
   const { data } = await axios.get(`/api/v1/notes`, {
     params: {
       limit: 100,
-      orderBy: 'updatedAt desc',
+      orderBy: 'note.updatedAt desc',
     },
     headers,
   });
