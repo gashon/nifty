@@ -26,7 +26,7 @@ type InfiniteQueryData = {
 
 export const useCreateModule = ({ config }: UseCreateModuleOptions = {}) => {
   return useMutation({
-    onMutate: async (newDirectory) => {
+    onSuccess: async (newDirectory) => {
       await queryClient.cancelQueries('directories');
 
       const previousModules: InfiniteQueryData =
@@ -37,7 +37,7 @@ export const useCreateModule = ({ config }: UseCreateModuleOptions = {}) => {
         pages: [
           {
             ...previousModules.pages[0],
-            data: [newDirectory, ...previousModules.pages[0].data],
+            data: [newDirectory.data.data, ...previousModules.pages[0].data],
           },
           ...previousModules.pages.slice(1),
         ],
@@ -49,9 +49,9 @@ export const useCreateModule = ({ config }: UseCreateModuleOptions = {}) => {
         queryClient.setQueryData('directories', context.previousModules);
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries('directories');
-    },
+    // onSuccess: () => {
+    //   queryClient.invalidateQueries('directories');
+    // },
     ...config,
     mutationFn: createModule,
   });
