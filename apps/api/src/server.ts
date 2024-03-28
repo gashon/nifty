@@ -5,7 +5,6 @@ import 'reflect-metadata';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import rateLimit from 'express-rate-limit';
 import * as Sentry from '@sentry/node';
-import mongoose from '@nifty/server-lib/mongoose';
 
 import earlyAccessGuard from './middlewares/guards/early-access';
 import errorHandler from './middlewares/error-handler';
@@ -53,9 +52,6 @@ server.setErrorConfig((app) => {
 });
 
 export async function start() {
-  // Connect to MongoDB
-  await mongoose.connect(process.env.MONGODB_URL!);
-
   const serverInstance = server.build();
   serverInstance.listen(port, () =>
     logger.info(`Server started on port ${port}`)

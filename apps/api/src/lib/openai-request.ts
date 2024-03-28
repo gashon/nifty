@@ -10,11 +10,6 @@ import {
   createFreeResponseGradingPrompt,
 } from '@nifty/api/util';
 import { CustomException } from '@nifty/api/exceptions';
-import {
-  IFreeResponseQuizQuestion,
-  IMultipleChoiceQuizQuestion,
-} from '@nifty/server-lib/models/quiz';
-import { IFreeResponseSubmissionGradingResponse } from '@nifty/server-lib/models/submission';
 import { QuizFreeResponseAnswer } from '../domains/quiz/dto';
 import {
   FreeResponseQuestion,

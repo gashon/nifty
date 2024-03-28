@@ -36,9 +36,6 @@ importers:
       '@dqbd/tiktoken':
         specifier: 1.0.6
         version: 1.0.6
-      '@nifty/server-lib':
-        specifier: workspace:*
-        version: link:../../packages/server-lib
       '@sentry/node':
         specifier: 7.45.0
         version: 7.45.0

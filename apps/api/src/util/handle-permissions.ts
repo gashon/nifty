@@ -1,4 +1,4 @@
-import { PermissionsType } from '@nifty/server-lib/models/collaborator';
+type PermissionsType = number;
 
 export enum Permission {
   Read = 1,

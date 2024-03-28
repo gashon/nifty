@@ -1,18 +1,4 @@
 import {
-  IQuizQuestion,
-  IFreeResponseQuizQuestion,
-  IQuizMultipleChoiceQuestion,
-  IQuizFreeResponseQuestion,
-} from '@nifty/server-lib/models/quiz';
-import {
-  IQuizSubmissionAnswer,
-  IFreeResponseSubmissionGradingResponse,
-  IQuizMultipleChoiceAnswer,
-  IQuizFreeResponseAnswer,
-  IMultipleChoiceSubmissionAnswer,
-  IFreeResponseSubmissionAnswer,
-} from '@nifty/server-lib/models/submission';
-import {
   openaiRequest,
   openaiRequestHandler,
 } from '@nifty/api/lib/openai-request';
@@ -26,16 +12,6 @@ import {
   QuizQuestionMultipleChoice,
   Selectable,
 } from '@nifty/common/types';
-
-type MultipleChoiceQA = {
-  question: IQuizMultipleChoiceQuestion;
-  answer: IQuizMultipleChoiceAnswer;
-};
-
-export type FreeResponseQA = {
-  question: IQuizFreeResponseQuestion;
-  answer: IQuizFreeResponseAnswer;
-};
 
 export function assessMultipleChoiceAnswer(
   question: Selectable<QuizQuestionMultipleChoice>,

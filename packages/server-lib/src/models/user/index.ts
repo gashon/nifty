@@ -10,10 +10,6 @@ const userSchema = new mongoose.Schema<IUser>(
   {
     name: {
       type: String,
-      trim: true,
-      default(this: IUser) {
-        return this.email;
-      },
     },
     email: {
       type: String,
