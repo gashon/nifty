@@ -13,10 +13,9 @@ export default function auth(): RequestHandler {
     const encodedRefreshToken = req.cookies[REFRESH_TOKEN_NAME];
 
     if (!!encodedAccessToken && !!encodedRefreshToken) {
-
-      const accessToken = verifyToken<AccessTokenJwt>(encodedAccessToken)
+      const accessToken = verifyToken<AccessTokenJwt>(encodedAccessToken);
       // TODO(@gashon) revokation logic
-      if(!timestampIsExpired(accessToken.expiresAt)) {
+      if (!timestampIsExpired(accessToken.expiresAt)) {
         // Set locals
         res.locals.user = accessToken.user;
         return next();
@@ -25,7 +24,8 @@ export default function auth(): RequestHandler {
       // user access token is expired
 
       const refreshToken = verifyToken<RefreshTokenJwt>(encodedRefreshToken);
-      const isRefreshTokenValid = refreshToken && !timestampIsExpired(refreshToken.expiresAt);
+      const isRefreshTokenValid =
+        refreshToken && !timestampIsExpired(refreshToken.expiresAt);
       // TODO(@gashon) revokation logic
       const isRefreshTokenDeleted = false;
 
@@ -34,18 +34,23 @@ export default function auth(): RequestHandler {
         res.clearCookie(REFRESH_TOKEN_NAME);
         return res.status(status.UNAUTHORIZED).json({
           error: {
-            message: isRefreshTokenValid ? 'Your session has expired. Please login again.' : 'Invalid authorization token.',
+            message: isRefreshTokenValid
+              ? 'Your session has expired. Please login again.'
+              : 'Invalid authorization token.',
             type: 'invalid_request_error',
           },
         });
       }
 
       // create new access token
-      const {encoded: newAccessToken, expiresAt }= generateAccessToken(refreshToken.user, {
-        strategy: refreshToken.strategy,
-        requestIp: req.ip,
-        requestUserAgent: req.headers['user-agent'] || '',
-      });
+      const { encoded: newAccessToken, expiresAt } = generateAccessToken(
+        refreshToken.user,
+        {
+          strategy: refreshToken.strategy,
+          requestIp: req.ip,
+          requestUserAgent: req.headers['user-agent'] || '',
+        }
+      );
 
       res.cookie(ACCESS_TOKEN_NAME, newAccessToken, {
         expires: expiresAt,

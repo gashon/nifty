@@ -36,6 +36,7 @@ import { Permission } from '@nifty/api/util';
 import { PaginationParams } from '@nifty/api/types';
 import auth from '@nifty/api/middlewares/auth';
 import { CustomException } from '@nifty/api/exceptions';
+import { authGuard } from '@nifty/api/middlewares/guards/auth';
 
 @controller('/v1/notes')
 export class NoteController {
@@ -94,7 +95,7 @@ export class NoteController {
     req: Request,
     res: Response
   ): ExpressResponse<GetUserNotesResponse> {
-    const userId = req.locals.user.id;
+    const userId = res.locals.user.id;
     const { limit, cursor } = req.query as PaginationParams;
 
     const cursorDate = cursor ? new Date(cursor) : undefined;
@@ -108,12 +109,13 @@ export class NoteController {
     return res.json({ data: notes });
   }
 
-  @httpGet('/directories/:id', auth())
+  @httpGet('/directories/:id')
+  @authGuard()
   async getDirectoryNotes(
     req: Request,
     res: Response
   ): ExpressResponse<GetDirectoryNotesResponse> {
-    const userId = req.locals.user.id;
+    const userId = res.locals.user.id;
     const directoryId = Number(req.params.id) as GetDirectoryNotesRequestParam;
     const { limit, cursor } = req.query as GetDirectoryNotesRequestQuery;
 
