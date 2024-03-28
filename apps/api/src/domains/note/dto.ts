@@ -21,11 +21,11 @@ export type GetNoteRequestParam = number;
 export type GetNoteResponse = AppResponse<Note>;
 
 export type GetUserNotesRequestQuery = PaginationParams<'note'>;
-export type GetUserNotesResponse = AppPaginationResponse<Note[]>;
+export type GetUserNotesResponse = AppPaginationResponse<Note>;
 
 export type GetDirectoryNotesRequestParam = number;
 export type GetDirectoryNotesRequestQuery = PaginationParams<'note'>;
-export type GetDirectoryNotesResponse = AppPaginationResponse<Note[]>;
+export type GetDirectoryNotesResponse = AppPaginationResponse<Note>;
 
 export type UpdateNoteRequestBody = Updateable<Note>;
 export type UpdateNoteRequestParam = number;

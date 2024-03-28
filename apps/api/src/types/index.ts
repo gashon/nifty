@@ -1,10 +1,10 @@
 import { DB } from '@nifty/common/types';
 
-export type OrderQueryWithTable = `${T}.${Extract<
+export type OrderQueryWithTable<T> = `${T}.${Extract<
   keyof DB[T] & string,
   string
 >} ${'asc' | 'desc'}`;
-export type OrderQueryWithoutTable = `${Extract<
+export type OrderQueryWithoutTable<T> = `${Extract<
   keyof DB[T] & string,
   string
 >} ${'asc' | 'desc'}`;
@@ -16,7 +16,7 @@ export type OrderBy<T extends keyof DB & string> =
   | OrderQueryWithoutTable<T>[];
 
 export type PaginationParams<T extends keyof DB> = {
-  limit: string;
-  cursor?: number;
+  limit: number;
+  cursor?: string;
   orderBy?: OrderBy<T>;
 };

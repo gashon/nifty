@@ -34,12 +34,10 @@ export class NoteRepository {
 
   async createNoteAndCollaborator({
     userId,
-    directoryId,
     values,
     collabortorPermissions,
   }: {
     userId: number;
-    directoryId: number | null;
     values: Insertable<Note>;
     collabortorPermissions: Permission;
   }) {
@@ -62,32 +60,18 @@ export class NoteRepository {
           .executeTakeFirstOrThrow(),
       ]);
 
-      // link note with collaborator and optional directory
-      const jobs = [
-        trx
-          .insertInto('noteCollaborator')
-          .values({
-            userId,
-            collaboratorId: collaborator.id,
-            noteId: note.id,
-          })
-          .returningAll()
-          .executeTakeFirstOrThrow(),
-        directoryId
-          ? trx
-              .insertInto('directoryNote')
-              .values({
-                directoryId,
-                noteId: note.id,
-              })
-              .returningAll()
-              .executeTakeFirstOrThrow()
-          : null,
-      ];
+      // link note with collaborator
+      const noteCollaborator = await trx
+        .insertInto('noteCollaborator')
+        .values({
+          userId,
+          collaboratorId: collaborator.id,
+          noteId: note.id,
+        })
+        .returningAll()
+        .executeTakeFirstOrThrow();
 
-      const [noteCollaborator, directoryNote] = await Promise.all(jobs);
-
-      return { note, collaborator, noteCollaborator, directoryNote };
+      return { note, collaborator, noteCollaborator };
     });
   }
 
@@ -154,6 +138,7 @@ export class NoteRepository {
       .orderBy(orderBy);
 
     if (cursor) {
+      query = buildQueryWithCursor(query, orderBy, cursor);
       query = query.where('note.createdAt', '<', cursor);
     }
 

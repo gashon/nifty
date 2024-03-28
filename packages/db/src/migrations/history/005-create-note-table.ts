@@ -13,7 +13,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('title', 'varchar', (col) => col.notNull())
     .addColumn('content', 'text', (col) => col.notNull().defaultTo(''))
     .addColumn('description', 'varchar', (col) => col.notNull())
-    .addColumn('img_url', 'varchar', (col) => col.notNull())
+    .addColumn('img_url', 'varchar')
     .addColumn('public_permissions', 'integer', (col) => col.notNull())
     .addColumn('created_at', 'timestamp', (col) =>
       col.defaultTo(sql`now()`).notNull()

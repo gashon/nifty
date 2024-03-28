@@ -151,12 +151,15 @@ export class NoteController {
     res: Response
   ): ExpressResponse<CreateNoteResponse> {
     const userId = res.locals.user.id;
-    const { directoryId, ...values } = req.body as CreateNoteRequestBody;
+    const values = req.body as CreateNoteRequestBody;
 
     const { note } = await this.noteService.createNoteAndCollaborator({
-      values: { ...values, createdBy: userId },
+      values: {
+        ...values,
+        createdBy: userId,
+        publicPermissions: Permission.Read,
+      },
       userId,
-      directoryId,
       // Default to read-write-delete permission for the creator
       collabortorPermissions: Permission.ReadWriteDelete,
     });

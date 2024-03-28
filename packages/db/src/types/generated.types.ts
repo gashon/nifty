@@ -49,7 +49,7 @@ export interface Note {
   description: string;
   directoryId: number | null;
   id: Generated<number>;
-  imgUrl: string;
+  imgUrl: string | null;
   publicPermissions: number;
   title: string;
   updatedAt: Generated<Timestamp>;

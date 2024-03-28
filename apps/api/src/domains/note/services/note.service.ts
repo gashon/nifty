@@ -21,18 +21,15 @@ export class NoteService {
 
   async createNoteAndCollaborator({
     userId,
-    directoryId,
     values,
     collabortorPermissions,
   }: {
     userId: number;
-    directoryId: number | null;
     values: Insertable<Note>;
     collabortorPermissions: Permission;
   }) {
     return this.noteRepository.createNoteAndCollaborator({
       userId,
-      directoryId,
       values,
       collabortorPermissions,
     });

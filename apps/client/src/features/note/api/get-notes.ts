@@ -4,38 +4,34 @@ import {
   UseInfiniteQueryResult,
 } from 'react-query';
 
-import { NoteListResponse } from '@nifty/server-lib/models/note';
 import { PaginationParams } from '@nifty/api/types';
 import { axios } from '@nifty/client/lib/axios';
+import { GetDirectoryNotesResponse } from '@nifty/api/domains/note/dto';
+import { Note } from '@nifty/common/types';
 
 export const getNotes = async (
   directoryId: string | undefined,
-  { sort, limit, cursor, expand }: PaginationParams,
+  params: PaginationParams<'note'>,
   headers?: { [key: string]: string }
-): Promise<{ data: NoteListResponse }> => {
+): Promise<GetDirectoryNotesResponse> => {
   const { data } = await axios.get(`/api/v1/notes/directories/${directoryId}`, {
-    params: {
-      sort,
-      limit,
-      cursor,
-      expand,
-    },
+    params,
     headers,
   });
   return data;
 };
 
-type UseNotesOptions = PaginationParams & {
+type UseNotesOptions = PaginationParams<'note'> & {
   directoryId?: string;
 };
 
 export const useInfiniteNotes = (
   { cursor, directoryId, ...pagination }: UseNotesOptions,
-  initialData?: InfiniteData<NoteListResponse>
-): UseInfiniteQueryResult<NoteListResponse> => {
+  initialData?: InfiniteData<Note[]>
+): UseInfiniteQueryResult<GetDirectoryNotesResponse['data']> => {
   return useInfiniteQuery({
     queryKey: ['notes'],
-    queryFn: ({ pageParam = cursor }) => {
+    queryFn: ({ pageParam = cursor ?? null }) => {
       return new Promise((resolve, reject) => {
         getNotes(directoryId, { ...pagination, cursor: pageParam })
           .then(({ data }) => {
@@ -47,8 +43,8 @@ export const useInfiniteNotes = (
       });
     },
     getNextPageParam: (lastPage, _pages) => {
-      if (lastPage.has_more) {
-        return lastPage.next_cursor;
+      if (lastPage.pagination?.hasMore) {
+        return lastPage.pagination.nextCursor;
       }
     },
     initialData,
