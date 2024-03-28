@@ -8,6 +8,7 @@ import type {
   Note,
   Updateable,
   Directory,
+  Selectable,
 } from '@nifty/common/types';
 
 type NoteWithoutDeletedAt = Omit<Note, 'deletedAt'>;
@@ -21,11 +22,11 @@ export type GetNoteRequestParam = number;
 export type GetNoteResponse = AppResponse<Note>;
 
 export type GetUserNotesRequestQuery = PaginationParams<'note'>;
-export type GetUserNotesResponse = AppPaginationResponse<Note>;
+export type GetUserNotesResponse = AppPaginationResponse<Selectable<Note>>;
 
 export type GetDirectoryNotesRequestParam = number;
 export type GetDirectoryNotesRequestQuery = PaginationParams<'note'>;
-export type GetDirectoryNotesResponse = AppPaginationResponse<Note>;
+export type GetDirectoryNotesResponse = AppPaginationResponse<Selectable<Note>>;
 
 export type UpdateNoteRequestBody = Updateable<Note>;
 export type UpdateNoteRequestParam = number;

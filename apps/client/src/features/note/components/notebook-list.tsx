@@ -33,7 +33,7 @@ export const NotebookList: FC<NotebookListProps> = ({ moduleId }) => {
         )}
         {data && isFetched && (
           <>
-            {data.pages.map((page) => {
+            {data.pages.map(({ data: page }) => {
               return page.map((note) => (
                 <div key={note.id}>
                   <NotebookItem

@@ -3,7 +3,7 @@ import { axios } from '@nifty/client/lib/axios';
 import { NoteListResponse } from '@nifty/server-lib/models/note';
 import { MutationConfig, queryClient } from '@nifty/client/lib/react-query';
 
-export const deleteNote = (noteId: string) => {
+export const deleteNote = (noteId: number) => {
   return axios.delete(`/api/v1/notes/${noteId}`);
 };
 
@@ -13,20 +13,21 @@ type UseCreateModuleOptions = {
 
 export const useDeleteNote = ({ config }: UseCreateModuleOptions = {}) => {
   return useMutation({
-    onMutate: async (deletedNoteId) => {
-      await queryClient.cancelQueries('notes');
-
-      // delete the note from the cache
-      const previousModules: NoteListResponse = queryClient.getQueryData('notes');
-      queryClient.setQueryData('notes', () => (
-        {
-          ...previousModules,
-          data: (previousModules?.data || []).filter((note) => note.id !== deletedNoteId),
-        }
-      ));
-
-      return { previousModules };
-    },
+    // onMutate: async (deletedNoteId) => {
+    //   await queryClient.cancelQueries('notes');
+    //
+    //   // delete the note from the cache
+    //   const previousModules: NoteListResponse =
+    //     queryClient.getQueryData('notes');
+    //   queryClient.setQueryData('notes', () => ({
+    //     ...previousModules,
+    //     data: (previousModules?.data || []).filter(
+    //       (note) => note.id !== deletedNoteId
+    //     ),
+    //   }));
+    //
+    //   return { previousModules };
+    // },
     onError: (_, __, context: any) => {
       if (context?.previousModules) {
         queryClient.setQueryData('notes', context.previousModules);

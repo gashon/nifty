@@ -27,14 +27,14 @@ type UseNotesOptions = PaginationParams<'note'> & {
 
 export const useInfiniteNotes = (
   { cursor, directoryId, ...pagination }: UseNotesOptions,
-  initialData?: InfiniteData<Note[]>
-): UseInfiniteQueryResult<GetDirectoryNotesResponse['data']> => {
+  initialData?: InfiniteData<GetDirectoryNotesResponse>
+): UseInfiniteQueryResult<GetDirectoryNotesResponse> => {
   return useInfiniteQuery({
     queryKey: ['notes'],
     queryFn: ({ pageParam = cursor ?? null }) => {
       return new Promise((resolve, reject) => {
         getNotes(directoryId, { ...pagination, cursor: pageParam })
-          .then(({ data }) => {
+          .then((data) => {
             resolve(data);
           })
           .catch((error) => {

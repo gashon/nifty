@@ -43,7 +43,7 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({
         isDone={createNodeMutation.isSuccess}
         title={'Create a document'}
         triggerButton={
-          <div className="absolute right-0">
+          <div className="flex justify-end py-4">
             <Button> Create Document </Button>
           </div>
         }
