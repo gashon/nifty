@@ -13,7 +13,7 @@ import { Permission, isPermitted } from '@nifty/api/util';
 @injectable()
 export class DirectoryCollaboratorService {
   constructor(
-    @inject(BINDING.DIRECTORY_REPOSITORY)
+    @inject(BINDING.DIRECTORY_COLLABORATOR_REPOSITORY)
     private directoryCollaboratorRepository: DirectoryCollaboratorRepository
   ) {}
 
@@ -88,7 +88,7 @@ export class DirectoryCollaboratorService {
     limit: number;
     cursor?: Date;
   }) {
-    console.log(this.directoryCollaboratorRepository);
+    console.log('REPO - ', this.directoryCollaboratorRepository);
     return this.directoryCollaboratorRepository.paginateDirectoriesByUserId({
       userId,
       limit,

@@ -77,6 +77,10 @@ export class DirectoryController {
     const { cursor, limit } = req.query as PaginationParams;
 
     const cursorDate = cursor ? new Date(cursor) : undefined;
+    console.log(
+      'SERVICE - ',
+      this.directoryCollaboratorService.paginateDirectoriesByUserId
+    );
     const directories =
       await this.directoryCollaboratorService.paginateDirectoriesByUserId({
         userId,
