@@ -20,7 +20,8 @@ export type CreateNoteResponse = AppResponse<NoteWithoutDeletedAt>;
 export type GetNoteRequestParam = number;
 export type GetNoteResponse = AppResponse<Note>;
 
-export type GetUserNotesResponse = AppResponse<Note[]>;
+export type GetUserNotesRequestQuery = PaginationParams<'note'>;
+export type GetUserNotesResponse = AppPaginationResponse<Note[]>;
 
 export type GetDirectoryNotesRequestParam = number;
 export type GetDirectoryNotesRequestQuery = PaginationParams<'note'>;

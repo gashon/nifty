@@ -30,6 +30,7 @@ import type {
   UpdateNoteResponse,
   DeleteNoteResponse,
   UpdateNoteRequestParam,
+  GetUserNotesRequestQuery,
 } from '@nifty/api/domains/note/dto';
 import type { ExpressResponse } from '@nifty/api/domains/dto';
 import { Permission } from '@nifty/api/util';
@@ -51,12 +52,6 @@ export class NoteController {
     @inject(BINDING.NOTE_COLLABORATOR_SERVICE)
     private noteCollaboratorService: NoteCollaboratorService
   ) {}
-
-  @httpGet('/recent', auth())
-  async getRecentNotes(req: Request, res: Response): Promise<void> {
-    res.json({ data: [] });
-    return;
-  }
 
   @httpGet('/:id/neighbors', auth())
   async getNoteNeighbors(req: Request, res: Response): Promise<void> {
@@ -97,7 +92,7 @@ export class NoteController {
     res: Response
   ): ExpressResponse<GetUserNotesResponse> {
     const userId = res.locals.user.id;
-    const { limit, cursor, orderBy } = req.query as PaginationParams<'note'>;
+    const { limit, cursor, orderBy } = req.query as GetUserNotesRequestQuery;
 
     const cursorDate = cursor ? new Date(cursor) : undefined;
     const notes = await this.noteCollaboratorService.paginateNotesByUserId({

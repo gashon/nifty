@@ -75,7 +75,7 @@ export class NoteCollaboratorService {
     userId: number;
     select: readonly SelectExpression<DB, 'note'>[] | '*';
     limit: number;
-    cursor: Date;
+    cursor?: Date;
     orderBy?: OrderBy<'note'>;
   }) {
     return this.noteCollaboratorRepository.paginateNotesByUserId({
