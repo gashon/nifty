@@ -1,6 +1,5 @@
 import * as z from 'zod';
 import { FC, useCallback } from 'react';
-import { AiOutlinePlus } from 'react-icons/ai';
 import { FiArrowRight } from 'react-icons/fi';
 import { FieldError } from 'react-hook-form';
 
@@ -8,20 +7,24 @@ import { useCreateModule } from '@nifty/client/features/module';
 
 import { Button } from '@nifty/ui/atoms';
 import { FormDrawer, Form, InputField } from '@nifty/ui/form';
-import { DirectoryCreateRequest } from '@nifty/server-lib/models/directory';
+import type { CreateDirectoryRequestBody } from '@nifty/api/domains/directory/dto';
 
 const schema = z.object({
   name: z.string().min(1).max(50),
-  alias: z.string().min(0).max(50).optional(),
-  credits: z.string().min(0).max(100).optional(),
+  alias: z.string().min(0).max(50).optional().nullable(),
+  credits: z.string().optional().nullable(),
 });
 
 export const ModuleCreationButton: FC = () => {
   const createModuleMutation = useCreateModule();
 
   const onSubmit = useCallback(
-    async (values: DirectoryCreateRequest) => {
-      const payload = { ...values, parent: undefined };
+    async (values: CreateDirectoryRequestBody) => {
+      const payload = {
+        ...values,
+        parentId: undefined,
+        credits: values.credits ? parseInt(values.credits) : null,
+      };
       await createModuleMutation.mutateAsync(payload);
     },
     [createModuleMutation]
@@ -43,7 +46,7 @@ export const ModuleCreationButton: FC = () => {
           </Button>
         }
       >
-        <Form<DirectoryCreateRequest, typeof schema>
+        <Form<CreateDirectoryRequestBody, typeof schema>
           schema={schema}
           onSubmit={onSubmit}
           className="w-full flex flex-col align-center justify-center"
@@ -77,7 +80,7 @@ export const ModuleCreationButton: FC = () => {
                 style={{ marginBottom: -5 }}
               >
                 <InputField
-                  type="text"
+                  type="number"
                   label="Number of Credits (optional)"
                   error={formState.errors['credits'] as FieldError}
                   registration={register('credits')}

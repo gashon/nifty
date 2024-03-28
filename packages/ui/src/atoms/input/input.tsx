@@ -12,17 +12,23 @@ type InputProps = Pick<
 } & Partial<UseFormRegisterReturn>;
 
 // Based on https://play.tailwindcss.com/asmAkefxLr
-export const Input: FC<InputProps> = ({ label, registration, ...rest }) => (
+export const Input: FC<InputProps> = ({
+  label,
+  type,
+  registration,
+  ...rest
+}) => (
   <div className="group relative w-full">
     <input
       {...rest}
+      type={type}
       data-testid="input-atom"
-      type="text"
       className={
         'text-black peer w-full bg-transparent px-3 py-3 outline-none transition-colors'
       }
       placeholder=" "
       style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
+      autoComplete="off"
       {...registration}
     />
 

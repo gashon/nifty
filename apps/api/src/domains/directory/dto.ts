@@ -8,7 +8,10 @@ export type GetDirectoryResponse = AppResponse<Directory>;
 export type GetDirectoriesRequestQuery = PaginationParams;
 export type GetDirectoriesResponse = AppResponse<Directory[]>;
 
-export type CreateDirectoryRequestBody = Insertable<Directory>;
+export type CreateDirectoryRequestBody = Pick<
+  Insertable<Directory>,
+  'alias' | 'name' | 'credits' | 'parentId'
+>;
 export type CreateDirectoryResponse = AppResponse<Directory>;
 
 export type DeleteDirectoryRequestParam = number;

@@ -77,10 +77,6 @@ export class DirectoryController {
     const { cursor, limit } = req.query as PaginationParams;
 
     const cursorDate = cursor ? new Date(cursor) : undefined;
-    console.log(
-      'SERVICE - ',
-      this.directoryCollaboratorService.paginateDirectoriesByUserId
-    );
     const directories =
       await this.directoryCollaboratorService.paginateDirectoriesByUserId({
         userId,
@@ -102,7 +98,7 @@ export class DirectoryController {
     const { directory } =
       await this.directoryService.createDirectoryAndCollaborator({
         userId,
-        values,
+        values: { ...values, createdBy: userId },
         // Default permission for the creator
         collabortorPermissions: Permission.ReadWriteDelete,
       });

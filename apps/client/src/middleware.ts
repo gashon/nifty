@@ -11,7 +11,6 @@ const middleware: NextMiddleware = async function middleware(req) {
     req.cookies.get(ACCESS_TOKEN_NAME) &&
     req.cookies.get(REFRESH_TOKEN_NAME)
   ) {
-    console.log('hit', req.nextUrl.pathname);
     if (req.nextUrl.pathname === '/')
       return NextResponse.redirect(createUrl('/dashboard'));
   }
