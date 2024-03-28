@@ -88,6 +88,7 @@ export class DirectoryCollaboratorService {
     limit: number;
     cursor?: Date;
   }) {
+    console.log(this.directoryCollaboratorRepository);
     return this.directoryCollaboratorRepository.paginateDirectoriesByUserId({
       userId,
       limit,

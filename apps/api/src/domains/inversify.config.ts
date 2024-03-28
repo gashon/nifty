@@ -2,45 +2,11 @@ import { Container } from 'inversify';
 
 import type { KysleyDB } from '@nifty/common/types/pg';
 import { db } from '@nifty/common/db';
-
 import {
-  IUserController,
   UserController,
-  USER_TYPES,
-} from '@nifty/api/domains/user';
-import {
-  IDirectoryController,
-  DirectoryController,
-  DIRECTORY_TYPES,
-} from '@nifty/api/domains/directory';
-import {
-  ICollaboratorController,
-  COLLABORATOR_TYPES,
-} from '@nifty/api/domains/collaborator';
-import {
-  INoteController,
-  NoteController,
-  NOTE_TYPES,
-} from '@nifty/api/domains/note';
-import {
-  IQuizController,
-  QuizCollaboratorRepository,
   QuizController,
-  QUIZ_TYPES,
-} from '@nifty/api/domains/quiz';
-import { SUBMISSION_TYPES } from './submission/types';
-
-import Note, { NoteModel } from '@nifty/server-lib/models/note';
-import Directory, { DirectoryModel } from '@nifty/server-lib/models/directory';
-import Collaborator, {
-  CollaboratorModel,
-} from '@nifty/server-lib/models/collaborator';
-import Quiz, { QuizModel } from '@nifty/server-lib/models/quiz';
-import Submission, {
-  SubmissionModel,
-} from '@nifty/server-lib/models/submission';
-import User, { type UserModel } from '@nifty/server-lib/models/user';
-import {
+  NoteController,
+  DirectoryController,
   DirectoryRepository,
   DirectoryCollaboratorRepository,
   CollaboratorRepository,
@@ -56,6 +22,7 @@ import {
   QuizRepository,
   SubmissionService,
   SubmissionRepository,
+  QuizCollaboratorRepository,
 } from '@nifty/api/domains';
 import { BINDING } from '@nifty/api/domains/binding';
 import { QuizCollaboratorService } from './quiz/services/quiz-collaborator.service';
@@ -67,8 +34,7 @@ container.bind<KysleyDB>(BINDING.DB).toConstantValue(db);
 // User
 container.bind<UserRepository>(BINDING.USER_REPOSITORY).to(UserRepository);
 container.bind<UserService>(BINDING.USER_SERVICE).to(UserService);
-container.bind<UserModel>(USER_TYPES.MODEL).toDynamicValue(() => User);
-container.bind<IUserController>(USER_TYPES.CONTROLLER).to(UserController);
+container.bind<UserController>(BINDING.USER_CONTROLLER).to(UserController);
 
 // Directory
 container
@@ -86,18 +52,12 @@ container
   )
   .to(DirectoryCollaboratorRepository);
 container
-  .bind<DirectoryModel>(DIRECTORY_TYPES.MODEL)
-  .toDynamicValue(() => Directory);
-container
-  .bind<IDirectoryController>(DIRECTORY_TYPES.CONTROLLER)
+  .bind<DirectoryController>(BINDING.DIRECTORY_CONTROLLER)
   .to(DirectoryController);
 
 container
   .bind<CollaboratorRepository>(BINDING.COLLABORATOR_REPOSITORY)
   .to(CollaboratorRepository);
-container
-  .bind<CollaboratorModel>(COLLABORATOR_TYPES.MODEL)
-  .toDynamicValue(() => Collaborator);
 
 // Note
 container.bind<NoteService>(BINDING.NOTE_SERVICE).to(NoteService);
@@ -108,8 +68,7 @@ container.bind<NoteRepository>(BINDING.NOTE_REPOSITORY).to(NoteRepository);
 container
   .bind<NoteCollaboratorRepository>(BINDING.NOTE_COLLABORATOR_REPOSITORY)
   .to(NoteCollaboratorRepository);
-container.bind<NoteModel>(NOTE_TYPES.MODEL).toDynamicValue(() => Note);
-container.bind<INoteController>(NOTE_TYPES.CONTROLLER).to(NoteController);
+container.bind<NoteController>(BINDING.NOTE_CONTROLLER).to(NoteController);
 
 // Quiz
 container.bind<QuizService>(BINDING.QUIZ_SERVICE).to(QuizService);
@@ -120,8 +79,7 @@ container.bind<QuizRepository>(BINDING.QUIZ_REPOSITORY).to(QuizRepository);
 container
   .bind<QuizCollaboratorRepository>(BINDING.QUIZ_COLLABORATOR_REPOSITORY)
   .to(QuizCollaboratorRepository);
-container.bind<QuizModel>(QUIZ_TYPES.MODEL).toDynamicValue(() => Quiz);
-container.bind<IQuizController>(QUIZ_TYPES.CONTROLLER).to(QuizController);
+container.bind<QuizController>(BINDING.QUIZ_CONTROLLER).to(QuizController);
 
 // Submission
 container
@@ -130,8 +88,5 @@ container
 container
   .bind<SubmissionRepository>(BINDING.SUBMISSION_REPOSITORY)
   .to(SubmissionRepository);
-container
-  .bind<SubmissionModel>(SUBMISSION_TYPES.MODEL)
-  .toDynamicValue(() => Submission);
 
 export { container };
