@@ -5,7 +5,7 @@ import type { Insertable, Directory, Updateable } from '@nifty/common/types';
 export type GetDirectoryRequestParam = Pick<Directory, 'id'>;
 export type GetDirectoryResponse = AppResponse<Directory>;
 
-export type GetDirectoriesRequestQuery = PaginationParams;
+export type GetDirectoriesRequestQuery = PaginationParams<'directory'>;
 export type GetDirectoriesResponse = AppResponse<Directory[]>;
 
 export type CreateDirectoryRequestBody = Pick<

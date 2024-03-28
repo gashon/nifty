@@ -20,7 +20,9 @@ import type {
   CreateDirectoryResponse,
   DeleteDirectoryRequestParam,
   DeleteDirectoryResponse,
+  GetDirectoriesRequestQuery,
   GetDirectoriesResponse,
+  GetDirectoryRequestParam,
 } from '@nifty/api/domains/directory/dto';
 import { BINDING } from '@nifty/api/domains/binding';
 import { Permission } from '@nifty/api/util';
@@ -34,13 +36,6 @@ export class DirectoryController {
     @inject(BINDING.DIRECTORY_COLLABORATOR_SERVICE)
     private directoryCollaboratorService: DirectoryCollaboratorService
   ) {}
-
-  @httpGet('/recent', auth())
-  async getRecentDirectories(req: Request, res: Response): Promise<void> {
-    //TODO(@gashon) implement
-    res.json({ data: [] });
-    return;
-  }
 
   @httpGet('/:id', auth())
   async getDirectory(
@@ -74,7 +69,7 @@ export class DirectoryController {
     res: Response
   ): ExpressResponse<GetDirectoriesResponse> {
     const userId = res.locals.user.id;
-    const { cursor, limit } = req.query as PaginationParams;
+    const { cursor, limit, orderBy } = req.query as GetDirectoriesRequestQuery;
 
     const cursorDate = cursor ? new Date(cursor) : undefined;
     const directories =
@@ -82,6 +77,7 @@ export class DirectoryController {
         userId,
         cursor: cursorDate,
         limit: Number(limit),
+        orderBy,
       });
 
     return res.json({ data: directories });

@@ -6,21 +6,27 @@ import type {
   SelectExpression,
   DB,
   DirectoryCollaborator,
+  Transaction,
+  Directory,
 } from '@nifty/common/types';
 import { BINDING } from '@nifty/api/domains/binding';
+import { OrderBy } from '@nifty/api/types';
 
 @injectable()
 export class DirectoryCollaboratorRepository {
   constructor(@inject(BINDING.DB) private db: KysleyDB) {}
 
-  async createDirectoryCollaborator({
-    values,
-    returning,
-  }: {
-    values: Insertable<DirectoryCollaborator>;
-    returning: readonly SelectExpression<DB, 'directoryCollaborator'>[];
-  }) {
-    return this.db
+  async createDirectoryCollaborator(
+    {
+      values,
+      returning,
+    }: {
+      values: Insertable<DirectoryCollaborator>;
+      returning: readonly SelectExpression<DB, 'directoryCollaborator'>[];
+    },
+    trx?: Transaction<DB>
+  ) {
+    return (trx || this.db)
       .insertInto('directoryCollaborator')
       .values(values)
       .returning(returning)
@@ -73,12 +79,14 @@ export class DirectoryCollaboratorRepository {
     userId,
     limit,
     cursor,
+    orderBy = ['directory.createdAt desc'],
   }: {
     userId: number;
     limit: number;
     cursor?: Date;
+    orderBy?: OrderBy<'directory'>[];
   }) {
-    const query = this.db
+    let query = this.db
       .selectFrom('directoryCollaborator')
       .where('directoryCollaborator.userId', '=', userId)
       .innerJoin(
@@ -89,11 +97,17 @@ export class DirectoryCollaboratorRepository {
       .where('directory.deletedAt', 'is', null)
       .where('directoryCollaborator.deletedAt', 'is', null)
       .selectAll()
-      .orderBy('directory.createdAt', 'desc')
+      .orderBy(orderBy)
       .limit(limit);
 
     if (cursor) {
-      query.where('directory.createdAt', '<', cursor);
+      for (const str of orderBy) {
+        const [column, order] = str.split(' ') as [
+          keyof Directory,
+          'asc' | 'desc'
+        ];
+        query = query.where(column, order === 'asc' ? '>' : '<', cursor);
+      }
     }
 
     return query.execute();

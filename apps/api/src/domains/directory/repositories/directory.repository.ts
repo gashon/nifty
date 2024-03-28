@@ -8,10 +8,15 @@ import type {
   DB,
 } from '@nifty/common/types';
 import { BINDING } from '@nifty/api/domains/binding';
+import { DirectoryCollaboratorRepository } from './directory-collaborator.repository';
 
 @injectable()
 export class DirectoryRepository {
-  constructor(@inject(BINDING.DB) private db: KysleyDB) {}
+  constructor(
+    @inject(BINDING.DB) private db: KysleyDB,
+    @inject(BINDING.DIRECTORY_COLLABORATOR_REPOSITORY)
+    private directoryCollaboratorRepository: DirectoryCollaboratorRepository
+  ) {}
 
   async createDirectory({
     values,
@@ -56,6 +61,18 @@ export class DirectoryRepository {
           .executeTakeFirstOrThrow(),
       ]);
 
+      await this.directoryCollaboratorRepository.createDirectoryCollaborator(
+        {
+          values: {
+            directoryId: directory.id,
+            collaboratorId: collaborator.id,
+            userId,
+          },
+          returning: ['directoryId'],
+        },
+        trx
+      );
+
       return { directory, collaborator };
     });
   }
@@ -65,12 +82,12 @@ export class DirectoryRepository {
     select,
   }: {
     id: number;
-    select: readonly SelectExpression<DB, 'directory'>[] | "*";
+    select: readonly SelectExpression<DB, 'directory'>[] | '*';
   }) {
     const query = this.db
       .selectFrom('directory')
       .where('id', '=', id)
-      .where('deletedAt', 'is', null)
+      .where('deletedAt', 'is', null);
 
     if (select !== '*') return query.select(select).executeTakeFirstOrThrow();
     return query.executeTakeFirstOrThrow();

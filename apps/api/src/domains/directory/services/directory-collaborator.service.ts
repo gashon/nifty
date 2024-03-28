@@ -9,6 +9,7 @@ import type {
 import { BINDING } from '@nifty/api/domains/binding';
 import { DirectoryCollaboratorRepository } from '@nifty/api/domains';
 import { Permission, isPermitted } from '@nifty/api/util';
+import { OrderBy } from '@nifty/api/types';
 
 @injectable()
 export class DirectoryCollaboratorService {
@@ -83,16 +84,18 @@ export class DirectoryCollaboratorService {
     userId,
     limit,
     cursor,
+    orderBy,
   }: {
     userId: number;
     limit: number;
     cursor?: Date;
+    orderBy?: OrderBy<'directory'>[];
   }) {
-    console.log('REPO - ', this.directoryCollaboratorRepository);
     return this.directoryCollaboratorRepository.paginateDirectoriesByUserId({
       userId,
       limit,
       cursor,
+      orderBy,
     });
   }
 }
