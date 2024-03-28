@@ -28,13 +28,13 @@ export const NotebookList: FC<NotebookListProps> = ({ moduleId }) => {
           </>
         )}
         {/* @ts-ignore */}
-        {data && isFetched && data.pages[0]?.data.length === 0 && (
+        {data && isFetched && data.pages[0]?.data?.length === 0 && (
           <div className="text-gray-500">No notes found</div>
         )}
         {data && isFetched && (
           <>
             {data.pages.map(({ data }: any) => {
-              return data.map((note) => (
+              return (data || []).map((note) => (
                 <div key={note.id}>
                   <NotebookItem
                     onDelete={() => deleteNote(note.id)}
