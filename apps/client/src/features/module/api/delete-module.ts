@@ -17,13 +17,14 @@ export const useDeleteModule = ({ config }: UseCreateModuleOptions = {}) => {
       await queryClient.cancelQueries('directories');
 
       // delete the directory from the cache
-      const previousModules: DirectoryListResponse = queryClient.getQueryData('directories');
-      queryClient.setQueryData('directories', () => (
-        {
-          ...previousModules,
-          data: (previousModules?.data || []).filter((dir) => dir.id !== deleteDirectory.id),
-        }
-      ));
+      const previousModules: DirectoryListResponse =
+        queryClient.getQueryData('directories');
+      queryClient.setQueryData('directories', () => ({
+        ...previousModules,
+        data: (previousModules?.data || []).filter(
+          (dir) => dir.id !== deleteDirectory.id
+        ),
+      }));
 
       return { previousModules };
     },
@@ -35,7 +36,9 @@ export const useDeleteModule = ({ config }: UseCreateModuleOptions = {}) => {
     onSuccess: () => {
       queryClient.invalidateQueries('directories');
       queryClient.invalidateQueries('recent-directories');
-
+      // invalidate notes which may have been moved to the trash
+      queryClient.invalidateQueries('notes');
+      queryClient.invalidateQueries('recent-notes');
     },
     ...config,
     mutationFn: (directoryId) => deleteDirectory(directoryId),

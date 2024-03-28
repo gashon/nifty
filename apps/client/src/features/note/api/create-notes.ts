@@ -37,16 +37,18 @@ export const useCreateNote = ({ config }: UseCreateModuleOptions = {}) => {
     },
     onSuccess: (noteCreateResponse) => {
       const createdNote = noteCreateResponse.data.data;
+
       queryClient.setQueryData<InfiniteQueryData>(
         'notes',
         (previousModules) => {
+          console.log('previousModules', previousModules, createdNote);
           if (previousModules?.pages?.length > 0) {
             return {
               ...previousModules,
               pages: [
                 {
                   ...previousModules.pages[0],
-                  data: [createdNote, ...previousModules.pages[0]],
+                  data: [createdNote, ...previousModules.pages[0].data],
                 },
                 ...previousModules.pages.slice(1),
               ],

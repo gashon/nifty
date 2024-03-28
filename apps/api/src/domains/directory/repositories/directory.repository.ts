@@ -8,14 +8,18 @@ import type {
   DB,
 } from '@nifty/common/types';
 import { BINDING } from '@nifty/api/domains/binding';
-import { DirectoryCollaboratorRepository } from './directory-collaborator.repository';
-
+import {
+  DirectoryCollaboratorRepository,
+  NoteRepository,
+} from '@nifty/api/domains';
 @injectable()
 export class DirectoryRepository {
   constructor(
     @inject(BINDING.DB) private db: KysleyDB,
     @inject(BINDING.DIRECTORY_COLLABORATOR_REPOSITORY)
-    private directoryCollaboratorRepository: DirectoryCollaboratorRepository
+    private directoryCollaboratorRepository: DirectoryCollaboratorRepository,
+    @inject(BINDING.NOTE_REPOSITORY)
+    private noteRepository: NoteRepository
   ) {}
 
   async createDirectory({
@@ -93,12 +97,19 @@ export class DirectoryRepository {
     return query.executeTakeFirstOrThrow();
   }
 
+  // delete directory and all notes in it (not noteCollaborators or directoryCollaborators though)
+  // TODO(@gashon) support recursive deletion of child directories and notes
   async deleteDirectoryById(id: number) {
-    return this.db
-      .updateTable('directory')
-      .set({ deletedAt: new Date() })
-      .where('id', '=', id)
-      .where('deletedAt', 'is', null)
-      .executeTakeFirstOrThrow();
+    return this.db.transaction().execute(async (trx) => {
+      await Promise.all([
+        trx
+          .updateTable('directory')
+          .set({ deletedAt: new Date() })
+          .where('id', '=', id)
+          .where('deletedAt', 'is', null)
+          .executeTakeFirstOrThrow(),
+        this.noteRepository.deleteNotesByDirectoryId(id, trx),
+      ]);
+    });
   }
 }

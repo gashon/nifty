@@ -53,6 +53,7 @@ export class DirectoryService {
   }
 
   async deleteDirectoryById(id: number) {
+    // this also deletes all notes in the directory
     return this.directoryRepository.deleteDirectoryById(id);
   }
 }

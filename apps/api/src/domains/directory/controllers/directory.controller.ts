@@ -120,6 +120,7 @@ export class DirectoryController {
       throw new CustomException('Permission denied', status.FORBIDDEN);
     }
 
+    // this also deletes all notes in the directory
     await this.directoryService.deleteDirectoryById(id);
 
     return res.json({ data: { id } });

@@ -7,11 +7,11 @@ import type {
   DB,
   Note,
   Updateable,
+  Transaction,
 } from '@nifty/common/types';
 import { BINDING } from '@nifty/api/domains/binding';
 import { Permission } from '@nifty/api/util';
 import { OrderBy } from '@nifty/api/types';
-import { buildQueryWithCursor } from '@nifty/api/util/pagination';
 
 @injectable()
 export class NoteRepository {
@@ -116,6 +116,16 @@ export class NoteRepository {
       .where('deletedAt', 'is', null)
       .returning(['id'])
       .executeTakeFirstOrThrow();
+  }
+
+  async deleteNotesByDirectoryId(directoryId: number, trx?: Transaction<DB>) {
+    return (trx || this.db)
+      .updateTable('note')
+      .set({ deletedAt: new Date() })
+      .where('directoryId', '=', directoryId)
+      .where('deletedAt', 'is', null)
+      .returning(['id'])
+      .execute();
   }
 
   async paginateNotesByDirectoryId({
