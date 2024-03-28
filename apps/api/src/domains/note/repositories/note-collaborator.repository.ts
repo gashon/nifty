@@ -51,7 +51,7 @@ export class NoteCollaboratorRepository {
         )
         // sql will optimize this join out if unused in select
         .innerJoin('note', 'note.id', 'noteCollaborator.noteId')
-        .where('userId', '=', userId)
+        .where('noteCollaborator.userId', '=', userId)
         .select(select)
         .executeTakeFirst()
     );
