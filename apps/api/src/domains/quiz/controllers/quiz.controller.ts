@@ -7,7 +7,6 @@ import {
 } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { Request, Response } from 'express';
-import { FilterQuery } from 'mongoose';
 
 import auth from '@nifty/api/middlewares/auth';
 import {
@@ -16,16 +15,7 @@ import {
 } from '@nifty/api/lib/openai-request';
 import { CustomException } from '@nifty/api/exceptions';
 import { PaginationParams } from '@nifty/api/types';
-import { IQuizController } from '@nifty/api/domains/quiz';
-import { QUIZ_TYPES, QuizCreateResponse } from '@nifty/api/domains/quiz/types';
-import { NOTE_TYPES } from '@nifty/api/domains/note/types';
-import { COLLABORATOR_TYPES } from '@nifty/api/domains/collaborator/types';
-import { DIRECTORY_TYPES } from '@nifty/api/domains/directory/types';
-import collaborator, {
-  CollaboratorDocument,
-  CollaboratorModel,
-  ICollaborator,
-} from '@nifty/server-lib/models/collaborator';
+
 import {
   setPermissions,
   Permission,
@@ -33,215 +23,152 @@ import {
   countTokens,
   createMultipleChoiceQuizGenerationPrompt,
   createFreeResponseQuizGenerationPrompt,
+  gradeAnswers,
 } from '@nifty/api/util';
+import { authGuard } from '@nifty/api/middlewares/guards/auth';
 import {
-  SubmissionCreateRequest,
-  ISubmissionAnswer,
-  SubmissionModel,
-} from '@nifty/server-lib/models/submission';
-import { QuizCreateRequest, QuizModel } from '@nifty/server-lib/models/quiz';
-import { SUBMISSION_TYPES } from '@nifty/api/domains/submission/types';
-import { NoteModel } from '@nifty/server-lib/models/note';
-import { DirectoryModel } from '@nifty/server-lib/models/directory';
+  SubmissionService,
+  QuizService,
+  QuizCollaboratorService,
+  NoteCollaboratorService,
+  NoteService,
+} from '@nifty/api/domains';
+import { BINDING } from '../../binding';
+import { ExpressResponse } from '../../dto';
+import type {
+  CreateQuizRequestBody,
+  CreateQuizResponse,
+  CreateQuizSubmissionRequestBody,
+  CreateQuizSubmissionResponse,
+  DeleteQuizByIdRequestParams,
+  DeleteQuizByIdResponse,
+  GetQuizByIdRequestParams,
+  GetQuizByIdResponse,
+  GetQuizSubmissionByIdResponse,
+  GetQuizSubmissionsRequestParams,
+  GetQuizSubmissionsResponse,
+  GetQuizzesResponse,
+} from '@nifty/api/domains/quiz/dto';
 
 @controller('/v1/quizzes')
-export class QuizController implements IQuizController {
+export class QuizController {
   constructor(
-    @inject(QUIZ_TYPES.MODEL) private quizModel: QuizModel,
-    @inject(SUBMISSION_TYPES.MODEL) private submissionModel: SubmissionModel,
-    @inject(NOTE_TYPES.MODEL) private noteModel: NoteModel,
-    @inject(DIRECTORY_TYPES.MODEL)
-    private directoryModel: DirectoryModel,
-    @inject(COLLABORATOR_TYPES.MODEL)
-    private collaboratorModel: CollaboratorModel
+    @inject(BINDING.QUIZ_SERVICE)
+    private quizService: QuizService,
+    @inject(BINDING.QUIZ_COLLABORATOR_SERVICE)
+    private quizCollaboratorService: QuizCollaboratorService,
+    @inject(BINDING.SUBMISSION_SERVICE)
+    private submissionService: SubmissionService,
+    @inject(BINDING.NOTE_COLLABORATOR_SERVICE)
+    private noteCollaboratorService: NoteCollaboratorService,
+    @inject(BINDING.NOTE_SERVICE)
+    private noteService: NoteService
   ) {}
 
   @httpGet('/:id', auth())
-  async getQuiz(req: Request, res: Response): Promise<void> {
+  @authGuard()
+  async getQuiz(
+    req: Request,
+    res: Response
+  ): ExpressResponse<GetQuizByIdResponse> {
     const userId = res.locals.user._id;
+    const quizId = Number(req.params.id) as GetQuizByIdRequestParams;
 
-    // hide correct answer
-    let quiz = await this.quizModel.findById(req.params.id, {
-      'questions.correct_index': 0,
-    });
-    if (!quiz) throw new CustomException('Quiz not found', status.NOT_FOUND);
+    const hasPermission =
+      await this.quizCollaboratorService.userHasPermissionToQuiz({
+        quizId,
+        userId,
+        permission: Permission.Read,
+      });
 
-    // validate permissions
-    quiz = await quiz.populate('collaborators');
-    const collaborator = quiz.collaborators.find(
-      (collaborator: any) => collaborator.user === userId
-    );
-    if (!collaborator)
+    if (!hasPermission) {
       throw new CustomException(
-        'You do not have access to this quiz',
+        'You do not have permission to read this quiz.',
         status.FORBIDDEN
       );
+    }
 
-    res.status(status.OK).json({ data: quiz });
+    const quiz = await this.quizService.getQuizById({
+      id: quizId,
+      select: '*',
+    });
+
+    return res.status(status.OK).json({ data: quiz });
   }
 
   @httpGet('/', auth())
-  async getQuizzes(req: Request, res: Response): Promise<void> {
+  async getQuizzes(
+    req: Request,
+    res: Response
+  ): ExpressResponse<GetQuizzesResponse> {
     const userId = res.locals.user._id;
-    const query = { ...req.query } as PaginationParams<ICollaborator>;
+    const { limit, cursor } = req.query as PaginationParams;
 
-    const condition: FilterQuery<CollaboratorDocument> = {
-      deleted_at: { $exists: false },
-      type: 'quiz',
-      user: userId,
-    };
-
-    const collaborators = await this.collaboratorModel.paginate({
-      ...condition,
-      ...query,
+    const cursorDate = cursor ? new Date(cursor) : undefined;
+    const quizzes = await this.quizCollaboratorService.paginateQuizzesByUserId({
+      userId,
+      select: '*',
+      limit: Number(limit),
+      cursor: cursorDate,
     });
-    if (!collaborators?.data || collaborators.data.length == 0) {
-      res.status(status.OK).json({ data: [] });
-      return;
-    }
 
-    const quizzes = await this.quizModel
-      .find({
-        _id: {
-          $in: collaborators.data.map(
-            (collaborator) => collaborator.type === 'quiz' && collaborator.quiz
-          ),
-        },
-        deleted_at: null,
-      })
-      .sort({ created_at: -1 });
-
-    res.status(status.OK).json({ data: quizzes });
+    return res.status(status.OK).json({ data: quizzes });
   }
 
   @httpPost('/', auth())
   async createQuiz(
     req: Request,
     res: Response
-  ): Promise<Response<QuizCreateResponse>> {
-    const createdBy = res.locals.user._id;
-    const body: QuizCreateRequest = req.body;
-    const noteId = body.note;
+  ): ExpressResponse<CreateQuizResponse> {
+    const userId = res.locals.user._id;
+    const values = req.body as CreateQuizRequestBody;
+    const noteId = values.noteId;
 
-    if (
-      !body.question_type.multiple_choice &&
-      !body.question_type.free_response
-    )
+    const hasPermissionToNote =
+      await this.noteCollaboratorService.userHasPermissionToNote({
+        noteId,
+        userId,
+        permission: Permission.Read,
+      });
+
+    if (!hasPermissionToNote) {
       throw new CustomException(
-        'Quiz must have at least one question type',
-        status.BAD_REQUEST
-      );
-
-    // validate note exists
-    const note = await this.noteModel.findById(noteId);
-    if (!note) throw new CustomException('Note not found', status.NOT_FOUND);
-
-    const numTokens = countTokens(note.content, 'text-davinci-003');
-    if (numTokens > 2500)
-      throw new CustomException(
-        'Note must be less than 2500 words',
-        status.BAD_REQUEST
-      );
-
-    if (numTokens < 25)
-      throw new CustomException(
-        'Note must be at least 25 words',
-        status.BAD_REQUEST
-      );
-
-    // validate user has access to directory and note doesn't already have a quiz
-    const [collaboratorsAggregation, prevQuiz] = await Promise.all([
-      this.collaboratorModel.aggregate([
-        {
-          $match: {
-            user: createdBy,
-          },
-        },
-        {
-          $lookup: {
-            from: 'notes',
-            localField: '_id',
-            foreignField: 'collaborators',
-            as: 'note',
-          },
-        },
-        {
-          $unwind: {
-            path: '$note',
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $match: {
-            'note._id': noteId,
-          },
-        },
-      ]),
-
-      this.quizModel.findOne({ note: note.id, deleted_at: null }),
-    ]);
-
-    if (!collaboratorsAggregation[0])
-      throw new CustomException(
-        'You do not have access to this directory',
+        'You do not have permission to create a quiz for this note.',
         status.FORBIDDEN
       );
-
-    // generate quiz
-    const [
-      quizCollaborator,
-      multipleChoiceResult,
-      freeResponseResult,
-      directory,
-    ] = await Promise.all([
-      this.collaboratorModel.create({
-        user: createdBy,
-        type: 'quiz',
-        permissions: setPermissions(Permission.ReadWriteDelete),
-        created_by: createdBy,
-      }),
-      body.question_type.multiple_choice &&
-        openaiRequest({
-          payload: note.content,
-          generator: openaiRequestHandler.multipleChoiceQuizGenerator,
-          errorMessage: 'Quiz could not be generated from note',
-        }),
-      body.question_type.free_response &&
-        openaiRequest({
-          payload: note.content,
-          generator: openaiRequestHandler.freeResponseQuizGenerator,
-          errorMessage: 'Quiz could not be generated from note',
-        }),
-      !req.body.title &&
-        this.directoryModel.findOne({
-          notes: {
-            $in: [note.id],
-          },
-        }),
-    ]);
-
-    // set quiz title
-    let title = req.body.title;
-    if (!title && directory) {
-      title = `${directory.name}: ${note.title}`;
     }
 
-    // create quiz
-    const quizQuestions = [
-      ...(multipleChoiceResult || []),
-      ...(freeResponseResult || []),
-    ];
-    const quiz = await this.quizModel.create({
-      title,
-      questions: quizQuestions,
-      note: noteId,
-      collaborators: [quizCollaborator.id],
-      question_type: body.question_type,
-      created_by: createdBy,
+    const note = await this.noteService.getNoteById({
+      id: noteId,
+      select: ['content'],
     });
 
-    quizCollaborator.set({ quiz: quiz.id });
-    quizCollaborator.save();
+    // generate selected questions
+    const [multipleChoice, freeResponse] = await Promise.all([
+      openaiRequest({
+        payload: note.content,
+        generator: openaiRequestHandler.multipleChoiceQuizGenerator,
+        errorMessage: 'Quiz could not be generated from note',
+        disabled: !values.multipleChoiceActivated,
+      }),
+      openaiRequest({
+        payload: note.content,
+        generator: openaiRequestHandler.freeResponseQuizGenerator,
+        errorMessage: 'Quiz could not be generated from note',
+        disabled: !values.freeResponseActivated,
+      }),
+    ]);
+
+    const { quiz } = await this.quizService.createQuizAndCollaborator({
+      userId,
+      noteId,
+      values: { ...values, createdBy: userId },
+      questions: {
+        multipleChoice: multipleChoice || [],
+        freeResponse: freeResponse || [],
+      },
+      collabortorPermissions: Permission.ReadWriteDelete,
+    });
 
     return res.status(status.CREATED).json({ data: quiz });
   }
@@ -250,272 +177,157 @@ export class QuizController implements IQuizController {
   async remixQuiz(
     req: Request,
     res: Response
-  ): Promise<Response<QuizCreateResponse>> {
-    const createdBy = res.locals.user._id;
-    const body: QuizCreateRequest = req.body;
-    const quizId = req.params.id;
-    const noteId = body.note;
-
-    if (
-      !body.question_type.multiple_choice &&
-      !body.question_type.free_response
-    )
-      throw new CustomException(
-        'Quiz must have at least one question type',
-        status.BAD_REQUEST
-      );
-
-    // validate note exists
-    const note = await this.noteModel.findById(noteId);
-    if (!note) throw new CustomException('Note not found', status.NOT_FOUND);
-
-    // validate user has access to directory and note doesn't already have a quiz
-    const [collaboratorAggregation, prevQuiz] = await Promise.all([
-      this.collaboratorModel.aggregate([
-        {
-          $match: {
-            user: createdBy,
-          },
-        },
-        {
-          $lookup: {
-            from: 'notes',
-            localField: '_id',
-            foreignField: 'collaborators',
-            as: 'note',
-          },
-        },
-        {
-          $unwind: {
-            path: '$note',
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $match: {
-            'note._id': noteId,
-          },
-        },
-      ]),
-      this.quizModel.findById(quizId),
-    ]);
-
-    if (!collaboratorAggregation[0])
-      throw new CustomException(
-        'You do not have access to this directory',
-        status.FORBIDDEN
-      );
-
-    if (!prevQuiz)
-      throw new CustomException('Quiz not found', status.NOT_FOUND);
-
-    const prevQuestionQuestions: string[] = prevQuiz.questions.map(
-      ({ question }) => question
-    );
-    const questionListString = prevQuestionQuestions.join(', ');
-
-    const numTokens = countTokens(
-      `${note.content} ${questionListString}`,
-      'text-davinci-003'
-    );
-    if (numTokens > 2500)
-      throw new CustomException(
-        'Note must be less than 2500 words',
-        status.BAD_REQUEST
-      );
-
-    if (numTokens < 25)
-      throw new CustomException(
-        'Note must be at least 25 words',
-        status.BAD_REQUEST
-      );
-
-    const remixMultipleChoiceGenerator =
-      openaiRequestHandler.multipleChoiceQuizGenerator;
-    remixMultipleChoiceGenerator.getPrompt = (payload: string) => {
-      return createMultipleChoiceQuizGenerationPrompt(
-        payload,
-        questionListString
-      );
-    };
-
-    const remixFreeResponseGenerator =
-      openaiRequestHandler.freeResponseQuizGenerator;
-    remixFreeResponseGenerator.getPrompt = (payload: string) => {
-      return createFreeResponseQuizGenerationPrompt(
-        payload,
-        questionListString
-      );
-    };
-
-    // generate quiz
-    const [
-      quizCollaborator,
-      multipleChoiceResult,
-      freeResponseResult,
-      directory,
-    ] = await Promise.all([
-      this.collaboratorModel.create({
-        user: createdBy,
-        type: 'quiz',
-        permissions: setPermissions(Permission.ReadWriteDelete),
-        created_by: createdBy,
-      }),
-      body.question_type.multiple_choice &&
-        openaiRequest({
-          payload: note.content,
-          generator: remixMultipleChoiceGenerator,
-          errorMessage: 'Quiz could not be generated from note',
-        }),
-      body.question_type.free_response &&
-        openaiRequest({
-          payload: note.content,
-          generator: remixFreeResponseGenerator,
-          errorMessage: 'Quiz could not be generated from note',
-        }),
-      !req.body.title &&
-        this.directoryModel.findOne({
-          notes: {
-            $in: [note.id],
-          },
-        }),
-    ]);
-
-    // set quiz title
-    let title = req.body.title;
-    if (!title && directory) {
-      title = `${directory.name}: ${note.title} - Remix`;
-    }
-
-    // create quiz
-    const quizQuestions = [
-      ...(multipleChoiceResult || []),
-      ...(freeResponseResult || []),
-    ];
-    const quiz = await this.quizModel.create({
-      title,
-      questions: quizQuestions,
-      note: noteId,
-      collaborators: [quizCollaborator.id],
-      question_type: body.question_type,
-      created_by: createdBy,
-    });
-
-    quizCollaborator.set({ quiz: quiz.id });
-    quizCollaborator.save();
-
-    return res.status(status.CREATED).json({ data: quiz });
+  ): ExpressResponse<CreateQuizRemixResponse> {
+    // @TODO
+    // const createdBy = res.locals.user._id;
+    // const body: QuizCreateRequest = req.body;
+    // const quizId = req.params.id;
+    // const noteId = body.note;
+    //
+    return res.status(status.CREATED).json({ data: [] });
   }
 
   @httpDelete('/:id', auth())
-  async deleteQuizById(req: Request, res: Response): Promise<void> {
-    const id = req.params.id;
+  async deleteQuizById(
+    req: Request,
+    res: Response
+  ): ExpressResponse<DeleteQuizByIdResponse> {
+    const id = Number(req.params.id) as DeleteQuizByIdRequestParams;
     const userId = res.locals.user._id;
 
-    // validate quiz exists
-    const quiz = await this.quizModel.findById(id);
-    if (!quiz) throw new CustomException('Quiz not found', status.NOT_FOUND);
+    const hasPermission =
+      await this.quizCollaboratorService.userHasPermissionToQuiz({
+        quizId: id,
+        userId,
+        permission: Permission.ReadWriteDelete,
+      });
 
-    const collaborator = await this.collaboratorModel.findOne({
-      user: userId,
-      quiz: quiz.id,
-    });
-
-    // validate user has access to quiz
-    if (!collaborator || !quiz.collaborators.includes(collaborator.id))
+    if (!hasPermission) {
       throw new CustomException(
-        'You do not have access to this quiz',
+        'You do not have permission to delete this quiz.',
         status.FORBIDDEN
       );
+    }
 
-    // delete quiz
-    await this.quizModel.updateOne(
-      { _id: id },
-      { $set: { deleted_at: new Date() } },
-      { new: true }
-    );
+    await this.quizService.deleteQuizById(id);
 
     res.status(status.NO_CONTENT).json();
   }
 
   @httpPost('/:id/submissions', auth())
-  async submitQuiz(req: Request, res: Response): Promise<void> {
-    const userId = res.locals.user._id;
-    const quizId = req.params.id;
-    const submissionAttributes: SubmissionCreateRequest = req.body;
+  async submitQuiz(
+    req: Request,
+    res: Response
+  ): ExpressResponse<CreateQuizSubmissionResponse> {
+    const userId = res.locals.user.id as number;
+    const quizId = Number(req.params.id);
+    const { answers, ...values } = req.body as CreateQuizSubmissionRequestBody;
 
-    // validate quiz exists
-    const quiz = await this.quizModel.findById(quizId);
-    if (!quiz) throw new CustomException('Quiz not found', status.NOT_FOUND);
+    // validate access to quiz
+    const hasPermission =
+      await this.quizCollaboratorService.userHasPermissionToQuiz({
+        quizId,
+        userId,
+        permission: Permission.Read,
+      });
 
-    // validate user has access to quiz
-    if (userId !== quiz.created_by)
+    if (!hasPermission) {
       throw new CustomException(
-        'You do not have access to this quiz',
+        'You do not have permission to submit to this quiz.',
         status.FORBIDDEN
       );
+    }
 
-    // grading logic
-    const submissionAnswers: ISubmissionAnswer[] = [];
-    const questionsAndAnswers = quiz.questions.map((question) => {
-      const answer = submissionAttributes.answers?.find(
-        (answer) => answer.question_id === question.id
-      );
-      if (!answer)
-        throw new CustomException('Invalid question id', status.BAD_REQUEST);
+    // grading answers
+    const { multipleChoiceQuestions, freeResponseQuestions } =
+      await this.quizService.getQuizQuestionsById(quizId);
 
-      return { question, answer };
+    const assessed = await gradeAnswers({
+      questions: {
+        multipleChoice: multipleChoiceQuestions,
+        freeResponse: freeResponseQuestions,
+      },
+      answers,
     });
 
-    const {
-      multipleChoiceStats,
-      multipleChoiceGrades,
-      freeResponseStats,
-      freeResponseGrades,
-    } = await gradeQuestions(questionsAndAnswers);
-
-    const stats = {
-      total_correct:
-        multipleChoiceStats.total_correct + freeResponseStats.total_correct,
-      total_incorrect:
-        multipleChoiceStats.total_incorrect + freeResponseStats.total_incorrect,
-    };
-    const score = (stats.total_correct / quiz.questions.length) * 100;
-
-    const submission = await this.submissionModel.create({
-      ...stats,
-      quiz: quiz.id,
-      time_taken: req.body.time_taken,
-      grades: [...multipleChoiceGrades, ...freeResponseGrades],
-      total_questions: quiz.questions.length,
-      total_unanswered: quiz.questions.length - submissionAnswers.length,
-      score,
-      created_by: userId,
+    // create submission and link answers
+    const submission = await this.submissionService.createSubmission({
+      values: {
+        ...values,
+        createdBy: userId,
+        quizId,
+        score: assessed.score,
+        totalCorrect: assessed.totalCorrect,
+        totalIncorrect: assessed.totalIncorrect,
+        totalQuestions: assessed.totalQuestions,
+        totalUnanswered: assessed.totalUnanswered,
+      },
+      answers: {
+        freeResponse: assessed.freeResponse.grades,
+        multipleChoice: assessed.multipleChoice.grades,
+      },
     });
 
-    res.status(status.CREATED).json({ data: submission });
+    return res.status(status.CREATED).json({ data: submission });
   }
 
-  @httpGet('/submissions/:submissionId', auth())
-  async getSubmission(req: Request, res: Response): Promise<void> {
+  @httpGet('/submissions/:id', auth())
+  async getSubmission(
+    req: Request,
+    res: Response
+  ): ExpressResponse<GetQuizSubmissionByIdResponse> {
     const userId = res.locals.user._id;
-    const submissionId = req.params.submissionId;
+    const submissionId = Number(req.params.id);
 
-    let submission = await this.submissionModel.findById(submissionId);
-    if (!submission)
-      throw new CustomException('Submission not found', status.NOT_FOUND);
+    const submission = await this.submissionService.getSubmissionById({
+      id: submissionId,
+      select: '*',
+    });
 
-    // validate user has access to submission
-    if (userId !== submission.created_by)
+    // validate permission to quiz
+    const hasPermission = submission?.createdBy === userId;
+    if (!hasPermission) {
       throw new CustomException(
-        'You do not have access to this submission',
+        'You do not have permission to read this submission.',
         status.FORBIDDEN
       );
+    }
 
-    submission = await submission.populate('quiz');
-    res.status(status.OK).json({ data: submission });
+    return res.status(status.OK).json({ data: submission });
   }
 
   @httpGet('/:id/submissions', auth())
-  async getSubmissions(req: Request, res: Response): Promise<void> {}
+  async getSubmissions(
+    req: Request,
+    res: Response
+  ): ExpressResponse<GetQuizSubmissionsResponse> {
+    const userId = res.locals.user._id;
+    const quizId = Number(req.params.id) as GetQuizSubmissionsRequestParams;
+    const { limit, cursor } = req.query as GetQuizSubmissionsRequestQuery;
+
+    // validate permission to quiz
+    const hasPermission =
+      await this.quizCollaboratorService.userHasPermissionToQuiz({
+        quizId,
+        userId,
+        permission: Permission.Read,
+      });
+
+    if (!hasPermission) {
+      throw new CustomException(
+        'You do not have permission to read submissions for this quiz.',
+        status.FORBIDDEN
+      );
+    }
+
+    const cursorDate = cursor ? new Date(cursor) : undefined;
+    const submissions =
+      await this.submissionService.paginateSubmissionsByQuizId({
+        quizId,
+        limit: Number(limit),
+        cursor: cursorDate,
+      });
+
+    return res.status(status.OK).json({ data: submissions });
+  }
 }

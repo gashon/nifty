@@ -25,8 +25,14 @@ export const BINDING = {
   NOTE_MODEL: 'NoteModel',
   NOTE_CONTROLLER: 'NoteController',
 
+  QUIZ_SERVICE: 'QuizService',
+  QUIZ_COLLABORATOR_SERVICE: 'QuizCollaboratorService',
+  QUIZ_REPOSITORY: 'QuizRepository',
+  QUIZ_COLLABORATOR_REPOSITORY: 'QuizCollaboratorRepository',
   QUIZ_MODEL: 'QuizModel',
   QUIZ_CONTROLLER: 'QuizController',
 
+  SUBMISSION_SERVICE: 'SubmissionService',
+  SUBMISSION_REPOSITORY: 'SubmissionRepository',
   SUBMISSION_MODEL: 'SubmissionModel',
 };

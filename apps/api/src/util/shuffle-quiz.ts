@@ -1,6 +1,8 @@
-import { IMultipleChoiceQuizQuestion } from '@nifty/server-lib/models/quiz';
+import { MultipleChoiceQuestion } from '@nifty/common/types';
 
-export function shuffleQuiz(questions: IMultipleChoiceQuizQuestion[]): IMultipleChoiceQuizQuestion[] {
+export function shuffleQuiz(
+  questions: { question: string; answers: string[] }[]
+): MultipleChoiceQuestion[] {
   return questions.map((question: any, index: number) => {
     // shallow copy
     const answers = [...question.answers];
@@ -12,13 +14,13 @@ export function shuffleQuiz(questions: IMultipleChoiceQuizQuestion[]): IMultiple
       [answers[i], answers[j]] = [answers[j], answers[i]];
     }
     // find the correct index
-    correctIndex = answers.findIndex((answer: any) => answer === question.answers[correctIndex]);
+    correctIndex = answers.findIndex(
+      (answer: any) => answer === question.answers[correctIndex]
+    );
     return {
-      id: index.toString(),
-      type: "multiple-choice",
       question: question.question,
       answers: answers,
-      correct_index: correctIndex,
-    }
+      correctIndex: correctIndex,
+    };
   });
 }

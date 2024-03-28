@@ -24,6 +24,7 @@ import {
 } from '@nifty/api/domains/note';
 import {
   IQuizController,
+  QuizCollaboratorRepository,
   QuizController,
   QUIZ_TYPES,
 } from '@nifty/api/domains/quiz';
@@ -51,8 +52,13 @@ import {
   DirectoryCollaboratorService,
   UserRepository,
   UserService,
+  QuizService,
+  QuizRepository,
+  SubmissionService,
+  SubmissionRepository,
 } from '@nifty/api/domains';
 import { BINDING } from '@nifty/api/domains/binding';
+import { QuizCollaboratorService } from './quiz/services/quiz-collaborator.service';
 
 const container = new Container();
 
@@ -66,18 +72,16 @@ container.bind<IUserController>(USER_TYPES.CONTROLLER).to(UserController);
 
 // Directory
 container
-  .bind<InstanceType<typeof DirectoryService>>(BINDING.DIRECTORY_SERVICE)
+  .bind<DirectoryService>(BINDING.DIRECTORY_SERVICE)
   .to(DirectoryService);
 container
-  .bind<InstanceType<typeof DirectoryCollaboratorService>>(
-    BINDING.DIRECTORY_COLLABORATOR_SERVICE
-  )
+  .bind<DirectoryCollaboratorService>(BINDING.DIRECTORY_COLLABORATOR_SERVICE)
   .to(DirectoryCollaboratorService);
 container
-  .bind<InstanceType<typeof DirectoryRepository>>(BINDING.DIRECTORY_REPOSITORY)
+  .bind<DirectoryRepository>(BINDING.DIRECTORY_REPOSITORY)
   .to(DirectoryRepository);
 container
-  .bind<InstanceType<typeof DirectoryCollaboratorRepository>>(
+  .bind<DirectoryCollaboratorRepository>(
     BINDING.DIRECTORY_COLLABORATOR_REPOSITORY
   )
   .to(DirectoryCollaboratorRepository);
@@ -89,37 +93,43 @@ container
   .to(DirectoryController);
 
 container
-  .bind<InstanceType<typeof CollaboratorRepository>>(
-    BINDING.COLLABORATOR_REPOSITORY
-  )
+  .bind<CollaboratorRepository>(BINDING.COLLABORATOR_REPOSITORY)
   .to(CollaboratorRepository);
 container
   .bind<CollaboratorModel>(COLLABORATOR_TYPES.MODEL)
   .toDynamicValue(() => Collaborator);
 
 // Note
+container.bind<NoteService>(BINDING.NOTE_SERVICE).to(NoteService);
 container
-  .bind<InstanceType<typeof NoteService>>(BINDING.NOTE_SERVICE)
-  .to(NoteService);
-container
-  .bind<InstanceType<typeof NoteCollaboratorService>>(
-    BINDING.NOTE_COLLABORATOR_SERVICE
-  )
+  .bind<NoteCollaboratorService>(BINDING.NOTE_COLLABORATOR_SERVICE)
   .to(NoteCollaboratorService);
+container.bind<NoteRepository>(BINDING.NOTE_REPOSITORY).to(NoteRepository);
 container
-  .bind<InstanceType<typeof NoteRepository>>(BINDING.NOTE_REPOSITORY)
-  .to(NoteRepository);
-container
-  .bind<InstanceType<typeof NoteCollaboratorRepository>>(
-    BINDING.NOTE_COLLABORATOR_REPOSITORY
-  )
+  .bind<NoteCollaboratorRepository>(BINDING.NOTE_COLLABORATOR_REPOSITORY)
   .to(NoteCollaboratorRepository);
 container.bind<NoteModel>(NOTE_TYPES.MODEL).toDynamicValue(() => Note);
 container.bind<INoteController>(NOTE_TYPES.CONTROLLER).to(NoteController);
 
+// Quiz
+container.bind<QuizService>(BINDING.QUIZ_SERVICE).to(QuizService);
+container
+  .bind<QuizCollaboratorService>(BINDING.QUIZ_COLLABORATOR_SERVICE)
+  .to(QuizCollaboratorService);
+container.bind<QuizRepository>(BINDING.QUIZ_REPOSITORY).to(QuizRepository);
+container
+  .bind<QuizCollaboratorRepository>(BINDING.QUIZ_COLLABORATOR_REPOSITORY)
+  .to(QuizCollaboratorRepository);
 container.bind<QuizModel>(QUIZ_TYPES.MODEL).toDynamicValue(() => Quiz);
 container.bind<IQuizController>(QUIZ_TYPES.CONTROLLER).to(QuizController);
 
+// Submission
+container
+  .bind<SubmissionService>(BINDING.SUBMISSION_SERVICE)
+  .to(SubmissionService);
+container
+  .bind<SubmissionRepository>(BINDING.SUBMISSION_REPOSITORY)
+  .to(SubmissionRepository);
 container
   .bind<SubmissionModel>(SUBMISSION_TYPES.MODEL)
   .toDynamicValue(() => Submission);
