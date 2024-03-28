@@ -1,10 +1,10 @@
-import * as dotenv from "dotenv";
-dotenv.config({path: __dirname + "/../../../../../.env"});
-import { Pool } from "pg";
-import { Kysely, PostgresDialect, CamelCasePlugin } from "kysely";
-import { DB } from "@nifty/db/types";
+import * as dotenv from 'dotenv';
+dotenv.config({ path: __dirname + '/../../../../../.env' });
+import { Pool } from 'pg';
+import { Kysely, PostgresDialect, CamelCasePlugin } from 'kysely';
+import { DB } from '../types';
 
-export { sql } from "kysely";
+export { sql } from 'kysely';
 
 export const db = new Kysely<DB>({
   dialect: new PostgresDialect({
@@ -14,7 +14,7 @@ export const db = new Kysely<DB>({
       database: process.env.POSTGRES_DB,
       user: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
-      ssl: process.env.NO_SSL === "true" ? false : true,
+      ssl: process.env.NO_SSL === 'true' ? false : true,
     }),
   }),
   plugins: [new CamelCasePlugin()],

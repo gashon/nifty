@@ -51,6 +51,7 @@ export class QuizService {
 
   async createQuizAndCollaborator({
     userId,
+    noteId,
     values,
     questions,
     collabortorPermissions,
@@ -67,6 +68,7 @@ export class QuizService {
     return this.quizRepository.createQuizAndCollaborator({
       userId,
       values,
+      noteId,
       questions,
       collabortorPermissions,
     });

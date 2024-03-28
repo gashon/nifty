@@ -58,35 +58,16 @@ export class DirectoryCollaboratorService {
     return hasCollaboratorPermission;
   }
 
-  async paginateNotesByDirectoryId({
-    directoryId,
-    select,
-    limit,
-    cursor,
-  }: {
-    directoryId: number;
-    select: readonly SelectExpression<DB, 'note'>[];
-    limit: number;
-    cursor?: Date;
-  }) {
-    return this.directoryCollaboratorRepository.paginateNotesByDirectoryId({
-      directoryId,
-      select,
-      limit,
-      cursor,
-    });
-  }
-
   async paginateDirectoriesByUserId({
     userId,
     limit,
     cursor,
-    orderBy,
+    orderBy = 'directory.createdAt desc',
   }: {
     userId: number;
     limit: number;
     cursor?: Date;
-    orderBy?: OrderBy<'directory'>[];
+    orderBy?: OrderBy<'directory'>;
   }) {
     return this.directoryCollaboratorRepository.paginateDirectoriesByUserId({
       userId,

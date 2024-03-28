@@ -12,6 +12,7 @@ import type {
 import { BINDING } from '@nifty/api/domains/binding';
 import { Permission } from '@nifty/api/util';
 import { OrderBy } from '@nifty/api/types';
+import { OrderByExpression } from 'kysely';
 
 @injectable()
 export class NoteRepository {
@@ -139,16 +140,15 @@ export class NoteRepository {
     select: readonly SelectExpression<DB, 'note'>[] | '*';
     limit: number;
     cursor?: Date;
-    orderBy: OrderBy<'note'>[];
+    orderBy: OrderBy<'note'>;
   }) {
     let query = this.db
       .selectFrom('note')
       .where('directoryId', '=', directoryId)
       .where('deletedAt', 'is', null)
-      .orderBy(orderBy);
+      .orderBy(orderBy as OrderBy<'note'>);
 
     if (cursor) {
-      query = buildQueryWithCursor(query, orderBy, cursor);
       query = query.where('note.createdAt', '<', cursor);
     }
 

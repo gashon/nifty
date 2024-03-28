@@ -1,8 +1,9 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as GitHubStrategy } from 'passport-github2';
+
 import { db, sql } from '@nifty/common/db';
-import { User } from '@nifty/db/types';
+import type { User } from '@nifty/common/types';
 
 const googleStrategy = new GoogleStrategy(
   {
@@ -12,16 +13,21 @@ const googleStrategy = new GoogleStrategy(
     userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
   },
   async (_accessToken, _refreshToken, profile, cb) => {
-
-    // findOrCreate sql query
-    const {rows}= await sql<User>`
-      INSERT INTO "user" (email, avatar_url, last_login)
-      VALUES (${profile._json.email}, ${profile._json.picture}, ${new Date})
-      ON CONFLICT (email) DO UPDATE
-      SET last_login = ${new Date}
-      RETURNING *
-    `.execute(db)
-    const [user] = rows
+    // insertOrUpdate on email conflict
+    const user = await db
+      .insertInto('user')
+      .values({
+        email: profile._json.email!,
+        avatarUrl: profile._json.picture,
+        lastLogin: new Date(),
+      })
+      .onConflict((oc) =>
+        oc.column('email').doUpdateSet({
+          lastLogin: new Date(),
+        })
+      )
+      .returningAll()
+      .executeTakeFirstOrThrow();
 
     return cb(null, user);
   }
@@ -45,15 +51,21 @@ const githubStrategy = new GitHubStrategy(
       profile.emails?.[0]?.value;
     if (!email) return cb(new Error('No email found'));
 
-    // findOrCreate sql query
-    const {rows}= await sql<User>`
-      INSERT INTO "user" (email, avatar_url, last_login)
-      VALUES (${email}, ${profile._json.avatar_url}, ${new Date})
-      ON CONFLICT (email) DO UPDATE
-      SET last_login = ${new Date}
-      RETURNING *
-    `.execute(db)
-    const [user] = rows
+    // insertOrUpdate on email conflict
+    const user = await db
+      .insertInto('user')
+      .values({
+        email,
+        avatarUrl: profile._json.picture,
+        lastLogin: new Date(),
+      })
+      .onConflict((oc) =>
+        oc.column('email').doUpdateSet({
+          lastLogin: new Date(),
+        })
+      )
+      .returningAll()
+      .execute();
 
     return cb(null, user);
   }

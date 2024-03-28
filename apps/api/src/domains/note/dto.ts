@@ -2,7 +2,7 @@ import type {
   AppPaginationResponse,
   AppResponse,
 } from '@nifty/api/domains/dto';
-import { PaginationParams } from '@nifty/api/types';
+import { PaginationParams, PaginationQueryParams } from '@nifty/api/types';
 import type {
   Insertable,
   Note,
@@ -14,11 +14,11 @@ import type {
 type NoteWithoutDeletedAt = Omit<Note, 'deletedAt'>;
 
 export type GetNoteNeighborsRequestQuery = Omit<
-  PaginationParams<'note'>,
+  PaginationQueryParams<'note'>,
   'cursor' | 'orderBy'
 > & {
   // ensure note has directory
-  validateNoteHasDirectory?: boolean;
+  validateNoteHasDirectory?: string;
 };
 export type GetNoteNeighborsResponse = {
   before: Selectable<Note>[];
@@ -33,11 +33,11 @@ export type CreateNoteResponse = AppResponse<NoteWithoutDeletedAt>;
 export type GetNoteRequestParam = number;
 export type GetNoteResponse = AppResponse<Note>;
 
-export type GetUserNotesRequestQuery = PaginationParams<'note'>;
+export type GetUserNotesRequestQuery = PaginationQueryParams<'note'>;
 export type GetUserNotesResponse = AppPaginationResponse<Selectable<Note>>;
 
 export type GetDirectoryNotesRequestParam = number;
-export type GetDirectoryNotesRequestQuery = PaginationParams<'note'>;
+export type GetDirectoryNotesRequestQuery = PaginationQueryParams<'note'>;
 export type GetDirectoryNotesResponse = AppPaginationResponse<Selectable<Note>>;
 
 export type UpdateNoteRequestBody = Updateable<Note>;

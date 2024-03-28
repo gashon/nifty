@@ -27,6 +27,7 @@ import type {
 import { BINDING } from '@nifty/api/domains/binding';
 import { Permission } from '@nifty/api/util';
 import { PaginationParams } from '@nifty/api/types';
+import { paginator } from '@nifty/api/middlewares/guards/pagination';
 
 @controller('/v1/directories')
 export class DirectoryController {
@@ -64,6 +65,7 @@ export class DirectoryController {
   }
 
   @httpGet('/', auth())
+  @paginator()
   async getDirectories(
     req: Request,
     res: Response
@@ -120,7 +122,7 @@ export class DirectoryController {
       throw new CustomException('Permission denied', status.FORBIDDEN);
     }
 
-    // this also deletes all notes in the directory
+    // this also deletes all notes in the directory )
     await this.directoryService.deleteDirectoryById(id);
 
     return res.json({ data: { id } });

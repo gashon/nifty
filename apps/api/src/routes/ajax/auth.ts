@@ -1,35 +1,40 @@
 import express from 'express';
 import status from 'http-status';
 
-import Notification from '@nifty/server-lib/models/notification';
-import Token from '@nifty/server-lib/models/token';
-import RefreshToken from '@nifty/server-lib/models/refresh-token';
-import User, { IUser } from '@nifty/server-lib/models/user';
-
-import { db } from "@nifty/common/db";
-import { AccessToken } from "@nifty/common/types";
-
+import { db } from '@nifty/common/db';
+import type { Selectable, User } from '@nifty/common/types';
 import passport from '@nifty/api/lib/passport';
 import createLoginLink from '@nifty/api/util/create-login-link';
 import auth from '@nifty/api/middlewares/auth';
 import oauthLogin from '@nifty/api/middlewares/oauth-login';
-import { ACCESS_TOKEN_EXPIRATION_IN_SECONDS, ACCESS_TOKEN_NAME, REFRESH_TOKEN_EXPIRATION_IN_SECONDS, REFRESH_TOKEN_NAME } from '@nifty/api/constants';
-import { generateTokens } from '@nifty/api/util/create-tokens';
+import { ACCESS_TOKEN_NAME, REFRESH_TOKEN_NAME } from '@nifty/api/constants';
+import { generateAuthTokens } from '@nifty/api/util/create-tokens';
 
 const router: express.IRouter = express.Router();
 
 router.post('/login/email', async (req, res, next) => {
   try {
-    let user = await db.selectFrom("user").select("id").where("email", '=', req.body.email).executeTakeFirst();
-    if (!user) user = await db.insertInto("user").values({ email: req.body.email }).executeTakeFirst();
+    let user = await db
+      .selectFrom('user')
+      .selectAll()
+      .where('email', '=', req.body.email)
+      .executeTakeFirst();
 
-    if (!user || user.deleted_at) return res.sendStatus(status.UNAUTHORIZED);
+    if (!user)
+      user = await db
+        .insertInto('user')
+        .values({ email: req.body.email })
+        .returningAll()
+        .executeTakeFirstOrThrow();
 
-    const { encodedAccessToken, encodedRefreshToken } = await generateTokens(user, {
-      strategy: 'email',
-      requestIp: req.ip,
-      requestUserAgent: req.headers['user-agent'] || ''
-    });
+    if (!user || user.deletedAt) return res.sendStatus(status.UNAUTHORIZED);
+
+    const { encodedAccessToken, encodedRefreshToken } =
+      await generateAuthTokens(user as Selectable<User>, {
+        strategy: 'email',
+        requestIp: req.ip,
+        requestUserAgent: req.headers['user-agent'] || '',
+      });
 
     // TODO - send email
     const loginLink = createLoginLink(
@@ -45,7 +50,7 @@ router.post('/login/email', async (req, res, next) => {
 
     res.sendStatus(status.OK);
   } catch (err) {
-    console.log('err', err)
+    console.log('err', err);
     next(err);
   }
 });
@@ -94,7 +99,11 @@ router.get(
 
 router.get('/user', auth(), async (req, res, next) => {
   try {
-    const user = await db.selectFrom("user").selectAll().where("id", '=', res.locals.user.id).executeTakeFirst();
+    const user = await db
+      .selectFrom('user')
+      .selectAll()
+      .where('id', '=', res.locals.user.id)
+      .executeTakeFirst();
 
     res.send(user);
   } catch (err) {
@@ -104,17 +113,7 @@ router.get('/user', auth(), async (req, res, next) => {
 
 router.get('/logout', async (req, res, next) => {
   try {
-    await Token.updateMany(
-      {
-        _id: {
-          $in: [
-            req.cookies[ACCESS_TOKEN_NAME],
-            req.cookies[REFRESH_TOKEN_NAME],
-          ],
-        },
-      },
-      { deleted_at: new Date() }
-    );
+    // @TODD (gashon) - blacklist token to prevent replay attacks
 
     res.clearCookie(ACCESS_TOKEN_NAME);
     res.clearCookie(REFRESH_TOKEN_NAME);

@@ -1,4 +1,5 @@
 import { injectable, inject } from 'inversify';
+import { SelectQueryBuilder } from 'kysely';
 
 import type {
   KysleyDB,
@@ -48,43 +49,16 @@ export class DirectoryCollaboratorRepository {
       .executeTakeFirst();
   }
 
-  async paginateNotesByDirectoryId({
-    directoryId,
-    select,
-    limit,
-    cursor,
-  }: {
-    directoryId: number;
-    select: readonly SelectExpression<DB, 'note'>[];
-    limit: number;
-    cursor?: Date;
-  }) {
-    const query = this.db
-      .selectFrom('directoryNote')
-      .where('directoryNote.directoryId', '=', directoryId)
-      .innerJoin('note', 'note.id', 'directoryNote.noteId')
-      .where('note.deletedAt', 'is', null)
-      .select(select)
-      .orderBy('note.createdAt', 'desc')
-      .limit(limit);
-
-    if (cursor) {
-      query.where('note.createdAt', '<', cursor);
-    }
-
-    return query.execute();
-  }
-
   async paginateDirectoriesByUserId({
     userId,
     limit,
     cursor,
-    orderBy = ['directory.createdAt desc'],
+    orderBy,
   }: {
     userId: number;
     limit: number;
     cursor?: Date;
-    orderBy?: OrderBy<'directory'>[];
+    orderBy: OrderBy<'directory'>;
   }) {
     let query = this.db
       .selectFrom('directoryCollaborator')
@@ -101,13 +75,7 @@ export class DirectoryCollaboratorRepository {
       .limit(limit);
 
     if (cursor) {
-      for (const str of orderBy) {
-        const [column, order] = str.split(' ') as [
-          keyof Directory,
-          'asc' | 'desc'
-        ];
-        query = query.where(column, order === 'asc' ? '>' : '<', cursor);
-      }
+      query = query.where('directory.createdAt', '<', cursor);
     }
 
     return query.execute();

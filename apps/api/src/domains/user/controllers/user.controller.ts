@@ -10,17 +10,17 @@ import type {
   GetUserResponse,
   GetUserRequestParam,
 } from '@nifty/api/domains/user/dto';
-import { ExpressResponse } from '@nifty/api/dto';
+import { ExpressResponse } from '@nifty/api/domains/dto';
 
 @controller('/v1/users')
-export class UserController implements IUserController {
+export class UserController {
   constructor(@inject(BINDING.USER_SERVICE) private userService: UserService) {}
 
   @httpGet('/me', auth())
-  async getMe(req: Request, res: Response): ExpressResponse<GetUserResponse> {
+  async getMe(_req: Request, res: Response): ExpressResponse<GetUserResponse> {
     const user = res.locals.user;
 
-    res.status(status.OK).json({ data: user });
+    return res.status(status.OK).json({ data: user });
   }
 
   @httpGet('/:id', auth())
@@ -29,7 +29,7 @@ export class UserController implements IUserController {
 
     const user = await this.userService.getUserById({ id, select: '*' });
 
-    res.status(status.OK).json({ data: user });
+    return res.status(status.OK).json({ data: user });
   }
 
   // @httpPost('/subscribe')

@@ -1,22 +1,18 @@
 import { DB } from '@nifty/common/types';
+import { OrderByExpression, SelectQueryBuilder } from 'kysely';
+import { DirectedOrderByStringReference } from 'kysely/dist/cjs/parser/order-by-parser';
 
-export type OrderQueryWithTable<T> = `${T}.${Extract<
-  keyof DB[T] & string,
-  string
->} ${'asc' | 'desc'}`;
-export type OrderQueryWithoutTable<T> = `${Extract<
-  keyof DB[T] & string,
-  string
->} ${'asc' | 'desc'}`;
-
-export type OrderBy<T extends keyof DB & string> =
-  | OrderQueryWithTable<T>
-  | OrderQueryWithoutTable<T>
-  | OrderQueryWithTable<T>[]
-  | OrderQueryWithoutTable<T>[];
+export type OrderBy<T extends keyof DB & string> = Extract<
+  OrderByExpression<DB, T, DB[T]>,
+  DirectedOrderByStringReference<DB, T, DB[T]>
+>;
 
 export type PaginationParams<T extends keyof DB> = {
   limit: number;
   cursor?: string;
   orderBy?: OrderBy<T>;
+};
+
+export type PaginationQueryParams<T extends keyof DB> = PaginationParams<T> & {
+  limit: string;
 };

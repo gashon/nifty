@@ -1,9 +1,9 @@
-import { RefreshToken, TokenStrategy, User } from './pg';
+import { RefreshToken, Selectable, TokenStrategy, User } from './pg';
 
 export * from './pg';
 
 export type AccessTokenJwt = {
-  user: User;
+  user: Selectable<User>;
   strategy: TokenStrategy;
   requestIp: string;
   requestUserAgent: string;
@@ -11,7 +11,7 @@ export type AccessTokenJwt = {
 };
 
 export type RefreshTokenJwt = {
-  user: User;
+  user: Selectable<User>;
   strategy: TokenStrategy;
   requestIp: string;
   requestUserAgent: string;

@@ -14,12 +14,11 @@ import {
   openaiRequest,
 } from '@nifty/api/lib/openai-request';
 import { CustomException } from '@nifty/api/exceptions';
-import { PaginationParams } from '@nifty/api/types';
+import { PaginationParams, PaginationQueryParams } from '@nifty/api/types';
 
 import {
   setPermissions,
   Permission,
-  gradeQuestions,
   countTokens,
   createMultipleChoiceQuizGenerationPrompt,
   createFreeResponseQuizGenerationPrompt,
@@ -36,6 +35,7 @@ import {
 import { BINDING } from '../../binding';
 import { ExpressResponse } from '../../dto';
 import type {
+  CreateRemixQuizResponse,
   CreateQuizRequestBody,
   CreateQuizResponse,
   CreateQuizSubmissionRequestBody,
@@ -48,7 +48,9 @@ import type {
   GetQuizSubmissionsRequestParams,
   GetQuizSubmissionsResponse,
   GetQuizzesResponse,
+  GetQuizSubmissionsRequestQuery,
 } from '@nifty/api/domains/quiz/dto';
+import { getPaginationMeta } from '@nifty/api/util/pagination';
 
 @controller('/v1/quizzes')
 export class QuizController {
@@ -102,7 +104,8 @@ export class QuizController {
     res: Response
   ): ExpressResponse<GetQuizzesResponse> {
     const userId = res.locals.user._id;
-    const { limit, cursor, orderBy } = req.query as PaginationParams;
+    const { limit, cursor, orderBy } =
+      req.query as PaginationQueryParams<'quiz'>;
 
     const cursorDate = cursor ? new Date(cursor) : undefined;
     const quizzes = await this.quizCollaboratorService.paginateQuizzesByUserId({
@@ -113,7 +116,9 @@ export class QuizController {
       orderBy,
     });
 
-    return res.status(status.OK).json({ data: quizzes });
+    return res
+      .status(status.OK)
+      .json({ data: quizzes, pagination: getPaginationMeta(quizzes, limit) });
   }
 
   @httpPost('/', auth())
@@ -143,6 +148,8 @@ export class QuizController {
       id: noteId,
       select: ['content'],
     });
+
+    // TODO count token
 
     // generate selected questions
     const [multipleChoice, freeResponse] = await Promise.all([
@@ -178,13 +185,19 @@ export class QuizController {
   async remixQuiz(
     req: Request,
     res: Response
-  ): ExpressResponse<CreateQuizRemixResponse> {
+  ): ExpressResponse<CreateRemixQuizResponse> {
     // @TODO
     // const createdBy = res.locals.user._id;
     // const body: QuizCreateRequest = req.body;
     // const quizId = req.params.id;
     // const noteId = body.note;
-    //
+
+    // validate note exists and user has permission to Read
+    // validate note already has a target quiz to remix (pass quizId in params)
+    // grab previous quiz questions (to feed into openai)
+    // use remixMultipleChoiceGenerator and remixFreeResponseGenerator to generate new questions
+    // generate new quiz questions and create quiz
+
     return res.status(status.CREATED).json({ data: [] });
   }
 
@@ -212,7 +225,7 @@ export class QuizController {
 
     await this.quizService.deleteQuizById(id);
 
-    res.status(status.NO_CONTENT).json();
+    return res.status(status.NO_CONTENT).json();
   }
 
   @httpPost('/:id/submissions', auth())
@@ -238,6 +251,8 @@ export class QuizController {
         status.FORBIDDEN
       );
     }
+
+    // TODO count tokens
 
     // grading answers
     const { multipleChoiceQuestions, freeResponseQuestions } =

@@ -114,41 +114,6 @@ async function gradeFreeResponseQuestions(
   return { stats, grades };
 }
 
-export async function gradeQuestions(
-  questionsAndAnswers: {
-    question: IQuizQuestion;
-    answer: IQuizSubmissionAnswer;
-  }[]
-) {
-  const freeResponseQuestionsAndAnswers: FreeResponseQA[] = [];
-  const multipleChoiceQuestionsAndAnswers: MultipleChoiceQA[] = [];
-  // ts hack to get around type narrowing
-  for (const { question, answer } of questionsAndAnswers) {
-    if (
-      question.type === 'multiple-choice' &&
-      answer.type === 'multiple-choice'
-    ) {
-      multipleChoiceQuestionsAndAnswers.push({ question, answer });
-    } else if (
-      question.type === 'free-response' &&
-      answer.type === 'free-response'
-    ) {
-      freeResponseQuestionsAndAnswers.push({ question, answer });
-    }
-  }
-
-  const { multipleChoiceStats, multipleChoiceGrades } =
-    gradeMultipleChoiceQuestions(multipleChoiceQuestionsAndAnswers);
-  const { freeResponseStats, freeResponseGrades } =
-    await gradeFreeResponseQuestions(freeResponseQuestionsAndAnswers);
-  return {
-    multipleChoiceStats,
-    multipleChoiceGrades,
-    freeResponseStats,
-    freeResponseGrades,
-  };
-}
-
 function linkQuestionWithAnswer<
   T extends { id: number },
   U extends { questionId: number }

@@ -64,7 +64,7 @@ export class NoteCollaboratorService {
     select,
     limit,
     cursor,
-    orderBy = 'note.createdAt desc',
+    orderBy = 'note.createdAt t' as OrderBy<'note'>,
   }: {
     userId: number;
     select: readonly SelectExpression<DB, 'note'>[] | '*';

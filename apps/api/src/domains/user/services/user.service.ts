@@ -2,6 +2,7 @@ import { inject, injectable } from 'inversify';
 
 import { BINDING } from '@nifty/api/domains/binding';
 import { UserRepository } from '@nifty/api/domains';
+import type { SelectExpression, DB } from '@nifty/common/types';
 
 @injectable()
 export class UserService {

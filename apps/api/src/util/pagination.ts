@@ -1,6 +1,5 @@
 import { DB, SelectQueryBuilder } from '@nifty/common/types';
 import { AppPaginationResponse } from '../domains/dto';
-import { OrderBy, OrderQueryWithoutTable, OrderQueryWithTable } from '../types';
 
 export const getPaginationMeta = <T extends { id: number }>(
   items: T[],

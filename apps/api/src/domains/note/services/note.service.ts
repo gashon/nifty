@@ -94,13 +94,13 @@ export class NoteService {
     select,
     limit,
     cursor,
-    orderBy = ['createdAt desc'],
+    orderBy = 'createdAt desc',
   }: {
     directoryId: number;
     select: readonly SelectExpression<DB, 'note'>[] | '*';
     limit: number;
     cursor?: Date;
-    orderBy?: OrderBy<'note'>[];
+    orderBy?: OrderBy<'note'>;
   }) {
     return this.noteRepository.paginateNotesByDirectoryId({
       directoryId,
