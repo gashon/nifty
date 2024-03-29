@@ -2,12 +2,9 @@ import type {
   AppPaginationResponse,
   AppResponse,
 } from '@nifty/api/domains/dto';
-import { PaginationParams, PaginationQueryParams } from '@nifty/api/types';
+import { PaginationQueryParams } from '@nifty/api/types';
 import type {
   Insertable,
-  Note,
-  Updateable,
-  Directory,
   Quiz,
   Submission,
   SubmissionAnswerMultipleChoice,
@@ -15,22 +12,25 @@ import type {
   Selectable,
 } from '@nifty/common/types';
 
-export type GetQuizByIdResponse = AppResponse<Quiz>;
+export type GetQuizByIdResponse = AppResponse<Selectable<Quiz>>;
 export type GetQuizByIdRequestParams = number;
 
-export type GetQuizzesResponse = AppPaginationResponse<Quiz>;
-export type GetQuizzesRequestQuery = PaginationParams<'quiz'>;
+export type GetQuizzesResponse = AppPaginationResponse<Selectable<Quiz>>;
+export type GetQuizzesRequestQuery = PaginationQueryParams<'quiz'>;
 
-export type CreateQuizResponse = AppResponse<Quiz>;
-export type CreateQuizRequestBody = Omit<Insertable<Quiz>, 'createdBy'>;
+export type CreateQuizResponse = AppResponse<Selectable<Quiz>>;
+export type CreateQuizRequestBody = Omit<
+  Insertable<Selectable<Quiz>>,
+  'createdBy'
+>;
 
-export type UpdateQuizByIdResponse = AppResponse<Quiz>;
+export type UpdateQuizByIdResponse = AppResponse<Selectable<Quiz>>;
 export type UpdateQuizByIdRequestParams = number;
 
-export type DeleteQuizByIdResponse = AppResponse<Quiz>;
+export type DeleteQuizByIdResponse = AppResponse<Selectable<Quiz>>;
 export type DeleteQuizByIdRequestParams = number;
 
-export type CreateRemixQuizResponse = AppResponse<Quiz>;
+export type CreateRemixQuizResponse = AppResponse<Selectable<Quiz>>;
 export type CreateRemixQuizRequestParams = number;
 
 export type QuizFreeResponseAnswer = Pick<

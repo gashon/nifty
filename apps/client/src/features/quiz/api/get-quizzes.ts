@@ -1,32 +1,33 @@
 import { useInfiniteQuery, UseInfiniteQueryResult } from 'react-query';
 
-import { QuizListResponse } from '@nifty/server-lib/models/quiz';
-import { PaginationParams } from '@nifty/api/types';
+import type {
+  GetQuizzesRequestQuery,
+  GetQuizzesResponse,
+} from '@nifty/api/domains/quiz/dto';
 import { axios } from '@nifty/client/lib/axios';
 
-export const getQuizzes = async ({ sort, limit, page, expand }: PaginationParams): Promise<QuizListResponse> => {
+export const getQuizzes = async (
+  params: GetQuizzesRequestQuery
+): Promise<GetQuizzesResponse> => {
   const { data } = await axios.get(`/api/v1/quizzes`, {
-    params: {
-      sort,
-      limit,
-      page,
-      expand
-    },
+    params,
   });
   return data;
 };
 
-type UseQuizzesOptions = PaginationParams;
+type UseQuizzesOptions = GetQuizzesRequestQuery;
 
-export const useInfiniteQuizzes = ({ ...pagination }: UseQuizzesOptions): UseInfiniteQueryResult<PaginationParams> => {
+export const useInfiniteQuizzes = ({
+  ...pagination
+}: UseQuizzesOptions): UseInfiniteQueryResult<UseQuizzesOptions> => {
   return useInfiniteQuery({
     queryKey: ['quizzes'],
-    queryFn: ({ pageParam = 1 }) => getQuizzes({ ...pagination, page: pageParam }),
+    queryFn: ({ pageParam = undefined }) =>
+      getQuizzes({ ...pagination, cursor: pageParam }),
     getNextPageParam: (lastPage, _pages) => {
-      if (lastPage.has_more) {
-        return lastPage.page + 1;
+      if (lastPage.pagination.hasMore) {
+        return lastPage.pagination.nextCursor;
       }
     },
   });
 };
-

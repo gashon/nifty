@@ -1,29 +1,37 @@
-import { QuizListResponse, QuizCreateRequest } from '@nifty/server-lib/models/quiz';
-import { AxiosResponse } from 'axios';
 import { useMutation } from 'react-query';
+
 import { axios } from '@nifty/client/lib/axios';
 import { MutationConfig, queryClient } from '@nifty/client/lib/react-query';
-import { QuizCreateResponse } from "@nifty/api/domains/quiz/types"
+import type {
+  CreateQuizResponse,
+  CreateQuizRequestBody,
+  GetQuizzesResponse,
+} from '@nifty/api/domains/quiz/dto';
 
-export const createQuiz = (data: QuizCreateRequest): Promise<AxiosResponse<QuizCreateResponse>> => {
-  return axios.post(`/api/v1/quizzes`, data);
+export const createQuiz = async (
+  payload: CreateQuizRequestBody
+): Promise<CreateQuizResponse> => {
+  const { data } = await axios.post(`/api/v1/quizzes`, payload);
+
+  return data;
 };
 
 type UseCreateQuizOptions = {
   config?: MutationConfig<typeof createQuiz>;
-}
+};
 
 type InfiniteQueryData = {
-  pages: QuizListResponse[];
+  pages: GetQuizzesResponse[];
   pageParams: Array<string | undefined>;
-}
+};
 
 export const useCreateQuiz = ({ config }: UseCreateQuizOptions = {}) => {
   return useMutation({
     onMutate: async (newQuiz) => {
       await queryClient.cancelQueries('quizzes');
 
-      const previousQuizzes: InfiniteQueryData = queryClient.getQueryData('quizzes');
+      const previousQuizzes: InfiniteQueryData =
+        queryClient.getQueryData('quizzes');
       return { previousQuizzes };
     },
     onError: (_, __, context: any) => {

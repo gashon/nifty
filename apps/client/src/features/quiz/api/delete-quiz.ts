@@ -1,9 +1,14 @@
-import { QuizListResponse } from '@nifty/server-lib/models/quiz';
 import { useMutation } from 'react-query';
+
+import {
+  DeleteQuizByIdResponse,
+  DeleteQuizByIdRequestParams,
+  GetQuizzesResponse,
+} from '@nifty/api/domains/quiz/dto';
 import { axios } from '@nifty/client/lib/axios';
 import { MutationConfig, queryClient } from '@nifty/client/lib/react-query';
 
-export const deleteQuiz = (quizId: string) => {
+export const deleteQuiz = (quizId: DeleteQuizByIdRequestParams) => {
   return axios.delete(`/api/v1/quizzes/${quizId}`);
 };
 
@@ -13,17 +18,18 @@ type UseCreateQuizOptions = {
 
 export const useDeleteQuiz = ({ config }: UseCreateQuizOptions = {}) => {
   return useMutation({
-    onMutate: async (deleteQuiz) => {
+    onMutate: async (deletedId) => {
       await queryClient.cancelQueries('quizzes');
 
       // delete the quiz from the cache
-      const previousQuizzes: QuizListResponse = queryClient.getQueryData('quizzes');
-      queryClient.setQueryData('quizzes', () => (
-        {
-          ...previousQuizzes,
-          data: (previousQuizzes?.data || []).filter((dir) => dir.id !== deleteQuiz.id),
-        }
-      ));
+      const previousQuizzes =
+        queryClient.getQueryData<GetQuizzesResponse>('quizzes');
+      queryClient.setQueryData('quizzes', () => ({
+        ...previousQuizzes,
+        data: (previousQuizzes?.data || []).filter(
+          (dir) => dir.id !== deletedId
+        ),
+      }));
 
       return { previousQuizzes };
     },
