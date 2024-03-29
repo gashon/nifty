@@ -5,16 +5,8 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 module.exports = withBundleAnalyzer({
   reactStrictMode: true,
-  experimental: {
-    transpilePackages: [
-      '@nifty/tsconfig',
-      '@nifty/server-lib',
-      '@nifty/ui',
-      '@nifty/common',
-    ],
-  },
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   poweredByHeader: false,
   eslint: { ignoreDuringBuilds: true },
