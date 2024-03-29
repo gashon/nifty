@@ -29,7 +29,7 @@ type NotebookItemProps =
       onClick?: () => void;
       onDelete?: never;
       icon: ReactElement;
-      label?: string;
+      label: string;
       title?: never;
       lastEdited?: never;
       href?: never;
@@ -47,7 +47,10 @@ export const NotebookItem: FC<NotebookItemProps> = ({
 }) => {
   if (variant === 'loading') {
     return (
-      <div role="status" className="h-11 w-full animate-pulse bg-accent dark:bg-zinc-800 lg:h-12" />
+      <div
+        role="status"
+        className="h-11 w-full animate-pulse bg-accent dark:bg-zinc-800 lg:h-12"
+      />
     );
   }
 
@@ -65,7 +68,10 @@ export const NotebookItem: FC<NotebookItemProps> = ({
 
   return (
     <div className="relative w-full">
-      <button onClick={onDelete} className="absolute right-1 top-1 accent-mask-hover">
+      <button
+        onClick={onDelete}
+        className="absolute right-1 top-1 accent-mask-hover"
+      >
         <AiOutlineDelete size={22} />
       </button>
       <a
@@ -82,6 +88,7 @@ export const NotebookItem: FC<NotebookItemProps> = ({
           <p className="text-xs text-zinc-500">{lastEdited}</p>
           {label && (
             <div className="flex items-center gap-3">
+              {/* @ts-ignore */}
               <ModuleTag name={label.name} color={label.color} />
             </div>
           )}
