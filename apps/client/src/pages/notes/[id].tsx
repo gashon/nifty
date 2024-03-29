@@ -4,9 +4,16 @@ import { useState, useEffect } from 'react';
 import { BsArrowBarLeft } from 'react-icons/bs';
 import { GiHamburgerMenu } from 'react-icons/gi';
 
-import { AuthProtection, AuthProvider, getUser } from '@nifty/client/features/auth';
+import {
+  AuthProtection,
+  AuthProvider,
+  getUser,
+} from '@nifty/client/features/auth';
 import { LoadingPage } from '@nifty/ui/pages/loading';
-import { DocumentSection, NoteSettingsDrawer } from '@nifty/client/features/note';
+import {
+  DocumentSection,
+  NoteSettingsDrawer,
+} from '@nifty/client/features/note';
 import { Authorization } from '@nifty/client/lib/authorization';
 
 function Document({ user }) {
@@ -41,7 +48,7 @@ function Document({ user }) {
               </main>
               <Authorization checkPolicy={'note:settings:mutate'}>
                 <NoteSettingsDrawer
-                  noteId={id as string}
+                  noteId={Number(id as string)}
                   triggerButton={
                     <button className="fixed top-5 right-5 p-5 text-2xl text-white bg-primary rounded-full shadow-lg">
                       <GiHamburgerMenu />

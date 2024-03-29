@@ -3,17 +3,16 @@ import { SOCKET_EVENT } from '@nifty/api-live/types';
 
 type SocketMessageHandlerParams = {
   socket: WebSocket | null;
-  documentId: string;
+  documentId: number;
   onDocumentLoad: (note: any) => void;
   onDocumentUpdate: (note: any) => void;
-
 };
 
 export const useSocketMessageHandler = ({
   socket,
   documentId,
   onDocumentLoad,
-  onDocumentUpdate
+  onDocumentUpdate,
 }: SocketMessageHandlerParams) => {
   useEffect(() => {
     if (socket) {
@@ -57,8 +56,9 @@ export const useSocketMessageHandler = ({
           })
         );
       }
-    }
-    , [socket]);
+    },
+    [socket]
+  );
 
   return { sendDocumentUpdate };
 };

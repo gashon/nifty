@@ -39,13 +39,13 @@ export const DocumentSection: FC = () => {
             documentId={Number(id as string)}
             fallBackEditor={
               // todo: only use long poll if note has not collaborators (offline)
-              <LongPollDocumentEditor documentId={id as string} />
+              <LongPollDocumentEditor documentId={Number(id as string)} />
             }
           />
         </ErrorBoundary>
       </section>
       <section className="w-full flex justify-between py-10 underline">
-        <PageNavigation id={id as string} />
+        <PageNavigation id={Number(id as string)} />
       </section>
     </>
   );

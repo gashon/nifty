@@ -13,6 +13,7 @@ import {
   NotebookList,
   NotebookListSSR,
   getNotes,
+  getNotesInDirectory,
 } from '@nifty/client/features/note';
 
 import { LoadingPage } from '@nifty/ui/pages/loading';
@@ -48,7 +49,7 @@ export async function getServerSideProps(context) {
   const { id } = context.params;
 
   const [notesSettle, userSettle] = await Promise.allSettled([
-    getNotes(id, { limit: 5 }, context.req.headers),
+    getNotesInDirectory(id, { limit: '5' }, context.req.headers),
     getUser(context.req.headers),
   ]);
 
