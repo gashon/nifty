@@ -1,8 +1,7 @@
-
 import { useEffect, useState, useRef, useReducer } from 'react';
-import { API_LIVE_URL } from "@nifty/client/config";
+import { API_LIVE_URL } from '@nifty/client/config';
 
-export const useNoteSocket = (noteId: string) => {
+export const useNoteSocket = (noteId: number) => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [reconnect, forceReconnect] = useReducer((x) => x + 1, 0);
   const [connectionFailed, setConnectionFailed] = useState<boolean>(false);
@@ -27,7 +26,6 @@ export const useNoteSocket = (noteId: string) => {
       }
     };
 
-
     setSocket(s);
     // return () => {
     //   s.close();
@@ -35,4 +33,5 @@ export const useNoteSocket = (noteId: string) => {
   }, [noteId, reconnect]);
 
   return { socket, connectionFailed };
-}
+};
+

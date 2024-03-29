@@ -1,14 +1,12 @@
-import {
-  NoteListResponse,
-  NoteCreateRequest,
-} from '@nifty/server-lib/models/note';
 import { AxiosResponse } from 'axios';
 import { useMutation } from 'react-query';
+
 import { axios } from '@nifty/client/lib/axios';
 import { MutationConfig, queryClient } from '@nifty/client/lib/react-query';
 import type {
   CreateNoteResponse,
   CreateNoteRequestBody,
+  GetUserNotesResponse,
 } from '@nifty/api/domains/note/dto';
 
 export const createNote = (
@@ -22,7 +20,7 @@ type UseCreateModuleOptions = {
 };
 
 type InfiniteQueryData = {
-  pages: NoteListResponse[];
+  pages: GetUserNotesResponse[];
   pageParams: Array<string | undefined>;
 };
 
@@ -38,27 +36,6 @@ export const useCreateNote = ({ config }: UseCreateModuleOptions = {}) => {
       }
     },
     onSuccess: (noteCreateResponse) => {
-      const createdNote = noteCreateResponse.data.data;
-
-      queryClient.setQueryData<InfiniteQueryData>(
-        'notes',
-        (previousModules) => {
-          if (previousModules?.pages?.length > 0) {
-            return {
-              ...previousModules,
-              pages: [
-                {
-                  ...previousModules.pages[0],
-                  data: [createdNote, ...previousModules.pages[0].data],
-                },
-                ...previousModules.pages.slice(1),
-              ],
-            };
-          } else {
-            return { pages: [{ data: [createdNote] }], pageParams: [] };
-          }
-        }
-      );
       queryClient.invalidateQueries('notes');
     },
     ...config,

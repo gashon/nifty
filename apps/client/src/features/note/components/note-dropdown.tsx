@@ -7,7 +7,8 @@ export const NoteDropdown: FC<{
 }> = ({ onChange }) => {
   const [selection, setSelection] = useState<undefined | string>(undefined);
   const { data } = useInfiniteNotes({
-    limit: 100,
+    limit: '100',
+    directoryId: undefined,
   });
 
   const notes = (data?.pages || [])

@@ -19,7 +19,10 @@ import {
 } from 'slate';
 import { withHistory } from 'slate-history';
 import { Editable, ReactEditor, Slate, withReact } from 'slate-react';
-import { useNoteSocket, useSocketMessageHandler } from '@nifty/client/features/socket/';
+import {
+  useNoteSocket,
+  useSocketMessageHandler,
+} from '@nifty/client/features/socket/';
 import { BulletedListElement } from '../types';
 import { useWordCount } from '@nifty/client/features/note';
 
@@ -37,7 +40,7 @@ const SHORTCUTS = {
 };
 
 type MarkdownShortcutsProps = {
-  documentId: string;
+  documentId: number;
   fallBackEditor: ReactElement;
 };
 
@@ -52,8 +55,9 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
   );
   const [_, forceRerender] = useReducer((s) => s + 1, 0);
   const { socket, connectionFailed } = useNoteSocket(documentId);
-  const [initValue, setInitValue] =
-    useState<Descendant[] | undefined>(undefined);
+  const [initValue, setInitValue] = useState<Descendant[] | undefined>(
+    undefined
+  );
 
   const onDocumentLoad = useCallback((note) => {
     setInitValue(

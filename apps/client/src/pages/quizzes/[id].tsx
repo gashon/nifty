@@ -3,15 +3,20 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, FC } from 'react';
 import { BsArrowBarLeft } from 'react-icons/bs';
 
-import { AuthProtection, AuthProvider, getUser } from '@nifty/client/features/auth';
+import {
+  AuthProtection,
+  AuthProvider,
+  getUser,
+} from '@nifty/client/features/auth';
 import { QuizForm, getQuiz } from '@nifty/client/features/quiz';
 import { LoadingPage } from '@nifty/ui/pages/loading';
 import { IUser } from '@nifty/server-lib/models/user';
 import { IQuiz } from '@nifty/server-lib/models/quiz';
+import { Quiz, Selectable, User } from '@nifty/common/types';
 
 export const QuizPage: FC<{
-  user: IUser;
-  quiz: IQuiz;
+  user: Selectable<User>;
+  quiz: Selectable<Quiz>;
 }> = ({ user, quiz }) => {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);

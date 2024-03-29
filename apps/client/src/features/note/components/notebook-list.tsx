@@ -1,7 +1,10 @@
 import { FC } from 'react';
 
 import NotebookItem from '@nifty/ui/molecules/notebook-item';
-import { useInfiniteNotes, useDeleteNote } from '@nifty/client/features/note';
+import {
+  useInfiniteNotesInDirectory,
+  useDeleteNote,
+} from '@nifty/client/features/note';
 
 type NotebookListProps = {
   moduleId: number;
@@ -9,9 +12,9 @@ type NotebookListProps = {
 };
 
 export const NotebookList: FC<NotebookListProps> = ({ moduleId }) => {
-  const { data, isFetched } = useInfiniteNotes({
+  const { data, isFetched } = useInfiniteNotesInDirectory({
     directoryId: moduleId,
-    limit: 100,
+    limit: '100',
   });
   const { mutate: deleteNote } = useDeleteNote();
 
@@ -37,8 +40,11 @@ export const NotebookList: FC<NotebookListProps> = ({ moduleId }) => {
               return page.map((note) => (
                 <div key={note.id}>
                   <NotebookItem
+                    variant="default"
                     onDelete={() => deleteNote(note.id)}
                     href={`/notes/${note.id}?title=${note.title}`}
+                    icon={<p>ICON</p>}
+                    lastEdited={note.updatedAt}
                     {...note}
                   />
                 </div>

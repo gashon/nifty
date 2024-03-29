@@ -11,7 +11,7 @@ import { successNotification } from '@nifty/client/lib/notification';
 
 type NoteSettingsDrawerProps = {
   triggerButton: ReactElement;
-  noteId: string;
+  noteId: number;
 };
 
 // consider moving to formkik if this become CRUD operations

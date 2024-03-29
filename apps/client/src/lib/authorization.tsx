@@ -37,20 +37,21 @@ export const useAuthorization = () => {
       }
 
       if (
-        allowedPermissions &&
-        !allowedPermissions.some((permission) =>
-          (user?.permissions || []).includes(permission)
-        )
+        allowedPermissions
+        // &&
+        // !allowedPermissions.some((permission) =>
+        //   (user?.permissions || []).includes(permission)
+        // )
       ) {
         return false;
       }
 
       return true;
     },
-    [user?.permissions]
+    [user]
   );
 
-  return { checkAccess, permissions: user?.permissions };
+  return { checkAccess, permissions: user };
 };
 
 type AuthorizationProps = {

@@ -5,7 +5,11 @@ import { useState, useEffect, FC } from 'react';
 import { BsArrowBarLeft } from 'react-icons/bs';
 import dayjs from 'dayjs';
 
-import { AuthProtection, AuthProvider, getUser } from '@nifty/client/features/auth';
+import {
+  AuthProtection,
+  AuthProvider,
+  getUser,
+} from '@nifty/client/features/auth';
 import { getQuizSubmission, useRemixQuiz } from '@nifty/client/features/quiz';
 import { LoadingPage } from '@nifty/ui/pages/loading';
 import { IUser } from '@nifty/server-lib/models/user';
@@ -21,6 +25,7 @@ import {
   IQuizFreeResponseQuestion,
 } from '@nifty/server-lib/models/quiz';
 import { Button } from '@nifty/ui/atoms';
+import { Selectable, User } from '@nifty/common/types';
 
 interface SubmissionResponse extends Omit<ISubmission, 'quiz'> {
   quiz: IQuiz; // quiz is populated
@@ -123,7 +128,7 @@ const SubmissionResults: FC<{
 };
 
 export const SubmissionPage: FC<{
-  user: IUser;
+  user: Selectable<User>;
   submission: SubmissionResponse;
 }> = ({ user, submission }) => {
   const router = useRouter();
@@ -179,15 +184,19 @@ export const SubmissionPage: FC<{
                   <span className="underline opacity-75">Try again</span>
                 </Link>
                 <Button
-                  onClick={async () => {
-                    const payload = {
-                      question_type: submission.quiz.question_type,
-                      note: submission.quiz.note,
-                    };
-                    const { data: quizResponse } = await remixQuiz(payload);
-                    router.push(`/quizzes/${quizResponse.data.id}`);
-                  }}
+                  // onClick={async () => {
+                  //   const payload = {
+                  //     question_type: submission.quiz.question_type,
+                  //     note: submission.quiz.note,
+                  //   };
+                  //   const { data: quizResponse } = await remixQuiz(
+                  //     submission.quiz.id,
+                  //     payload
+                  //   );
+                  //   router.push(`/quizzes/${quizResponse.data.id}`);
+                  // }}
                   loading={remixIsLoading}
+                  disabled
                 >
                   Create another quiz!
                 </Button>

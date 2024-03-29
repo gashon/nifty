@@ -8,13 +8,13 @@ import { useCreateQuiz } from '@nifty/client/features/quiz';
 
 import { Button } from '@nifty/ui/atoms';
 import { FormDrawer, Form, InputField, FieldWrapper } from '@nifty/ui/form';
-import { QuizCreateRequest } from '@nifty/server-lib/models/quiz';
+import type { CreateQuizRequestBody } from '@nifty/api/domains/quiz/dto';
 
 const schema = z.object({
   title: z.string().max(50).optional(),
-  note: z.string().min(1).max(100), // note id
-  multiple_choice: z.boolean().default(false),
-  free_response: z.boolean().default(false),
+  noteId: z.number(),
+  multipleChoiceActivated: z.boolean().default(false),
+  freeResponseActivated: z.boolean().default(false),
 });
 
 export const QuizCreationButton: FC = () => {
@@ -22,14 +22,7 @@ export const QuizCreationButton: FC = () => {
 
   const onSubmit = useCallback(
     async (values: z.infer<typeof schema>) => {
-      const payload: QuizCreateRequest = {
-        title: values.title,
-        note: values.note,
-        question_type: {
-          multiple_choice: values.multiple_choice,
-          free_response: values.free_response,
-        },
-      };
+      const payload: CreateQuizRequestBody = values;
       await createQuizMutation.mutateAsync(payload);
     },
     [createQuizMutation]
@@ -57,8 +50,8 @@ export const QuizCreationButton: FC = () => {
           className="w-full flex flex-col align-center justify-center"
         >
           {({ formState, setValue, register, getValues, watch }) => {
-            const multipleChoice = watch('multiple_choice');
-            const freeResponse = watch('free_response');
+            const multipleChoice = watch('multipleChoiceActivated');
+            const freeResponse = watch('freeResponseActivated');
 
             return (
               <>
@@ -84,14 +77,17 @@ export const QuizCreationButton: FC = () => {
                         <div
                           className="flex flex-row items-center gap-2 "
                           onClick={(e) => {
-                            setValue('multiple_choice', !multipleChoice);
+                            setValue(
+                              'multipleChoiceActivated',
+                              !multipleChoice
+                            );
                           }}
                         >
                           <input
                             type="checkbox"
                             name="question_type"
                             className="w-4 h-4"
-                            value="multiple_choice"
+                            value="multipleChoiceActivated"
                             checked={multipleChoice}
                           />
                           <label className="text-black cursor-pointer">
@@ -102,14 +98,14 @@ export const QuizCreationButton: FC = () => {
                         <div
                           className="flex flex-row items-center gap-2"
                           onClick={(e) => {
-                            setValue('free_response', !freeResponse);
+                            setValue('freeResponseActivated', !freeResponse);
                           }}
                         >
                           <input
                             type="checkbox"
                             name="question_type"
                             className="w-4 h-4"
-                            value="free_response"
+                            value="freeResponseActivated"
                             checked={freeResponse}
                           />
                           <label className="text-black cursor-pointer">
@@ -131,11 +127,11 @@ export const QuizCreationButton: FC = () => {
                     <div className="flex flex-row items-center gap-2">
                       <FieldWrapper
                         label="Note"
-                        error={formState.errors['note'] as FieldError}
+                        error={formState.errors['noteId'] as FieldError}
                       >
                         <NoteDropdown
                           onChange={(noteId) => {
-                            setValue('note', noteId);
+                            setValue('noteId', noteId);
                           }}
                         />
                       </FieldWrapper>

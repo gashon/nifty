@@ -36,7 +36,7 @@ export const DocumentSection: FC = () => {
       <section className="min-h-screen">
         <ErrorBoundary fallback={<p>Failed to connect</p>}>
           <SocketDocumentEditor
-            documentId={id as string}
+            documentId={Number(id as string)}
             fallBackEditor={
               // todo: only use long poll if note has not collaborators (offline)
               <LongPollDocumentEditor documentId={id as string} />

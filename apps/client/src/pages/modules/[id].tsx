@@ -3,7 +3,11 @@ import { useRouter } from 'next/router';
 
 import ThemeLayout from '@nifty/client/layouts/theme';
 import DashboardLayout from '@nifty/client/layouts/dashboard';
-import { AuthProtection, getUser, AuthProvider } from '@nifty/client/features/auth';
+import {
+  AuthProtection,
+  getUser,
+  AuthProvider,
+} from '@nifty/client/features/auth';
 import {
   NoteCreationButton,
   NotebookList,
@@ -29,8 +33,8 @@ function Module({ notes, user, id }) {
                 <h3 className="pb-6 text-3xl text-primary dark:text-zinc-400 ">
                   {moduleName}
                 </h3>
-                <NoteCreationButton moduleId={id as string} />
-                <NotebookList notes={notes} moduleId={id as string} />
+                <NoteCreationButton moduleId={Number(id as string)} />
+                <NotebookList notes={notes} moduleId={Number(id as string)} />
               </main>
             </DashboardLayout>
           </ThemeLayout>
