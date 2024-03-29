@@ -3,13 +3,13 @@ import { FC } from 'react';
 import { useGetNoteNeighbors } from '@nifty/client/features/note';
 
 type PageNavigationProps = {
-  id: string;
+  id: number;
 };
 
 export const PageNavigation: FC<PageNavigationProps> = ({ id }) => {
   const { data: neighbors } = useGetNoteNeighbors(id, {
-    limit: 1,
-    validateNoteHasDirectory: true,
+    limit: '1',
+    validateNoteHasDirectory: 'true',
   });
 
   if (!neighbors?.data) return null;

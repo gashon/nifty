@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Descendant } from 'slate';
 const countWords = (value: Descendant[]) =>
   value.reduce((memo, node) => {
+    // @ts-ignore TODO fix
     if (node?.children[0]?.text) {
       return memo + node.children[0].text.split(' ').length;
     }
@@ -17,5 +18,5 @@ export const useWordCount = (editorValue: Descendant[]) => {
     setWordCount(countWords(editorValue));
   }, [editorValue]);
 
-  return { wordCount, countWords }
+  return { wordCount, countWords };
 };

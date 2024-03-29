@@ -2,16 +2,24 @@ import { FC, useState, useEffect } from 'react';
 import { FiChevronUp, FiLogOut, FiSettings, FiUser } from 'react-icons/fi';
 import { twMerge } from 'tailwind-merge';
 import { useMediaQuery } from 'usehooks-ts';
-import { DropdownMenu } from '../../atoms/dropdown-menu';
 
-type UserCardProps = {
-  name?: string;
-  avatar?: string;
+import { DropdownMenu } from '../../atoms/dropdown-menu';
+import type { Selectable, User } from '@nifty/common/types';
+
+type UserCardProps = Selectable<User> & {
   signOut?: () => void;
 };
 
-export const UserCard: FC<UserCardProps> = ({ name, avatar, signOut }) => {
+export const UserCard: FC<UserCardProps> = ({
+  firstName,
+  lastName,
+  avatarUrl,
+  signOut,
+}) => {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
+
+  const name = firstName && lastName ? `${firstName} ${lastName}` : null;
+
   return (
     <DropdownMenu
       buttonAs="div"
@@ -45,7 +53,7 @@ export const UserCard: FC<UserCardProps> = ({ name, avatar, signOut }) => {
       >
         <div className="flex items-center gap-3 text-left">
           <img
-            src={avatar || '/user-placeholder.svg'}
+            src={avatarUrl || '/user-placeholder.svg'}
             alt={name}
             className="h-8 w-8 rounded-full lg:h-10 lg:w-10"
           />

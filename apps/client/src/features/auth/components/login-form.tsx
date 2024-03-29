@@ -2,10 +2,7 @@ import * as z from 'zod';
 import { useCallback, useState, FC } from 'react';
 import { useRouter } from 'next/router';
 
-import { Button } from 'ui/components/elements';
-import { InputField, Form } from 'ui/components/form';
-import { login } from '@nifty/client/features/auth/api';
-import { LoginFormData } from '@nifty/client/features/auth/types';
+import { emailLogin } from '@nifty/client/features/auth/api';
 import { GoogleLogin } from './google-login';
 
 const schema = z.object({
@@ -25,7 +22,7 @@ const LoginForm: FC = ({}) => {
   const handleSubmit = useCallback(
     async (values: z.infer<typeof schema>) => {
       try {
-        await login({ email: values.email }, router.query);
+        await emailLogin({ email: values.email }, router.query);
         setSentStatus(SentStatus.Sent);
       } catch (error) {
         setSentStatus(SentStatus.Error);
@@ -37,7 +34,8 @@ const LoginForm: FC = ({}) => {
   if (sentStatus === SentStatus.Sent) {
     return (
       <div className="text-center text-gray-500">
-        We&apos;ve sent you a temporary login link. Please check your email to log in.
+        We&apos;ve sent you a temporary login link. Please check your email to
+        log in.
       </div>
     );
   }

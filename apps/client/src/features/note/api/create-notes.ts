@@ -6,12 +6,14 @@ import { AxiosResponse } from 'axios';
 import { useMutation } from 'react-query';
 import { axios } from '@nifty/client/lib/axios';
 import { MutationConfig, queryClient } from '@nifty/client/lib/react-query';
-import { NoteCreateResponse } from '@nifty/api/domains/note/types';
-import type { CreateNoteRequestBody } from '@nifty/api/domains/note/dto';
+import type {
+  CreateNoteResponse,
+  CreateNoteRequestBody,
+} from '@nifty/api/domains/note/dto';
 
 export const createNote = (
   data: CreateNoteRequestBody
-): Promise<AxiosResponse<NoteCreateResponse>> => {
+): Promise<AxiosResponse<CreateNoteResponse>> => {
   return axios.post(`/api/v1/notes`, data);
 };
 
@@ -41,7 +43,6 @@ export const useCreateNote = ({ config }: UseCreateModuleOptions = {}) => {
       queryClient.setQueryData<InfiniteQueryData>(
         'notes',
         (previousModules) => {
-          console.log('previousModules', previousModules, createdNote);
           if (previousModules?.pages?.length > 0) {
             return {
               ...previousModules,

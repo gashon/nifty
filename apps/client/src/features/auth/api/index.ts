@@ -1,11 +1,13 @@
 import { ParsedUrlQuery } from 'querystring';
 import { AxiosResponse } from 'axios';
 import { axios } from '@nifty/client/lib/axios';
-import {User} from "@nifty/common/types"
+import type { Selectable, User } from '@nifty/common/types';
 
 import { LoginFormData } from '../types';
 
-export const getUser = async (headers?: { [key: string]: string }): Promise<AxiosResponse<User>> => {
+export const getUser = async (headers?: {
+  [key: string]: string;
+}): Promise<AxiosResponse<Selectable<User>>> => {
   const data = await axios.get('/ajax/auth/user', {
     headers,
   });
@@ -13,10 +15,14 @@ export const getUser = async (headers?: { [key: string]: string }): Promise<Axio
   return data;
 };
 
-export const emailLogin = async (payload: LoginFormData, params: ParsedUrlQuery, enabled?: boolean) => {
+export const emailLogin = async (
+  payload: LoginFormData,
+  params: ParsedUrlQuery,
+  enabled?: boolean
+) => {
   return axios.post('/ajax/auth/login/email', payload, { params });
 };
 
 export const signOut = async () => {
   return axios.get('/ajax/auth/logout');
-}
+};

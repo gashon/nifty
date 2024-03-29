@@ -1,25 +1,41 @@
 import { useQuery } from 'react-query';
+
 import { axios } from '@nifty/client/lib/axios';
-import { DirectoryDocument } from '@nifty/server-lib/models/directory';
+import type {
+  GetDirectoriesRequestQuery,
+  GetDirectoriesResponse,
+} from '@nifty/api/domains/directory/dto';
+
+type GetRecentDirectoriesRequestQuery = Pick<
+  GetDirectoriesRequestQuery,
+  'limit'
+>;
 
 export const getRecentlyEditedModules = async (
-  k?: number,
+  params: GetRecentDirectoriesRequestQuery,
   headers?: { [key: string]: string }
-): Promise<{ data: Partial<DirectoryDocument>[] }> => {
-  const { data } = await axios.get(`/api/v1/directories`, {
-    params: {
-      limit: k,
-      orderBy: ['directory.updatedAt desc'],
-    },
-    headers,
-  });
-  return data;
+): Promise<GetDirectoriesResponse['data']> => {
+  const { data } = await axios.get<GetDirectoriesResponse>(
+    `/api/v1/directories`,
+    {
+      params: {
+        limit: params.limit,
+        orderBy: 'directory.updatedAt desc',
+      },
+      headers,
+    }
+  );
+
+  return data.data;
 };
 
-export const useRecentModules = (userId: string, k?: number) => {
+export const useRecentModules = (
+  userId: string,
+  params: GetRecentDirectoriesRequestQuery
+) => {
   return useQuery(
     ['recent-directories', userId],
-    () => getRecentlyEditedModules(k),
+    () => getRecentlyEditedModules(params),
     {
       enabled: true,
     }

@@ -9,10 +9,15 @@ import React, {
 import { useRouter } from 'next/router';
 import { AxiosResponse } from 'axios';
 import storage from '@nifty/client/lib/storage';
-import { getUser, emailLogin, LoginFormSchema, signOut } from '@nifty/client/features/auth';
-import { IUser } from '@nifty/server-lib/models/user';
+import {
+  getUser,
+  emailLogin,
+  LoginFormSchema,
+  signOut,
+} from '@nifty/client/features/auth';
+import type { User, Selectable } from '@nifty/common/types';
 
-export type AuthUserDTO = IUser | null;
+export type AuthUserDTO = null | Selectable<User>;
 
 type AuthContextType = {
   user: AuthUserDTO | undefined;
@@ -60,7 +65,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({
             setError(new Error('Failed to fetch user data'));
             return;
           }
-          storage.set<IUser>('user', data);
+          storage.set<Selectable<User>>('user', data);
           setUser(data);
           setIsOffline(false);
         })

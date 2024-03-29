@@ -9,7 +9,7 @@ import { axios } from '@nifty/client/lib/axios';
 import { GetDirectoryNotesResponse } from '@nifty/api/domains/note/dto';
 
 export const getNotes = async (
-  directoryId: string | undefined,
+  directoryId: number,
   params: PaginationParams<'note'>,
   headers?: { [key: string]: string }
 ): Promise<GetDirectoryNotesResponse> => {
@@ -21,7 +21,7 @@ export const getNotes = async (
 };
 
 type UseNotesOptions = PaginationParams<'note'> & {
-  directoryId?: string;
+  directoryId: number;
 };
 
 export const useInfiniteNotes = (

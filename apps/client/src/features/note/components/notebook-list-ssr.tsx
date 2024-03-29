@@ -5,20 +5,18 @@ import { useInfiniteNotes, useDeleteNote } from '@nifty/client/features/note';
 import { useQueryClient } from 'react-query';
 
 type NotebookListProps = {
-  moduleId: string;
+  moduleId: number;
   notes: any;
 };
 
 export const NotebookListSSR: FC<NotebookListProps> = ({ moduleId, notes }) => {
-  // prefetch page 2
-  const { data, isFetched } = useInfiniteNotes(
-    {
-      page: 2,
-      directoryId: moduleId,
-      limit: 1000,
-    },
-    { pages: [notes], pageParams: [] }
-  );
+  // const { data, isFetched } = useInfiniteNotes(
+  //   {
+  //     directoryId: moduleId,
+  //     limit: 1000,
+  //   },
+  //   { pages: [notes], pageParams: [] }
+  // );
   const { mutate: deleteNote } = useDeleteNote();
   const queryClient = useQueryClient();
 
@@ -29,7 +27,7 @@ export const NotebookListSSR: FC<NotebookListProps> = ({ moduleId, notes }) => {
     const unsubscribe = queryClient.getQueryCache().subscribe(() => {
       const cacheData = queryClient.getQueryData(['notes']);
       if (cacheData) {
-        setAllNotes(cacheData.pages.flatMap(({ data }) => data));
+        // setAllNotes(cacheData.pages.flatMap(({ data }) => data));
       }
     });
 
@@ -42,9 +40,9 @@ export const NotebookListSSR: FC<NotebookListProps> = ({ moduleId, notes }) => {
   return (
     <>
       <div className="flex flex-col gap-3">
-        {isFetched && allNotes.length === 0 && (
-          <div className="text-gray-500">No notes found</div>
-        )}
+        {/* {isFetched && allNotes.length === 0 && ( */}
+        {/*   <div className="text-gray-500">No notes found</div> */}
+        {/* )} */}
         {allNotes && allNotes.length > 0 && (
           <>
             {allNotes.map((note: any) => (

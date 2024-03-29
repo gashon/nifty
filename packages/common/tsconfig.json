@@ -8,7 +8,7 @@
     "typeRoots": ["node_modules/@types", "types"],
     "baseUrl": ".",
     "paths": {
-      "@nifty/db/*": ["../db/src/*"],
+      "@nifty/db/*": ["../db/src/*"]
     }
   },
   "exclude": ["node_modules"]

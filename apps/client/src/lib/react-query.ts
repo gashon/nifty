@@ -1,6 +1,10 @@
 import { AxiosError } from 'axios';
-import { QueryClient, UseQueryOptions, UseMutationOptions, DefaultOptions } from 'react-query';
-import { PromiseValue } from 'type-fest';
+import {
+  QueryClient,
+  UseQueryOptions,
+  UseMutationOptions,
+  DefaultOptions,
+} from 'react-query';
 
 const queryConfig: DefaultOptions = {
   queries: {
@@ -12,7 +16,7 @@ const queryConfig: DefaultOptions = {
 
 export const queryClient = new QueryClient({ defaultOptions: queryConfig });
 
-export type ExtractFnReturnType<FnType extends (...args: any) => any> = PromiseValue<
+export type ExtractFnReturnType<FnType extends (...args: any) => any> = Awaited<
   ReturnType<FnType>
 >;
 
@@ -21,8 +25,9 @@ export type QueryConfig<QueryFnType extends (...args: any) => any> = Omit<
   'queryKey' | 'queryFn'
 >;
 
-export type MutationConfig<MutationFnType extends (...args: any) => any> = UseMutationOptions<
-  ExtractFnReturnType<MutationFnType>,
-  AxiosError,
-  Parameters<MutationFnType>[0]
->;
+export type MutationConfig<MutationFnType extends (...args: any) => any> =
+  UseMutationOptions<
+    ExtractFnReturnType<MutationFnType>,
+    AxiosError,
+    Parameters<MutationFnType>[0]
+  >;

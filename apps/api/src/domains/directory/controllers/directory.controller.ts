@@ -28,6 +28,7 @@ import { BINDING } from '@nifty/api/domains/binding';
 import { Permission } from '@nifty/api/util';
 import { PaginationParams } from '@nifty/api/types';
 import { paginator } from '@nifty/api/middlewares/guards/pagination';
+import { getPaginationMeta } from '@nifty/api/util/pagination';
 
 @controller('/v1/directories')
 export class DirectoryController {
@@ -82,7 +83,10 @@ export class DirectoryController {
         orderBy,
       });
 
-    return res.json({ data: directories });
+    return res.json({
+      data: directories,
+      pagination: getPaginationMeta(directories, limit),
+    });
   }
 
   @httpPost('/', auth())

@@ -13,6 +13,9 @@ export type PaginationParams<T extends keyof DB> = {
   orderBy?: OrderBy<T>;
 };
 
-export type PaginationQueryParams<T extends keyof DB> = PaginationParams<T> & {
+export type PaginationQueryParams<T extends keyof DB> = Omit<
+  PaginationParams<T>,
+  'limit'
+> & {
   limit: string;
 };

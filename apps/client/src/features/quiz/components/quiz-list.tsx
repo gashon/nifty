@@ -13,7 +13,7 @@ export const QuizList: FC = () => {
     isFetching,
     isFetchingNextPage,
     isFetched,
-  } = useInfiniteQuizzes({ limit: 100 });
+  } = useInfiniteQuizzes({ limit: '100' });
   const { mutate: deleteQuiz } = useDeleteQuiz();
 
   return (

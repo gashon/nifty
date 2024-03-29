@@ -31,7 +31,7 @@ export type CreateNoteRequestBody = Omit<Insertable<Note>, 'createdBy'> & {
 export type CreateNoteResponse = AppResponse<NoteWithoutDeletedAt>;
 
 export type GetNoteRequestParam = number;
-export type GetNoteResponse = AppResponse<Note>;
+export type GetNoteResponse = AppResponse<Selectable<Note>>;
 
 export type GetUserNotesRequestQuery = PaginationQueryParams<'note'>;
 export type GetUserNotesResponse = AppPaginationResponse<Selectable<Note>>;
@@ -42,7 +42,7 @@ export type GetDirectoryNotesResponse = AppPaginationResponse<Selectable<Note>>;
 
 export type UpdateNoteRequestBody = Updateable<Note>;
 export type UpdateNoteRequestParam = number;
-export type UpdateNoteResponse = AppResponse<{ id: Pick<Note, 'id'> }>;
+export type UpdateNoteResponse = AppResponse<Selectable<Note>>;
 
 export type DeleteNoteRequestParam = number;
-export type DeleteNoteResponse = AppResponse<{ id: Pick<Note, 'id'> }>;
+export type DeleteNoteResponse = AppResponse<Pick<Selectable<Note>, 'id'>>;

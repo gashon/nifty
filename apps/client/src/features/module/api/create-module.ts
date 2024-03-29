@@ -6,12 +6,14 @@ import { AxiosResponse } from 'axios';
 import { useMutation } from 'react-query';
 import { axios } from '@nifty/client/lib/axios';
 import { MutationConfig, queryClient } from '@nifty/client/lib/react-query';
-import { DirectoryCreateResponse } from '@nifty/api/domains/directory/types';
-import { CreateDirectoryRequestBody } from '@nifty/api/domains/directory/dto';
+import {
+  CreateDirectoryResponse,
+  CreateDirectoryRequestBody,
+} from '@nifty/api/domains/directory/dto';
 
 export const createModule = (
   data: CreateDirectoryRequestBody
-): Promise<AxiosResponse<DirectoryCreateResponse>> => {
+): Promise<AxiosResponse<CreateDirectoryResponse>> => {
   return axios.post(`/api/v1/directories`, data);
 };
 

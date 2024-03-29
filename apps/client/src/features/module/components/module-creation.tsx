@@ -23,7 +23,7 @@ export const ModuleCreationButton: FC = () => {
       const payload = {
         ...values,
         parentId: undefined,
-        credits: values.credits ? parseInt(values.credits) : null,
+        credits: values.credits ? Number(values.credits) : null,
       };
       await createModuleMutation.mutateAsync(payload);
     },

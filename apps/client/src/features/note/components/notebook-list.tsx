@@ -4,7 +4,7 @@ import NotebookItem from '@nifty/ui/molecules/notebook-item';
 import { useInfiniteNotes, useDeleteNote } from '@nifty/client/features/note';
 
 type NotebookListProps = {
-  moduleId: string;
+  moduleId: number;
   notes: any;
 };
 

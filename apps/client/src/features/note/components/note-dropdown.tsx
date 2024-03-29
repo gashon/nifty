@@ -3,7 +3,7 @@ import { DropdownMenu } from '@nifty/ui/atoms';
 import { useInfiniteNotes } from '@nifty/client/features/note';
 
 export const NoteDropdown: FC<{
-  onChange: (value: string | undefined) => void;
+  onChange: (value: number | undefined) => void;
 }> = ({ onChange }) => {
   const [selection, setSelection] = useState<undefined | string>(undefined);
   const { data } = useInfiniteNotes({

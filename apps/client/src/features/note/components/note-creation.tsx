@@ -12,6 +12,7 @@ import { FormDrawer, Form, InputField, FieldWrapper } from '@nifty/ui/form';
 import { NoteCreateRequest } from '@nifty/server-lib/models/note';
 import { Permission } from '@nifty/api/util/handle-permissions';
 import { Authorization } from '@nifty/client/lib/authorization';
+import { CreateNoteRequestBody } from '@nifty/api/domains/note/dto';
 
 const PermissionSchema = z.nativeEnum(Permission);
 const schema = z.object({
@@ -21,7 +22,7 @@ const schema = z.object({
 });
 
 type NoteCreationButtonProps = {
-  moduleId: string;
+  moduleId: number;
 };
 
 export const NoteCreationButton: FC<NoteCreationButtonProps> = ({
@@ -30,8 +31,12 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({
   const createNodeMutation = useCreateNote();
 
   const onSubmit = useCallback(
-    async (values: NoteCreateRequest) => {
-      const payload = { ...values, directoryId: moduleId };
+    async (values: Omit<CreateNoteRequestBody, 'directoryId'>) => {
+      const payload: CreateNoteRequestBody = {
+        ...values,
+        directoryId: moduleId,
+      };
+
       await createNodeMutation.mutateAsync(payload);
     },
     [createNodeMutation]

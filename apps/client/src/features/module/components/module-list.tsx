@@ -1,12 +1,21 @@
 import { FC } from 'react';
 
-import { useInfiniteDirectories, useDeleteModule } from '@nifty/client/features/module';
+import {
+  useInfiniteDirectories,
+  useDeleteModule,
+} from '@nifty/client/features/module';
 import ModuleCard from '@nifty/ui/molecules/module-card';
 
 export const ModuleList: FC = () => {
   // todo implement frontend pagination
-  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, isFetched } =
-    useInfiniteDirectories({ limit: 100 });
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    isFetched,
+  } = useInfiniteDirectories({ limit: '100' });
   const { mutate: deleteModule } = useDeleteModule();
 
   return (
@@ -18,7 +27,7 @@ export const ModuleList: FC = () => {
       {isFetched && (
         <>
           {data.pages.map(({ data }: any) =>
-            data.map(module => (
+            data.map((module) => (
               <div key={module.id}>
                 <ModuleCard
                   onDelete={() => deleteModule(module.id)}
