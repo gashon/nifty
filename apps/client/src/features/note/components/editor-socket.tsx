@@ -137,21 +137,6 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
     [editor]
   );
 
-  useEffect(() => {
-    if (!socket || !initValue || connectionFailed) return;
-    const interval = setInterval(() => {
-      console.log('SENDING');
-      sendDocumentUpdate(
-        JSON.stringify([
-          {
-            type: 'paragraph',
-            children: [{ text: (Math.random() + 1).toString(36).substring(7) }],
-          },
-        ])
-      );
-    }, 2000);
-  }, [socket, initValue, connectionFailed]);
-
   if (!initValue) return <p className="underline text-xl">Loading...</p>;
   if (connectionFailed) return fallBackEditor;
 

@@ -50,8 +50,8 @@ export class SocketService {
     const notePermissions = await this.getNotePermissions(documentId);
 
     const hasPublicPermissions = isPermitted(notePermissions, Permission.Read);
-    if (hasPublicPermissions)
-      return { notePermissions, hasAccess: true, collaborator: null };
+    if (!hasPublicPermissions)
+      return { notePermissions, hasAccess: false, collaborator: null };
 
     // check if user is a collaborator
     const collaborator = await this.dbRepository.getCollaborator(

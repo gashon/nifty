@@ -199,6 +199,7 @@ export class WebSocketServer extends Server {
   async handleDocumentUpdate(documentId: number, socket: WebSocket, data: any) {
     try {
       const content = data.payload.note.content;
+      console.log('content', content);
       await this.socketService.setContent(documentId, content, socket);
 
       const updateMessage = {

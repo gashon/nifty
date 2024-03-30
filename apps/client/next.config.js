@@ -12,7 +12,7 @@ const withTM = require('next-transpile-modules')([
 ]);
 
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   typescript: {
     ignoreBuildErrors: false,
   },
