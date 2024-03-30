@@ -46,46 +46,43 @@ export class SocketService {
     return this.dbRepository.getNotePermissions(documentId);
   }
 
-  async validateAccess(
-    accessToken: string,
-    documentId: number
-  ): Promise<{
-    hasAccess: boolean;
-    collaborator: Selectable<Collaborator> | null;
-  }> {
+  async validateAccess(userId: number, documentId: number) {
     const notePermissions = await this.getNotePermissions(documentId);
 
-    // token is in req headers
-    const token = verifyToken<AccessTokenJwt>(accessToken);
-    if (!token) throw new Error('Invalid access token');
-
     const hasPublicPermissions = isPermitted(notePermissions, Permission.Read);
-    if (hasPublicPermissions) return { hasAccess: true, collaborator: null };
+    if (hasPublicPermissions)
+      return { notePermissions, hasAccess: true, collaborator: null };
 
     // check if user is a collaborator
     const collaborator = await this.dbRepository.getCollaborator(
-      token.user.id,
+      userId,
       documentId
     );
     if (!collaborator)
-      throw new Error("You don't have access to this document");
+      return {
+        hasAccess: false,
+      };
 
     // update last viewed at asynchonously
     this.dbRepository.updateCollaboratorLastViewedAt(collaborator.id);
 
-    return { hasAccess: true, collaborator };
+    return { notePermissions, hasAccess: true, collaborator };
   }
 
   async getEditorSockets(documentId: number): Promise<WebSocket[]> {
     return this.socketRepository.getEditorSockets(documentId);
   }
 
-  async getEditors(documentId: number): Promise<string[]> {
+  async getEditors(documentId: number) {
     return this.socketRepository.getEditors(documentId);
   }
 
-  async addEditorToDocument(documentId: number, editor: WebSocket) {
-    return this.socketRepository.addEditor(documentId, editor);
+  async addEditorToDocument(
+    editorId: number,
+    documentId: number,
+    editor: WebSocket
+  ) {
+    return this.socketRepository.addEditor(editorId, documentId, editor);
   }
 
   async disconnectEditor(documentId: number, editor: WebSocket) {
@@ -134,13 +131,9 @@ export class SocketService {
     });
   }
 
-  // pass editor to require permissions
-  async saveContentToDisk(documentId: number, editor?: WebSocket) {
-    if (editor && !this.socketRepository.socketIsEditor(documentId, editor))
-      throw new Error('You are not an editor of this document');
-
+  async saveContentToDisk(documentId: number) {
     const memoryContent = await this.socketRepository.getContent(documentId);
-    return this.socketRepository.updateMongoDocument(documentId, memoryContent);
+    return this.socketRepository.writeToDB(documentId, memoryContent);
   }
 
   parse(message: RawData): Record<string, unknown> | null {

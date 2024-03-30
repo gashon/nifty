@@ -2,12 +2,17 @@ import { WebSocket } from 'ws';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { RedisClientType } from '@nifty/api-live/lib/redis';
-import type { KysleyDB, Note, Selectable } from '@nifty/common/types';
+import type {
+  Collaborator,
+  KysleyDB,
+  Note,
+  Selectable,
+} from '@nifty/common/types';
 import { db } from '@nifty/common/db';
 
 export class SocketRepository {
   private redis: RedisClientType;
-  private socketMap: Map<string, WebSocket> = new Map();
+  private socketMap: Map<number, WebSocket> = new Map();
   private db: KysleyDB;
 
   constructor(redisClient: RedisClientType) {
@@ -20,27 +25,26 @@ export class SocketRepository {
   }
 
   async getEditors(documentId: number) {
-    const editors = await this._redisGet(`document:${documentId}:editors`);
-    return editors ? (JSON.parse(editors) as string[]) : ([] as string[]);
+    const editors = await this._redisGet<number[]>(
+      `document:${documentId}:editors`
+    );
+    return editors || [];
   }
 
   async getEditorSockets(documentId: number): Promise<WebSocket[]> {
     const editors = await this.getEditors(documentId);
-    return editors
-      .map((editorId) => this.socketMap.get(editorId)!)
-      .filter((socket) => socket);
+    return editors.map((editorId) => this.socketMap.get(editorId)!);
   }
 
-  async addEditor(documentId: number, editor: WebSocket) {
-    const editorId = uuidv4();
+  async addEditor(editorId: number, documentId: number, editor: WebSocket) {
     this.socketMap.set(editorId, editor);
-
     const editorIds = await this.getEditors(documentId);
+
     if (!editorIds.includes(editorId)) {
-      await this.redis.set(
-        `document:${documentId}:editors`,
-        JSON.stringify([...editorIds, editorId])
-      );
+      await this._redisSet(`document:${documentId}:editors`, [
+        ...editorIds,
+        editorId,
+      ]);
     }
   }
 
@@ -52,10 +56,7 @@ export class SocketRepository {
 
     this.socketMap.delete(editorId);
     const newEditors = editorIds.filter((e) => e !== editorId);
-    await this._redisSet(
-      `document:${documentId}:editors`,
-      JSON.stringify(newEditors)
-    );
+    await this._redisSet(`document:${documentId}:editors`, newEditors);
   }
 
   getEditorIdBySocket(editor: WebSocket) {
@@ -64,34 +65,38 @@ export class SocketRepository {
     )?.[0];
   }
 
-  async getContent(documentId: number) {
-    const content = await this._redisGet(`document:${documentId}:content`);
-    if (!content) {
-      const note = await this.db
-        .selectFrom('note')
-        .select(['content'])
-        .where('id', '=', documentId)
-        .executeTakeFirst();
-      if (!note) throw new Error('Document not found');
+  async getContent(documentId: number): Promise<string> {
+    const content = await this._redisGet<string>(
+      `document:${documentId}:content`
+    );
 
-      this.redis.set(`document:${documentId}:content`, note.content);
-      return note.content;
-    }
-    return content ? content : '';
+    if (content) return content;
+
+    // if not in redis, fetch from db
+    const note = await this.db
+      .selectFrom('note')
+      .select(['content'])
+      .where('id', '=', documentId)
+      .executeTakeFirst();
+    if (!note) throw new Error('Document not found');
+
+    await this._redisSet(`document:${documentId}:content`, note.content);
+    return note.content;
   }
 
   async setContent(documentId: number, content: string, editor: WebSocket) {
-    await this.redis.set(`document:${documentId}:content`, content);
+    await this._redisSet(`document:${documentId}:content`, content);
   }
 
   async getDocumentIdBySocket(editor: WebSocket) {
     const editorId = this.getEditorIdBySocket(editor);
     if (editorId) {
       const documentIds = await this.redis.keys('document:*:editors');
-      for (const documentId of documentIds) {
-        const editors = await this._redisGet(documentId);
+      for (const idString of documentIds) {
+        const documentId = idString.split(':')[1];
+        const editors = await this.getEditors(Number(documentId));
         if (editors && editors.includes(editorId)) {
-          return Number(documentId.split(':')[1]);
+          return Number(documentId);
         }
       }
     }
@@ -111,7 +116,7 @@ export class SocketRepository {
     return editors.includes(editorId!);
   }
 
-  async updateMongoDocument(
+  async writeToDB(
     documentId: number,
     content: string
   ): Promise<[Selectable<Note>, boolean]> {
@@ -134,12 +139,12 @@ export class SocketRepository {
     return [note, isUpdated];
   }
 
-  _redisGet(key: string) {
-    return new Promise<string | null>((resolve, reject) => {
+  _redisGet<T>(key: string) {
+    return new Promise<T | null>((resolve, reject) => {
       this.redis
         .get(key)
         .then((result) => {
-          resolve(result);
+          resolve(result ? JSON.parse(result) : null);
         })
         .catch((err) => {
           reject(err);
@@ -147,10 +152,10 @@ export class SocketRepository {
     });
   }
 
-  _redisSet(key: string, value: string) {
+  _redisSet(key: string, value: any) {
     return new Promise<void>((resolve, reject) => {
       this.redis
-        .set(key, value)
+        .set(key, JSON.stringify(value))
         .then(() => {
           resolve();
         })

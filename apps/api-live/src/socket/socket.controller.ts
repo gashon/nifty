@@ -5,8 +5,9 @@ import { isPermitted, Permission } from '@nifty/api/util/handle-permissions';
 import { SocketService, closeSocketOnError } from '@nifty/api-live/socket';
 import { SOCKET_EVENT } from '@nifty/api-live/types';
 import { RedisClientType } from '@nifty/api-live/lib/redis';
-import { ACCESS_TOKEN_NAME } from '@nifty/api/constants';
-import type { Collaborator, Selectable } from '@nifty/common/types';
+import { AccessTokenJwt, Collaborator, Selectable } from '@nifty/common/types';
+import { getAccessTokenString } from '@nifty/api-live/socket/util';
+import { verifyToken } from '@nifty/api/lib/jwt';
 
 const SAVE_TO_DISK_INTERVAL = 15000; // 15 seconds
 const HEARTBEAT_INTERVAL = 30000; // 30 seconds
@@ -16,6 +17,7 @@ interface WebSocketSession extends WebSocket {
   isAlive?: boolean;
   collaborator?: Selectable<Collaborator>;
   notePermissions?: Permission;
+  userId: number;
 }
 
 // todo attach permissions to the note editing socket
@@ -43,32 +45,34 @@ export class WebSocketServer extends Server {
       const documentId = Number(docParam);
 
       // get access token from cookie
-      const accessToken = request.headers['cookie']
-        ?.split(';')
-        .find((cookie) => cookie.includes(ACCESS_TOKEN_NAME))
-        ?.split('=')[1];
+      const accessTokenString = getAccessTokenString(request.headers['cookie']);
+      let accessToken: AccessTokenJwt | undefined = undefined;
+      try {
+        accessToken = verifyToken<AccessTokenJwt>(accessTokenString);
+      } catch (err) {
+        logger.error(err);
+      }
+
       if (!accessToken) {
-        logger.error('No access token found');
+        logger.error('Invalid access token ');
         socket.close();
         return;
       }
 
       try {
         // get note permissions and validate access
-        const [notePermissions, { hasAccess, collaborator }] =
-          await Promise.all([
-            this.socketService.getNotePermissions(documentId),
-            this.socketService.validateAccess(
-              accessToken as string,
-              documentId
-            ),
-          ]);
+        const { notePermissions, hasAccess, collaborator } =
+          await this.socketService.validateAccess(
+            accessToken.user.id,
+            documentId
+          );
 
         if (!hasAccess)
           throw new Error('You do not have access to this document');
 
         // attach user permissions to the socket
         // todo store in redis
+        socket['userId'] = accessToken.user.id;
         socket['collaborator'] = collaborator ?? undefined;
         socket['notePermissions'] = notePermissions;
       } catch (err) {
@@ -94,16 +98,16 @@ export class WebSocketServer extends Server {
   }
 
   heartbeat() {
-    this.clients.forEach((socket: WebSocketSession) => {
-      if (socket.isAlive === false) {
-        logger.info('Socket is dead, closing connection');
-        this.handleEditorLeave(socket);
-        return socket.terminate();
-      }
-
-      logger.info('Socket is alive, sending heartbeat');
-      socket.isAlive = false;
-      socket.ping();
+    this.clients.forEach((socket: WebSocket) => {
+      // if (socket?.isAlive === false) {
+      //   logger.info('Socket is dead, closing connection');
+      //   this.handleEditorLeave(socket);
+      //   return socket.terminate();
+      // }
+      //
+      // logger.info('Socket is alive, sending heartbeat');
+      // socket?.isAlive = false;
+      // socket.ping();
     });
   }
 
@@ -112,7 +116,11 @@ export class WebSocketServer extends Server {
     await this.syncLock.acquire(
       ['connection', documentId.toString()],
       async () => {
-        await this.socketService.addEditorToDocument(documentId, socket);
+        await this.socketService.addEditorToDocument(
+          socket.userId,
+          documentId,
+          socket
+        );
 
         socket.isAlive = true;
         // broadcast the join to all connected users
