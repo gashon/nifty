@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "doppler run -- nodemon src/server.ts",
-    "start": "doppler run -t $DOPPLER_API_TOKEN -- node -r esbuild-register src/server.ts",
+    "start": "doppler run -t $DOPPLER_TOKEN_API -- node -r esbuild-register src/server.ts",
     "build": "tsc",
     "lint": "tsc --noEmit && eslint . --fix --ext js,ts"
   },
@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@nifty/common": "workspace:*",
+    "@nifty/api": "workspace:*",
     "@nifty/tsconfig": "workspace:*",
     "@types/express": "^4.17.14",
     "@types/morgan": "^1.9.3",

@@ -5,7 +5,8 @@ import { isPermitted, Permission } from '@nifty/api/util/handle-permissions';
 import { SocketService, closeSocketOnError } from '@nifty/api-live/socket';
 import { SOCKET_EVENT } from '@nifty/api-live/types';
 import { RedisClientType } from '@nifty/api-live/lib/redis';
-import { ICollaborator } from '@nifty/server-lib/models/collaborator';
+import { ACCESS_TOKEN_NAME } from '@nifty/api/constants';
+import type { Collaborator, Selectable } from '@nifty/common/types';
 
 const SAVE_TO_DISK_INTERVAL = 15000; // 15 seconds
 const HEARTBEAT_INTERVAL = 30000; // 30 seconds
@@ -13,7 +14,7 @@ const LOCK_TIMEOUT = 10000; // 10 seconds
 
 interface WebSocketSession extends WebSocket {
   isAlive?: boolean;
-  collaborator?: ICollaborator;
+  collaborator?: Selectable<Collaborator>;
   notePermissions?: Permission;
 }
 
@@ -36,13 +37,15 @@ export class WebSocketServer extends Server {
     this.socketService.clearRedis();
 
     this.on('connection', async (socket: WebSocketSession, request) => {
-      const documentId = request.url?.split('/').pop();
-      if (!documentId) return;
+      const docParam = request.url?.split('/').pop();
+      if (!docParam) return;
+
+      const documentId = Number(docParam);
 
       // get access token from cookie
       const accessToken = request.headers['cookie']
         ?.split(';')
-        .find((cookie) => cookie.includes('access_token'))
+        .find((cookie) => cookie.includes(ACCESS_TOKEN_NAME))
         ?.split('=')[1];
       if (!accessToken) {
         logger.error('No access token found');
@@ -52,10 +55,14 @@ export class WebSocketServer extends Server {
 
       try {
         // get note permissions and validate access
-        const [notePermissions, [hasAccess, collaborator]] = await Promise.all([
-          this.socketService.getNotePermissions(documentId),
-          this.socketService.validateAccess(accessToken as string, documentId),
-        ]);
+        const [notePermissions, { hasAccess, collaborator }] =
+          await Promise.all([
+            this.socketService.getNotePermissions(documentId),
+            this.socketService.validateAccess(
+              accessToken as string,
+              documentId
+            ),
+          ]);
 
         if (!hasAccess)
           throw new Error('You do not have access to this document');
@@ -101,37 +108,43 @@ export class WebSocketServer extends Server {
   }
 
   @closeSocketOnError
-  async handleConnection(documentId: string, socket: WebSocketSession) {
-    await this.syncLock.acquire(['connection', documentId], async () => {
-      await this.socketService.addEditorToDocument(documentId, socket);
+  async handleConnection(documentId: number, socket: WebSocketSession) {
+    await this.syncLock.acquire(
+      ['connection', documentId.toString()],
+      async () => {
+        await this.socketService.addEditorToDocument(documentId, socket);
 
-      socket.isAlive = true;
-      // broadcast the join to all connected users
-      this.broadcastJoin(documentId, socket);
-      // start autosave clock if not already started
-      this.findOrStartAutoSaveClock(documentId);
-      // send the current content to the new user
-      this.sendCurrentDocumentContent(documentId, socket);
-
-      socket.on('pong', () => {
         socket.isAlive = true;
-      });
+        // broadcast the join to all connected users
+        this.broadcastJoin(documentId, socket);
+        // start autosave clock if not already started
+        this.findOrStartAutoSaveClock(documentId);
+        // send the current content to the new user
+        this.sendCurrentDocumentContent(documentId, socket);
 
-      socket.on('message', (message: WebSocket.RawData, _isBinary: boolean) => {
-        this.handleMessage(documentId, message, socket);
-      });
+        socket.on('pong', () => {
+          socket.isAlive = true;
+        });
 
-      socket.on('close', () => {
-        this.handleEditorLeave(socket, documentId);
-      });
+        socket.on(
+          'message',
+          (message: WebSocket.RawData, _isBinary: boolean) => {
+            this.handleMessage(documentId, message, socket);
+          }
+        );
 
-      socket.on('error', () => {
-        this.handleEditorLeave(socket, documentId);
-      });
-    });
+        socket.on('close', () => {
+          this.handleEditorLeave(socket, documentId);
+        });
+
+        socket.on('error', () => {
+          this.handleEditorLeave(socket, documentId);
+        });
+      }
+    );
   }
 
-  async broadcastJoin(documentId: string, socket: WebSocketSession) {
+  async broadcastJoin(documentId: number, socket: WebSocketSession) {
     try {
       const joinMessage = {
         event: SOCKET_EVENT.EDITOR_JOIN,
@@ -143,22 +156,25 @@ export class WebSocketServer extends Server {
     }
   }
 
-  async findOrStartAutoSaveClock(documentId: string) {
+  async findOrStartAutoSaveClock(documentId: number) {
     try {
-      await this.syncLock.acquire(['autosave', documentId], async () => {
-        if (!this.autoSaveClocks[documentId]) {
-          this.autoSaveClocks[documentId] = setInterval(async () => {
-            logger.info(`Autosaving document: ${documentId}...`);
-            await this.syncToDatabase(documentId);
-          }, SAVE_TO_DISK_INTERVAL);
+      await this.syncLock.acquire(
+        ['autosave', documentId.toString()],
+        async () => {
+          if (!this.autoSaveClocks[documentId]) {
+            this.autoSaveClocks[documentId] = setInterval(async () => {
+              logger.info(`Autosaving document: ${documentId}...`);
+              await this.syncToDatabase(documentId);
+            }, SAVE_TO_DISK_INTERVAL);
+          }
         }
-      });
+      );
     } catch (err) {
       logger.error(err);
     }
   }
 
-  async sendCurrentDocumentContent(documentId: string, socket: WebSocket) {
+  async sendCurrentDocumentContent(documentId: number, socket: WebSocket) {
     try {
       const content = await this.socketService.getContent(documentId);
       const contentMessage = {
@@ -172,7 +188,7 @@ export class WebSocketServer extends Server {
     }
   }
 
-  async handleDocumentUpdate(documentId: string, socket: WebSocket, data: any) {
+  async handleDocumentUpdate(documentId: number, socket: WebSocket, data: any) {
     try {
       const content = data.payload.note.content;
       await this.socketService.setContent(documentId, content, socket);
@@ -191,10 +207,10 @@ export class WebSocketServer extends Server {
   }
 
   async handleEditorLeave(socket: WebSocket): Promise<void>;
-  async handleEditorLeave(socket: WebSocket, docId: string): Promise<void>;
-  async handleEditorLeave(socket: WebSocket, docId?: string): Promise<void> {
+  async handleEditorLeave(socket: WebSocket, docId: number): Promise<void>;
+  async handleEditorLeave(socket: WebSocket, docId?: number): Promise<void> {
     await this.syncLock.acquire(
-      ['disconnection', docId || 'unknown'],
+      ['disconnection', docId?.toString() || 'unknown'],
       async () => {
         const documentId =
           docId || (await this.socketService.getDocumentIdBySocket(socket));
@@ -224,7 +240,7 @@ export class WebSocketServer extends Server {
   // ping all editors to make sure they are still alive
   // if they are not, remove them from the list of editors
   // todo implement this as a fallback if the editor does not send a leave message
-  async countAndPruneActiveEditors(documentId: string): Promise<number> {
+  async countAndPruneActiveEditors(documentId: number): Promise<number> {
     const sockets = await this.socketService.getEditorSockets(documentId);
 
     const activeEditors = await Promise.all(
@@ -244,7 +260,7 @@ export class WebSocketServer extends Server {
   }
 
   @closeSocketOnError
-  async handleEditorIdle(documentId: string) {
+  async handleEditorIdle(documentId: number) {
     try {
       const idleMessage = { event: SOCKET_EVENT.EDITOR_IDLE, documentId };
       this.socketService.broadcast(documentId, idleMessage);
@@ -253,7 +269,7 @@ export class WebSocketServer extends Server {
     }
   }
 
-  async syncToDatabase(documentId: string) {
+  async syncToDatabase(documentId: number) {
     try {
       const [_, updated] = await this.socketService.saveContentToDisk(
         documentId
@@ -308,7 +324,7 @@ export class WebSocketServer extends Server {
 
   @closeSocketOnError
   handleMessage(
-    documentId: string,
+    documentId: number,
     message: WebSocket.RawData,
     socket: WebSocketSession
   ) {

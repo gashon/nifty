@@ -1,36 +1,36 @@
 import WebSocket, { RawData, OPEN } from 'ws';
-import { Model } from 'mongoose';
+
 import { RedisClientType } from '@nifty/api-live/lib/redis';
 import { SocketRepository } from './socket.repository';
-import Note, { INote } from '@nifty/server-lib/models/note';
-import AccessToken, { IToken } from '@nifty/server-lib/models/token';
-import Collaborator, {
-  ICollaborator,
-} from '@nifty/server-lib/models/collaborator';
 import { SOCKET_EVENT } from '@nifty/api-live/types';
 import { Permission, isPermitted } from '@nifty/api/util/handle-permissions';
+import type {
+  Note,
+  Collaborator,
+  KysleyDB,
+  AccessTokenJwt,
+  Selectable,
+} from '@nifty/common/types';
+import { db } from '@nifty/common/db';
+import { verifyToken } from '@nifty/api/lib/jwt';
 
 export class SocketService {
   private socketRepository: SocketRepository;
-  private noteModel: Model<INote>;
-  private accessTokenModel: Model<IToken>;
-  private collaboratorModel: Model<ICollaborator>;
+  private db: KysleyDB;
 
   constructor(redisClient: RedisClientType) {
     this.socketRepository = new SocketRepository(redisClient);
-    this.collaboratorModel = Collaborator;
-    this.accessTokenModel = AccessToken;
-    this.noteModel = Note;
+    this.db = db;
   }
 
   // call with a socket to broadcast to all other sockets
-  async broadcast(documentId: string, message: object): Promise<void>;
+  async broadcast(documentId: number, message: object): Promise<void>;
   async broadcast(
-    documentId: string,
+    documentId: number,
     message: object,
     socket: WebSocket
   ): Promise<void>;
-  async broadcast(documentId: string, message: object, socket?: WebSocket) {
+  async broadcast(documentId: number, message: object, socket?: WebSocket) {
     const payload = JSON.stringify(message);
     const editors = await this.socketRepository.getEditorSockets(documentId);
     editors.forEach((editor) => {
@@ -44,78 +44,91 @@ export class SocketService {
     return this.socketRepository.clearRedis();
   }
 
-  async getNotePermissions(documentId: string): Promise<Permission> {
-    const note = await this.noteModel.findById(documentId);
+  async getNotePermissions(documentId: number): Promise<Permission> {
+    const note = await this.db
+      .selectFrom('note')
+      .select('publicPermissions')
+      .where('id', '=', documentId)
+      .executeTakeFirst();
     if (!note) throw new Error('Document not found');
-    return note.public_permissions;
+
+    return note.publicPermissions;
   }
 
   async validateAccess(
     accessToken: string,
-    documentId: string
-  ): Promise<[boolean, ICollaborator | null]> {
-    const note = await this.noteModel.findById(documentId);
-    if (!note) throw new Error('Document not found');
+    documentId: number
+  ): Promise<{
+    hasAccess: boolean;
+    collaborator: Selectable<Collaborator> | null;
+  }> {
+    const notePermissions = await this.getNotePermissions(documentId);
+
     // token is in req headers
-    const token = await this.accessTokenModel.findById(accessToken);
-    if (!token || !token.user) throw new Error('Access token not found');
+    const token = verifyToken<AccessTokenJwt>(accessToken);
+    if (!token) throw new Error('Invalid access token');
 
-    const hasPublicPermissions = isPermitted(
-      note.public_permissions,
-      Permission.Read
-    );
-    if (hasPublicPermissions) return [true, null];
+    const hasPublicPermissions = isPermitted(notePermissions, Permission.Read);
+    if (hasPublicPermissions) return { hasAccess: true, collaborator: null };
 
-    const collaborator = await this.collaboratorModel.findOne({
-      type: 'note',
-      note: documentId,
-      user: token.user,
-    });
+    // check if user is a collaborator
+    const collaborator = await this.db
+      .selectFrom('collaborator')
+      .innerJoin(
+        'noteCollaborator',
+        'noteCollaborator.collaboratorId',
+        'collaborator.id'
+      )
+      .selectAll()
+      .where('collaborator.userId', '=', token.user.id)
+      .where('noteCollaborator.noteId', '=', documentId)
+      .executeTakeFirst();
+
     if (!collaborator)
       throw new Error("You don't have access to this document");
 
     // update last viewed at
-    collaborator.set({
-      last_viewed_at: new Date(),
-    });
-    collaborator.save();
-    return [true, collaborator as ICollaborator];
+    db.updateTable('collaborator')
+      .set({ lastViewedAt: new Date() })
+      .where('id', '=', collaborator.id)
+      .execute();
+    return { hasAccess: true, collaborator };
   }
 
-  async getEditorSockets(documentId: string): Promise<WebSocket[]> {
+  async getEditorSockets(documentId: number): Promise<WebSocket[]> {
     return this.socketRepository.getEditorSockets(documentId);
   }
 
-  async getEditors(documentId: string): Promise<string[]> {
+  async getEditors(documentId: number): Promise<string[]> {
     return this.socketRepository.getEditors(documentId);
   }
 
-  async addEditorToDocument(documentId: string, editor: WebSocket) {
+  async addEditorToDocument(documentId: number, editor: WebSocket) {
     return this.socketRepository.addEditor(documentId, editor);
   }
 
-  async disconnectEditor(documentId: string, editor: WebSocket) {
+  async disconnectEditor(documentId: number, editor: WebSocket) {
     return this.socketRepository.disconnectEditor(documentId, editor);
   }
 
-  async getDocumentIdBySocket(editor: WebSocket): Promise<string | null> {
+  async getDocumentIdBySocket(editor: WebSocket): Promise<number | null> {
     return this.socketRepository.getDocumentIdBySocket(editor);
   }
 
-  async setContent(documentId: string, content: string, editor: WebSocket) {
+  async setContent(documentId: number, content: string, editor: WebSocket) {
     if (!this.socketRepository.socketIsEditor(documentId, editor))
       throw new Error('You are not an editor of this document');
     return this.socketRepository.setContent(documentId, content, editor);
   }
 
-  async getContent(documentId: string): Promise<string>;
-  async getContent(documentId: string, editor?: WebSocket): Promise<string> {
+  async getContent(documentId: number): Promise<string>;
+  async getContent(documentId: number, editor?: WebSocket): Promise<string> {
     if (editor && !this.socketRepository.socketIsEditor(documentId, editor))
       throw new Error('You are not an editor of this document');
     return this.socketRepository.getContent(documentId);
   }
 
-  async removeDocumentFromMemory(documentId: string) {
+  async removeDocumentFromMemory(documentId: number) {
     return this.socketRepository.removeDocumentFromMemory(documentId);
   }
 
@@ -141,7 +154,7 @@ export class SocketService {
   }
 
   // pass editor to require permissions
-  async saveContentToDisk(documentId: string, editor?: WebSocket) {
+  async saveContentToDisk(documentId: number, editor?: WebSocket) {
     if (editor && !this.socketRepository.socketIsEditor(documentId, editor))
       throw new Error('You are not an editor of this document');
 

@@ -1,36 +1,37 @@
 import { WebSocket } from 'ws';
 import { v4 as uuidv4 } from 'uuid';
-import { Model } from 'mongoose';
-import { RedisClientType } from '@nifty/api-live/lib/redis';
-import Note, { INote } from '@nifty/server-lib/models/note';
+
+import type { RedisClientType } from '@nifty/api-live/lib/redis';
+import type { KysleyDB, Note, Selectable } from '@nifty/common/types';
+import { db } from '@nifty/common/db';
 
 export class SocketRepository {
   private redis: RedisClientType;
   private socketMap: Map<string, WebSocket> = new Map();
-  private noteModel: Model<INote>;
+  private db: KysleyDB;
 
   constructor(redisClient: RedisClientType) {
     this.redis = redisClient;
-    this.noteModel = Note;
+    this.db = db;
   }
 
   clearRedis() {
     return this.redis.flushAll();
   }
 
-  async getEditors(documentId: string) {
+  async getEditors(documentId: number) {
     const editors = await this._redisGet(`document:${documentId}:editors`);
     return editors ? (JSON.parse(editors) as string[]) : ([] as string[]);
   }
 
-  async getEditorSockets(documentId: string): Promise<WebSocket[]> {
+  async getEditorSockets(documentId: number): Promise<WebSocket[]> {
     const editors = await this.getEditors(documentId);
     return editors
       .map((editorId) => this.socketMap.get(editorId)!)
       .filter((socket) => socket);
   }
 
-  async addEditor(documentId: string, editor: WebSocket) {
+  async addEditor(documentId: number, editor: WebSocket) {
     const editorId = uuidv4();
     this.socketMap.set(editorId, editor);
 
@@ -43,7 +44,7 @@ export class SocketRepository {
     }
   }
 
-  async disconnectEditor(documentId: string, editor: WebSocket) {
+  async disconnectEditor(documentId: number, editor: WebSocket) {
     const editorIds = await this.getEditors(documentId);
     const editorId = this.getEditorIdBySocket(editor);
 
@@ -63,10 +64,14 @@ export class SocketRepository {
     )?.[0];
   }
 
-  async getContent(documentId: string) {
+  async getContent(documentId: number) {
     const content = await this._redisGet(`document:${documentId}:content`);
     if (!content) {
-      const note = await this.noteModel.findById(documentId);
+      const note = await this.db
+        .selectFrom('note')
+        .select(['content'])
+        .where('id', '=', documentId)
+        .executeTakeFirst();
       if (!note) throw new Error('Document not found');
 
       this.redis.set(`document:${documentId}:content`, note.content);
@@ -75,7 +80,7 @@ export class SocketRepository {
     return content ? content : '';
   }
 
-  async setContent(documentId: string, content: string, editor: WebSocket) {
+  async setContent(documentId: number, content: string, editor: WebSocket) {
     await this.redis.set(`document:${documentId}:content`, content);
   }
 
@@ -86,37 +91,44 @@ export class SocketRepository {
       for (const documentId of documentIds) {
         const editors = await this._redisGet(documentId);
         if (editors && editors.includes(editorId)) {
-          return documentId.split(':')[1];
+          return Number(documentId.split(':')[1]);
         }
       }
     }
     return null;
   }
 
-  async removeDocumentFromMemory(documentId: string) {
+  async removeDocumentFromMemory(documentId: number) {
     await Promise.all([
       this.redis.del(`document:${documentId}:content`),
       this.redis.del(`document:${documentId}:editors`),
     ]);
   }
 
-  async socketIsEditor(documentId: string, editor: WebSocket) {
+  async socketIsEditor(documentId: number, editor: WebSocket) {
     const editors = await this.getEditors(documentId);
     const editorId = this.getEditorIdBySocket(editor);
     return editors.includes(editorId!);
   }
 
   async updateMongoDocument(
-    documentId: string,
+    documentId: number,
     content: string
-  ): Promise<[INote, boolean]> {
-    const note = await this.noteModel.findById(documentId);
+  ): Promise<[Selectable<Note>, boolean]> {
+    const note = await this.db
+      .selectFrom('note')
+      .selectAll()
+      .where('id', '=', documentId)
+      .executeTakeFirst();
     if (!note) throw new Error('Document not found');
 
     const isUpdated = content !== note.content;
     if (isUpdated) {
-      note.content = content;
-      await note.save();
+      await this.db
+        .updateTable('note')
+        .set({ content })
+        .where('id', '=', documentId)
+        .execute();
     }
 
     return [note, isUpdated];
