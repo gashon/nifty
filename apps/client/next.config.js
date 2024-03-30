@@ -3,22 +3,15 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   openAnalyzer: true,
 });
 
-module.exports = /* withBundleAnalyzer */ {
-  transpilePackages: [
-    '@nifty/api',
-    '@nifty/ui',
-    '@nifty/common',
-    '@nifty/api-live',
-  ],
-  webpack: (config) => {
-    config.resolve.extensionAlias = {
-      '.js': ['.ts', '.tsx', '.js', '.jsx'],
-      '.mjs': ['.mts', '.mjs'],
-      '.cjs': ['.cts', '.cjs'],
-    };
-    return config;
-  },
+// nextConfig.transpilePackages doesn't work with pnpm
+const withTM = require('next-transpile-modules')([
+  '@nifty/api',
+  '@nifty/ui',
+  '@nifty/common',
+  '@nifty/api-live',
+]);
 
+const nextConfig = {
   reactStrictMode: true,
   typescript: {
     ignoreBuildErrors: false,
@@ -40,3 +33,5 @@ module.exports = /* withBundleAnalyzer */ {
     ];
   },
 };
+
+module.exports = withTM(withBundleAnalyzer(nextConfig));
