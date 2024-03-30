@@ -105,7 +105,7 @@ router.get('/user', auth(), async (req, res, next) => {
       .where('id', '=', res.locals.user.id)
       .executeTakeFirst();
 
-    res.send(user);
+    res.send({ data: user });
   } catch (err) {
     next(err);
   }
