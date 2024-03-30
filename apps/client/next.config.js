@@ -4,13 +4,21 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 module.exports = /* withBundleAnalyzer */ {
-  transpileModules: [
+  transpilePackages: [
     '@nifty/api',
     '@nifty/ui',
     '@nifty/common',
-    '@nifty/server-lib',
-    '@nivty/api-live',
+    '@nifty/api-live',
   ],
+  webpack: (config) => {
+    config.resolve.extensionAlias = {
+      '.js': ['.ts', '.tsx', '.js', '.jsx'],
+      '.mjs': ['.mts', '.mjs'],
+      '.cjs': ['.cts', '.cjs'],
+    };
+    return config;
+  },
+
   reactStrictMode: true,
   typescript: {
     ignoreBuildErrors: false,

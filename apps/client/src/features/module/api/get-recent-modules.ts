@@ -30,7 +30,7 @@ export const getRecentlyEditedModules = async (
 };
 
 export const useRecentModules = (
-  userId: string,
+  userId: number,
   params: GetRecentDirectoriesRequestQuery
 ) => {
   return useQuery(

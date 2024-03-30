@@ -49,7 +49,6 @@ export type CreateQuizSubmissionResponse = AppResponse<Submission>;
 export type CreateQuizSubmissionRequestBody = Omit<
   Insertable<Submission>,
   | 'createdBy'
-  | 'quizId'
   | 'score'
   | 'totalCorrect'
   | 'totalIncorrect'

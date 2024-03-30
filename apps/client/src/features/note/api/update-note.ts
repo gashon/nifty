@@ -1,4 +1,3 @@
-import { NoteUpdateRequest } from '@nifty/server-lib/models/note';
 import { useMutation } from 'react-query';
 import { axios } from '@nifty/client/lib/axios';
 import { MutationConfig, queryClient } from '@nifty/client/lib/react-query';

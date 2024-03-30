@@ -1,4 +1,11 @@
-import React, { memo, useCallback, useMemo, useEffect, useState, useRef } from 'react';
+import React, {
+  memo,
+  useCallback,
+  useMemo,
+  useEffect,
+  useState,
+  useRef,
+} from 'react';
 import {
   createEditor,
   Editor,
@@ -28,12 +35,21 @@ const SHORTCUTS = {
 
 function SaveStatus({ status, onClick }) {
   if (status === 'saved') {
-    return <p className={`opacity-25 cursor-default fixed right-10 bottom-10`}>Saved</p>;
+    return (
+      <p className={`opacity-25 cursor-default fixed right-10 bottom-10`}>
+        Saved
+      </p>
+    );
   } else if (status === 'saving') {
-    return <p className={`opacity-50 pointer fixed right-10 bottom-10`}>Saving...</p>;
+    return (
+      <p className={`opacity-50 pointer fixed right-10 bottom-10`}>Saving...</p>
+    );
   } else {
     return (
-      <button onClick={onClick} className={`opacity-50 pointer fixed right-10 bottom-10`}>
+      <button
+        onClick={onClick}
+        className={`opacity-50 pointer fixed right-10 bottom-10`}
+      >
         Not Saved
       </button>
     );
@@ -43,8 +59,11 @@ function SaveStatus({ status, onClick }) {
 const SaveStatusComponent = memo(SaveStatus);
 
 const MarkdownShortcuts = ({ documentId }) => {
-  const renderElement = useCallback(props => <Element {...props} />, []);
-  const editor = useMemo(() => withShortcuts(withReact(withHistory(createEditor()))), []);
+  const renderElement = useCallback((props) => <Element {...props} />, []);
+  const editor = useMemo(
+    () => withShortcuts(withReact(withHistory(createEditor()))),
+    []
+  );
   const { data: note, isFetched } = useGetNote(documentId);
   const { mutateAsync: updateNote } = useUpdateNote(documentId);
   const [noteHandler, setNoteHandler] = useState<{
@@ -78,7 +97,8 @@ const MarkdownShortcuts = ({ documentId }) => {
 
           const blockEntry = Editor.above(editor, {
             at: path,
-            match: n => SlateElement.isElement(n) && Editor.isBlock(editor, n),
+            match: (n) =>
+              SlateElement.isElement(n) && Editor.isBlock(editor, n),
           });
           if (!blockEntry) {
             return false;
@@ -97,18 +117,27 @@ const MarkdownShortcuts = ({ documentId }) => {
   );
 
   const handleSave = useCallback(() => {
-    setNoteHandler(prevNoteHandler => ({ ...prevNoteHandler, saveStatus: 'saving' }));
+    setNoteHandler((prevNoteHandler) => ({
+      ...prevNoteHandler,
+      saveStatus: 'saving',
+    }));
     updateNote({
       content: JSON.stringify(editor.children),
       note_id: documentId,
     });
-    setNoteHandler(prevNoteHandler => ({ ...prevNoteHandler, saveStatus: 'saved' }));
+    setNoteHandler((prevNoteHandler) => ({
+      ...prevNoteHandler,
+      saveStatus: 'saved',
+    }));
   }, []);
 
   // autosave, note
   useEffect(() => {
     if (!noteHandler.isMounted) {
-      setNoteHandler(prevNoteHandler => ({ ...prevNoteHandler, isMounted: true }));
+      setNoteHandler((prevNoteHandler) => ({
+        ...prevNoteHandler,
+        isMounted: true,
+      }));
       setInterval(() => {
         if (noteHandlerRef.current.saveStatus === 'not_saved') {
           handleSave();
@@ -125,23 +154,29 @@ const MarkdownShortcuts = ({ documentId }) => {
 
   return (
     <>
-      <SaveStatusComponent status={noteHandler.saveStatus} onClick={handleSave} />
+      <SaveStatusComponent
+        status={noteHandler.saveStatus}
+        onClick={handleSave}
+      />
       <Slate
         editor={editor}
         value={
-          (note.data?.content.length !== 0 &&
-            note.data?.content !== '[]' &&
-            JSON.parse(note.data.content)) || [
+          (note.data?.data?.content.length !== 0 &&
+            note.data?.data?.content !== '[]' &&
+            JSON.parse(note.data?.data.content)) || [
             {
               type: 'paragraph',
               children: [{ text: '' }],
             },
           ]
         }
-        onChange={value => {
+        onChange={(value) => {
           // @ts-ignore
           if (value[0]?.children[0].text === '') return;
-          setNoteHandler(prevNoteHandler => ({ ...prevNoteHandler, saveStatus: 'not_saved' }));
+          setNoteHandler((prevNoteHandler) => ({
+            ...prevNoteHandler,
+            saveStatus: 'not_saved',
+          }));
         }}
       >
         <Editable
@@ -156,16 +191,16 @@ const MarkdownShortcuts = ({ documentId }) => {
   );
 };
 
-const withShortcuts = editor => {
+const withShortcuts = (editor) => {
   const { deleteBackward, insertText } = editor;
 
-  editor.insertText = text => {
+  editor.insertText = (text) => {
     const { selection } = editor;
 
     if (text.endsWith(' ') && selection && Range.isCollapsed(selection)) {
       const { anchor } = selection;
       const block = Editor.above(editor, {
-        match: n => SlateElement.isElement(n) && Editor.isBlock(editor, n),
+        match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n),
       });
       const path = block ? block[1] : [];
       const start = Editor.start(editor, path);
@@ -184,7 +219,7 @@ const withShortcuts = editor => {
           type,
         };
         Transforms.setNodes<SlateElement>(editor, newProperties, {
-          match: n => SlateElement.isElement(n) && Editor.isBlock(editor, n),
+          match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n),
         });
 
         if (type === 'list-item') {
@@ -193,7 +228,10 @@ const withShortcuts = editor => {
             children: [],
           };
           Transforms.wrapNodes(editor, list, {
-            match: n => !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === 'list-item',
+            match: (n) =>
+              !Editor.isEditor(n) &&
+              SlateElement.isElement(n) &&
+              n.type === 'list-item',
           });
         }
 
@@ -209,7 +247,7 @@ const withShortcuts = editor => {
 
     if (selection && Range.isCollapsed(selection)) {
       const match = Editor.above(editor, {
-        match: n => SlateElement.isElement(n) && Editor.isBlock(editor, n),
+        match: (n) => SlateElement.isElement(n) && Editor.isBlock(editor, n),
       });
 
       if (match) {
@@ -229,8 +267,10 @@ const withShortcuts = editor => {
 
           if (block.type === 'list-item') {
             Transforms.unwrapNodes(editor, {
-              match: n =>
-                !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === 'bulleted-list',
+              match: (n) =>
+                !Editor.isEditor(n) &&
+                SlateElement.isElement(n) &&
+                n.type === 'bulleted-list',
               split: true,
             });
           }
@@ -304,3 +344,4 @@ const Element = ({ attributes, children, element }) => {
 };
 
 export default MarkdownShortcuts;
+

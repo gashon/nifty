@@ -9,16 +9,15 @@ import {
 } from '@nifty/client/features/note';
 import { Button } from '@nifty/ui/atoms';
 import { FormDrawer, Form, InputField, FieldWrapper } from '@nifty/ui/form';
-import { NoteCreateRequest } from '@nifty/server-lib/models/note';
 import { Permission } from '@nifty/api/util/handle-permissions';
 import { Authorization } from '@nifty/client/lib/authorization';
-import { CreateNoteRequestBody } from '@nifty/api/domains/note/dto';
+import type { CreateNoteRequestBody } from '@nifty/api/domains/note/dto';
 
 const PermissionSchema = z.nativeEnum(Permission);
 const schema = z.object({
   title: z.string().min(1).max(50),
   description: z.string().min(0).max(50).optional(),
-  public_permissions: PermissionSchema.optional(),
+  publicPermissions: PermissionSchema.optional(),
 });
 
 type NoteCreationButtonProps = {
@@ -62,7 +61,7 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({
           </Button>
         }
       >
-        <Form<NoteCreateRequest, typeof schema>
+        <Form<CreateNoteRequestBody, typeof schema>
           schema={schema}
           onSubmit={onSubmit}
           className="w-full flex flex-col align-center justify-center"
@@ -99,11 +98,11 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({
                 <Authorization checkPolicy="note:settings:mutate">
                   <FieldWrapper
                     label="Public Permissions"
-                    error={formState.errors['public_permissions'] as FieldError}
+                    error={formState.errors['publicPermissions'] as FieldError}
                   >
                     <NotePermissionDropdown
                       setPermissions={(value: Permission) =>
-                        setValue('public_permissions', value)
+                        setValue('publicPermissions', value)
                       }
                     />
                   </FieldWrapper>

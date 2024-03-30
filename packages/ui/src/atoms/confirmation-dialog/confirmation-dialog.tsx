@@ -1,7 +1,8 @@
 import * as React from 'react';
+import { Dialog as UIDialog } from '@headlessui/react';
 
 import { Button } from '../button';
-import { Dialog, DialogTitle } from '../dialog';
+import { Dialog } from '../dialog';
 import { useDisclosure } from '../../hooks/use-disclosure';
 
 export type ConfirmationDialogProps = {
@@ -55,12 +56,12 @@ export const ConfirmationDialog = ({
               </div>
             )}
             <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-              <DialogTitle
+              <UIDialog.Title
                 as="h3"
                 className="text-lg leading-6 font-medium text-gray-900"
               >
                 {title}
-              </DialogTitle>
+              </UIDialog.Title>
               {body && (
                 <div className="mt-2">
                   <p className="text-sm text-gray-500">{body}</p>

@@ -63,7 +63,7 @@ export const NoteSettingsDrawer: FC<NoteSettingsDrawerProps> = ({
         {/* Update note permissions dropdown */}
         {isFetched && (
           <NotePermissionDropdown
-            initPermissions={note.data.public_permissions}
+            initPermissions={note.data.data.publicPermissions}
             onChange={updateNotePermissions}
           />
         )}

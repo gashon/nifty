@@ -1,13 +1,13 @@
 import { ParsedUrlQuery } from 'querystring';
 import { AxiosResponse } from 'axios';
 import { axios } from '@nifty/client/lib/axios';
-import type { Selectable, User } from '@nifty/common/types';
 
 import { LoginFormData } from '../types';
+import type { GetUserResponse } from '@nifty/api/domains/user/dto';
 
 export const getUser = async (headers?: {
   [key: string]: string;
-}): Promise<AxiosResponse<Selectable<User>>> => {
+}): Promise<AxiosResponse<GetUserResponse>> => {
   const data = await axios.get('/ajax/auth/user', {
     headers,
   });

@@ -1,15 +1,19 @@
 import { NextSeo } from 'next-seo';
 
-import { AuthProtection, AuthProvider, getUser } from '@nifty/client/features/auth';
+import {
+  AuthProtection,
+  AuthProvider,
+  getUser,
+} from '@nifty/client/features/auth';
 import { GreetingHeader } from '@nifty/client/features/dashboard/components';
 
 import ThemeLayout from '@nifty/client/layouts/theme';
 import DashboardLayout from '@nifty/client/layouts/dashboard';
-import { IUser } from '@nifty/server-lib/models/user';
+import type { Selectable, User } from '@nifty/common/types';
 import RecentModules from '@nifty/client/features/dashboard/components/recent-modules';
 import RecentNotebooks from '@nifty/client/features/dashboard/components/recent-notebooks';
 
-export default function Dashboard({ user }: { user: IUser }) {
+export default function Dashboard({ user }: { user: Selectable<User> }) {
   return (
     <>
       <NextSeo title={'Dashboard'} noindex />
@@ -52,7 +56,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      user,
+      user: user.data,
     },
   };
 }

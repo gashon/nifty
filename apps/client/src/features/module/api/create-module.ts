@@ -1,14 +1,11 @@
-import {
-  DirectoryListResponse,
-  DirectoryCreateRequest,
-} from '@nifty/server-lib/models/directory';
 import { AxiosResponse } from 'axios';
 import { useMutation } from 'react-query';
 import { axios } from '@nifty/client/lib/axios';
 import { MutationConfig, queryClient } from '@nifty/client/lib/react-query';
-import {
+import type {
   CreateDirectoryResponse,
   CreateDirectoryRequestBody,
+  GetDirectoriesResponse,
 } from '@nifty/api/domains/directory/dto';
 
 export const createModule = (
@@ -22,7 +19,7 @@ type UseCreateModuleOptions = {
 };
 
 type InfiniteQueryData = {
-  pages: DirectoryListResponse[];
+  pages: GetDirectoriesResponse[];
   pageParams: Array<string | undefined>;
 };
 

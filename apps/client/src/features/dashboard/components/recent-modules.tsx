@@ -5,12 +5,12 @@ import {
   useDeleteModule,
   ModuleCreationButton,
 } from '@nifty/client/features/module';
-import { IUser } from '@nifty/server-lib/models/user';
 
+import type { Selectable, User } from '@nifty/common/types';
 import { Button } from '@nifty/ui/atoms';
 import ModuleCard from '@nifty/ui/molecules/module-card';
 
-export const RecentModules: FC<{ user: IUser }> = ({ user }) => {
+export const RecentModules: FC<{ user: Selectable<User> }> = ({ user }) => {
   const { data: modules, isFetched } = useRecentModules(user.id, {
     limit: '6',
   });

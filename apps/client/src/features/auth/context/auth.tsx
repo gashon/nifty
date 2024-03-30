@@ -65,8 +65,9 @@ export const AuthProvider: FC<AuthProviderProps> = ({
             setError(new Error('Failed to fetch user data'));
             return;
           }
-          storage.set<Selectable<User>>('user', data);
-          setUser(data);
+          const { data: user } = data;
+          storage.set<Selectable<User>>('user', user);
+          setUser(user);
           setIsOffline(false);
         })
         .catch((err) => {

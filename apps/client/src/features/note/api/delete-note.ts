@@ -1,6 +1,5 @@
 import { useMutation } from 'react-query';
 import { axios } from '@nifty/client/lib/axios';
-import { NoteListResponse } from '@nifty/server-lib/models/note';
 import { MutationConfig, queryClient } from '@nifty/client/lib/react-query';
 
 export const deleteNote = (noteId: number) => {

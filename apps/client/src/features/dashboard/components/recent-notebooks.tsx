@@ -1,10 +1,10 @@
 import { FC } from 'react';
 import { useRecentNotes, useDeleteNote } from '@nifty/client/features/note';
-import { IUser } from '@nifty/server-lib/models/user';
+import type { Selectable, User } from '@nifty/common/types';
 
 import NotebookItem from '@nifty/ui/molecules/notebook-item';
 
-export const RecentNotebooks: FC<{ user: IUser }> = ({ user }) => {
+export const RecentNotebooks: FC<{ user: Selectable<User> }> = ({ user }) => {
   const { data: notes, isFetched } = useRecentNotes(user.id);
   const { mutate: deleteNote } = useDeleteNote();
 
