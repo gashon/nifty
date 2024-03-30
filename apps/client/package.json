@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "doppler run next dev",
     "build:raw": "next build",
-    "build": "doppler run -t $DOPPLER_CLIENT_TOKEN -- next build",
+    "build": "doppler run -t $DOPPLER_TOKEN_CLIENT -- next build",
     "build:analyze": "ANALYZE=true doppler run -- next build",
     "start": "doppler run -t $DOPPLER_CLIENT_TOKEN -- next start '/usr/src/app/apps/client'",
     "lint": "next lint"

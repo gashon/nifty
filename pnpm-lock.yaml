@@ -18,6 +18,9 @@ importers:
       cross-env:
         specifier: 7.0.3
         version: 7.0.3
+      dotenv-cli:
+        specifier: ^7.4.1
+        version: 7.4.1
       eslint:
         specifier: ^7.32.0
         version: 7.32.0
@@ -8791,6 +8794,21 @@ packages:
     dependencies:
       no-case: 3.0.4
       tslib: 2.6.1
+    dev: true
+
+  /dotenv-cli@7.4.1:
+    resolution: {integrity: sha512-fE1aywjRrWGxV3miaiUr3d2zC/VAiuzEGghi+QzgIA9fEf/M5hLMaRSXb4IxbUAwGmaLi0IozdZddnVU96acag==}
+    hasBin: true
+    dependencies:
+      cross-spawn: 7.0.3
+      dotenv: 16.4.5
+      dotenv-expand: 10.0.0
+      minimist: 1.2.8
+    dev: true
+
+  /dotenv-expand@10.0.0:
+    resolution: {integrity: sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==}
+    engines: {node: '>=12'}
     dev: true
 
   /dotenv-expand@11.0.6:

@@ -8,10 +8,7 @@ import Collaborator, {
   ICollaborator,
 } from '@nifty/server-lib/models/collaborator';
 import { SOCKET_EVENT } from '@nifty/api-live/types';
-import {
-  Permission,
-  checkPermissions,
-} from '@nifty/api/util/handle-permissions';
+import { Permission, isPermitted } from '@nifty/api/util/handle-permissions';
 
 export class SocketService {
   private socketRepository: SocketRepository;
@@ -63,7 +60,7 @@ export class SocketService {
     const token = await this.accessTokenModel.findById(accessToken);
     if (!token || !token.user) throw new Error('Access token not found');
 
-    const hasPublicPermissions = checkPermissions(
+    const hasPublicPermissions = isPermitted(
       note.public_permissions,
       Permission.Read
     );

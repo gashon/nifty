@@ -1,10 +1,7 @@
 import WebSocket, { WebSocketServer as Server, ServerOptions } from 'ws';
 import AsyncLock from 'async-lock';
 import logger from '@nifty/api-live/lib/logger';
-import {
-  checkPermissions,
-  Permission,
-} from '@nifty/api/util/handle-permissions';
+import { isPermitted, Permission } from '@nifty/api/util/handle-permissions';
 import { SocketService, closeSocketOnError } from '@nifty/api-live/socket';
 import { SOCKET_EVENT } from '@nifty/api-live/types';
 import { RedisClientType } from '@nifty/api-live/lib/redis';
@@ -276,7 +273,7 @@ export class WebSocketServer extends Server {
     socket: WebSocketSession,
     requiredPermissions: Permission
   ): boolean {
-    const hasPublicPermission = checkPermissions(
+    const hasPublicPermission = isPermitted(
       socket.notePermissions!,
       requiredPermissions
     );
@@ -292,7 +289,7 @@ export class WebSocketServer extends Server {
       return false;
     }
 
-    const hasCollaboratorPermission = checkPermissions(
+    const hasCollaboratorPermission = isPermitted(
       socket.collaborator.permissions,
       requiredPermissions
     );
@@ -355,4 +352,3 @@ export class WebSocketServer extends Server {
     }
   }
 }
-

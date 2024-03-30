@@ -14,7 +14,7 @@
   },
   "scripts": {
     "test": "turbo run dev",
-    "build": "turbo run build",
+    "build": "dotenv -- turbo run build",
     "dev": "concurrently \"pnpm run mongo:start\" \"pnpm run redis:start\" \"wait-on tcp:localhost:27017 tcp:localhost:6379 && cross-env FORCE_COLOR=1 turbo run dev --parallel --verbosity 2\"",
     "start": "cross-env turbo run start --parallel",
     "lint": "turbo run lint",
@@ -31,6 +31,7 @@
   "devDependencies": {
     "concurrently": "8.0.1",
     "cross-env": "7.0.3",
+    "dotenv-cli": "^7.4.1",
     "eslint": "^7.32.0",
     "eslint-config-custom": "*",
     "prettier": "^2.7.1",
