@@ -12,7 +12,7 @@ import { db } from '@nifty/common/db';
 
 export class SocketRepository {
   private redis: RedisClientType;
-  private socketMap: Map<number, WebSocket> = new Map();
+  private socketMap: Map<string, WebSocket> = new Map();
   private db: KysleyDB;
 
   constructor(redisClient: RedisClientType) {
@@ -25,7 +25,7 @@ export class SocketRepository {
   }
 
   async getEditors(documentId: number) {
-    const editors = await this._redisGet<number[]>(
+    const editors = await this._redisGet<string[]>(
       `document:${documentId}:editors`
     );
     return editors || [];
@@ -36,7 +36,9 @@ export class SocketRepository {
     return editors.map((editorId) => this.socketMap.get(editorId)!);
   }
 
-  async addEditor(editorId: number, documentId: number, editor: WebSocket) {
+  async addEditor(documentId: number, editor: WebSocket) {
+    const editorId = uuidv4();
+
     this.socketMap.set(editorId, editor);
     const editorIds = await this.getEditors(documentId);
 

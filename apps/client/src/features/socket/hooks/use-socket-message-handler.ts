@@ -42,7 +42,7 @@ export const useSocketMessageHandler = ({
   }, [socket, documentId, onDocumentLoad]);
 
   const sendDocumentUpdate = useCallback(
-    (noteContent: string) => {
+    (noteContent: string, operation: any) => {
       if (socket) {
         socket.send(
           JSON.stringify({
@@ -51,6 +51,7 @@ export const useSocketMessageHandler = ({
               note: {
                 id: documentId,
                 content: noteContent,
+                operation,
               },
             },
           })

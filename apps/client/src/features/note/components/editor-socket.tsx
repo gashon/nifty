@@ -13,6 +13,7 @@ import {
   Editor,
   Element as SlateElement,
   Node as SlateNode,
+  Operation,
   Point,
   Range,
   Transforms,
@@ -71,25 +72,26 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
           ]
     );
   }, []);
-  const updateEditorContent = (newContent: Descendant[]) => {
+  const updateEditorContent = (ops: Operation[]) => {
     try {
-      // console.log('GOT', newContent, editor);
-      // Replace the entire editor content with new content
-      editor.children = newContent;
-      // Re-render the editor
-      Editor.normalize(editor, { force: true });
-      // Focus the editor to ensure updates are displayed immediately
-      ReactEditor.focus(editor);
+      editor.isRemote = true;
+      // updateEditorContent(JSON.parse(note.content));
+      Editor.withoutNormalizing(editor, () => {
+        ops.forEach((op) => editor.apply(op));
+      });
+      Promise.resolve().then((_) => (editor.isRemote = false));
     } catch (err) {
       console.log(err);
     }
-    forceRerender();
+    // forceRerender();
   };
 
   const onDocumentUpdate = useCallback(
     (note: any) => {
       // todo handle collaboration
-      updateEditorContent(JSON.parse(note.content));
+      console.log('NOTE', note);
+      updateEditorContent(note.operation);
+      // updateEditorContent(JSON.parse(note.content));
     },
     [editor]
   );
@@ -142,26 +144,29 @@ const MarkdownShortcuts: FC<MarkdownShortcutsProps> = ({
 
   return (
     <>
-      <Slate editor={editor} value={initValue}>
+      <Slate
+        editor={editor}
+        value={initValue}
+        onChange={(value) => {
+          // use https://github.com/cudr/slate-collaborative
+          console.log('VALUE', editor.isRemote);
+          if (editor.isRemote) {
+            return;
+          }
+
+          const ops = editor.operations
+            .filter((o) => o.type !== 'set_selection')
+            .map((o) => ({ ...o, data: undefined }));
+
+          sendDocumentUpdate(JSON.stringify(value), ops);
+        }}
+      >
         <Editable
           onDOMBeforeInput={handleDOMBeforeInput}
           renderElement={renderElement}
           placeholder="Write some markdown..."
           spellCheck
           autoFocus
-          onKeyUp={() => {
-            // todo send cursor updates
-            let value = editor.children;
-            if (value.length === 0) {
-              value = [
-                {
-                  type: 'paragraph',
-                  children: [{ text: '' }],
-                },
-              ];
-            }
-            sendDocumentUpdate(JSON.stringify(value));
-          }}
         />
       </Slate>
     </>

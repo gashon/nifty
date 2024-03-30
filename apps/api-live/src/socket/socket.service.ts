@@ -4,12 +4,6 @@ import { RedisClientType } from '@nifty/api-live/lib/redis';
 import { SocketRepository } from './socket.repository';
 import { SOCKET_EVENT } from '@nifty/api-live/types';
 import { Permission, isPermitted } from '@nifty/api/util/handle-permissions';
-import type {
-  Collaborator,
-  AccessTokenJwt,
-  Selectable,
-} from '@nifty/common/types';
-import { verifyToken } from '@nifty/api/lib/jwt';
 import { DBRepository } from '@nifty/api-live/db';
 
 export class SocketService {
@@ -77,12 +71,8 @@ export class SocketService {
     return this.socketRepository.getEditors(documentId);
   }
 
-  async addEditorToDocument(
-    editorId: number,
-    documentId: number,
-    editor: WebSocket
-  ) {
-    return this.socketRepository.addEditor(editorId, documentId, editor);
+  async addEditorToDocument(documentId: number, editor: WebSocket) {
+    return this.socketRepository.addEditor(documentId, editor);
   }
 
   async disconnectEditor(documentId: number, editor: WebSocket) {

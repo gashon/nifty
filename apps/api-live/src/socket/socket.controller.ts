@@ -116,11 +116,7 @@ export class WebSocketServer extends Server {
     await this.syncLock.acquire(
       ['connection', documentId.toString()],
       async () => {
-        await this.socketService.addEditorToDocument(
-          socket.userId,
-          documentId,
-          socket
-        );
+        await this.socketService.addEditorToDocument(documentId, socket);
 
         socket.isAlive = true;
         // broadcast the join to all connected users
@@ -205,7 +201,11 @@ export class WebSocketServer extends Server {
       const updateMessage = {
         event: SOCKET_EVENT.DOCUMENT_UPDATE,
         payload: {
-          note: { id: documentId, content },
+          note: {
+            id: documentId,
+            content,
+            operation: data.payload.note.operation,
+          },
         },
       };
       this.socketService.broadcast(documentId, updateMessage, socket);
