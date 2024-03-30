@@ -8,7 +8,10 @@ import { USER_PERMISSIONS } from '@nifty/common/constants';
 
 const userSchema = new mongoose.Schema<IUser>(
   {
-    name: {
+    first_name: {
+      type: String,
+    },
+    last_name: {
       type: String,
     },
     email: {
@@ -17,7 +20,7 @@ const userSchema = new mongoose.Schema<IUser>(
       lowercase: true,
       trim: true,
     },
-    avatar: {
+    avatar_url: {
       type: String,
       default(this: IUser) {
         return (

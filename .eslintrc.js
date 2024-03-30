@@ -8,8 +8,13 @@ module.exports = {
       rootDir: ['packages/*/'],
     },
   },
-  plugins: ['@typescript-eslint/eslint-plugin'],
-  extends: ['plugin:@typescript-eslint/recommended', 'prettier', "custom"],
+  plugins: ['@typescript-eslint/eslint-plugin', '@tanstack/query', 'next'],
+  extends: [
+    'plugin:@typescript-eslint/recommended',
+    'prettier',
+    'custom',
+    'plugin:@tanstack/eslint-plugin-query/recommended',
+  ],
   overrides: [
     {
       files: ['**/*.ts'],

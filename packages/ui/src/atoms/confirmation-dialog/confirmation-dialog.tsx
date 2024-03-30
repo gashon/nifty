@@ -1,4 +1,3 @@
-import { ExclamationIcon, InformationCircleIcon } from '@heroicons/react/outline';
 import * as React from 'react';
 
 import { Button } from '../button';
@@ -46,17 +45,20 @@ export const ConfirmationDialog = ({
           <div className="sm:flex sm:items-start">
             {icon === 'danger' && (
               <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                <ExclamationIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
+                EXCLAMATION_ICON
               </div>
             )}
 
             {icon === 'info' && (
               <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
-                <InformationCircleIcon className="h-6 w-6 text-blue-600" aria-hidden="true" />
+                INFORMATION_ICON
               </div>
             )}
             <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-              <DialogTitle as="h3" className="text-lg leading-6 font-medium text-gray-900">
+              <DialogTitle
+                as="h3"
+                className="text-lg leading-6 font-medium text-gray-900"
+              >
                 {title}
               </DialogTitle>
               {body && (
@@ -69,7 +71,7 @@ export const ConfirmationDialog = ({
           <div className="mt-4 flex space-x-2 justify-end">
             <Button
               type="button"
-              variant="inverse"
+              variant="primary"
               className="w-full inline-flex justify-center rounded-md border focus:ring-1 focus:ring-offset-1 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
               onClick={close}
               ref={cancelButtonRef}

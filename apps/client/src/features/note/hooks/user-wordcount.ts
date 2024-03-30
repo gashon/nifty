@@ -4,6 +4,7 @@ const countWords = (value: Descendant[]) =>
   value.reduce((memo, node) => {
     // @ts-ignore TODO fix
     if (node?.children[0]?.text) {
+      // @ts-ignore TODO fix
       return memo + node.children[0].text.split(' ').length;
     }
     return memo;

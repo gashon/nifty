@@ -31,6 +31,7 @@
     "@headlessui/react": "^1.7.12",
     "@headlessui/tailwindcss": "0.1.2",
     "@heroicons/react": "^2.0.16",
+    "@hookform/resolvers": "^2.9.11",
     "clsx": "2.1.0",
     "formik": "^2.2.9",
     "next": "13.0.0",

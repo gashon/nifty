@@ -5,7 +5,7 @@ export interface IUser extends Resource {
   first_name: string;
   last_name: string;
   email: string;
-  avater_url: string;
+  avatar_url: string;
   last_login?: Date | number;
   permissions?: string[];
   /** @ignore */

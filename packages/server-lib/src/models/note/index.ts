@@ -52,7 +52,7 @@ const noteSchema = new mongoose.Schema<INote>(
       required: true,
     },
     deleted_at: {
-      type: Number,
+      type: Date,
       default: null,
     },
   },

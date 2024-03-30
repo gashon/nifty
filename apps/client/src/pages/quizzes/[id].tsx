@@ -10,8 +10,6 @@ import {
 } from '@nifty/client/features/auth';
 import { QuizForm, getQuiz } from '@nifty/client/features/quiz';
 import { LoadingPage } from '@nifty/ui/pages/loading';
-import { IUser } from '@nifty/server-lib/models/user';
-import { IQuiz } from '@nifty/server-lib/models/quiz';
 import { Quiz, Selectable, User } from '@nifty/common/types';
 
 export const QuizPage: FC<{

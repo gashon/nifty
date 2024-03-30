@@ -46,7 +46,7 @@ const directorySchema = new mongoose.Schema<IDirectory>(
       ref: 'Collaborator',
     },
     deleted_at: {
-      type: Number,
+      type: Date,
       default: null,
     },
   },

@@ -80,7 +80,7 @@ const quizSchema = new mongoose.Schema<IQuiz>(
       required: true,
     },
     deleted_at: {
-      type: Number,
+      type: Date,
       default: null,
     },
   },

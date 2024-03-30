@@ -58,6 +58,7 @@
     "@nifty/tsconfig": "workspace:*",
     "@nifty/ui": "workspace:*",
     "@tailwindcss/forms": "^0.5.3",
+    "@tanstack/eslint-plugin-query": "^5.28.6",
     "@types/node": "^17.0.12",
     "@types/prismjs": "^1.26.0",
     "@types/react": "^18.0.1",

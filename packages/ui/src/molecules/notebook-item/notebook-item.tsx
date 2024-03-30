@@ -54,7 +54,7 @@ export const NotebookItem: FC<NotebookItemProps> = ({
     );
   }
 
-  if (variant === 'button') {
+  if (variant === 'button' && typeof label === 'string') {
     return (
       <button
         onClick={onClick}
