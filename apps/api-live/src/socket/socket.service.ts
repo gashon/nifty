@@ -5,22 +5,20 @@ import { SocketRepository } from './socket.repository';
 import { SOCKET_EVENT } from '@nifty/api-live/types';
 import { Permission, isPermitted } from '@nifty/api/util/handle-permissions';
 import type {
-  Note,
   Collaborator,
-  KysleyDB,
   AccessTokenJwt,
   Selectable,
 } from '@nifty/common/types';
-import { db } from '@nifty/common/db';
 import { verifyToken } from '@nifty/api/lib/jwt';
+import { DBRepository } from '@nifty/api-live/db';
 
 export class SocketService {
   private socketRepository: SocketRepository;
-  private db: KysleyDB;
+  private dbRepository: DBRepository;
 
   constructor(redisClient: RedisClientType) {
     this.socketRepository = new SocketRepository(redisClient);
-    this.db = db;
+    this.dbRepository = new DBRepository();
   }
 
   // call with a socket to broadcast to all other sockets
@@ -44,15 +42,8 @@ export class SocketService {
     return this.socketRepository.clearRedis();
   }
 
-  async getNotePermissions(documentId: number): Promise<Permission> {
-    const note = await this.db
-      .selectFrom('note')
-      .select('publicPermissions')
-      .where('id', '=', documentId)
-      .executeTakeFirst();
-    if (!note) throw new Error('Document not found');
-
-    return note.publicPermissions;
+  async getNotePermissions(documentId: number) {
+    return this.dbRepository.getNotePermissions(documentId);
   }
 
   async validateAccess(
@@ -72,26 +63,16 @@ export class SocketService {
     if (hasPublicPermissions) return { hasAccess: true, collaborator: null };
 
     // check if user is a collaborator
-    const collaborator = await this.db
-      .selectFrom('collaborator')
-      .innerJoin(
-        'noteCollaborator',
-        'noteCollaborator.collaboratorId',
-        'collaborator.id'
-      )
-      .selectAll()
-      .where('collaborator.userId', '=', token.user.id)
-      .where('noteCollaborator.noteId', '=', documentId)
-      .executeTakeFirst();
-
+    const collaborator = await this.dbRepository.getCollaborator(
+      token.user.id,
+      documentId
+    );
     if (!collaborator)
       throw new Error("You don't have access to this document");
 
-    // update last viewed at
-    db.updateTable('collaborator')
-      .set({ lastViewedAt: new Date() })
-      .where('id', '=', collaborator.id)
-      .execute();
+    // update last viewed at asynchonously
+    this.dbRepository.updateCollaboratorLastViewedAt(collaborator.id);
+
     return { hasAccess: true, collaborator };
   }
 
