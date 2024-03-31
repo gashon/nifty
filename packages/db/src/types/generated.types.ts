@@ -1,4 +1,4 @@
-import type { ColumnType } from 'kysely';
+import type { ColumnType } from "kysely";
 
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
@@ -6,13 +6,7 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
-export type TokenStrategy =
-  | 'email'
-  | 'facebook'
-  | 'github'
-  | 'google'
-  | 'invite'
-  | 'refresh';
+export type TokenStrategy = "email" | "facebook" | "github" | "google" | "invite" | "refresh";
 
 export interface Collaborator {
   createdAt: Generated<Timestamp>;
@@ -48,7 +42,7 @@ export interface DirectoryCollaborator {
 }
 
 export interface Note {
-  content: Generated<string>;
+  content: Buffer | null;
   createdAt: Generated<Timestamp>;
   createdBy: number;
   deletedAt: Timestamp | null;

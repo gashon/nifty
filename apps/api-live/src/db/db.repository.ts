@@ -40,4 +40,23 @@ export class DBRepository {
       .where('id', '=', collaboratorId)
       .execute();
   }
+
+  async writeNoteToDisk(documentId: number, state: Buffer) {
+    return this.db
+      .updateTable('note')
+      .set({ content: state })
+      .where('id', '=', documentId)
+      .execute();
+  }
+
+  async readNoteFromDisk(documentId: number) {
+    const note = await this.db
+      .selectFrom('note')
+      .select('content')
+      .where('id', '=', documentId)
+      .executeTakeFirst();
+    if (!note) throw new Error('Document not found');
+
+    return note.content;
+  }
 }
