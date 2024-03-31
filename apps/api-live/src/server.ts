@@ -15,6 +15,7 @@ const server = Server.configure({
   onAuthenticate: async (data: onAuthenticatePayload) => {
     const tokenStr = getAccessTokenString(data.requestHeaders.cookie);
     const token = verifyToken<AccessTokenJwt>(tokenStr);
+    console.log('token', token);
     if (!token) {
       throw new Error('Unauthorized');
     }
@@ -27,16 +28,11 @@ const server = Server.configure({
       await dbRepository.getNotePermissions(documentId),
       Permission.ReadWrite
     );
-    const hasPublicPermissionsRead = isPermitted(
+    const hasPublicReadPermissions = isPermitted(
       notePermissions,
       Permission.Read
     );
-    const hasPublicPermissions =
-      hasPublicPermissionsRead || hasPublicWritePermissions;
-    if (hasPublicPermissions) {
-      if (!hasPublicWritePermissions) {
-        data.connection.readOnly = true;
-      }
+    if (hasPublicWritePermissions) {
       return { user: token.user };
     }
 
@@ -44,9 +40,15 @@ const server = Server.configure({
       token.user.id,
       documentId
     );
+    if (!collaborator && hasPublicReadPermissions) {
+      data.connection.readOnly = true;
+      return { user: token.user };
+    }
+
     if (!collaborator) throw new Error('Unauthorized');
 
     if (!isPermitted(collaborator.permissions, Permission.ReadWrite)) {
+      console.log('setting readonly');
       data.connection.readOnly = true;
     }
 
@@ -73,6 +75,7 @@ const server = Server.configure({
         return doc;
       },
       store: async ({ documentName, state }) => {
+        console.log('store', documentName, state.toJSON());
         await dbRepository.writeNoteToDisk(Number(documentName), state);
       },
     }),
