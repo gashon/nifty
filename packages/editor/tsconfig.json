@@ -1,0 +1,19 @@
+{
+  "extends": "@nifty/tsconfig/base.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "experimentalDecorators": true,
+    "lib": ["ES2019"],
+    "module": "CommonJS",
+    "outDir": "dist",
+    "rootDir": "../../",
+    "target": "es6",
+    "baseUrl": ".",
+    "paths": {
+      "@nifty/common/*": ["../common/src/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}

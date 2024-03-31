@@ -17,74 +17,18 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import * as Y from 'yjs';
-import { WebSocket } from 'ws';
+import type { Selectable, User } from '@nifty/common/types';
 
 import MenuBar from './menu-bar';
 
-const colors = [
-  '#958DF1',
-  '#F98181',
-  '#FBBC88',
-  '#FAF594',
-  '#70CFF8',
-  '#94FADB',
-  '#B9F18D',
-];
-const names = [
-  'Lea Thompson',
-  'Cyndi Lauper',
-  'Tom Cruise',
-  'Madonna',
-  'Jerry Hall',
-  'Joan Collins',
-  'Winona Ryder',
-  'Christina Applegate',
-  'Alyssa Milano',
-  'Molly Ringwald',
-  'Ally Sheedy',
-  'Debbie Harry',
-  'Olivia Newton-John',
-  'Elton John',
-  'Michael J. Fox',
-  'Axl Rose',
-  'Emilio Estevez',
-  'Ralph Macchio',
-  'Rob Lowe',
-  'Jennifer Grey',
-  'Mickey Rourke',
-  'John Cusack',
-  'Matthew Broderick',
-  'Justine Bateman',
-  'Lisa Bonet',
-];
-
-const getRandomElement = (list) =>
-  list[Math.floor(Math.random() * list.length)];
-
-const getRandomRoom = () => {
-  const roomNumbers = [10, 11, 12];
-
-  return getRandomElement(roomNumbers.map((number) => `rooms.${number}`));
-};
-const getRandomColor = () => getRandomElement(colors);
-const getRandomName = () => getRandomElement(names);
-
-const room = getRandomRoom();
-
 const ydoc = new Y.Doc();
 
-const getInitialUser = () => {
-  return (
-    JSON.parse(localStorage.getItem('currentUser')) || {
-      name: getRandomName(),
-      color: getRandomColor(),
-    }
-  );
-};
-
-export const Editor: FC<{ documentId: string }> = ({ documentId }) => {
+export const Editor: FC<{ user: Selectable<User>; documentId: string }> = ({
+  user,
+  documentId,
+}) => {
   const [status, setStatus] = useState('connecting');
-  const [currentUser, setCurrentUser] = useState(getInitialUser);
+  console.log('user', user);
 
   if (!documentId) {
     return <div>No documentId provided</div>;
@@ -134,19 +78,17 @@ export const Editor: FC<{ documentId: string }> = ({ documentId }) => {
 
   // Save current user to localStorage and emit to editor
   useEffect(() => {
-    if (editor && currentUser) {
-      localStorage.setItem('currentUser', JSON.stringify(currentUser));
-      editor.chain().focus().updateUser(currentUser).run();
+    if (editor && user) {
+      editor
+        .chain()
+        .focus()
+        .updateUser({
+          name: user.email,
+          avatar: user.avatarUrl,
+        })
+        .run();
     }
-  }, [editor, currentUser]);
-
-  const setName = useCallback(() => {
-    const name = (window.prompt('Name') || '').trim().substring(0, 32);
-
-    if (name) {
-      return setCurrentUser({ ...currentUser, name });
-    }
-  }, [currentUser]);
+  }, [editor, user]);
 
   return (
     <div className="editor">
@@ -161,7 +103,7 @@ export const Editor: FC<{ documentId: string }> = ({ documentId }) => {
             : 'offline'}
         </div>
         <div className="editor__name">
-          <button onClick={setName}>{currentUser.name}</button>
+          <button>{user.email}</button>
         </div>
       </div>
     </div>

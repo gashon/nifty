@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useState, useEffect, FC } from 'react';
 import { Editor } from '@nifty/editor/editor';
+import useUser from '@nifty/client/hooks/use-user';
 
 const LongPollDocumentEditor = dynamic(
   () => import('@nifty/client/features/note/components/editor'),
@@ -25,6 +26,7 @@ export const DocumentSection: FC<{ documentId: string }> = ({ documentId }) => {
   const router = useRouter();
   const { id } = router.query;
   const [isMounted, setIsMounted] = useState(false);
+  const { data: user } = useUser();
 
   useEffect(() => {
     setIsMounted(true);
@@ -43,7 +45,7 @@ export const DocumentSection: FC<{ documentId: string }> = ({ documentId }) => {
           {/*     <LongPollDocumentEditor documentId={Number(id as string)} /> */}
           {/*   } */}
           {/* /> */}
-          <Editor documentId={documentId} />
+          {user && <Editor documentId={documentId} user={user} />}
         </ErrorBoundary>
       </section>
       <section className="w-full flex justify-between py-10 underline">
