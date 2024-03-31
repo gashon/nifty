@@ -4,8 +4,6 @@ import { onAuthenticatePayload, Server } from '@hocuspocus/server';
 import { verifyToken } from '@nifty/api/lib/jwt';
 import { isPermitted, Permission } from '@nifty/api/util/handle-permissions';
 import { AccessTokenJwt } from '@nifty/common/types';
-import { mkdir, readFile, writeFile } from 'fs/promises';
-import * as Y from 'yjs';
 import { DBRepository } from './db';
 import { getAccessTokenString } from './socket';
 
@@ -64,10 +62,6 @@ const server = Server.configure({
         const documentId = parseInt(documentName, 10);
 
         const doc = await dbRepository.readNoteFromDisk(documentId);
-        //
-        // const doc = await readFile(`./data/${documentName}.bin`).catch(
-        //   () => null
-        // );
 
         if (doc) {
           console.log('doc loaded from disk', documentName);
@@ -79,16 +73,6 @@ const server = Server.configure({
       },
     }),
   ],
-
-  onLoadDocument: async ({ documentName }) => {
-    const doc = new Y.Doc();
-
-    const content = doc.getMap('content');
-
-    return doc;
-  },
-
-  onStoreDocument: async ({ documentName, document }) => {},
 });
 
 const main = async () => {

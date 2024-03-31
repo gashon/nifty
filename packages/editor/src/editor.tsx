@@ -3,6 +3,7 @@ import {
   HocuspocusProvider,
   TiptapCollabProviderWebsocket,
   TiptapCollabProvider,
+  WebSocketStatus,
 } from '@hocuspocus/provider';
 import CharacterCount from '@tiptap/extension-character-count';
 import Collaboration from '@tiptap/extension-collaboration';
@@ -19,7 +20,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import * as Y from 'yjs';
 import type { Selectable, User } from '@nifty/common/types';
 
-import MenuBar from './menu-bar';
+import { MenuBar } from './components/menu-bar';
 
 const ydoc = new Y.Doc();
 
@@ -27,7 +28,9 @@ export const Editor: FC<{ user: Selectable<User>; documentId: string }> = ({
   user,
   documentId,
 }) => {
-  const [status, setStatus] = useState('connecting');
+  const [status, setStatus] = useState<WebSocketStatus>(
+    WebSocketStatus.Connecting
+  );
   console.log('user', user);
 
   if (!documentId) {
@@ -48,6 +51,9 @@ export const Editor: FC<{ user: Selectable<User>; documentId: string }> = ({
       websocketProvider: socket,
       onAuthenticationFailed: ({ reason }) => {
         console.log('reason', reason);
+      },
+      onStatus: ({ status }) => {
+        setStatus(status);
       },
     });
   }, [socket, documentId, ydoc]);
@@ -70,28 +76,20 @@ export const Editor: FC<{ user: Selectable<User>; documentId: string }> = ({
         provider: websocketProvider,
       }),
     ],
+    // update user
+    onUpdate: ({ editor }) => {
+      if (editor && user) {
+        editor
+          .chain()
+          .focus()
+          .updateUser({
+            name: user.email,
+            avatar: user.avatarUrl,
+          })
+          .run();
+      }
+    },
   });
-
-  useEffect(() => {
-    // Update status changes
-    websocketProvider.on('status', (event) => {
-      setStatus(event.status);
-    });
-  }, []);
-
-  // Save current user to localStorage and emit to editor
-  useEffect(() => {
-    if (editor && user) {
-      editor
-        .chain()
-        .focus()
-        .updateUser({
-          name: user.email,
-          avatar: user.avatarUrl,
-        })
-        .run();
-    }
-  }, [editor, user]);
 
   return (
     <div className="editor">

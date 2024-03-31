@@ -1,5 +1,5 @@
 {
-  "extends": "@nifty/tsconfig/base.json",
+  "extends": "@nifty/tsconfig/react-library.json",
   "compilerOptions": {
     "esModuleInterop": true,
     "moduleResolution": "Node",
@@ -11,7 +11,8 @@
     "target": "es6",
     "baseUrl": ".",
     "paths": {
-      "@nifty/common/*": ["../common/src/*"]
+      "@nifty/common/*": ["../common/src/*"],
+      "@nifty/tsconfig/*": ["../tsconfig/src/*"]
     }
   },
   "include": ["src/**/*"],

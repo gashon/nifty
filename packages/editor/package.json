@@ -24,6 +24,7 @@
     "@nifty/common": "workspace:*"
   },
   "devDependencies": {
-    "@types/react": "^18.2.73"
+    "@types/react": "^18.2.73",
+    "@nifty/tsconfig": "workspace:*"
   }
 }
