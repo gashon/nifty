@@ -46,6 +46,9 @@ export const Editor: FC<{ user: Selectable<User>; documentId: string }> = ({
       name: documentId,
       document: ydoc,
       websocketProvider: socket,
+      onAuthenticationFailed: ({ reason }) => {
+        console.log('reason', reason);
+      },
     });
   }, [socket, documentId, ydoc]);
 

@@ -75,7 +75,6 @@ const server = Server.configure({
         return doc;
       },
       store: async ({ documentName, state }) => {
-        console.log('store', documentName, state.toJSON());
         await dbRepository.writeNoteToDisk(Number(documentName), state);
       },
     }),
