@@ -20,7 +20,8 @@
       "@nifty/ui/*": ["../../packages/ui/src/*"],
       "@nifty/common/*": ["../../packages/common/src/*"],
       "@nifty/api/*": ["../api/src/*"],
-      "@nifty/api-live/*": ["../api-live/src/*"]
+      "@nifty/api-live/*": ["../api-live/src/*"],
+      "@nifty/editor/*": ["../../packages/editor/src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js"],

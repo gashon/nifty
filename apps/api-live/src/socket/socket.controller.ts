@@ -39,6 +39,7 @@ export class WebSocketServer extends Server {
     this.socketService.clearRedis();
 
     this.on('connection', async (socket: WebSocketSession, request) => {
+      console.log('CONNECRTION');
       const docParam = request.url?.split('/').pop();
       if (!docParam) return;
 

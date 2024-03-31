@@ -53,6 +53,7 @@
     "zod": "^3.20.6",
     "@nifty/api-live": "workspace:*",
     "@nifty/common": "workspace:*",
+    "@nifty/editor": "workspace:*",
     "@nifty/tsconfig": "workspace:*",
     "@nifty/ui": "workspace:*"
   },

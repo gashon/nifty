@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useState, useEffect, FC } from 'react';
+import { Editor } from '@nifty/editor/editor';
 
 const LongPollDocumentEditor = dynamic(
   () => import('@nifty/client/features/note/components/editor'),
@@ -20,7 +21,7 @@ const PageNavigation = dynamic(
   }
 );
 
-export const DocumentSection: FC = () => {
+export const DocumentSection: FC<{ documentId: string }> = ({ documentId }) => {
   const router = useRouter();
   const { id } = router.query;
   const [isMounted, setIsMounted] = useState(false);
@@ -35,13 +36,14 @@ export const DocumentSection: FC = () => {
     <>
       <section className="min-h-screen">
         <ErrorBoundary fallback={<p>Failed to connect</p>}>
-          <SocketDocumentEditor
-            documentId={Number(id as string)}
-            fallBackEditor={
-              // todo: only use long poll if note has not collaborators (offline)
-              <LongPollDocumentEditor documentId={Number(id as string)} />
-            }
-          />
+          {/* <SocketDocumentEditor */}
+          {/*   documentId={Number(id as string)} */}
+          {/*   fallBackEditor={ */}
+          {/*     // todo: only use long poll if note has not collaborators (offline) */}
+          {/*     <LongPollDocumentEditor documentId={Number(id as string)} /> */}
+          {/*   } */}
+          {/* /> */}
+          <Editor documentId={documentId} />
         </ErrorBoundary>
       </section>
       <section className="w-full flex justify-between py-10 underline">

@@ -1,36 +1,52 @@
-import express from 'express';
-import http from 'http';
-import rateLimit from 'express-rate-limit';
-import morgan from 'morgan';
-import logger from '@nifty/api-live/lib/logger';
+import { Database } from '@hocuspocus/extension-database';
+import { Logger } from '@hocuspocus/extension-logger';
+import { Server } from '@hocuspocus/server';
+import { mkdir, readFile, writeFile } from 'fs/promises';
+import * as Y from 'yjs';
 
-import { initRedisClient } from '@nifty/api-live/lib/redis';
-import { WebSocketServer } from '@nifty/api-live/socket';
+const server = Server.configure({
+  extensions: [
+    new Logger(),
+    new Database({
+      fetch: async ({ documentName }) => {
+        const doc = await readFile(`./data/${documentName}.bin`).catch(
+          () => null
+        );
 
-const port = 8080;
-const dev = process.env.NODE_ENV !== 'production';
+        if (doc) {
+          console.log('doc loaded from disk', documentName);
+        }
 
-const app = express();
+        return doc;
+      },
+      store: async ({ documentName, state }) => {
+        await writeFile(`./data/${documentName}.bin`, state);
+      },
+    }),
+  ],
 
-app.set('trust proxy', !dev);
-app.disable('x-powered-by');
+  onLoadDocument: async ({ documentName }) => {
+    const doc = new Y.Doc();
 
-app.use(morgan(dev ? 'dev' : 'combined'));
+    console.log('doc created', documentName);
 
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: dev ? Number.MAX_SAFE_INTEGER : 100, // limit each IP to x requests per windowMs
-    message:
-      'Too many requests from this IP, please try again after 15 minutes',
-  })
-);
+    const content = doc.getMap('content');
 
-const redis = initRedisClient();
+    return doc;
+  },
 
-const server = http.createServer(app);
-new WebSocketServer(redis, { server });
-
-server.listen(port, () => {
-  logger.info(`Server started on port ${port}`);
+  onStoreDocument: async ({ documentName, document }) => {
+    await writeFile(
+      `./data/${documentName}.json`,
+      JSON.stringify(document.getMap('content').toJSON())
+    );
+  },
 });
+
+const main = async () => {
+  await mkdir('./data', { recursive: true }).catch(() => null);
+  await server.listen(8080);
+  console.log('Server is running on port 8080');
+};
+
+main();

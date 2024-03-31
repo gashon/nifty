@@ -44,7 +44,7 @@ function Document({ user }) {
                 {title}
               </h1>
               <main className="h-screen">
-                <DocumentSection />
+                <DocumentSection documentId={id as string} />
               </main>
               <Authorization checkPolicy={'note:settings:mutate'}>
                 <NoteSettingsDrawer

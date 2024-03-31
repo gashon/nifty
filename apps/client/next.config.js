@@ -9,6 +9,7 @@ const withTM = require('next-transpile-modules')([
   '@nifty/ui',
   '@nifty/common',
   '@nifty/api-live',
+  '@nifty/editor',
 ]);
 
 const nextConfig = {
