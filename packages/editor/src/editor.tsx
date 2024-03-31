@@ -21,75 +21,17 @@ import * as Y from 'yjs';
 import type { Selectable, User } from '@nifty/common/types';
 
 import { MenuBar } from './components/menu-bar';
-
-const ydoc = new Y.Doc();
+import { useSocket } from './hooks';
 
 export const Editor: FC<{ user: Selectable<User>; documentId: string }> = ({
   user,
   documentId,
 }) => {
-  const [status, setStatus] = useState<WebSocketStatus>(
-    WebSocketStatus.Connecting
-  );
-  console.log('user', user);
-
   if (!documentId) {
     return <div>No documentId provided</div>;
   }
 
-  const socket = useMemo(() => {
-    return new TiptapCollabProviderWebsocket({
-      baseUrl: 'ws://localhost:8080',
-      connect: true,
-    });
-  }, []);
-
-  const websocketProvider = useMemo(() => {
-    return new TiptapCollabProvider({
-      name: documentId,
-      document: ydoc,
-      websocketProvider: socket,
-      onAuthenticationFailed: ({ reason }) => {
-        console.log('reason', reason);
-      },
-      onStatus: ({ status }) => {
-        setStatus(status);
-      },
-    });
-  }, [socket, documentId, ydoc]);
-
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        history: false,
-      }),
-      Highlight,
-      TaskList,
-      TaskItem,
-      CharacterCount.configure({
-        limit: 10000,
-      }),
-      Collaboration.configure({
-        document: ydoc,
-      }),
-      CollaborationCursor.configure({
-        provider: websocketProvider,
-      }),
-    ],
-    // update user
-    onUpdate: ({ editor }) => {
-      if (editor && user) {
-        editor
-          .chain()
-          .focus()
-          .updateUser({
-            name: user.email,
-            avatar: user.avatarUrl,
-          })
-          .run();
-      }
-    },
-  });
+  const { status, editor } = useSocket(documentId, user);
 
   return (
     <div className="editor">
@@ -97,9 +39,11 @@ export const Editor: FC<{ user: Selectable<User>; documentId: string }> = ({
       <EditorContent className="editor__content" editor={editor} />
       <div className="editor__footer">
         <div className={`editor__status editor__status--${status}`}>
-          {status === 'connected'
-            ? `${editor.storage.collaborationCursor.users.length} user${
-                editor.storage.collaborationCursor.users.length === 1 ? '' : 's'
+          {status === WebSocketStatus.Connected
+            ? `${editor?.storage.collaborationCursor.users.length} user${
+                editor?.storage.collaborationCursor.users.length === 1
+                  ? ''
+                  : 's'
               } online in ${documentId}`
             : 'offline'}
         </div>
