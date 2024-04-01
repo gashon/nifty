@@ -1,10 +1,12 @@
 import { Database } from '@hocuspocus/extension-database';
 import { Logger } from '@hocuspocus/extension-logger';
 import { onAuthenticatePayload, Server } from '@hocuspocus/server';
+
 import { verifyToken } from '@nifty/api/lib/jwt';
 import { isPermitted, Permission } from '@nifty/api/util/handle-permissions';
 import { AccessTokenJwt } from '@nifty/common/types';
 import { DBRepository } from './db';
+import logger from './lib/logger';
 import { getAccessTokenString } from './socket';
 
 const dbRepository = new DBRepository();
@@ -55,7 +57,11 @@ const server = Server.configure({
     return { user: token.user };
   },
   extensions: [
-    new Logger(),
+    new Logger({
+      log: (msg) => {
+        logger.info(msg);
+      },
+    }),
     new Database({
       fetch: async ({ documentName }) => {
         const documentId = parseInt(documentName, 10);

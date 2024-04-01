@@ -83,7 +83,7 @@ export class SocketRepository {
     if (!note) throw new Error('Document not found');
 
     await this._redisSet(`document:${documentId}:content`, note.content);
-    return note.content;
+    return note.content?.toString() || '';
   }
 
   async setContent(documentId: number, content: string, editor: WebSocket) {
@@ -129,11 +129,11 @@ export class SocketRepository {
       .executeTakeFirst();
     if (!note) throw new Error('Document not found');
 
-    const isUpdated = content !== note.content;
+    const isUpdated = content !== note.content?.toString();
     if (isUpdated) {
       await this.db
         .updateTable('note')
-        .set({ content })
+        .set({ content: new Buffer(content) })
         .where('id', '=', documentId)
         .execute();
     }

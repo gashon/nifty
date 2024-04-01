@@ -14,6 +14,7 @@
       "src/types",
       "../../packages/common/types"
     ],
+    "preserveSymlinks": true,
     "baseUrl": ".",
     "paths": {
       "@nifty/api-live/*": ["src/*"],

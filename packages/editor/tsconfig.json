@@ -10,6 +10,7 @@
     "rootDir": "../../",
     "target": "es6",
     "baseUrl": ".",
+    "preserveSymlinks": true,
     "paths": {
       "@nifty/common/*": ["../common/src/*"],
       "@nifty/tsconfig/*": ["../tsconfig/src/*"]

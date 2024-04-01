@@ -42,7 +42,7 @@ export class DBRepository {
   }
 
   async writeNoteToDisk(documentId: number, state: Buffer) {
-    return this.db
+    await this.db
       .updateTable('note')
       .set({ content: state })
       .where('id', '=', documentId)

@@ -1,4 +1,4 @@
-import winston from "winston"
+import winston from 'winston';
 
 const customLevels = {
   error: 0,
@@ -6,28 +6,23 @@ const customLevels = {
   info: 2,
   debug: 3,
 };
+
 const logger = winston.createLogger({
   levels: customLevels,
   format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
+    winston.format.colorize({ all: true }),
+    winston.format.printf(
+      (info: winston.Logform.TransformableInfo) =>
+        `[${info.timestamp}] ${info.level}: ${info.message}`
+    ),
+    winston.format.align(),
+    winston.format.timestamp({
+      format: 'YYYY-MM-DD hh:mm:ss.SSS A',
+    }),
+    winston.format.timestamp()
   ),
   defaultMeta: { service: 'api-live' },
-  transports: [
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'combined.log' }),
-  ],
+  transports: [new winston.transports.File({ filename: 'combined.log' })],
 });
-
-// If running in development mode, also log to the console
-if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.combine(
-      winston.format.colorize(),
-      winston.format.timestamp(),
-      winston.format.simple()
-    ),
-  }));
-}
 
 export default logger;

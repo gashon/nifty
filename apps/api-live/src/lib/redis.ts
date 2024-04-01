@@ -1,9 +1,15 @@
-import { RedisClientType as RedisType, createClient, RedisModules, RedisFunctions, RedisScripts } from 'redis'
+import {
+  RedisClientType as RedisType,
+  createClient,
+  RedisModules,
+  RedisFunctions,
+  RedisScripts,
+} from 'redis';
 import logger from '@nifty/api-live/lib/logger';
 
-export type RedisClientType = RedisType<RedisModules, RedisFunctions, RedisScripts>
+// export type RedisClientType = RedisType<RedisModules, RedisFunctions, RedisScripts>
 
-export function initRedisClient(): RedisClientType {
+export function initRedisClient() {
   const client = createClient({
     url: process.env.REDIS_HOST || 'redis://127.0.0.1:6379',
   });
@@ -29,5 +35,5 @@ export function initRedisClient(): RedisClientType {
     logger.info('Redis client ready');
   });
 
-  return client
+  return client;
 }
