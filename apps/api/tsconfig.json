@@ -8,11 +8,7 @@
     "module": "CommonJS",
     "outDir": "dist",
     "target": "es6",
-    "typeRoots": [
-      "node_modules/@types",
-      "src/types",
-      "../../packages/common/types"
-    ],
+    "typeRoots": ["node_modules/@types", "src/types"],
     "baseUrl": ".",
     "paths": {
       "@nifty/api/*": ["src/*"],

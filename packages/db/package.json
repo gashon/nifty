@@ -4,6 +4,7 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
+    "build": "tsc",
     "dev": "pnpm start",
     "start": "docker run --rm -v data:/var/lib/postgresql/data --name nifty-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=nifty_db -e POSTGRES_USER=postgres -p 5431:5432 postgres",
     "stop": "docker stop nifty-db && docker rm nifty-db",
