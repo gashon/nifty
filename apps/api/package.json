@@ -4,11 +4,10 @@
   "private": true,
   "entry": "src/server.ts",
   "main": "dist/server.js",
-  "type": "module",
   "scripts": {
     "dev": "doppler run -- nodemon src/server.ts",
     "start": "doppler run -- node dist/server.js",
-    "build": "tsup src/server.ts --external pg-native",
+    "build": "tsup src/server.ts --external pg-native --format cjs --minify --out-dir dist",
     "lint": "tsc --noEmit && eslint . --fix --ext js,ts"
   },
   "dependencies": {
