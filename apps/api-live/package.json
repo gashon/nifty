@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "doppler run -- nodemon src/server.ts",
     "start": "doppler run -- node dist/server.js",
-    "build": "tsup src/server.ts",
+    "build": "tsup src/server.ts --external pg-native",
     "lint": "tsc --noEmit && eslint . --fix --ext js,ts"
   },
   "dependencies": {

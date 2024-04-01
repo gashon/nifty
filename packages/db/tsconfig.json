@@ -6,11 +6,12 @@
     "outDir": "./dist",
     "declaration": true,
     "rootDir": "../../",
-    "typeRoots": ["node_modules/@types", "types"],
+    "typeRoots": ["node_modules/@types"],
     "baseUrl": ".",
     "paths": {
       "@nifty/db/*": ["./src/*"]
     }
   },
-  "exclude": ["node_modules", "./dist/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }
