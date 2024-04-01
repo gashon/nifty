@@ -17,6 +17,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import TaskList from '@tiptap/extension-task-list';
 import StarterKit from '@tiptap/starter-kit';
 import { Selectable, User } from '@nifty/common/types';
+import { generateBrightColor } from '../utils';
 
 export const useSocket = (documentId: string, user: Selectable<User>) => {
   const [status, setStatus] = useState<WebSocketStatus>(
@@ -78,7 +79,7 @@ export const useSocket = (documentId: string, user: Selectable<User>) => {
           .updateUser({
             name: user.email,
             avatar: user.avatarUrl,
-            // color:
+            color: generateBrightColor(),
           })
           .run();
       }
