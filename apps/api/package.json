@@ -2,9 +2,12 @@
   "name": "@nifty/api",
   "version": "0.0.0",
   "private": true,
+  "entry": "src/server.ts",
+  "main": "dist/server.js",
+  "type": "module",
   "scripts": {
     "dev": "doppler run -- nodemon src/server.ts",
-    "start": "doppler run -t $DOPPLER_API_TOKEN -- node -r esbuild-register src/server.ts",
+    "start": "doppler run -t $DOPPLER_API_TOKEN -- node dist/server.js",
     "build": "tsup src/server.ts --external pg-native",
     "lint": "tsc --noEmit && eslint . --fix --ext js,ts"
   },

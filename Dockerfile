@@ -1,39 +1,24 @@
-# ---- Base Node ----
-FROM node:16.15.0-alpine AS base
-RUN mkdir -p /usr/src/app
+FROM node:20-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+FROM base AS build
+COPY . /usr/src/app
 WORKDIR /usr/src/app
-COPY package.json package-lock.json ecosystem.config.js turbo.json yarn.lock tailwind.config.js ./
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm run -r build
+RUN pnpm deploy --filter=api --prod /prod/api
+RUN pnpm deploy --filter=api-live --prod /prod/api-live
 
-# ---- Dependencies ----
-FROM base AS dependencies
-ARG DOPPLER_CLIENT_TOKEN
-RUN apk add --no-cache --virtual .build-deps alpine-sdk
-# install python
-RUN apk add --no-cache python3 
-# Build tools including make
-RUN apk add --no-cache --virtual .build-deps alpine-sdk 
-# Doppler CLI
-RUN apk add curl gnupg 
-RUN (curl -Ls --tlsv1.2 --proto "=https" --retry 3 https://cli.doppler.com/install.sh || wget -t 3 -qO- https://cli.doppler.com/install.sh) | sh
-COPY ./apps ./apps
-COPY ./packages ./packages
-
-# ---- Builder ----
-FROM dependencies AS builder
-ARG DOPPLER_CLIENT_TOKEN
-# install deps
-RUN yarn install --non-interactive --prefer-offline --no-progress --skip-integrity-check
-# build client
-RUN yarn apps:build
-RUN yarn global add pm2
-RUN yarn cache clean
-
-# ---- App Build --- 
-FROM builder as app
-ENV DOPPLER_CLIENT_TOKEN=$DOPPLER_CLIENT_TOKEN
-ENV DOPPLER_API_TOKEN=$DOPPLER_API_TOKEN
-WORKDIR /usr/src/app
-EXPOSE 3000
+FROM base AS api
+COPY --from=build /prod/api /prod/api
+WORKDIR /prod/api
 EXPOSE 7000
+CMD [ "pnpm", "start" ]
+
+FROM base AS api-live
+COPY --from=build /prod/api-live /prod/api-live
+WORKDIR /prod/api-live
 EXPOSE 8080
-CMD pm2-runtime start /usr/src/app/ecosystem.config.js --env production --interpreter $(which node) 
+CMD [ "pnpm", "start" ]
