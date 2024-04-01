@@ -15,20 +15,18 @@
   "scripts": {
     "test": "turbo run dev",
     "build": "dotenv -- turbo run build",
-    "dev": "concurrently cross-env FORCE_COLOR=1 turbo run dev --parallel --verbosity 2\"",
+    "dev": "cross-env FORCE_COLOR=1 turbo run dev --parallel --verbosity 2",
     "start": "cross-env turbo run start --parallel",
     "lint": "turbo run lint",
     "format": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,scss,md}\"",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,scss,md}\""
   },
   "devDependencies": {
-    "concurrently": "8.0.1",
     "cross-env": "7.0.3",
     "dotenv-cli": "^7.4.1",
     "eslint": "^7.32.0",
     "eslint-config-custom": "*",
-    "prettier": "^2.7.1",
-    "wait-on": "7.0.1"
+    "prettier": "^2.7.1"
   },
   "engines": {
     "node": ">=16.15.0",
