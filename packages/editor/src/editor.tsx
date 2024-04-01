@@ -1,9 +1,8 @@
 import { WebSocketStatus } from '@hocuspocus/provider';
-import { EditorContent, useEditor } from '@tiptap/react';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { EditorContent } from '@tiptap/react';
+import { FC, useMemo } from 'react';
 import type { Selectable, User } from '@nifty/common/types';
 
-import { MenuBar } from './components/menu-bar';
 import { BubbleMenu } from './components';
 import { useSocket } from './hooks';
 
@@ -18,11 +17,15 @@ export const Editor: FC<{ user: Selectable<User>; documentId: string }> = ({
   const { status, editor } = useSocket(documentId, user);
 
   const wordCount = useMemo(() => {
+    // @ts-ignore
     return editor?.storage.characterCount.words();
+    // @ts-ignore
   }, [editor?.storage?.characterCount?.words()]);
 
   const characterCount = useMemo(() => {
+    // @ts-ignore
     return editor?.storage.characterCount.characters();
+    // @ts-ignore
   }, [editor?.storage?.characterCount?.characters()]);
 
   if (status !== WebSocketStatus.Connected) {

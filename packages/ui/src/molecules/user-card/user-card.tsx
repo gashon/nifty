@@ -6,7 +6,7 @@ import { useMediaQuery } from 'usehooks-ts';
 import { DropdownMenu } from '../../atoms/dropdown-menu';
 import type { Selectable, User } from '@nifty/common/types';
 
-type UserCardProps = Selectable<User> & {
+export type UserCardProps = Selectable<User> & {
   signOut?: () => void;
 };
 

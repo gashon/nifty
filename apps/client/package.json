@@ -10,6 +10,9 @@
     "start": "doppler run -t $DOPPLER_CLIENT_TOKEN -- next start '/usr/src/app/apps/client'",
     "lint": "next lint"
   },
+  "resolutions": {
+    "@types/react": "^18.0.1"
+  },
   "dependencies": {
     "@headlessui/react": "^1.7.12",
     "@heroicons/react": "^2.0.16",

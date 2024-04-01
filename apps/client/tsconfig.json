@@ -16,6 +16,7 @@
     "jsx": "preserve",
     "preserveSymlinks": true,
     "paths": {
+      "react": ["./node_modules/@types/react"],
       "@nifty/client/*": ["src/*"],
       "@nifty/ui/*": ["../../packages/ui/src/*"],
       "@nifty/common/*": ["../../packages/common/src/*"],

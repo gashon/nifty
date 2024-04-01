@@ -5,16 +5,6 @@ import { useState, useEffect, FC } from 'react';
 import { Editor } from '@nifty/editor/editor';
 import useUser from '@nifty/client/hooks/use-user';
 
-const LongPollDocumentEditor = dynamic(
-  () => import('@nifty/client/features/note/components/editor'),
-  { ssr: false }
-);
-const SocketDocumentEditor = dynamic(
-  () => import('@nifty/client/features/note/components/editor-socket'),
-  {
-    ssr: false,
-  }
-);
 const PageNavigation = dynamic(
   () => import('@nifty/client/features/note/components/page-navigation'),
   {
