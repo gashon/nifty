@@ -31,7 +31,7 @@ export const useSocket = (documentId: string, user: Selectable<User>) => {
 
   const socket = useMemo(() => {
     return new TiptapCollabProviderWebsocket({
-      baseUrl: 'ws://localhost:8080',
+      baseUrl: 'ws://localhost:8080/ws',
       connect: true,
     });
   }, []);

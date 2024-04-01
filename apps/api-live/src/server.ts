@@ -81,7 +81,10 @@ const server = Server.configure({
 });
 
 const main = async () => {
-  await server.listen(8080);
+  await server.listen({
+    port: 8080,
+    path: '/ws',
+  });
   console.log('Server is running on port 8080');
 };
 
