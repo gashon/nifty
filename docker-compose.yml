@@ -22,3 +22,14 @@ services:
     environment:
       - NODE_ENV=production
       - DOPPLER_TOKEN=${DOPPLER_API_LIVE_TOKEN}
+
+  nginx:
+    image: nginx:latest
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - api
+      - api-live
