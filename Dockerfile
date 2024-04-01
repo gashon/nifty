@@ -1,7 +1,9 @@
-FROM node:20-slim AS base
+FROM node:16.15.0-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
+# install doppler cli
+RUN (curl -Ls --tlsv1.2 --proto "=https" --retry 3 https://cli.doppler.com/install.sh || wget -t 3 -qO- https://cli.doppler.com/install.sh) | sh
 
 FROM base AS build
 COPY . /usr/src/app

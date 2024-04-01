@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "dev": "doppler run -- nodemon src/server.ts",
-    "start": "doppler run -t $DOPPLER_TOKEN_API -- node dist/server.js",
+    "start": "doppler run -- node dist/server.js",
     "build": "tsup src/server.ts",
     "lint": "tsc --noEmit && eslint . --fix --ext js,ts"
   },

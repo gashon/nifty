@@ -5,8 +5,6 @@ services:
     build:
       context: ./
       target: api
-      args:
-        - DOPPLER_TOKEN=${DOPPLER_API_TOKEN}
     restart: always
     expose:
       - 7000
@@ -18,8 +16,6 @@ services:
     build:
       context: ./
       target: api-live
-      args:
-        - DOPPLER_TOKEN=${DOPPLER_API_LIVE_TOKEN}
     restart: always
     expose:
       - 8080
