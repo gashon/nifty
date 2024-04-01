@@ -24,6 +24,7 @@
     "dotenv": "16.4.5",
     "esbuild": "^0.15.13",
     "esbuild-runner": "2.2.2",
-    "kysely-codegen": "0.14.1"
+    "kysely-codegen": "0.14.1",
+    "typescript": "^4.8.4"
   }
 }
