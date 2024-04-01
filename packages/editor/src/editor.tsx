@@ -17,6 +17,14 @@ export const Editor: FC<{ user: Selectable<User>; documentId: string }> = ({
 
   const { status, editor } = useSocket(documentId, user);
 
+  const wordCount = useMemo(() => {
+    return editor?.storage.characterCount.words();
+  }, [editor?.storage?.characterCount?.words()]);
+
+  const characterCount = useMemo(() => {
+    return editor?.storage.characterCount.characters();
+  }, [editor?.storage?.characterCount?.characters()]);
+
   return (
     <div className="editor">
       {/* {editor && <MenuBar editor={editor} />} */}
@@ -24,16 +32,19 @@ export const Editor: FC<{ user: Selectable<User>; documentId: string }> = ({
       <EditorContent className="editor__content" editor={editor} />
       <div className="editor__footer">
         <div className={`editor__status editor__status--${status}`}>
-          {status === WebSocketStatus.Connected
-            ? `${editor?.storage.collaborationCursor.users.length} user${
-                editor?.storage.collaborationCursor.users.length === 1
-                  ? ''
-                  : 's'
-              } online in ${documentId}`
-            : 'offline'}
+          {/* {status === WebSocketStatus.Connected */}
+          {/*   ? `${editor?.storage.collaborationCursor.users.length} user${ */}
+          {/*       editor?.storage.collaborationCursor.users.length === 1 */}
+          {/*         ? '' */}
+          {/*         : 's' */}
+          {/*     } online in ${documentId}` */}
+          {/*   : 'offline'} */}
         </div>
-        <div className="editor__name">
-          <button>{user.email}</button>
+        <div className="opacity-25 w-full flex justify-end mt-5">
+          {/* <p className="">{status}</p> */}
+          <p className="">
+            {wordCount} {characterCount}
+          </p>
         </div>
       </div>
     </div>
