@@ -2,6 +2,7 @@
   "name": "nifty",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "pnpm@8.15.5",
   "repository": "https://github.com/gashon/nifty",
   "license": "MIT",
   "npmScope": "@nifty",

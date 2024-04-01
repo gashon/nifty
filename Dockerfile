@@ -1,4 +1,6 @@
 FROM node:16.15.0-alpine AS base
+RUN npm uninstall -g pnpm
+RUN curl -fsSL https://get.pnpm.io/v8.15.5.js | node - add --global pnpm@8.15.5
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
