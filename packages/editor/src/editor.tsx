@@ -32,6 +32,7 @@ export const Editor: FC<{ user: Selectable<User>; documentId: string }> = ({
   return (
     <div className="editor">
       {editor && <BubbleMenu editor={editor} />}
+      {/* @ts-ignore https://github.com/steven-tey/novel/issues/316 */}
       <EditorContent className="editor__content" editor={editor} />
       <div className="editor__footer">
         <div className={`editor__status editor__status--${status}`}>
