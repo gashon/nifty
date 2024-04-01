@@ -1,23 +1,6 @@
-import {
-  HocuspocusProviderWebsocket,
-  HocuspocusProvider,
-  TiptapCollabProviderWebsocket,
-  TiptapCollabProvider,
-  WebSocketStatus,
-} from '@hocuspocus/provider';
-import CharacterCount from '@tiptap/extension-character-count';
-import Collaboration from '@tiptap/extension-collaboration';
-import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
-import Highlight from '@tiptap/extension-highlight';
-import TaskItem from '@tiptap/extension-task-item';
-import TaskList from '@tiptap/extension-task-list';
-import { Color } from '@tiptap/extension-color';
-import ListItem from '@tiptap/extension-list-item';
-import TextStyle from '@tiptap/extension-text-style';
+import { WebSocketStatus } from '@hocuspocus/provider';
 import { EditorContent, useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import * as Y from 'yjs';
 import type { Selectable, User } from '@nifty/common/types';
 
 import { MenuBar } from './components/menu-bar';

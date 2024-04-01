@@ -293,3 +293,12 @@ td {
   user-select: none;
   white-space: nowrap;
 }
+
+/* Placeholder (at the top) */
+.tiptap .is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}

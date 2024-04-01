@@ -13,6 +13,7 @@ import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import Highlight from '@tiptap/extension-highlight';
 import TaskItem from '@tiptap/extension-task-item';
+import Placeholder from '@tiptap/extension-placeholder';
 import TaskList from '@tiptap/extension-task-list';
 import StarterKit from '@tiptap/starter-kit';
 import { Selectable, User } from '@nifty/common/types';
@@ -51,6 +52,9 @@ export const useSocket = (documentId: string, user: Selectable<User>) => {
     extensions: [
       StarterKit.configure({
         history: false,
+      }),
+      Placeholder.configure({
+        placeholder: 'Write something …',
       }),
       Highlight,
       TaskList,
