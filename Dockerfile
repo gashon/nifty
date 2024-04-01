@@ -1,4 +1,5 @@
 FROM node:16.15.0-alpine AS base
+RUN apk add --no-cache python3 make g++
 RUN npm uninstall -g pnpm
 RUN curl -fsSL https://get.pnpm.io/v8.15.5.js | node - add --global pnpm@8.15.5
 ENV PNPM_HOME="/pnpm"

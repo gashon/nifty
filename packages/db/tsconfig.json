@@ -3,7 +3,8 @@
   "compilerOptions": {
     "lib": ["ES2019", "DOM"],
     "module": "esnext",
-    "outDir": "dist",
+    "outDir": "./dist",
+    "declaration": true,
     "rootDir": "../../",
     "typeRoots": ["node_modules/@types", "types"],
     "baseUrl": ".",
@@ -11,5 +12,5 @@
       "@nifty/db/*": ["./src/*"]
     }
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "./dist/**/*"]
 }
