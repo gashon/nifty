@@ -13,6 +13,7 @@
     "@hocuspocus/extension-logger": "^2.11.3",
     "@hocuspocus/server": "^2.11.3",
     "@nifty/server-lib": "workspace:*",
+    "@redis/client": "^1.5.14",
     "@types/async-lock": "1.4.0",
     "async-lock": "1.4.0",
     "debug": "~2.6.9",

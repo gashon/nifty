@@ -172,6 +172,9 @@ importers:
       '@nifty/server-lib':
         specifier: workspace:*
         version: link:../../packages/server-lib
+      '@redis/client':
+        specifier: ^1.5.14
+        version: 1.5.14
       '@types/async-lock':
         specifier: 1.4.0
         version: 1.4.0
@@ -3787,6 +3790,15 @@ packages:
       '@redis/client': ^1.0.0
     dependencies:
       '@redis/client': 1.5.6
+
+  /@redis/client@1.5.14:
+    resolution: {integrity: sha512-YGn0GqsRBFUQxklhY7v562VMOP0DcmlrHHs3IV1mFE3cbxe31IITUkqhBcIhVSI/2JqtWAJXg5mjV4aU+zD0HA==}
+    engines: {node: '>=14'}
+    dependencies:
+      cluster-key-slot: 1.1.2
+      generic-pool: 3.9.0
+      yallist: 4.0.0
+    dev: false
 
   /@redis/client@1.5.6:
     resolution: {integrity: sha512-dFD1S6je+A47Lj22jN/upVU2fj4huR7S9APd7/ziUXsIXDL+11GPYti4Suv5y8FuXaN+0ZG4JF+y1houEJ7ToA==}
