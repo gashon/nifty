@@ -477,6 +477,10 @@ importers:
       '@nifty/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
+    devDependencies:
+      typescript:
+        specifier: ^4.8.4
+        version: 4.8.4
 
   packages/db:
     dependencies:
