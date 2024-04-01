@@ -27,7 +27,6 @@ export const Editor: FC<{ user: Selectable<User>; documentId: string }> = ({
 
   return (
     <div className="editor">
-      {/* {editor && <MenuBar editor={editor} />} */}
       {editor && <BubbleMenu editor={editor} />}
       <EditorContent className="editor__content" editor={editor} />
       <div className="editor__footer">

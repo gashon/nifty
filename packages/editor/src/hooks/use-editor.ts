@@ -15,6 +15,7 @@ import Highlight from '@tiptap/extension-highlight';
 import TaskItem from '@tiptap/extension-task-item';
 import Placeholder from '@tiptap/extension-placeholder';
 import TaskList from '@tiptap/extension-task-list';
+import Typography from '@tiptap/extension-typography';
 import StarterKit from '@tiptap/starter-kit';
 import { Selectable, User } from '@nifty/common/types';
 import { generateBrightColor } from '../utils';
@@ -57,6 +58,7 @@ export const useSocket = (documentId: string, user: Selectable<User>) => {
       Placeholder.configure({
         placeholder: 'Write something …',
       }),
+      Typography,
       Highlight,
       TaskList,
       TaskItem,

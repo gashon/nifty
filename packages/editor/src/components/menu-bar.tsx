@@ -1,7 +1,6 @@
 import React, { FC, Fragment } from 'react';
 import { EditorProvider, useCurrentEditor } from '@tiptap/react';
 
-import MenuItem from './menu-item';
 import { Editor } from '@tiptap/react';
 
 export const MenuBar: FC<{ editor: Editor }> = ({ editor }) => {
@@ -126,7 +125,7 @@ export const MenuBar: FC<{ editor: Editor }> = ({ editor }) => {
         redo
       </button>
       <button
-        onClick={() => editor.chain().focus().setColor('#958DF1').run()}
+        // onClick={() => editor.chain().focus().setColor('#958DF1').run()}
         className={
           editor.isActive('textStyle', { color: '#958DF1' }) ? 'is-active' : ''
         }
