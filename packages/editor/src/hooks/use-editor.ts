@@ -7,7 +7,7 @@ import {
   TiptapCollabProvider,
   WebSocketStatus,
 } from '@hocuspocus/provider';
-import { EditorContent, useEditor } from '@tiptap/react';
+import { useEditor } from '@tiptap/react';
 import CharacterCount from '@tiptap/extension-character-count';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';

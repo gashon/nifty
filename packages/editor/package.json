@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "@hocuspocus/provider": "^2.11.3",
+    "@nifty/common": "workspace:*",
     "@nifty/tsconfig": "workspace:*",
     "@tiptap/extension-character-count": "^2.2.4",
     "@tiptap/extension-collaboration": "^2.2.4",
@@ -12,6 +13,7 @@
     "@tiptap/extension-color": "^2.2.4",
     "@tiptap/extension-highlight": "^2.2.4",
     "@tiptap/extension-list-item": "^2.2.4",
+    "@tiptap/extension-placeholder": "^2.2.4",
     "@tiptap/extension-task-item": "^2.2.4",
     "@tiptap/extension-task-list": "^2.2.4",
     "@tiptap/extension-text": "^2.2.4",
@@ -20,11 +22,10 @@
     "@tiptap/starter-kit": "^2.2.4",
     "react": "^18.2.0",
     "ws": "8.13.0",
-    "yjs": "^13.6.14",
-    "@nifty/common": "workspace:*"
+    "yjs": "^13.6.14"
   },
   "devDependencies": {
-    "@types/react": "^18.2.73",
-    "@nifty/tsconfig": "workspace:*"
+    "@nifty/tsconfig": "workspace:*",
+    "@types/react": "^18.2.73"
   }
 }

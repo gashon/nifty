@@ -13,7 +13,6 @@ const server = Server.configure({
   onAuthenticate: async (data: onAuthenticatePayload) => {
     const tokenStr = getAccessTokenString(data.requestHeaders.cookie);
     const token = verifyToken<AccessTokenJwt>(tokenStr);
-    console.log('token', token);
     if (!token) {
       throw new Error('Unauthorized');
     }

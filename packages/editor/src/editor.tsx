@@ -21,6 +21,7 @@ import * as Y from 'yjs';
 import type { Selectable, User } from '@nifty/common/types';
 
 import { MenuBar } from './components/menu-bar';
+import { BubbleMenu } from './components';
 import { useSocket } from './hooks';
 
 export const Editor: FC<{ user: Selectable<User>; documentId: string }> = ({
@@ -36,6 +37,7 @@ export const Editor: FC<{ user: Selectable<User>; documentId: string }> = ({
   return (
     <div className="editor">
       {/* {editor && <MenuBar editor={editor} />} */}
+      {editor && <BubbleMenu editor={editor} />}
       <EditorContent className="editor__content" editor={editor} />
       <div className="editor__footer">
         <div className={`editor__status editor__status--${status}`}>
