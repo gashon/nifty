@@ -25,6 +25,10 @@ export const Editor: FC<{ user: Selectable<User>; documentId: string }> = ({
     return editor?.storage.characterCount.characters();
   }, [editor?.storage?.characterCount?.characters()]);
 
+  if (status !== WebSocketStatus.Connected) {
+    return <p className="opacity-25">{status}...</p>;
+  }
+
   return (
     <div className="editor">
       {editor && <BubbleMenu editor={editor} />}
