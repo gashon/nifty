@@ -302,3 +302,24 @@ td {
   height: 0;
   pointer-events: none;
 }
+
+.menu-button {
+  color: #fff;
+  border: 1px solid white;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  padding: 4px 6px;
+  margin-right: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  opacity: 0.8;
+}
+
+.menu-button:hover {
+  opacity: 1;
+}
+
+.menu-button.is-active {
+  background-color: white;
+  color: black;
+}

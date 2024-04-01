@@ -6,19 +6,23 @@ export const BubbleMenu: FC<{ editor: Editor }> = ({ editor }) => {
     <TipTapBubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
       <button
         onClick={() => editor.chain().focus().toggleBold().run()}
-        className={editor.isActive('bold') ? 'is-active' : ''}
+        className={`menu-button ${editor.isActive('bold') ? 'is-active' : ''}`}
       >
         bold
       </button>
       <button
         onClick={() => editor.chain().focus().toggleItalic().run()}
-        className={editor.isActive('italic') ? 'is-active' : ''}
+        className={`menu-button ${
+          editor.isActive('italic') ? 'is-active' : ''
+        }`}
       >
         italic
       </button>
       <button
         onClick={() => editor.chain().focus().toggleStrike().run()}
-        className={editor.isActive('strike') ? 'is-active' : ''}
+        className={`menu-button ${
+          editor.isActive('strike') ? 'is-active' : ''
+        }`}
       >
         strike
       </button>
