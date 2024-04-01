@@ -4,8 +4,12 @@
 # Ignore node_modules directory and its contents
 node_modules
 
+.gitignore
+*.md
+
 # Ignore build artifacts
 build
+dist
 
 # Ignore logs and temporary files
 *.log
