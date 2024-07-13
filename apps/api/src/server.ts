@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import morgan from 'morgan';
@@ -11,6 +15,7 @@ import errorHandler from './middlewares/error-handler';
 import indexRouter from './routes/index';
 import { container } from './domains/inversify.config';
 import logger from './lib/logger';
+
 
 const port = parseInt(process.env.PORT!, 10) || 7000;
 const dev = process.env.NODE_ENV !== 'production';

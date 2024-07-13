@@ -1,5 +1,4 @@
-import * as dotenv from 'dotenv';
-dotenv.config({ path: __dirname + '/../../../../../.env' });
+import 'dotenv/config';
 import { Pool } from 'pg';
 import { Kysely, PostgresDialect, CamelCasePlugin } from 'kysely';
 import { DB } from '../types';

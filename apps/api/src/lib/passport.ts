@@ -1,9 +1,11 @@
+import 'dotenv/config';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as GitHubStrategy } from 'passport-github2';
 
 import { db, sql } from '@nifty/common/db';
 import type { User } from '@nifty/common/types';
+
 
 const googleStrategy = new GoogleStrategy(
   {
