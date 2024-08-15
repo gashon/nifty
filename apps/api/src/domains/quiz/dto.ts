@@ -16,7 +16,7 @@ import type {
 
 export type GetQuizByIdResponse = AppResponse<
   Selectable<Quiz> & {
-    multipleChoiceQuestoins?: Selectable<QuizQuestionMultipleChoice>[];
+    multipleChoiceQuestions?: Selectable<QuizQuestionMultipleChoice>[];
     freeResponseQuestions?: Selectable<QuizQuestionFreeResponse>[];
   }
 >;

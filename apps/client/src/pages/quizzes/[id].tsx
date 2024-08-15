@@ -12,17 +12,17 @@ import { QuizForm, getQuiz } from '@nifty/client/features/quiz';
 import { LoadingPage } from '@nifty/ui/pages/loading';
 import { Quiz, Selectable, User } from '@nifty/common/types';
 import { useIsMounted } from '@nifty/client/hooks/use-is-mounted';
+import type { GetQuizByIdResponse } from '@nifty/api/domains/quiz/dto';
 
 export const QuizPage: FC<{
   user: Selectable<User>;
-  quiz: Selectable<Quiz>;
+  quiz: GetQuizByIdResponse['data'];
 }> = ({ user, quiz }) => {
   const router = useRouter();
   const isMounted = useIsMounted();
   const { id, title } = router.query;
 
   if (!isMounted || typeof window === 'undefined') return null;
-  console.log('quiz', quiz);
 
   return (
     <>
@@ -40,7 +40,11 @@ export const QuizPage: FC<{
                 {title}
               </h1>
               <main className="h-min-screen">
-                {/* <QuizForm quizId={id as string} questions={quiz.questions} /> */}
+                <QuizForm
+                  quizId={id as string}
+                  multipleChoiceQuestions={quiz?.multipleChoiceQuestions}
+                  freeResponseQuestions={quiz?.freeResponseQuestions}
+                />
               </main>
             </div>
           </div>

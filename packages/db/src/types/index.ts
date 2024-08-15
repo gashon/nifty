@@ -24,7 +24,7 @@ export type FreeResponseQuestion = Pick<
 
 export type MultipleChoiceQuestion = Pick<
   Selectable<QuizQuestionMultipleChoice>,
-  'question' | 'answers' | 'correctIndex'
+  'question' | 'answers' | 'correctIndex' | 'id'
 >;
 
 export type {
