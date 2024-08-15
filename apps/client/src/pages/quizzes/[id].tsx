@@ -11,20 +11,18 @@ import {
 import { QuizForm, getQuiz } from '@nifty/client/features/quiz';
 import { LoadingPage } from '@nifty/ui/pages/loading';
 import { Quiz, Selectable, User } from '@nifty/common/types';
+import { useIsMounted } from '@nifty/client/hooks/use-is-mounted';
 
 export const QuizPage: FC<{
   user: Selectable<User>;
   quiz: Selectable<Quiz>;
 }> = ({ user, quiz }) => {
   const router = useRouter();
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useIsMounted();
   const { id, title } = router.query;
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   if (!isMounted || typeof window === 'undefined') return null;
+  console.log('quiz', quiz);
 
   return (
     <>
