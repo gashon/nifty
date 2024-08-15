@@ -66,7 +66,14 @@ export type CreateQuizSubmissionRequestBody = Omit<
 };
 export type CreateQuizSubmissionRequestParams = number;
 
-export type GetQuizSubmissionByIdResponse = AppResponse<Submission>;
+export type GetQuizSubmissionByIdResponse = AppResponse<
+  Submission & {
+    answers?: {
+      freeResponseAnswers: Selectable<SubmissionAnswerFreeResponse>[];
+      multipleChoiceAnswers: Selectable<SubmissionAnswerMultipleChoice>[];
+    };
+  }
+>;
 export type GetQuizSubmissionByIdRequestParams = number;
 
 export type GetQuizSubmissionsResponse = AppResponse<Submission[]>;

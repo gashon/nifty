@@ -37,13 +37,16 @@ export class SubmissionService {
   async getSubmissionById({
     id,
     select,
+    joinAnswers,
   }: {
     id: number;
     select: readonly SelectExpression<DB, 'submission'>[] | '*';
+    joinAnswers?: boolean;
   }) {
     return this.submissionRepository.getSubmissionById({
       id,
       select,
+      joinAnswers,
     });
   }
   async deleteSubmissionById(id: number) {

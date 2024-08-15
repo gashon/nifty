@@ -305,6 +305,7 @@ export class QuizController {
     const submission = await this.submissionService.getSubmissionById({
       id: submissionId,
       select: '*',
+      joinAnswers: true,
     });
 
     // validate permission to quiz

@@ -117,13 +117,14 @@ import { Selectable, User } from '@nifty/common/types';
 
 export const SubmissionPage: FC<{
   user: Selectable<User>;
-  // submission: SubmissionResponse;
-}> = ({ user /* submission */ }) => {
+  submission: SubmissionResponse;
+}> = ({ user, submission }) => {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   // const { mutateAsync: remixQuiz, isLoading: remixIsLoading } = useRemixQuiz(
   //   submission.quiz.id
   // );
+  console.log('GOT', submission);
 
   useEffect(() => {
     setIsMounted(true);

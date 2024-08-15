@@ -108,20 +108,67 @@ export class SubmissionRepository {
   async getSubmissionById({
     id,
     select,
+    joinAnswers,
   }: {
     id: number;
     select: readonly SelectExpression<DB, 'submission'>[] | '*';
+    joinAnswers?: boolean;
   }) {
     const query = this.db
       .selectFrom('submission')
       .where('id', '=', id)
       .where('deletedAt', 'is', null);
 
-    if (select !== '*') {
-      return query.select(select).executeTakeFirst();
-    }
+    let submission: Submission;
+    if (select !== '*')
+      submission = await query.select(select).executeTakeFirst();
+    else submission = await query.selectAll().executeTakeFirst();
 
-    return query.selectAll().executeTakeFirst();
+    if (!joinAnswers) return submission;
+
+    const [freeResponseSubmissionAnswers, multipleChoiceSubmissionAnswers] =
+      await Promise.all([
+        this.getFreeResponseSubmisisonAnswerBySubmissionId({
+          submissionId: Number(submission.id),
+        }),
+        this.getMultipleChoiceSubmisisonAnswerBySubmissionId({
+          submissionId: Number(submission.id),
+        }),
+      ]);
+
+    return {
+      ...submission,
+      answers: {
+        freeResponseAnswers: freeResponseSubmissionAnswers,
+        multipleChoiceAnswers: multipleChoiceSubmissionAnswers,
+      },
+    };
+  }
+
+  async getFreeResponseSubmisisonAnswerBySubmissionId({
+    submissionId,
+  }: {
+    submissionId: number;
+  }) {
+    return this.db
+      .selectFrom('submissionAnswerFreeResponse')
+      .where('submissionId', '=', submissionId)
+      .where('deletedAt', 'is', null)
+      .selectAll()
+      .execute();
+  }
+
+  async getMultipleChoiceSubmisisonAnswerBySubmissionId({
+    submissionId,
+  }: {
+    submissionId: number;
+  }) {
+    return this.db
+      .selectFrom('submissionAnswerMultipleChoice')
+      .where('submissionId', '=', submissionId)
+      .where('deletedAt', 'is', null)
+      .selectAll()
+      .execute();
   }
 
   async deleteSubmissionById(id: number) {
