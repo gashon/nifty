@@ -16,7 +16,7 @@ import { Permission } from '@nifty/api/util';
 @injectable()
 export class QuizService {
   constructor(
-    @inject(BINDING.DIRECTORY_REPOSITORY)
+    @inject(BINDING.QUIZ_REPOSITORY)
     private quizRepository: QuizRepository
   ) {}
 

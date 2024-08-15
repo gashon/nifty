@@ -43,6 +43,9 @@ export class QuizRepository {
     },
     trx?: Transaction<DB>
   ) {
+    console.log('fre res', questions);
+    if (questions.length === 0) return [];
+
     return (trx || this.db)
       .insertInto('quizQuestionFreeResponse')
       .values(
@@ -65,6 +68,8 @@ export class QuizRepository {
     },
     trx?: Transaction<DB>
   ) {
+    if (questions.length === 0) return [];
+
     return (trx || this.db)
       .insertInto('quizQuestionMultipleChoice')
       .values(
@@ -113,14 +118,21 @@ export class QuizRepository {
           .executeTakeFirstOrThrow(),
       ]);
 
+      console.log('quiz vals', values);
+      console.log('created quiz here', quiz, collaborator);
+
       // link questions and collaborator
       const [quizCollaborator, freeResponseQuestions, multipleChoiceQuestions] =
         await Promise.all([
-          trx.insertInto('quizCollaborator').values({
-            userId,
-            quizId: quiz.id,
-            collaboratorId: collaborator.id,
-          }),
+          trx
+            .insertInto('quizCollaborator')
+            .values({
+              userId,
+              quizId: quiz.id,
+              collaboratorId: collaborator.id,
+            })
+            .returningAll()
+            .execute(),
           this.linkFreeResponseQuestions(
             {
               questions: questions.freeResponse,
