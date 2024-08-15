@@ -48,7 +48,7 @@ export class QuizRepository {
     return (trx || this.db)
       .insertInto('quizQuestionFreeResponse')
       .values(
-        questions.map(({ question }) => ({
+        questions.map((question) => ({
           quizId,
           question,
         }))
@@ -116,9 +116,6 @@ export class QuizRepository {
           .returningAll()
           .executeTakeFirstOrThrow(),
       ]);
-
-      console.log('quiz vals', values);
-      console.log('created quiz here', quiz, collaborator);
 
       // link questions and collaborator
       const [quizCollaborator, freeResponseQuestions, multipleChoiceQuestions] =

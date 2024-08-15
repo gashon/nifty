@@ -149,8 +149,6 @@ export const SubmissionPage: FC<{
                       <MultipleChoice answer={answer} />
                     </SubmissionResult>
                   ))}
-
-                {/* <SubmissionResults submission={submission} /> */}
               </main>
               <div className="w-full flex justify-between items-end">
                 {/* <Link href={`/quizzes/${submission.quizId}`}> */}
