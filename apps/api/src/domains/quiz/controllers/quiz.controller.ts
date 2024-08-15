@@ -94,6 +94,7 @@ export class QuizController {
     const quiz = await this.quizService.getQuizById({
       id: quizId,
       select: '*',
+      joinQuestions: true,
     });
 
     return res.status(status.OK).json({ data: quiz });

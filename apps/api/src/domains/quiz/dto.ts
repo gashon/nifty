@@ -9,10 +9,17 @@ import type {
   Submission,
   SubmissionAnswerMultipleChoice,
   SubmissionAnswerFreeResponse,
+  QuizQuestionMultipleChoice,
+  QuizQuestionFreeResponse,
   Selectable,
 } from '@nifty/common/types';
 
-export type GetQuizByIdResponse = AppResponse<Selectable<Quiz>>;
+export type GetQuizByIdResponse = AppResponse<
+  Selectable<Quiz> & {
+    multipleChoiceQuestoins?: Selectable<QuizQuestionMultipleChoice>[];
+    freeResponseQuestions?: Selectable<QuizQuestionFreeResponse>[];
+  }
+>;
 export type GetQuizByIdRequestParams = number;
 
 export type GetQuizzesResponse = AppPaginationResponse<Selectable<Quiz>>;

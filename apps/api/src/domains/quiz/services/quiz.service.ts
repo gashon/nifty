@@ -27,13 +27,16 @@ export class QuizService {
   async getQuizById({
     id,
     select,
+    joinQuestions,
   }: {
     id: number;
     select: readonly SelectExpression<DB, 'quiz'>[] | '*';
+    joinQuestions?: boolean;
   }) {
     return this.quizRepository.getQuizById({
       id,
       select,
+      joinQuestions,
     });
   }
 

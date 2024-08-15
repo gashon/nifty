@@ -43,7 +43,6 @@ export class QuizRepository {
     },
     trx?: Transaction<DB>
   ) {
-    console.log('fre res', questions);
     if (questions.length === 0) return [];
 
     return (trx || this.db)
@@ -162,18 +161,44 @@ export class QuizRepository {
   async getQuizById({
     id,
     select,
+    joinQuestions,
   }: {
     id: number;
     select: readonly SelectExpression<DB, 'quiz'>[] | '*';
+    joinQuestions?: boolean;
   }) {
     const query = this.db
       .selectFrom('quiz')
-      .where('id', '=', id)
-      .where('deletedAt', 'is', null);
+      .where('quiz.id', '=', id)
+      .where('quiz.deletedAt', 'is', null);
 
-    if (select !== '*') return query.select(select).executeTakeFirstOrThrow();
+    let quiz;
+    if (select !== '*')
+      quiz = await query.select(select).executeTakeFirstOrThrow();
+    else quiz = await query.selectAll().executeTakeFirst();
 
-    return query.selectAll().executeTakeFirstOrThrow();
+    if (!joinQuestions) return quiz;
+
+    const tasks = [];
+    if (quiz?.multipleChoiceActivated) {
+      tasks.push(this.getMultipleChoiceQuestionsByQuizId(id));
+    }
+    if (quiz?.freeResponseActivated) {
+      tasks.push(this.getFreeResponseQuestionsByQuizId(id));
+    }
+
+    const [multipleChoiceQuestions, freeResponseQuestions] = await Promise.all(
+      tasks
+    );
+
+    return {
+      ...quiz,
+      // hide correctIndex
+      multipleChoiceQuestions: multipleChoiceQuestions.map(
+        ({ correctIndex, ...rest }) => ({ ...rest })
+      ),
+      freeResponseQuestions,
+    };
   }
 
   async getMultipleChoiceQuestionsByQuizId(quizId: number) {
