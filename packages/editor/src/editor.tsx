@@ -34,7 +34,7 @@ export const Editor: FC<{ user: Selectable<User>; documentId: string }> = ({
 
   return (
     <div className="editor">
-      {/* {editor && <BubbleMenu editor={editor} />} */}
+      {editor && <BubbleMenu editor={editor} />}
       {/* @ts-ignore https://github.com/steven-tey/novel/issues/316 */}
       <EditorContent className="editor__content" editor={editor} />
       <div className="editor__footer">
@@ -48,7 +48,7 @@ export const Editor: FC<{ user: Selectable<User>; documentId: string }> = ({
           {/*   : 'offline'} */}
         </div>
         <div className="opacity-25 w-full flex justify-end mt-5">
-          <p className="">{status}</p>
+          {/* <p className="">{status}</p> */}
           <p className="">
             {wordCount} {characterCount}
           </p>
