@@ -51,7 +51,7 @@ export class QuizCollaboratorRepository {
         )
         // sql will optimize this join out if unused in select
         .innerJoin('quiz', 'quiz.id', 'quizCollaborator.quizId')
-        .where('userId', '=', userId)
+        .where('quizCollaborator.userId', '=', userId)
         .select(select)
         .executeTakeFirst()
     );
@@ -68,6 +68,11 @@ export class QuizCollaboratorRepository {
       .selectFrom('quizCollaborator')
       .where('quizCollaborator.quizId', '=', quizId)
       .innerJoin('quiz', 'quiz.id', 'quizCollaborator.quizId')
+      .innerJoin(
+        'collaborator',
+        'collaborator.id',
+        'quizCollaborator.collaboratorId'
+      )
       .where('quiz.deletedAt', 'is', null)
       .select(select)
       .execute();

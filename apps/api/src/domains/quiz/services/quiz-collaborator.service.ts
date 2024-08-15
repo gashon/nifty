@@ -53,10 +53,7 @@ export class QuizCollaboratorService {
       return false;
     }
 
-    const hasCollaboratorPermission = isPermitted(
-      res.collaborator.permissions,
-      permission
-    );
+    const hasCollaboratorPermission = isPermitted(res.permissions, permission);
 
     return hasCollaboratorPermission;
   }
