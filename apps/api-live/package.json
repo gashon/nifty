@@ -19,6 +19,7 @@
     "@types/async-lock": "1.4.0",
     "async-lock": "1.4.0",
     "debug": "~2.6.9",
+    "dotenv": "16.4.5",
     "eslint-utils": "^3.0.0",
     "express": "~4.16.1",
     "express-rate-limit": "6.7.0",

@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-
 dotenv.config();
 
 import cookieParser from 'cookie-parser';
@@ -16,7 +15,7 @@ import indexRouter from './routes/index';
 import { container } from './domains/inversify.config';
 import logger from './lib/logger';
 
-const port = parseInt(process.env.PORT!, 10) || 7000;
+const port = parseInt(process.env.API_PORT!, 10) || 7000;
 const dev = process.env.NODE_ENV !== 'production';
 
 Sentry.init({

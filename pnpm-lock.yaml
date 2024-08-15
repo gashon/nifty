@@ -190,6 +190,9 @@ importers:
       debug:
         specifier: ~2.6.9
         version: 2.6.9
+      dotenv:
+        specifier: 16.4.5
+        version: 16.4.5
       eslint-utils:
         specifier: ^3.0.0
         version: 3.0.0(eslint@8.22.0)
