@@ -28,13 +28,6 @@ export const DocumentSection: FC<{ documentId: string }> = ({ documentId }) => {
     <>
       <section className="min-h-screen">
         <ErrorBoundary fallback={<p>Failed to connect</p>}>
-          {/* <SocketDocumentEditor */}
-          {/*   documentId={Number(id as string)} */}
-          {/*   fallBackEditor={ */}
-          {/*     // todo: only use long poll if note has not collaborators (offline) */}
-          {/*     <LongPollDocumentEditor documentId={Number(id as string)} /> */}
-          {/*   } */}
-          {/* /> */}
           {user && <Editor documentId={documentId} user={user} />}
         </ErrorBoundary>
       </section>
