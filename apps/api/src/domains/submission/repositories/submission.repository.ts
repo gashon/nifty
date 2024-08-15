@@ -99,7 +99,7 @@ export class SubmissionRepository {
       ]);
 
       return {
-        submission,
+        ...submission,
         answers: { freeResponseAnswers, multiplChoiceAnswers },
       };
     });

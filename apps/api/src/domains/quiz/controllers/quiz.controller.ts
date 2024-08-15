@@ -301,6 +301,7 @@ export class QuizController {
   ): ExpressResponse<GetQuizSubmissionByIdResponse> {
     const userId = res.locals.user.id;
     const submissionId = Number(req.params.id);
+    console.log('GOT', submissionId);
 
     const submission = await this.submissionService.getSubmissionById({
       id: submissionId,

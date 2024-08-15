@@ -17,10 +17,8 @@ export type MultipleChoiceAnswerSubmission = Pick<
   'answerIndex' | 'correctIndex' | 'isCorrect' | 'questionId'
 >;
 
-export type FreeResponseQuestion = Pick<
-  Selectable<QuizQuestionFreeResponse>,
-  'question'
->;
+export type FreeResponseQuestion =
+  typeof Selectable<QuizQuestionFreeResponse>['question'];
 
 export type MultipleChoiceQuestion = Pick<
   Selectable<QuizQuestionMultipleChoice>,

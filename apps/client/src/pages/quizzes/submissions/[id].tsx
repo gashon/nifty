@@ -92,7 +92,6 @@ export const SubmissionPage: FC<{
   // const { mutateAsync: remixQuiz, isLoading: remixIsLoading } = useRemixQuiz(
   //   submission.quiz.id
   // );
-  console.log('GOT', submission);
 
   if (!isMounted || typeof window === 'undefined') return null;
 
