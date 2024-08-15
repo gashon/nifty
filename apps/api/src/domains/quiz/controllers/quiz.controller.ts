@@ -156,15 +156,7 @@ export class QuizController {
     }
 
     const noteContent = decodeYDocBuffer(note.content);
-    console.log('decoded', noteContent);
-    console.log('note', noteContent.content[0]);
-    // console.log('noteUtf8', note.content.toString('ascii'));
-    // console.log('noteUtf8', note.content.toString('utf-8'));
-    console.log(
-      'noteUtf8',
-      new TextDecoder('utf-8').decode(new Uint8Array(note.content))
-    );
-    // console.log('noteUtf8', note.content.toString('utf-32'));
+
     // generate selected questions
     const [multipleChoice, freeResponse] = await Promise.all([
       openaiRequest({

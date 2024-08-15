@@ -53,7 +53,6 @@ type NoteContent = {
 
 // convert note content to text and some markdown
 function formatNoteContent(noteContent: NoteContent): string {
-  console.log('GOT', noteContent.content);
   return noteContent.content
     .reduce((acc: string[], curr: NoteLine) => {
       // interpret empty content as newline
@@ -156,9 +155,7 @@ export async function openaiRequest<T>(generatorItem: {
   } = generatorItem;
 
   try {
-    console.log('formating', payload);
     const formattedPayload = format(payload);
-    console.log('done', formattedPayload);
     logger.info(`Sending openai request with payload: ${formattedPayload}}`);
 
     const prompt = getPrompt(formattedPayload);
