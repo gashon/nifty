@@ -123,7 +123,7 @@ export const SubmissionPage: FC<{
                         'seconds'
                       )
                       .format('mm:ss')}{' '}
-                    min
+                    <span style={{ opacity: 0.5 }}>(mm:ss)</span>
                   </p>
                 </section>
               </div>
