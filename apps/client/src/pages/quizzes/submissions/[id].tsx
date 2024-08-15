@@ -12,123 +12,87 @@ import {
 } from '@nifty/client/features/auth';
 import { getQuizSubmission, useRemixQuiz } from '@nifty/client/features/quiz';
 import { LoadingPage } from '@nifty/ui/pages/loading';
-import { Button } from '@nifty/ui/atoms';
 import { Selectable, User } from '@nifty/common/types';
-//
-// interface SubmissionResponse extends Omit<ISubmission, 'quiz'> {
-//   quiz: IQuiz; // quiz is populated
-// }
+import { useIsMounted } from '@nifty/client/hooks/use-is-mounted';
+import type { GetQuizSubmissionByIdResponse } from '@nifty/api/domains/quiz/dto';
 
-// const MultipleChoice: FC<{
-//   answer: IMultipleChoiceSubmissionAnswer;
-//   quizQuestion: IQuizMultipleChoiceQuestion;
-// }> = ({ answer, quizQuestion }) => {
-//   return (
-//     <>
-//       <p className="">
-//         <span className="">Correct Answer:</span>{' '}
-//         {quizQuestion.answers[answer.correct_index]}
-//       </p>
-//
-//       <p className="">
-//         {answer.is_correct
-//           ? 'Correct!'
-//           : `Your answer: ${
-//               quizQuestion.answers[answer.answer_index] ?? 'None'
-//             }`}
-//       </p>
-//     </>
-//   );
-// };
-//
-// const FreeResponse: FC<{
-//   answer: IFreeResponseSubmissionAnswer;
-//   quizQuestion: IQuizFreeResponseQuestion;
-// }> = ({ answer, quizQuestion }) => {
-//   return (
-//     <>
-//       <p className="opacity-75">
-//         <span className="">Your answer:</span> {answer.answer_text ?? 'N/A'}
-//       </p>
-//
-//       <p className="">
-//         <span className="">Feedback:</span> {answer.feedback_text}
-//       </p>
-//     </>
-//   );
-// };
-//
-// const SubmissionResults: FC<{
-//   submission: SubmissionResponse;
-// }> = ({ submission }) => {
-//   const getQuizQuestions = (questionId: string) => {
-//     return submission.quiz.questions.find(
-//       (question) => question.id === questionId
-//     );
-//   };
-//
-//   return (
-//     <>
-//       {submission.grades.map((answer) => {
-//         const quizQuestion = getQuizQuestions(answer.question_id);
-//
-//         let QuestionComponent = null;
-//         if (!quizQuestion) return null;
-//         else if (
-//           quizQuestion.type === 'multiple-choice' &&
-//           answer.type === 'multiple-choice'
-//         )
-//           QuestionComponent = MultipleChoice;
-//         else if (
-//           quizQuestion.type === 'free-response' &&
-//           answer.type === 'free-response'
-//         )
-//           QuestionComponent = FreeResponse;
-//
-//         return (
-//           <div
-//             key={answer.question_id}
-//             className={`text-primary flex flex-col p-4 mb-4 rounded-md`}
-//             style={{
-//               opacity: 0.95,
-//             }}
-//           >
-//             <div className="flex flex-row justify-between mb-4">
-//               <h3 className=" text-xl">{quizQuestion.question}</h3>
-//
-//               <p
-//                 className={` ${
-//                   answer.is_correct
-//                     ? 'text-green-400 text:bg-green-100'
-//                     : 'text-red-400 text:bg-red-100'
-//                 }`}
-//               >
-//                 {answer.is_correct ? 'Correct!' : 'Incorrect'}
-//               </p>
-//             </div>
-//
-//             <QuestionComponent answer={answer} quizQuestion={quizQuestion} />
-//           </div>
-//         );
-//       })}
-//     </>
-//   );
-// };
+const MultipleChoice: FC<{
+  answer: GetQuizSubmissionByIdResponse['data']['answers']['multipleChoiceAnswers'][number];
+}> = ({ answer }) => {
+  return (
+    <>
+      <p className="">
+        <span className="">Correct Answer:</span>{' '}
+        {answer.answers[answer.correctIndex]}
+      </p>
+
+      <p className="">
+        {answer.isCorrect
+          ? 'Correct!'
+          : `Your answer: ${answer.answerIndex ?? 'None'}`}
+      </p>
+    </>
+  );
+};
+
+const FreeResponse: FC<{
+  answer: GetQuizSubmissionByIdResponse['data']['answers']['freeResponseAnswers'][number];
+}> = ({ answer }) => {
+  return (
+    <>
+      <p className="opacity-75">
+        <span className="">Your answer:</span> {answer.answerText ?? 'N/A'}
+      </p>
+
+      <p className="">
+        <span className="">Feedback:</span> {answer.feedbackText}
+      </p>
+    </>
+  );
+};
+
+const SubmissionResult: FC<{
+  children: React.ReactNode;
+  id: number;
+  question: string;
+  isCorrect: boolean;
+}> = ({ children, question, id, isCorrect }) => {
+  return (
+    <div
+      key={`submission:result:${id}`}
+      className={`text-primary flex flex-col p-4 mb-4 rounded-md`}
+      style={{
+        opacity: 0.95,
+      }}
+    >
+      <div className="flex flex-row justify-between mb-4">
+        <h3 className=" text-xl">{question}</h3>
+
+        <p
+          className={` ${
+            isCorrect
+              ? 'text-green-400 text:bg-green-100'
+              : 'text-red-400 text:bg-red-100'
+          }`}
+        >
+          {isCorrect ? 'Correct!' : 'Incorrect'}
+        </p>
+      </div>
+      {children}
+    </div>
+  );
+};
 
 export const SubmissionPage: FC<{
   user: Selectable<User>;
-  submission: SubmissionResponse;
+  submission: GetQuizSubmissionByIdResponse['data'];
 }> = ({ user, submission }) => {
   const router = useRouter();
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useIsMounted();
   // const { mutateAsync: remixQuiz, isLoading: remixIsLoading } = useRemixQuiz(
   //   submission.quiz.id
   // );
   console.log('GOT', submission);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   if (!isMounted || typeof window === 'undefined') return null;
 
@@ -136,62 +100,83 @@ export const SubmissionPage: FC<{
     <>
       <NextSeo title={'Submission'} noindex />
       <AuthProvider preloadedUser={user}>
-        {/* <AuthProtection loadingComponent={<LoadingPage />}> */}
-        {/*   <header className="fixed w-full p-5"> */}
-        {/*     <button className="cursor-pointer" onClick={() => router.back()}> */}
-        {/*       <BsArrowBarLeft size={25} /> */}
-        {/*     </button> */}
-        {/*   </header> */}
-        {/*   <div className="flex items-center justify-center w-screen"> */}
-        {/*     <div className="flex flex-col order-1 p-16 w-full lg:w-2/3"> */}
-        {/*       <div className="flex flex-row justify-between items-end"> */}
-        {/*         <h1 className="underline text-5xl text-primary dark:text-zinc-400 "> */}
-        {/*           Results */}
-        {/*         </h1> */}
-        {/*         <section className="h-full flex flex-col justify-end"> */}
-        {/*           <p className="opacity-75"> */}
-        {/*             Score: {Math.round(submission.score * 100) / 100}% */}
-        {/*           </p> */}
-        {/*           <p className="opacity-75"> */}
-        {/*             Time Taken:  */}
-        {/*             {dayjs */}
-        {/*               .duration( */}
-        {/*                 Math.round((submission.time_taken / 1000) * 100) / 100, */}
-        {/*                 'seconds' */}
-        {/*               ) */}
-        {/*               .format('mm:ss')}{' '} */}
-        {/*             min */}
-        {/*           </p> */}
-        {/*         </section> */}
-        {/*       </div> */}
-        {/*       <main className="h-auto mt-10"> */}
-        {/*         <SubmissionResults submission={submission} /> */}
-        {/*       </main> */}
-        {/*       <div className="w-full flex justify-between items-end"> */}
-        {/*         <Link href={`/quizzes/${submission.quiz.id}`}> */}
-        {/*           <span className="underline opacity-75">Try again</span> */}
-        {/*         </Link> */}
-        {/*         <Button */}
-        {/*           // onClick={async () => { */}
-        {/*           //   const payload = { */}
-        {/*           //     question_type: submission.quiz.question_type, */}
-        {/*           //     note: submission.quiz.note, */}
-        {/*           //   }; */}
-        {/*           //   const { data: quizResponse } = await remixQuiz( */}
-        {/*           //     submission.quiz.id, */}
-        {/*           //     payload */}
-        {/*           //   ); */}
-        {/*           //   router.push(`/quizzes/${quizResponse.data.id}`); */}
-        {/*           // }} */}
-        {/*           loading={remixIsLoading} */}
-        {/*           disabled */}
-        {/*         > */}
-        {/*           Create another quiz! */}
-        {/*         </Button> */}
-        {/*       </div> */}
-        {/*     </div> */}
-        {/*   </div> */}
-        {/* </AuthProtection> */}
+        <AuthProtection loadingComponent={<LoadingPage />}>
+          <header className="fixed w-full p-5">
+            <button className="cursor-pointer" onClick={() => router.back()}>
+              <BsArrowBarLeft size={25} />
+            </button>
+          </header>
+          <div className="flex items-center justify-center w-screen">
+            <div className="flex flex-col order-1 p-16 w-full lg:w-2/3">
+              <div className="flex flex-row justify-between items-end">
+                <h1 className="underline text-5xl text-primary dark:text-zinc-400 ">
+                  Results
+                </h1>
+                <section className="h-full flex flex-col justify-end">
+                  <p className="opacity-75">
+                    Score: {Math.round(submission.score * 100) / 100}%
+                  </p>
+                  <p className="opacity-75">
+                    Time Taken:
+                    {dayjs
+                      .duration(
+                        Math.round((submission.timeTaken / 1000) * 100) / 100,
+                        'seconds'
+                      )
+                      .format('mm:ss')}{' '}
+                    min
+                  </p>
+                </section>
+              </div>
+              <main className="h-auto mt-10">
+                {submission.answers &&
+                  submission.answers.freeResponseAnswers.map((answer) => (
+                    <SubmissionResult
+                      id={answer.id}
+                      question={answer.question}
+                      isCorrect={answer.isCorrect}
+                    >
+                      <FreeResponse answer={answer} />
+                    </SubmissionResult>
+                  ))}
+                {submission.answers &&
+                  submission.answers.multipleChoiceAnswers.map((answer) => (
+                    <SubmissionResult
+                      id={answer.id}
+                      question={answer.question}
+                      isCorrect={answer.isCorrect}
+                    >
+                      <MultipleChoice answer={answer} />
+                    </SubmissionResult>
+                  ))}
+
+                {/* <SubmissionResults submission={submission} /> */}
+              </main>
+              <div className="w-full flex justify-between items-end">
+                <Link href={`/quizzes/${submission.quizId}`}>
+                  <span className="underline opacity-75">Try again</span>
+                </Link>
+                {/* <Button */}
+                {/*   // onClick={async () => { */}
+                {/*   //   const payload = { */}
+                {/*   //     question_type: submission.quiz.question_type, */}
+                {/*   //     note: submission.quiz.note, */}
+                {/*   //   }; */}
+                {/*   //   const { data: quizResponse } = await remixQuiz( */}
+                {/*   //     submission.quiz.id, */}
+                {/*   //     payload */}
+                {/*   //   ); */}
+                {/*   //   router.push(`/quizzes/${quizResponse.data.id}`); */}
+                {/*   // }} */}
+                {/*   loading={remixIsLoading} */}
+                {/*   disabled */}
+                {/* > */}
+                {/*   Create another quiz! */}
+                {/* </Button> */}
+              </div>
+            </div>
+          </div>
+        </AuthProtection>
       </AuthProvider>
     </>
   );

@@ -69,8 +69,10 @@ export type CreateQuizSubmissionRequestParams = number;
 export type GetQuizSubmissionByIdResponse = AppResponse<
   Submission & {
     answers?: {
-      freeResponseAnswers: Selectable<SubmissionAnswerFreeResponse>[];
-      multipleChoiceAnswers: Selectable<SubmissionAnswerMultipleChoice>[];
+      freeResponseAnswers: (Selectable<SubmissionAnswerFreeResponse> &
+        Selectable<QuizQuestionFreeResponse>)[];
+      multipleChoiceAnswers: (Selectable<SubmissionAnswerMultipleChoice> &
+        Selectable<QuizQuestionMultipleChoice>)[];
     };
   }
 >;

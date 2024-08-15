@@ -152,8 +152,13 @@ export class SubmissionRepository {
   }) {
     return this.db
       .selectFrom('submissionAnswerFreeResponse')
-      .where('submissionId', '=', submissionId)
-      .where('deletedAt', 'is', null)
+      .where('submissionAnswerFreeResponse.submissionId', '=', submissionId)
+      .where('submissionAnswerFreeResponse.deletedAt', 'is', null)
+      .innerJoin(
+        'quizQuestionFreeResponse',
+        'quizQuestionFreeResponse.id',
+        'submissionAnswerFreeResponse.questionId'
+      )
       .selectAll()
       .execute();
   }
@@ -165,8 +170,13 @@ export class SubmissionRepository {
   }) {
     return this.db
       .selectFrom('submissionAnswerMultipleChoice')
-      .where('submissionId', '=', submissionId)
-      .where('deletedAt', 'is', null)
+      .where('submissionAnswerMultipleChoice.submissionId', '=', submissionId)
+      .where('submissionAnswerMultipleChoice.deletedAt', 'is', null)
+      .innerJoin(
+        'quizQuestionMultipleChoice',
+        'quizQuestionMultipleChoice.id',
+        'submissionAnswerMultipleChoice.questionId'
+      )
       .selectAll()
       .execute();
   }
