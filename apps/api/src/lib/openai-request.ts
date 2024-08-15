@@ -40,12 +40,30 @@ interface RequestItem<T> {
   reformat: ReformatFn<T>;
 }
 
-function formatNoteContent(noteContent: string): string {
-  // convert note content to text and some markdown
-  return JSON.parse(noteContent)
-    .reduce((acc: string[], curr: any) => {
+type NoteLine = {
+  type: string;
+  attrs?: any;
+  content: { type: string; text: string }[];
+};
+
+type NoteContent = {
+  type: string;
+  content: NoteLine[];
+};
+
+// convert note content to text and some markdown
+function formatNoteContent(noteContent: NoteContent): string {
+  console.log('GOT', noteContent.content);
+  return noteContent.content
+    .reduce((acc: string[], curr: NoteLine) => {
+      // interpret empty content as newline
+      if (!curr?.content) {
+        acc.push('');
+        return acc;
+      }
       acc.push(
-        (curr.type.includes('heading') ? '# ' : '') + curr.children[0].text
+        (curr.type.includes('heading') ? '# ' : '') +
+          (curr?.content[0]?.text ?? '')
       );
       return acc;
     }, [])
@@ -138,7 +156,9 @@ export async function openaiRequest<T>(generatorItem: {
   } = generatorItem;
 
   try {
+    console.log('formating', payload);
     const formattedPayload = format(payload);
+    console.log('done', formattedPayload);
     logger.info(`Sending openai request with payload: ${formattedPayload}}`);
 
     const prompt = getPrompt(formattedPayload);

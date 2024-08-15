@@ -33,6 +33,9 @@ importers:
       '@dqbd/tiktoken':
         specifier: 1.0.6
         version: 1.0.6
+      '@hocuspocus/transformer':
+        specifier: ^2.13.5
+        version: 2.13.5(@tiptap/pm@2.2.4)(y-prosemirror@1.2.3(prosemirror-model@1.19.4)(prosemirror-state@1.4.3)(prosemirror-view@1.33.3)(y-protocols@1.0.6(yjs@13.6.14))(yjs@13.6.14))(yjs@13.6.14)
       '@sentry/node':
         specifier: 7.45.0
         version: 7.45.0
@@ -1945,6 +1948,13 @@ packages:
     resolution: {integrity: sha512-1Vdy4RtJcpffs5I4Ey3M8ulu2f6AbpSDmK4YFG8k3O4EJT7HDSO3Ib5STiRBxlr2LncJeVa2ikwlvwQotsWqew==}
     peerDependencies:
       y-protocols: ^1.0.6
+      yjs: ^13.6.8
+
+  '@hocuspocus/transformer@2.13.5':
+    resolution: {integrity: sha512-G5QWvV4K7lussF4lSWPFjtqSTZjiq1tkU4WEn1u8OdKQUF0GtfNcnrGWMlCeJdz5Ucpp4qJHWt4TTPI1Lpw/9Q==}
+    peerDependencies:
+      '@tiptap/pm': ^2.1.12
+      y-prosemirror: ^1.2.1
       yjs: ^13.6.8
 
   '@hookform/resolvers@2.9.11':
@@ -11564,6 +11574,14 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+
+  '@hocuspocus/transformer@2.13.5(@tiptap/pm@2.2.4)(y-prosemirror@1.2.3(prosemirror-model@1.19.4)(prosemirror-state@1.4.3)(prosemirror-view@1.33.3)(y-protocols@1.0.6(yjs@13.6.14))(yjs@13.6.14))(yjs@13.6.14)':
+    dependencies:
+      '@tiptap/core': 2.2.4(@tiptap/pm@2.2.4)
+      '@tiptap/pm': 2.2.4
+      '@tiptap/starter-kit': 2.2.4(@tiptap/pm@2.2.4)
+      y-prosemirror: 1.2.3(prosemirror-model@1.19.4)(prosemirror-state@1.4.3)(prosemirror-view@1.33.3)(y-protocols@1.0.6(yjs@13.6.14))(yjs@13.6.14)
+      yjs: 13.6.14
 
   '@hookform/resolvers@2.9.11(react-hook-form@7.43.2(react@18.2.0))':
     dependencies:

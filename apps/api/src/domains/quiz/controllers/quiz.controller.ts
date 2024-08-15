@@ -23,6 +23,7 @@ import {
   createMultipleChoiceQuizGenerationPrompt,
   createFreeResponseQuizGenerationPrompt,
   gradeAnswers,
+  decodeYDocBuffer,
 } from '@nifty/api/util';
 import { authGuard } from '@nifty/api/middlewares/guards/auth';
 import {
@@ -154,8 +155,9 @@ export class QuizController {
       throw new CustomException('Note content is empty', status.BAD_REQUEST);
     }
 
-    console.log('raw', note.content);
-    const noteUtf8 = note.content.toString();
+    const noteContent = decodeYDocBuffer(note.content);
+    console.log('decoded', noteContent);
+    console.log('note', noteContent.content[0]);
     // console.log('noteUtf8', note.content.toString('ascii'));
     // console.log('noteUtf8', note.content.toString('utf-8'));
     console.log(
@@ -166,13 +168,13 @@ export class QuizController {
     // generate selected questions
     const [multipleChoice, freeResponse] = await Promise.all([
       openaiRequest({
-        payload: noteUtf8,
+        payload: noteContent,
         generator: openaiRequestHandler.multipleChoiceQuizGenerator,
         errorMessage: 'Quiz could not be generated from note',
         disabled: !values.multipleChoiceActivated,
       }),
       openaiRequest({
-        payload: noteUtf8,
+        payload: noteContent,
         generator: openaiRequestHandler.freeResponseQuizGenerator,
         errorMessage: 'Quiz could not be generated from note',
         disabled: !values.freeResponseActivated,
