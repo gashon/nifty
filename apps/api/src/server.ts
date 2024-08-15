@@ -16,7 +16,6 @@ import indexRouter from './routes/index';
 import { container } from './domains/inversify.config';
 import logger from './lib/logger';
 
-
 const port = parseInt(process.env.PORT!, 10) || 7000;
 const dev = process.env.NODE_ENV !== 'production';
 

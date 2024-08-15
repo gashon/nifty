@@ -5,7 +5,7 @@
   "entry": "src/server.ts",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "wait-on tcp:localhost:5431 && nodemon src/server.ts",
+    "dev": "wait-on tcp:localhost:5432 && nodemon src/server.ts",
     "start": "node dist/server.js",
     "build": "tsup src/server.ts --external pg-native --format cjs --minify --out-dir dist",
     "lint": "tsc --noEmit && eslint . --fix --ext js,ts"
