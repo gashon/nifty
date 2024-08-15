@@ -148,6 +148,7 @@ export interface SubmissionAnswerFreeResponse {
   deletedAt: Timestamp | null;
   feedbackText: string | null;
   id: Generated<number>;
+  isCorrect: boolean | null;
   questionId: number;
   submissionId: number;
   updatedAt: Generated<Timestamp>;
