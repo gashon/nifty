@@ -73,7 +73,7 @@ export class QuizController {
     req: Request,
     res: Response
   ): ExpressResponse<GetQuizByIdResponse> {
-    const userId = res.locals.user._id;
+    const userId = res.locals.user.id;
     const quizId = Number(req.params.id) as GetQuizByIdRequestParams;
 
     const hasPermission =
@@ -103,7 +103,7 @@ export class QuizController {
     req: Request,
     res: Response
   ): ExpressResponse<GetQuizzesResponse> {
-    const userId = res.locals.user._id;
+    const userId = res.locals.user.id;
     const { limit, cursor, orderBy } =
       req.query as PaginationQueryParams<'quiz'>;
 
@@ -126,13 +126,12 @@ export class QuizController {
     req: Request,
     res: Response
   ): ExpressResponse<CreateQuizResponse> {
-    const userId = res.locals.user._id;
+    const userId = res.locals.user.id;
     const values = req.body as CreateQuizRequestBody;
-    const noteId = values.noteId;
 
     const hasPermissionToNote =
       await this.noteCollaboratorService.userHasPermissionToNote({
-        noteId,
+        noteId: values.noteId,
         userId,
         permission: Permission.Read,
       });
@@ -145,22 +144,35 @@ export class QuizController {
     }
 
     const note = await this.noteService.getNoteById({
-      id: noteId,
+      id: values.noteId,
       select: ['content'],
     });
 
-    // TODO count token
+    // TODO(gashon) count tokens
 
+    if (!note.content) {
+      throw new CustomException('Note content is empty', status.BAD_REQUEST);
+    }
+
+    console.log('raw', note.content);
+    const noteUtf8 = note.content.toString();
+    // console.log('noteUtf8', note.content.toString('ascii'));
+    // console.log('noteUtf8', note.content.toString('utf-8'));
+    console.log(
+      'noteUtf8',
+      new TextDecoder('utf-8').decode(new Uint8Array(note.content))
+    );
+    // console.log('noteUtf8', note.content.toString('utf-32'));
     // generate selected questions
     const [multipleChoice, freeResponse] = await Promise.all([
       openaiRequest({
-        payload: note.content,
+        payload: noteUtf8,
         generator: openaiRequestHandler.multipleChoiceQuizGenerator,
         errorMessage: 'Quiz could not be generated from note',
         disabled: !values.multipleChoiceActivated,
       }),
       openaiRequest({
-        payload: note.content,
+        payload: noteUtf8,
         generator: openaiRequestHandler.freeResponseQuizGenerator,
         errorMessage: 'Quiz could not be generated from note',
         disabled: !values.freeResponseActivated,
@@ -169,7 +181,7 @@ export class QuizController {
 
     const { quiz } = await this.quizService.createQuizAndCollaborator({
       userId,
-      noteId,
+      noteId: values.noteId,
       values: { ...values, createdBy: userId },
       questions: {
         multipleChoice: multipleChoice || [],
@@ -187,7 +199,7 @@ export class QuizController {
     res: Response
   ): ExpressResponse<CreateRemixQuizResponse> {
     // @TODO
-    // const createdBy = res.locals.user._id;
+    // const createdBy = res.locals.user.id;
     // const body: QuizCreateRequest = req.body;
     // const quizId = req.params.id;
     // const noteId = body.note;
@@ -207,7 +219,7 @@ export class QuizController {
     res: Response
   ): ExpressResponse<DeleteQuizByIdResponse> {
     const id = Number(req.params.id) as DeleteQuizByIdRequestParams;
-    const userId = res.locals.user._id;
+    const userId = res.locals.user.id;
 
     const hasPermission =
       await this.quizCollaboratorService.userHasPermissionToQuiz({
@@ -292,7 +304,7 @@ export class QuizController {
     req: Request,
     res: Response
   ): ExpressResponse<GetQuizSubmissionByIdResponse> {
-    const userId = res.locals.user._id;
+    const userId = res.locals.user.id;
     const submissionId = Number(req.params.id);
 
     const submission = await this.submissionService.getSubmissionById({
@@ -317,7 +329,7 @@ export class QuizController {
     req: Request,
     res: Response
   ): ExpressResponse<GetQuizSubmissionsResponse> {
-    const userId = res.locals.user._id;
+    const userId = res.locals.user.id;
     const quizId = Number(req.params.id) as GetQuizSubmissionsRequestParams;
     const { limit, cursor } = req.query as GetQuizSubmissionsRequestQuery;
 
