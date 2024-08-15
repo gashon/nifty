@@ -137,8 +137,8 @@ export const QuizForm: FC<{
         multipleChoice: multipleChoiceAnswers,
         freeResponse: freeResponseAnswers,
       },
-      quiz_id: quizId,
-      time_taken: getTotalTime(),
+      quizId: quizId,
+      timeTaken: getTotalTime(),
     };
     const { data } = await submitQuizMutation.mutateAsync(payload);
     // clean up localStorage

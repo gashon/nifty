@@ -14,7 +14,7 @@ import { SubmissionRepository } from '@nifty/api/domains';
 @injectable()
 export class SubmissionService {
   constructor(
-    @inject(BINDING.DIRECTORY_REPOSITORY)
+    @inject(BINDING.SUBMISSION_REPOSITORY)
     private submissionRepository: SubmissionRepository
   ) {}
 

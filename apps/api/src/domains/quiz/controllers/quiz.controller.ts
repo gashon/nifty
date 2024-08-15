@@ -273,6 +273,8 @@ export class QuizController {
       answers,
     });
 
+    console.log('assessed', assessed);
+
     // create submission and link answers
     const submission = await this.submissionService.createSubmission({
       values: {
