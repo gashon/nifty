@@ -38,6 +38,9 @@ function gradeMultipleChoiceQuestions(
     totalIncorrect: 0,
   };
   const grades = [];
+  if (!answers.length || answers.length === 0) {
+    return { stats, grades };
+  }
 
   for (const { question, answer } of answers) {
     const grading = assessMultipleChoiceAnswer(question, answer);
@@ -56,6 +59,15 @@ async function gradeFreeResponseQuestions(
     answer: QuizFreeResponseAnswer;
   }[]
 ) {
+  const stats = {
+    totalCorrect: 0,
+    totalIncorrect: 0,
+  };
+  const grades = [];
+
+  if (!answers.length || answers.length === 0) {
+    return { stats, grades };
+  }
   const freeResponseGrading = await openaiRequest({
     payload: answers,
     generator: openaiRequestHandler.freeResponseQuestionGradingGenerator,
@@ -64,13 +76,6 @@ async function gradeFreeResponseQuestions(
 
   if (!freeResponseGrading)
     throw new Error('Free responses could not be graded');
-
-  const stats = {
-    totalCorrect: 0,
-    totalIncorrect: 0,
-  };
-
-  const grades = [];
 
   for (const { questionId, isCorrect, feedbackText } of freeResponseGrading) {
     if (isCorrect) stats.totalCorrect++;

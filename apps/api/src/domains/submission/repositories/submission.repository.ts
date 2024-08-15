@@ -26,6 +26,8 @@ export class SubmissionRepository {
     },
     trx?: Transaction<DB>
   ) {
+    if (answers.length === 0) return [];
+
     return (trx || this.db)
       .insertInto('submissionAnswerFreeResponse')
       .values(
@@ -48,6 +50,8 @@ export class SubmissionRepository {
     },
     trx?: Transaction<DB>
   ) {
+    if (answers.length === 0) return [];
+
     return (trx || this.db)
       .insertInto('submissionAnswerMultipleChoice')
       .values(
