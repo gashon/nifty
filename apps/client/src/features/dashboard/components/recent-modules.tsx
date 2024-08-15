@@ -48,7 +48,7 @@ export const RecentModules: FC<{ user: Selectable<User> }> = ({ user }) => {
                   name: module.name,
                 }).toString()}`}
                 onDelete={() => deleteModule(module.id)}
-                icon={<p>ICON</p>}
+                icon={<></>}
                 color="blue"
                 {...module}
               />

@@ -40,16 +40,19 @@ export const NotebookList: FC<NotebookListProps> = ({ moduleId }) => {
               return page.map((note) => (
                 <div key={note.id}>
                   <NotebookItem
-                    icon="ICON"
+                    icon=""
                     variant="default"
                     onDelete={() => deleteNote(note.id)}
                     href={`/notes/${note.id}?title=${note.title}`}
                     lastEdited={new Date(note.updatedAt).toLocaleDateString()}
                     title={note.title}
-                    label={{
-                      color: 'blue',
-                      name: 'LABEL',
-                    }}
+                    label={
+                      {}
+                      // {
+                      //   color: 'blue',
+                      //   name: 'LABEL',
+                      // }
+                    }
                   />
                 </div>
               ));
