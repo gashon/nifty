@@ -114,10 +114,10 @@ export const SubmissionPage: FC<{
                 </h1>
                 <section className="h-full flex flex-col justify-end">
                   <p className="opacity-75">
-                    Score: {Math.round(submission.score * 100) / 100}%
+                    Score: {Math.round(submission.score * 100)}%
                   </p>
                   <p className="opacity-75">
-                    Time Taken:
+                    Time Taken:{' '}
                     {dayjs
                       .duration(
                         Math.round((submission.timeTaken / 1000) * 100) / 100,
@@ -153,21 +153,21 @@ export const SubmissionPage: FC<{
                 {/* <SubmissionResults submission={submission} /> */}
               </main>
               <div className="w-full flex justify-between items-end">
-                <Link href={`/quizzes/${submission.quizId}`}>
-                  <span className="underline opacity-75">Try again</span>
-                </Link>
+                {/* <Link href={`/quizzes/${submission.quizId}`}> */}
+                {/*   <span className="underline opacity-75">Try again</span> */}
+                {/* </Link> */}
                 {/* <Button */}
-                {/*   // onClick={async () => { */}
-                {/*   //   const payload = { */}
-                {/*   //     question_type: submission.quiz.question_type, */}
-                {/*   //     note: submission.quiz.note, */}
-                {/*   //   }; */}
-                {/*   //   const { data: quizResponse } = await remixQuiz( */}
-                {/*   //     submission.quiz.id, */}
-                {/*   //     payload */}
-                {/*   //   ); */}
-                {/*   //   router.push(`/quizzes/${quizResponse.data.id}`); */}
-                {/*   // }} */}
+                {/*   onClick={async () => { */}
+                {/*     const payload = { */}
+                {/*       question_type: submission.quiz.question_type, */}
+                {/*       note: submission.quiz.note, */}
+                {/*     }; */}
+                {/*     const { data: quizResponse } = await remixQuiz( */}
+                {/*       submission.quiz.id, */}
+                {/*       payload */}
+                {/*     ); */}
+                {/*     router.push(`/quizzes/${quizResponse.data.id}`); */}
+                {/*   }} */}
                 {/*   loading={remixIsLoading} */}
                 {/*   disabled */}
                 {/* > */}
