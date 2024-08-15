@@ -4,8 +4,10 @@ import logger from '@nifty/api/lib/logger';
 import { countTokens } from '@nifty/api/util';
 import { CustomException } from '@nifty/api/exceptions';
 
+const TOKEN_LIMIT = 4096;
+
 const getOpenAIResponse = async (prompt: string) => {
-  const model = 'text-davinci-003';
+  const model = 'gpt-3.5-turbo';
 
   // rough estimate of number of tokens
   const numTokens = countTokens(prompt, model);
@@ -15,25 +17,38 @@ const getOpenAIResponse = async (prompt: string) => {
     )} -- numTokens: ${numTokens}`
   );
 
-  const response = await openai.createCompletion({
-    prompt,
+  const response = await openai.createChatCompletion({
     model,
-    max_tokens: 4096 - numTokens,
+    messages: [
+      {
+        role: 'system',
+        content: prompt,
+      },
+    ],
+    max_tokens: TOKEN_LIMIT - numTokens,
     temperature: 0.2,
     frequency_penalty: 0.5,
     presence_penalty: 0.5,
     stream: false,
-    stop: null,
+    stop: undefined,
   });
   logger.info(
     `Successfully received openai response: ${JSON.stringify(response.data)}`
   );
 
+  if (response.data?.usage) {
+    logger.info(`OpenAI usage: ${JSON.stringify(response.data.usage)}`);
+  }
+
   const choice = response.data.choices[0];
   if (choice.finish_reason == 'length')
     throw new Error('Too many tokens in prompt :(');
 
-  return choice.text;
+  if (!choice.message) throw new Error('No text in openai response :(');
+
+  logger.info(`OpenAI response: ${JSON.stringify(choice.message)}`);
+
+  return choice.message.content;
 };
 
 export const sendOpenAIRequest = async (prompt: string) => {
