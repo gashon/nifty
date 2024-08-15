@@ -2,6 +2,8 @@
 
 Nifty is a powerful and easy-to-use note taking web application, designed to help student's improve memory retention.
 
+![image](https://github.com/user-attachments/assets/0a6a1dc2-3861-4450-947d-27254b63eb17)
+
 ## Getting Started
 
 Clone the repository:
