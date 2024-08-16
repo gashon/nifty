@@ -4,6 +4,8 @@
 
 html {
   font-family: 'Roboto', sans-serif;
+    /* background color should be var(primary) */
+  background-color: var(--bg-primary);
 }
 :root {
   --font-inter: 'Inter', sans-serif;
@@ -87,20 +89,21 @@ html {
 }
 
 [data-theme='teal'] {
-  --bg-primary-: rgba(19, 19, 19, 1);
+  --bg-primary-: #2dd4bf ;
   --text-primary-: theme('colors.white');
   --primary: theme('colors.white');
   --secondary: #2dd4bf;
-  --tertiary: #ed9cc9theme('colors.zinc.800');
+  --tertiary: theme('colors.white');
   --accent: #2dd4be61;
 }
 
 [data-theme='pink'] {
   /* --primary: #edbed8; */
-  --text-primary-: #191919;
+  --bg-primary: #ff59b5;
+  --text-primary-: theme('colors.white');
   --primary: theme('colors.white');
-  --secondary: #ff008c;
-  --tertiary: #ed9cc9theme('colors.zinc.800');
+  --secondary: theme('colors.white');
+  --tertiary: theme('colors.zinc.800');
   --bg-accent-: #ff008c33;
 }
 

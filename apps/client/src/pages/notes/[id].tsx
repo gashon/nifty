@@ -38,7 +38,7 @@ function Document({ user }) {
               <BsArrowBarLeft size={25} />
             </button>
           </header>
-          <div className="flex items-center justify-center w-screen">
+          <section className="flex items-center justify-center w-screen">
             <div className="flex flex-col order-1 p-16 w-full lg:w-2/3">
               <h1 className="underline mb-12 text-5xl text-primary dark:text-zinc-400 ">
                 {title}
@@ -57,7 +57,7 @@ function Document({ user }) {
                 />
               </Authorization>
             </div>
-          </div>
+          </section>
         </AuthProtection>
       </AuthProvider>
     </>

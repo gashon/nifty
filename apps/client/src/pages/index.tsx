@@ -68,7 +68,7 @@ const Landing: FC<LandingProps> = ({ onWaitListFormSubmit }) => {
 
   return (
     <ThemeLayout>
-      <div className="min-h-screen overflow-hidden bg-gradient-to-b from-[#0a0a0a] to-zinc-900">
+      <div className="min-h-screen overflow-hidden bg-primary">
         <main className="container mx-auto px-6 py-8 md:px-0">
           <Navbar />
           <header className="pt-24 text-center">
