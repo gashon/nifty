@@ -95,18 +95,15 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({
                 className="inline-flex justify-between text-left w-full mt-5"
                 style={{ marginBottom: -5 }}
               >
-                <Authorization checkPolicy="note:settings:mutate">
-                  <FieldWrapper
-                    label="Public Permissions"
-                    error={formState.errors['publicPermissions'] as FieldError}
-                  >
-                    <NotePermissionDropdown
-                      setPermissions={(value: Permission) =>
-                        setValue('publicPermissions', value)
-                      }
-                    />
-                  </FieldWrapper>
-                </Authorization>
+                <FieldWrapper
+                  label="Public Permissions"
+                  error={formState.errors['publicPermissions'] as FieldError}
+                >
+                  <NotePermissionDropdown
+                    setPermissions={(value: Permission) =>
+                      setValue('publicPermissions', value)
+                    }
+                  />
 
                 <div className="w-full flex justify-end">
                   <Button

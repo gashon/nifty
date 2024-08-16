@@ -34,6 +34,7 @@ const server = Server.configure({
       notePermissions,
       Permission.Read
     );
+
     if (hasPublicWritePermissions) {
       return { user: token.user };
     }

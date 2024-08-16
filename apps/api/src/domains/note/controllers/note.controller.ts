@@ -227,7 +227,7 @@ export class NoteController {
       values: {
         ...values,
         createdBy: userId,
-        publicPermissions: Permission.Read,
+        publicPermissions: values?.publicPermissions ?? Permission.None,
       },
       userId,
       // Default to read-write-delete permission for the creator
