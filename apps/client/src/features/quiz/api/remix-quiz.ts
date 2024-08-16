@@ -9,7 +9,7 @@ import type {
 } from '@nifty/api/domains/quiz/dto';
 
 export const remixQuiz = async (
-  quizId: string,
+  quizId: number,
   payload: CreateQuizRequestBody
 ): Promise<CreateQuizRequestBody> => {
   const { data } = await axios.post(`/api/v1/quizzes/${quizId}/remix`, payload);
@@ -27,7 +27,7 @@ type InfiniteQueryData = {
 };
 
 export const useRemixQuiz = (
-  quizId: string,
+  quizId: number,
   { config }: UseCreateQuizOptions = {}
 ) => {
   return useMutation({

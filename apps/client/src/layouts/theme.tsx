@@ -12,7 +12,7 @@ type ThemeLayoutProps = {
 const ThemeLayout: FC<ThemeLayoutProps> = ({ children }) => {
   return (
     <div className="relative">
-      <div className="fixed bottom-5 left-5">
+      <div className="fixed top-5 right-5">
         <ThemeSelection />
       </div>
       {children}

@@ -12,6 +12,7 @@ import {
 } from '@nifty/client/features/auth';
 import { getQuizSubmission, useRemixQuiz } from '@nifty/client/features/quiz';
 import { LoadingPage } from '@nifty/ui/pages/loading';
+import { Button } from '@nifty/ui/atoms';
 import { Selectable, User } from '@nifty/common/types';
 import { useIsMounted } from '@nifty/client/hooks/use-is-mounted';
 import type { GetQuizSubmissionByIdResponse } from '@nifty/api/domains/quiz/dto';
@@ -90,7 +91,7 @@ export const SubmissionPage: FC<{
   const router = useRouter();
   const isMounted = useIsMounted();
   // const { mutateAsync: remixQuiz, isLoading: remixIsLoading } = useRemixQuiz(
-  //   submission.quiz.id
+  //   submission.quizId
   // );
 
   if (!isMounted || typeof window === 'undefined') return null;
@@ -150,9 +151,9 @@ export const SubmissionPage: FC<{
                   ))}
               </main>
               <div className="w-full flex justify-between items-end">
-                {/* <Link href={`/quizzes/${submission.quizId}`}> */}
-                {/*   <span className="underline opacity-75">Try again</span> */}
-                {/* </Link> */}
+                <Link href={`/quizzes/${submission.quizId}`}>
+                  <span className="underline opacity-75">Try again</span>
+                </Link>
                 {/* <Button */}
                 {/*   onClick={async () => { */}
                 {/*     const payload = { */}
@@ -166,7 +167,6 @@ export const SubmissionPage: FC<{
                 {/*     router.push(`/quizzes/${quizResponse.data.id}`); */}
                 {/*   }} */}
                 {/*   loading={remixIsLoading} */}
-                {/*   disabled */}
                 {/* > */}
                 {/*   Create another quiz! */}
                 {/* </Button> */}
@@ -195,7 +195,6 @@ export async function getServerSideProps(context) {
   if (!user || !submission) {
     return {
       redirect: {
-        // destination: `/error/external?message=${encodeURIComponent("You are not logged in!")}&redirect=%2Fnotes%2F${context.params.id}`,
         destination: `/error/external?message=${encodeURIComponent(
           !user ? 'You are not logged in!' : "This submission doesn't exist!"
         )}&${new URLSearchParams({

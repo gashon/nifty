@@ -97,7 +97,7 @@ const ThemeSelection: FC = ({}) => {
           menuClassName="w-max flex flex-col justify-center"
           itemClassName="text-primary"
           buttonAs="button"
-          pos="top"
+          pos="bottom"
           list={AVAILABLE_THEMES.map((t) => ({
             icon: <Icon theme={t} />,
             label: t.charAt(0).toUpperCase() + t.slice(1),
