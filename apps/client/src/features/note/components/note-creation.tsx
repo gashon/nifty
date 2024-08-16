@@ -104,6 +104,7 @@ export const NoteCreationButton: FC<NoteCreationButtonProps> = ({
                       setValue('publicPermissions', value)
                     }
                   />
+                </FieldWrapper>
 
                 <div className="w-full flex justify-end">
                   <Button
