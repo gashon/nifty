@@ -108,10 +108,13 @@ export class NoteController {
         });
 
       if (!hasPermissionToDirectory) {
-        throw new CustomException(
-          'User does not have permission to read directory',
-          status.FORBIDDEN
-        );
+        return res.status(status.OK).json({
+          data: {
+            before: [],
+            after: [],
+          },
+          message: 'User does not have permission to read directory',
+        });
       }
     }
 

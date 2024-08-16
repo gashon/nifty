@@ -7,7 +7,7 @@ import type {
   DB,
 } from '@nifty/common/types';
 import { BINDING } from '@nifty/api/domains/binding';
-import { NoteCollaboratorRepository } from '@nifty/api/domains';
+import { NoteCollaboratorRepository, NoteRepository } from '@nifty/api/domains';
 import { Permission, isPermitted } from '@nifty/api/util';
 import { OrderBy } from '@nifty/api/types';
 
@@ -15,7 +15,9 @@ import { OrderBy } from '@nifty/api/types';
 export class NoteCollaboratorService {
   constructor(
     @inject(BINDING.NOTE_COLLABORATOR_REPOSITORY)
-    private noteCollaboratorRepository: NoteCollaboratorRepository
+    private noteCollaboratorRepository: NoteCollaboratorRepository,
+    @inject(BINDING.NOTE_REPOSITORY)
+    private noteRepository: NoteRepository
   ) {}
 
   async createNoteCollaborator({
@@ -40,23 +42,35 @@ export class NoteCollaboratorService {
     userId: number;
     permission: Permission;
   }) {
-    const res =
+    const note = await this.noteRepository.getNoteById({
+      id: noteId,
+      select: ['publicPermissions'],
+    });
+    const hasPublicPermission = isPermitted(note.publicPermissions, permission);
+
+    if (hasPublicPermission) {
+      return true;
+    }
+
+    const noteCollaborator =
       await this.noteCollaboratorRepository.getNoteCollaboratorByNoteIdAndUserId(
         {
           noteId,
           userId,
-          select: ['note.publicPermissions', 'collaborator.permissions'],
+          select: ['collaborator.permissions'],
         }
       );
 
-    if (!res) {
+    if (!noteCollaborator?.permissions) {
       return false;
     }
 
-    const hasPublicPermission = isPermitted(res.publicPermissions, permission);
-    const hasCollaboratorPermission = isPermitted(res.permissions, permission);
+    const hasCollaboratorPermission = isPermitted(
+      noteCollaborator.permissions,
+      permission
+    );
 
-    return hasPublicPermission || hasCollaboratorPermission;
+    return hasCollaboratorPermission;
   }
 
   async paginateNotesByUserId({
